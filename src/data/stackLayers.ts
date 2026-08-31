@@ -14,33 +14,33 @@ export const stackLayers: StackLayer[] = [
     colorTheme: 'purple',
   },
   {
+    id: 'middleware-communication',
+    name: { en: 'Middleware & Automotive Platforms', ko: '미들웨어 & 오토모티브 플랫폼' },
+    description: {
+      en: 'AUTOSAR Adaptive Platform, AUTOSAR Classic Platform, SOME/IP, DDS, Eclipse uProtocol, ROS 2, D-Bus, and IPC brokers.',
+      ko: 'AUTOSAR Adaptive, AUTOSAR Classic, SOME/IP, DDS, Eclipse uProtocol, ROS 2, D-Bus 및 IPC 브로커.',
+    },
+    order: 2,
+    layerType: 'core',
+    colorTheme: 'indigo',
+  },
+  {
     id: 'vehicle-services',
     name: { en: 'Vehicle Services & Networks', ko: '차량 서비스 & 네트워크' },
     description: {
       en: 'CAN/CAN FD, Automotive Ethernet, UDS diagnostics, DoIP, COVESA VSS data models, and ISO 26262/21434 services.',
       ko: 'CAN/CAN FD, 오토모티브 이더넷, UDS 진단, DoIP, COVESA VSS 데이터 모델 및 기능 안전/보안.',
     },
-    order: 2,
-    layerType: 'core',
-    colorTheme: 'emerald',
-  },
-  {
-    id: 'middleware-communication',
-    name: { en: 'Middleware & Communication', ko: '미들웨어 & 통신' },
-    description: {
-      en: 'Service-oriented RPC, SOME/IP, DDS, Eclipse uProtocol, ROS 2, D-Bus, and vehicle IPC brokers.',
-      ko: '서비스 지향 RPC, SOME/IP, DDS, Eclipse uProtocol, ROS 2, D-Bus 및 IPC 브로커.',
-    },
     order: 3,
     layerType: 'core',
-    colorTheme: 'indigo',
+    colorTheme: 'emerald',
   },
   {
     id: 'operating-systems',
     name: { en: 'Operating Systems (OS)', ko: '운영체제 (OS)' },
     description: {
-      en: 'Android Automotive OS, Embedded Linux, QNX Neutrino RTOS, AUTOSAR Adaptive (ARA), and AUTOSAR Classic (BSW).',
-      ko: '안드로이드 오토모티브 OS, 임베디드 리눅스, QNX RTOS, AUTOSAR Adaptive(ARA) 및 Classic(BSW).',
+      en: 'Android Automotive OS, Embedded Linux, AGL UCB, QNX Neutrino RTOS, Green Hills INTEGRITY, and SYSGO PikeOS.',
+      ko: '안드로이드 오토모티브 OS, 임베디드 리눅스, AGL UCB, QNX RTOS, Green Hills INTEGRITY 및 SYSGO PikeOS.',
     },
     order: 4,
     layerType: 'core',

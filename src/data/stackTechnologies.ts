@@ -288,25 +288,6 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['qnx', 'rtos', 'neutrino', 'microkernel', 'asil-d'],
   },
   {
-    id: 'autosar-os-osek',
-    name: 'AUTOSAR OS / OSEK-VDX RTOS',
-    layerId: 'operating-systems',
-    description: {
-      en: 'Static real-time operating system standard (ISO 17356) for 16/32-bit automotive microcontrollers with strict priority scheduling.',
-      ko: '16/32비트 차량 MCU를 위한 정적 우선순위 스케줄링 기반 표준 실시간 운영체제 (ISO 17356).',
-    },
-    whereDoesItFit: {
-      en: 'Safety-Critical Low-Level Real-Time OS running directly inside AUTOSAR Classic BSW ECUs.',
-      ko: 'AUTOSAR Classic BSW 제어기 내부에서 하드웨어 바로 위에서 구동되는 하드 실시간 OS.',
-    },
-    categories: ['Operating System', 'RTOS', 'AUTOSAR'],
-    topics: ['autosar', 'functional-safety', 'can'],
-    website: 'https://www.autosar.org/',
-    companyIds: ['vector-informatik', 'elektrobit', 'bosch'],
-    relatedTechnologyIds: ['autosar-classic', 'iso-26262-functional-safety'],
-    tags: ['autosar-os', 'osek', 'vdx', 'rtos', 'iso17356'],
-  },
-  {
     id: 'ghs-integrity-rtos',
     name: 'Green Hills INTEGRITY RTOS',
     layerId: 'operating-systems',
@@ -344,17 +325,17 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'agl-unified-codebase',
-    name: 'Automotive Grade Linux (AGL UCB)',
+    name: 'Automotive Grade Linux (AGL UCB Platform)',
     layerId: 'operating-systems',
     description: {
-      en: 'Open-source Linux Foundation distribution specified for IVI, instrument cluster, and telematics systems.',
-      ko: '리눅스 재단이 이끄는 IVI, 디지털 계기판 및 텔레매틱스 전용 오픈 소스 차량용 리눅스 배포판.',
+      en: 'Open-source Linux Foundation operating system & software platform specified for IVI, instrument cluster, and telematics systems.',
+      ko: '리눅스 재단이 이끄는 IVI, 디지털 계기판 및 텔레매틱스 전용 오픈 소스 차량용 리눅스 OS & 소프트웨어 플랫폼 배포판.',
     },
     whereDoesItFit: {
       en: 'Open-Source Automotive Linux Operating System Platform.',
       ko: '오픈 소스 오픈 가버넌스 차량용 리눅스 플랫폼 운영체제.',
     },
-    categories: ['Operating System', 'Linux Distribution', 'Open Source'],
+    categories: ['Operating System', 'Linux Platform', 'Open Source'],
     topics: ['embedded-linux', 'open-source', 'covesa'],
     website: 'https://www.automotivelinux.org/',
     openSourceProjectIds: ['automotive-grade-linux', 'yocto-project'],
@@ -402,69 +383,50 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 4. MIDDLEWARE & COMMUNICATION (Shifted AUTOSAR Classic & Adaptive + Common Middleware)
+  // 4. MIDDLEWARE & AUTOMOTIVE PLATFORMS (Layer 2: AUTOSAR Classic, AUTOSAR Adaptive & Middleware)
   // ==========================================
   {
     id: 'autosar-adaptive',
     name: 'AUTOSAR Adaptive Platform (ARA)',
     layerId: 'middleware-communication',
     description: {
-      en: 'C++ service-oriented dynamic platform for High-Performance Computers (HPC) running POSIX operating systems.',
-      ko: 'POSIX OS 기반 고성능 컴퓨터(HPC)를 위한 C++ 서비스 지향 동적 아키텍처(ARA) 미들웨어.',
+      en: 'C++ service-oriented dynamic middleware platform for High-Performance Computers (HPC) running POSIX operating systems.',
+      ko: 'POSIX OS 기반 고성능 컴퓨터(HPC)를 위한 C++ 서비스 지향 동적 아키텍처(ARA) 오토모티브 플랫폼.',
     },
     whereDoesItFit: {
       en: 'Dynamic middleware & execution environment sitting on Linux or QNX inside HPC Domain Controllers.',
       ko: 'HPC 도메인 제어기 내 리눅스 또는 QNX 위에서 작동하는 동적 미들웨어 및 실행 환경.',
     },
-    categories: ['Middleware', 'AUTOSAR', 'Service-Oriented'],
+    categories: ['Automotive Platform', 'AUTOSAR', 'Middleware'],
     topics: ['autosar', 'sdv', 'someip', 'functional-safety'],
     website: 'https://www.autosar.org/standards/adaptive-platform',
     companyIds: ['vector-informatik', 'elektrobit', 'volkswagen-group', 'hyundai-mobis'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
     relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino', 'dlt-logging'],
-    tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip'],
+    tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip', 'platform'],
   },
   {
     id: 'autosar-classic',
     name: 'AUTOSAR Classic Platform (BSW & RTE)',
     layerId: 'middleware-communication',
     description: {
-      en: 'Standardized basic software (BSW) and Runtime Environment (RTE) middleware for deeply embedded real-time microcontrollers.',
-      ko: '임베디드 실시간 마이크로컨트롤러를 위한 표준화된 정적 기본 소프트웨어(BSW) 및 RTE 미들웨어.',
+      en: 'Standardized basic software (BSW) and Runtime Environment (RTE) middleware platform for deeply embedded real-time microcontrollers.',
+      ko: '임베디드 실시간 마이크로컨트롤러를 위한 표준화된 정적 기본 소프트웨어(BSW) 및 RTE 미들웨어 플랫폼.',
     },
     whereDoesItFit: {
       en: 'Standardized ECU BSW & RTE Middleware layer running on top of MCAL & AUTOSAR OS.',
-      ko: 'MCAL 및 AUTOSAR OS 위에서 실행되는 정적 ECU BSW/RTE 미들웨어 레이어.',
+      ko: 'MCAL 및 실시간 OS 위에서 실행되는 정적 ECU BSW/RTE 미들웨어 레이어.',
     },
-    categories: ['Middleware', 'AUTOSAR', 'Firmware BSW'],
+    categories: ['Automotive Platform', 'AUTOSAR', 'Firmware BSW'],
     topics: ['autosar', 'can', 'functional-safety'],
     website: 'https://www.autosar.org/standards/classic-platform',
     companyIds: ['vector-informatik', 'elektrobit', 'etas', 'bosch'],
     toolIds: ['crc-calc', 'endianness-conv', 'can-id-conv'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
-    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol', 'dlt-logging', 'autosar-secoc', 'autosar-rte'],
-    tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu'],
-  },
-  {
-    id: 'autosar-rte',
-    name: 'AUTOSAR Runtime Environment (RTE)',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'System software bus mediating communication between AUTOSAR Application Software Components (SWCs) and Basic Software (BSW).',
-      ko: 'AUTOSAR 응용 소프트웨어 컴포넌트(SWC)와 BSW 모듈 간 통신을 중계하는 핵심 소프트웨어 버스 미들웨어.',
-    },
-    whereDoesItFit: {
-      en: 'AUTOSAR Software Component (SWC) Abstraction & Bus Binding Layer.',
-      ko: '소프트웨어 컴포넌트(SWC) 간 결합도를 낮추는 통신 추상화 레이어.',
-    },
-    categories: ['Middleware', 'AUTOSAR', 'Software Bus'],
-    topics: ['autosar', 'middleware'],
-    website: 'https://www.autosar.org/',
-    companyIds: ['vector-informatik', 'elektrobit', 'bosch'],
-    relatedTechnologyIds: ['autosar-classic', 'can-protocol'],
-    tags: ['rte', 'autosar-rte', 'swc', 'bsw', 'bus'],
+    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol', 'dlt-logging', 'autosar-secoc'],
+    tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu', 'platform'],
   },
   {
     id: 'dlt-logging',
@@ -662,7 +624,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 5. VEHICLE SERVICES & NETWORKS
+  // 5. VEHICLE SERVICES & NETWORKS (Layer 3: CAN, UDS, DoIP, COVESA VSS)
   // ==========================================
   {
     id: 'can-protocol',
