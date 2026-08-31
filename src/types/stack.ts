@@ -14,12 +14,24 @@ export type StackLayerId =
 
 export type StackLayerType = 'core' | 'cross-cutting';
 
+export type LayerColorTheme =
+  | 'purple'
+  | 'emerald'
+  | 'indigo'
+  | 'sky'
+  | 'amber'
+  | 'slate'
+  | 'rose'
+  | 'teal'
+  | 'violet';
+
 export interface StackLayer {
   id: StackLayerId;
   name: LocalizedText;
   description: LocalizedText;
   order: number;
   layerType: StackLayerType;
+  colorTheme: LayerColorTheme;
 }
 
 export interface StackTechnology {

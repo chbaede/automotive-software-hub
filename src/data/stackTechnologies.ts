@@ -1,7 +1,9 @@
 import { StackTechnology } from '../types/stack';
 
 export const stackTechnologies: StackTechnology[] = [
-  // 1. Hardware & Compute
+  // ==========================================
+  // 1. HARDWARE & COMPUTE (SoCs, MCUs & Silicon Base)
+  // ==========================================
   {
     id: 'nvidia-drive-thor',
     name: 'NVIDIA DRIVE Thor',
@@ -41,6 +43,43 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['snapdragon', 'cockpit', 'soc', 'qualcomm'],
   },
   {
+    id: 'renesas-rcar',
+    name: 'Renesas R-Car SoC Family',
+    layerId: 'hardware-compute',
+    description: {
+      en: 'High-performance automotive system-on-chips (R-Car H3, V4H) driving IVI, digital cluster, and ADAS perception systems.',
+      ko: 'IVI, 디지털 계기판 및 ADAS 인지 시스템을 구동하는 고성능 자동차용 SoC 시리즈 (R-Car H3, V4H).',
+    },
+    whereDoesItFit: {
+      en: 'Silicon Processor platform powering QNX, Automotive Grade Linux (AGL), and AUTOSAR Adaptive ECUs.',
+      ko: 'QNX, Automotive Grade Linux(AGL) 및 AUTOSAR Adaptive ECU를 구동하는 실리콘 프로세서 플랫폼.',
+    },
+    categories: ['SoC', 'Cockpit', 'ADAS'],
+    topics: ['embedded-linux', 'qnx', 'adas'],
+    website: 'https://www.renesas.com/products/automotive-products/automotive-system-chips-socs',
+    companyIds: ['denso', 'toyota-motor'],
+    relatedTechnologyIds: ['qnx-neutrino', 'linux-kernel'],
+    tags: ['renesas', 'rcar', 'soc', 'automotive-chip'],
+  },
+  {
+    id: 'ti-jacinto',
+    name: 'Texas Instruments Jacinto Processor Family',
+    layerId: 'hardware-compute',
+    description: {
+      en: 'DRA829 & TDA4VM processors featuring integrated CAN gateways, ASIL-D safety islands, and hardware Ethernet switches.',
+      ko: '통합 CAN 게이트웨이, ASIL-D 안전 아일랜드 및 하드웨어 이더넷 스위치를 탑재한 TI Jacinto 프로세서.',
+    },
+    whereDoesItFit: {
+      en: 'Automotive Domain Gateways, Zonal Controllers, and Vision ADAS Processor hardware.',
+      ko: '차량 도메인 게이트웨이, 영역 제어기(Zonal Controller) 및 비전 ADAS 프로세서 하드웨어.',
+    },
+    categories: ['SoC', 'Gateway', 'ADAS'],
+    topics: ['can', 'automotive-ethernet', 'functional-safety'],
+    website: 'https://www.ti.com/processors/jacinto-automotive-processors/overview.html',
+    relatedTechnologyIds: ['nxp-s32', 'can-protocol', 'doip-protocol'],
+    tags: ['ti', 'jacinto', 'tda4vm', 'dra829', 'gateway'],
+  },
+  {
     id: 'nxp-s32',
     name: 'NXP S32 Vehicle Compute Platform',
     layerId: 'hardware-compute',
@@ -57,11 +96,51 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.nxp.com/products/processors-and-microcontrollers/s32-automotive-platform:S32',
     companyIds: ['nxp'],
     toolIds: ['can-id-conv', 'can-frame-vis'],
-    relatedTechnologyIds: ['autosar-classic', 'can-fd', 'doip'],
+    relatedTechnologyIds: ['autosar-classic', 'can-fd', 'doip-protocol'],
     tags: ['nxp-s32', 'mcu', 'zonal', 'can-gateway'],
   },
+  {
+    id: 'horizon-robotics-journey',
+    name: 'Horizon Robotics Journey 5/6 BPU SoC',
+    layerId: 'hardware-compute',
+    description: {
+      en: 'High-performance AI Brain Processing Unit (BPU) SoC family delivering up to 560 TOPS for urban NOA and autonomous driving.',
+      ko: '도심 NOA 및 자율주행을 위해 최대 560 TOPS 성능을 제공하는 고성능 AI BPU(Brain Processing Unit) SoC.',
+    },
+    whereDoesItFit: {
+      en: 'Autonomous Driving (ADAS/AD) High-Performance Domain Controller Silicon.',
+      ko: '자율주행(ADAS/AD) 고성능 도메인 제어기 실리콘 하드웨어.',
+    },
+    categories: ['SoC', 'AI BPU', 'ADAS'],
+    topics: ['adas', 'sdv'],
+    website: 'https://www.horizon.cc/',
+    companyIds: ['horizon-robotics'],
+    relatedTechnologyIds: ['ros2-autoware', 'linux-kernel'],
+    tags: ['horizon', 'journey5', 'journey6', 'bpu', 'adas-soc'],
+  },
+  {
+    id: 'black-sesame-huashan',
+    name: 'Black Sesame Huashan A1000 SoC',
+    layerId: 'hardware-compute',
+    description: {
+      en: 'Automotive ASIL-B / ISO 26262 certified high-performance autonomous driving SoC supporting multi-camera fusion.',
+      ko: '멀티 카메라 센서 퓨전을 지원하는 자동차 ASIL-B / ISO 26262 인증 고성능 자율주행 SoC.',
+    },
+    whereDoesItFit: {
+      en: 'L2+ to L3 Autonomous Driving & Parking Domain Processor.',
+      ko: 'L2+ ~ L3 자율주행 및 자율주차 도메인 프로세서 하드웨어.',
+    },
+    categories: ['SoC', 'ADAS', 'Silicon'],
+    topics: ['adas', 'functional-safety'],
+    website: 'https://www.blacksesame.com.cn/',
+    companyIds: ['black-sesame-technologies'],
+    relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino'],
+    tags: ['black-sesame', 'huashan', 'a1000', 'adas'],
+  },
 
-  // 2. Hypervisor & Virtualization
+  // ==========================================
+  // 2. HYPERVISOR & VIRTUALIZATION
+  // ==========================================
   {
     id: 'qnx-hypervisor',
     name: 'BlackBerry QNX Hypervisor',
@@ -101,8 +180,28 @@ export const stackTechnologies: StackTechnology[] = [
     relatedTechnologyIds: ['linux-kernel', 'android-automotive-os'],
     tags: ['kvm', 'linux', 'hypervisor', 'virtualization'],
   },
+  {
+    id: 'xen-automotive',
+    name: 'Xen Project Automotive Hypervisor',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'Bare-metal Type-1 open-source hypervisor providing thin domain isolation for automotive Linux and Android guests.',
+      ko: '차량용 리눅스 및 안드로이드 게스트 OS의 베어메탈 경량 격리를 제공하는 오픈 소스 Type-1 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Hardware Virtualization Layer partitioning multi-core Arm SoC resources between Real-Time OS and Rich OS.',
+      ko: '멀티코어 Arm SoC 자원을 실시간 OS와 Rich OS 간에 물리 분할하는 가상화 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Open Source'],
+    topics: ['embedded-linux', 'open-source', 'sdv'],
+    website: 'https://xenproject.org/',
+    relatedTechnologyIds: ['kvm-automotive', 'linux-kernel'],
+    tags: ['xen', 'hypervisor', 'bare-metal', 'virtualization'],
+  },
 
-  // 3. Operating Systems
+  // ==========================================
+  // 3. OPERATING SYSTEMS (OS)
+  // ==========================================
   {
     id: 'android-automotive-os',
     name: 'Android Automotive OS (AAOS)',
@@ -212,32 +311,29 @@ export const stackTechnologies: StackTechnology[] = [
     relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino'],
     tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip'],
   },
-
-  // 4. Build & Platform
   {
-    id: 'yocto-project',
-    name: 'Yocto Project & BitBake',
-    layerId: 'build-platform',
+    id: 'vxworks-rtos',
+    name: 'Wind River VxWorks RTOS',
+    layerId: 'operating-systems',
     description: {
-      en: 'Open-source build framework providing BitBake recipe engine to create customized embedded Linux distributions.',
-      ko: '맞춤형 임베디드 리눅스 배포판을 생성하기 위해 BitBake 레시피 엔진을 제공하는 오픈 소스 빌드 프레임워크.',
+      en: 'Hard real-time deterministic RTOS with ASIL-D safety certification powering mission-critical ADAS ECUs.',
+      ko: '미션 크리티컬 ADAS ECU를 구동하는 ASIL-D 기능 안전 인증 하드 실시간 확정적 RTOS.',
     },
     whereDoesItFit: {
-      en: 'Platform compilation & BSP creation pipeline generating tailor-made Linux kernel images & rootfs.',
-      ko: '맞춤형 리눅스 커널 이미지 및 rootfs를 생성하는 플랫폼 컴파일 & BSP 빌드 파이프라인.',
+      en: 'Safety-critical Real-Time Operating System for Radar, LiDAR, and Brake Control ECUs.',
+      ko: '레이더, 라이다 및 브레이크 제어 ECU를 위한 기능 안전 실시간 운영체제.',
     },
-    categories: ['Build System', 'Platform', 'Embedded Linux'],
-    topics: ['yocto', 'embedded-linux', 'open-source'],
-    website: 'https://www.yoctoproject.org/',
-    openSourceProjectIds: ['yocto-project', 'automotive-grade-linux'],
-    companyIds: ['red-hat', 'wind-river'],
-    resourceIds: ['yocto-docs-manual'],
-    eventIds: ['agl-amm-berlin-2026', 'automotive-linux-summit-2026'],
-    relatedTechnologyIds: ['linux-kernel', 'socketcan'],
-    tags: ['yocto', 'bitbake', 'bsp', 'buildroot', 'embedded-linux'],
+    categories: ['Operating System', 'RTOS', 'Safety-Critical'],
+    topics: ['functional-safety', 'qnx'],
+    website: 'https://www.windriver.com/products/vxworks',
+    companyIds: ['wind-river'],
+    relatedTechnologyIds: ['autosar-classic', 'qnx-neutrino'],
+    tags: ['vxworks', 'rtos', 'windriver', 'asil-d'],
   },
 
-  // 5. Middleware & Communication
+  // ==========================================
+  // 4. MIDDLEWARE & COMMUNICATION
+  // ==========================================
   {
     id: 'someip-protocol',
     name: 'SOME/IP (Scalable Service-Oriented MiddlewarE over IP)',
@@ -282,6 +378,25 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['uprotocol', 'eclipse-sdv', 'rpc', 'pubsub', 'sdv'],
   },
   {
+    id: 'dds-protocol',
+    name: 'DDS (Data Distribution Service - FastDDS / CycloneDDS)',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'OMG standard high-performance publish-subscribe middleware used in ROS 2, ADAS perception pipelines, and AUTOSAR Adaptive.',
+      ko: 'ROS 2, ADAS 인지 파이프라인 및 AUTOSAR Adaptive에 사용되는 OMG 표준 고성능 Pub/Sub 미들웨어.',
+    },
+    whereDoesItFit: {
+      en: 'High-Throughput Data Streaming Middleware for camera, LiDAR, and radar sensor fusion nodes.',
+      ko: '카메라, 라이다 및 레이더 센서 퓨전 노드를 위한 고대역폭 데이터 스트리밍 미들웨어.',
+    },
+    categories: ['Middleware', 'DDS', 'PubSub'],
+    topics: ['ros2', 'adas', 'middleware'],
+    website: 'https://www.omg.org/omg-dds-portal/',
+    openSourceProjectIds: ['ros2-autoware'],
+    relatedTechnologyIds: ['ros2-autoware', 'someip-protocol'],
+    tags: ['dds', 'fastdds', 'cyclonedds', 'pubsub', 'omg'],
+  },
+  {
     id: 'ros2-autoware',
     name: 'ROS 2 & Autoware Framework',
     layerId: 'middleware-communication',
@@ -303,7 +418,9 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['ros2', 'autoware', 'dds', 'adas', 'autonomous'],
   },
 
-  // 6. Vehicle Services & Networks
+  // ==========================================
+  // 5. VEHICLE SERVICES & NETWORKS
+  // ==========================================
   {
     id: 'can-protocol',
     name: 'CAN / CAN FD Protocol (ISO 11898)',
@@ -387,7 +504,9 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['covesa', 'vss', 'signals', 'taxonomy', 'data-model'],
   },
 
-  // 7. Application & Experience
+  // ==========================================
+  // 6. APPLICATION & EXPERIENCE
+  // ==========================================
   {
     id: 'digital-cockpit-app',
     name: 'Digital Cockpit & Multi-Display IVI',
@@ -406,28 +525,127 @@ export const stackTechnologies: StackTechnology[] = [
     relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor', 'qualcomm-snapdragon-cockpit'],
     tags: ['cockpit', 'ivi', 'hud', 'cluster', 'user-experience'],
   },
-
-  // 8. Cloud & DevOps
   {
-    id: 'ota-cloud-fleet',
-    name: 'Connected Car OTA & Fleet Platform',
-    layerId: 'cloud-devops',
+    id: 'qt-automotive',
+    name: 'Qt for Automotive Framework',
+    layerId: 'application-experience',
     description: {
-      en: 'Cloud-to-car firmware/software Over-The-Air update orchestration, campaign management, and security signing.',
-      ko: '클라우드-차량 간 펌웨어/소프트웨어 OTA 무선 업데이트, 릴리스 캠페인 관리 및 보안 서명 시스템.',
+      en: 'Cross-platform C++ and QML UI toolkit powering 3D digital instrument clusters and IVI user interfaces.',
+      ko: '3D 디지털 계기판 및 IVI 사용자 인터페이스를 구동하는 크로스 플랫폼 C++ & QML UI 툴킷.',
     },
     whereDoesItFit: {
-      en: 'Cloud Infrastructure & Vehicle OTA Agent receiving differential software packages from backends.',
-      ko: '클라우드 백엔드로부터 차분 릴리스 패키지를 수신하여 차량 ECU에 설치하는 클라우드 & OTA 에이전트.',
+      en: 'High-Performance 2D/3D Graphics UI Application Layer for QNX Neutrino and Embedded Linux.',
+      ko: 'QNX 및 임베디드 리눅스 환경을 위한 고성능 2D/3D 그래픽 UI 애플리케이션 레이어.',
     },
-    categories: ['Cloud', 'OTA', 'DevOps'],
-    topics: ['cloud', 'sdv', 'cybersecurity'],
-    companyIds: ['hyundai-motor-group', 'tesla', 'red-hat'],
-    relatedTechnologyIds: ['eclipse-uprotocol', 'covesa-vss'],
-    tags: ['ota', 'cloud', 'fleet', 'telematics', 'updates'],
+    categories: ['Application', 'UI Toolkit', 'Cockpit'],
+    topics: ['qnx', 'embedded-linux', 'android-automotive'],
+    website: 'https://www.qt.io/solutions/automotive',
+    relatedTechnologyIds: ['qnx-neutrino', 'digital-cockpit-app'],
+    tags: ['qt', 'qml', 'cluster-ui', 'gui', '3d-cockpit'],
   },
 
-  // 9. Development & Testing
+  // ==========================================
+  // 7. BUILD & PLATFORM INFRASTRUCTURE (Cross-Cutting Pillar)
+  // ==========================================
+  {
+    id: 'yocto-project',
+    name: 'Yocto Project & BitBake',
+    layerId: 'build-platform',
+    description: {
+      en: 'Open-source build framework providing BitBake recipe engine to create customized embedded Linux distributions.',
+      ko: '맞춤형 임베디드 리눅스 배포판을 생성하기 위해 BitBake 레시피 엔진을 제공하는 오픈 소스 빌드 프레임워크.',
+    },
+    whereDoesItFit: {
+      en: 'Platform compilation & BSP creation pipeline generating tailor-made Linux kernel images & rootfs.',
+      ko: '맞춤형 리눅스 커널 이미지 및 rootfs를 생성하는 플랫폼 컴파일 & BSP 빌드 파이프라인.',
+    },
+    categories: ['Build System', 'Platform', 'Embedded Linux'],
+    topics: ['yocto', 'embedded-linux', 'open-source'],
+    website: 'https://www.yoctoproject.org/',
+    openSourceProjectIds: ['yocto-project', 'automotive-grade-linux'],
+    companyIds: ['red-hat', 'wind-river'],
+    resourceIds: ['yocto-docs-manual'],
+    eventIds: ['agl-amm-berlin-2026', 'automotive-linux-summit-2026'],
+    relatedTechnologyIds: ['linux-kernel', 'socketcan'],
+    tags: ['yocto', 'bitbake', 'bsp', 'buildroot', 'embedded-linux'],
+  },
+  {
+    id: 'bazel-build-system',
+    name: 'Bazel Build System',
+    layerId: 'build-platform',
+    description: {
+      en: 'Fast, scalable, multi-language hermetic build tool used heavily in Android AOSP, AUTOSAR Adaptive, and SDV codebases.',
+      ko: '안드로이드 AOSP, AUTOSAR Adaptive 및 SDV 코드베이스에서 광범위하게 쓰이는 고속 멀티 언어 재현 빌드 도구.',
+    },
+    whereDoesItFit: {
+      en: 'Cross-platform C++/Rust/Java build engine ensuring deterministic incremental builds across SDV repositories.',
+      ko: 'SDV 저장소 전반에서 결정론적 증분 빌드를 보장하는 크로스 플랫폼 빌드 엔진.',
+    },
+    categories: ['Build System', 'SDV', 'Multi-Language'],
+    topics: ['sdv', 'android-automotive', 'open-source'],
+    website: 'https://bazel.build/',
+    repositoryUrl: 'https://github.com/bazelbuild/bazel',
+    relatedTechnologyIds: ['soong-build-system', 'cmake-build'],
+    tags: ['bazel', 'build', 'hermetic', 'aosp', 'sdv'],
+  },
+  {
+    id: 'soong-build-system',
+    name: 'Soong & Kati (Android Build System)',
+    layerId: 'build-platform',
+    description: {
+      en: 'Android Open Source Project (AOSP) replacement for GNU Make, executing Android.bp blueprint configuration files.',
+      ko: 'GNU Make를 대체하여 Android.bp 블루프린트 설정 파일을 파싱/실행하는 안드로이드(AOSP)전용 빌드 시스템.',
+    },
+    whereDoesItFit: {
+      en: 'Android Automotive OS Platform compilation system converting Android.bp recipes into Ninja build files.',
+      ko: 'Android.bp 레시피를 Ninja 빌드 파일로 변환하여 안드로이드 오토모티브 OS 플랫폼을 빌드하는 시스템.',
+    },
+    categories: ['Build System', 'Android AOSP', 'Platform'],
+    topics: ['android-automotive', 'embedded-linux'],
+    website: 'https://source.android.com/docs/setup/build',
+    relatedTechnologyIds: ['android-automotive-os', 'bazel-build-system'],
+    tags: ['soong', 'kati', 'android-bp', 'aosp', 'ninja'],
+  },
+  {
+    id: 'buildroot',
+    name: 'Buildroot Embedded Linux Builder',
+    layerId: 'build-platform',
+    description: {
+      en: 'Simple, efficient Makefile-based tool to generate tiny embedded Linux systems, bootloaders, and cross-toolchains.',
+      ko: '경량 임베디드 리눅스 시스템, 부트로더 및 크로스 툴체인을 빠르게 생성하는 Makefile 기반 빌드 도구.',
+    },
+    whereDoesItFit: {
+      en: 'Fast prototyping & minimal rootfs generator for microcontrollers and secondary gateway ECUs.',
+      ko: '마이크로컨트롤러 및 서브 게이트웨이 ECU를 위한 빠른 프로토타이핑 & 최소 rootfs 생성기.',
+    },
+    categories: ['Build System', 'Embedded Linux', 'Lightweight'],
+    topics: ['embedded-linux', 'open-source'],
+    website: 'https://buildroot.org/',
+    relatedTechnologyIds: ['yocto-project', 'linux-kernel'],
+    tags: ['buildroot', 'embedded-linux', 'makefile', 'rootfs'],
+  },
+  {
+    id: 'cmake-build',
+    name: 'CMake & Ninja Build Tools',
+    layerId: 'build-platform',
+    description: {
+      en: 'De facto standard meta-build tool generator for C/C++ automotive middleware including SOME/IP, ROS 2, and AUTOSAR ARA.',
+      ko: 'SOME/IP, ROS 2, AUTOSAR ARA 등 C/C++ 자동차 미들웨어를 빌드하기 위한 사실상의 표준 메타 빌드 도구.',
+    },
+    whereDoesItFit: {
+      en: 'Universal C/C++ cross-platform compilation generator for real-time applications and SDKs.',
+      ko: '실시간 애플리케이션 및 SDK를 위한 보편적 C/C++ 크로스 플랫폼 메타 빌드 제너레이터.',
+    },
+    categories: ['Build System', 'C/C++', 'Toolchain'],
+    topics: ['someip', 'ros2', 'autosar'],
+    website: 'https://cmake.org/',
+    relatedTechnologyIds: ['bazel-build-system', 'someip-protocol', 'ros2-autoware'],
+    tags: ['cmake', 'ninja', 'cpp', 'build-system'],
+  },
+
+  // ==========================================
+  // 8. DEVELOPMENT, TESTING & PROFILING (Cross-Cutting Pillar)
+  // ==========================================
   {
     id: 'socketcan',
     name: 'Linux SocketCAN Subsystem & Tools',
@@ -469,5 +687,65 @@ export const stackTechnologies: StackTechnology[] = [
     relatedTechnologyIds: ['android-automotive-os'],
     tags: ['adb', 'perfetto', 'tracing', 'profiling', 'debug'],
   },
-];
+  {
+    id: 'renode-emulator',
+    name: 'Renode Simulation & Emulation Framework',
+    layerId: 'development-testing',
+    description: {
+      en: 'Antmicro open-source instruction set hardware emulator for multi-node Arm & RISC-V automotive ECU testing.',
+      ko: '멀티 노드 Arm 및 RISC-V 차량 ECU 소프트웨어를 하드웨어 없이 시뮬레이션하는 오픈 소스 에뮬레이터.',
+    },
+    whereDoesItFit: {
+      en: 'Software-in-the-Loop (SIL) Virtual Hardware Testbed running unmodified ECU firmware binaries.',
+      ko: '수정되지 않은 ECU 펌웨어 바이너리를 하드웨어 없이 검증하는 SIL 가상 테스트베드.',
+    },
+    categories: ['Simulation', 'Emulation', 'Open Source'],
+    topics: ['open-source', 'can', 'functional-safety'],
+    website: 'https://renode.io/',
+    repositoryUrl: 'https://github.com/renode/renode',
+    relatedTechnologyIds: ['socketcan', 'nxp-s32'],
+    tags: ['renode', 'antmicro', 'emulation', 'qemu', 'sil'],
+  },
 
+  // ==========================================
+  // 9. CLOUD & DEVOPS / OTA PLATFORM (Cross-Cutting Pillar)
+  // ==========================================
+  {
+    id: 'ota-cloud-fleet',
+    name: 'Connected Car OTA & Fleet Platform',
+    layerId: 'cloud-devops',
+    description: {
+      en: 'Cloud-to-car firmware/software Over-The-Air update orchestration, campaign management, and security signing.',
+      ko: '클라우드-차량 간 펌웨어/소프트웨어 OTA 무선 업데이트, 릴리스 캠페인 관리 및 보안 서명 시스템.',
+    },
+    whereDoesItFit: {
+      en: 'Cloud Infrastructure & Vehicle OTA Agent receiving differential software packages from backends.',
+      ko: '클라우드 백엔드로부터 차분 릴리스 패키지를 수신하여 차량 ECU에 설치하는 클라우드 & OTA 에이전트.',
+    },
+    categories: ['Cloud', 'OTA', 'DevOps'],
+    topics: ['cloud', 'sdv', 'cybersecurity'],
+    companyIds: ['hyundai-motor-group', 'tesla', 'red-hat'],
+    relatedTechnologyIds: ['eclipse-uprotocol', 'covesa-vss'],
+    tags: ['ota', 'cloud', 'fleet', 'telematics', 'updates'],
+  },
+  {
+    id: 'eclipse-ankaios',
+    name: 'Eclipse Ankaios (SDV Container Orchestrator)',
+    layerId: 'cloud-devops',
+    description: {
+      en: 'Workload management and container orchestrator designed specifically for vehicle High-Performance Computers (HPC).',
+      ko: '차량용 고성능 컴퓨터(HPC)를 위해 특별히 설계된 워크로드 관리 및 컨테이너 오케스트레이터.',
+    },
+    whereDoesItFit: {
+      en: 'Vehicle-side Workload Orchestration Engine deploying Podman/Docker containers dynamically on SDVs.',
+      ko: 'SDV에서 Podman/Docker 컨테이너를 동적으로 배포하고 라이프사이클을 관리하는 엔진.',
+    },
+    categories: ['Cloud', 'SDV', 'Containers'],
+    topics: ['sdv', 'open-source', 'cloud'],
+    website: 'https://eclipse-ankaios.github.io/ankaios/',
+    repositoryUrl: 'https://github.com/eclipse-ankaios/ankaios',
+    openSourceProjectIds: ['eclipse-score', 'eclipse-uprotocol'],
+    relatedTechnologyIds: ['eclipse-uprotocol', 'ota-cloud-fleet'],
+    tags: ['ankaios', 'eclipse-sdv', 'containers', 'kubernetes', 'orchestrator'],
+  },
+];

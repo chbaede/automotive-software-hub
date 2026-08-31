@@ -11,6 +11,7 @@ export const stackLayers: StackLayer[] = [
     },
     order: 1,
     layerType: 'core',
+    colorTheme: 'purple',
   },
   {
     id: 'vehicle-services',
@@ -21,6 +22,7 @@ export const stackLayers: StackLayer[] = [
     },
     order: 2,
     layerType: 'core',
+    colorTheme: 'emerald',
   },
   {
     id: 'middleware-communication',
@@ -31,6 +33,7 @@ export const stackLayers: StackLayer[] = [
     },
     order: 3,
     layerType: 'core',
+    colorTheme: 'indigo',
   },
   {
     id: 'operating-systems',
@@ -41,6 +44,7 @@ export const stackLayers: StackLayer[] = [
     },
     order: 4,
     layerType: 'core',
+    colorTheme: 'sky',
   },
   {
     id: 'hypervisor-virtualization',
@@ -51,6 +55,7 @@ export const stackLayers: StackLayer[] = [
     },
     order: 5,
     layerType: 'core',
+    colorTheme: 'amber',
   },
   {
     id: 'hardware-compute',
@@ -61,37 +66,41 @@ export const stackLayers: StackLayer[] = [
     },
     order: 6,
     layerType: 'core',
+    colorTheme: 'slate',
   },
 
   // --- CROSS-CUTTING PILLARS (Tooling, Build, Cloud & Process spanning all layers) ---
   {
     id: 'build-platform',
-    name: { en: 'Build & Platform', ko: '빌드 시스템 & 플랫폼' },
+    name: { en: 'Build & Platform Infrastructure', ko: '빌드 시스템 & 플랫폼 인프라' },
     description: {
-      en: 'Cross-layer Linux distro generators: Yocto Project, BitBake, CMake, and BSP build tools.',
-      ko: '전 레이어 커스텀 리눅스 배포판 생성 도구: Yocto Project, BitBake, CMake 및 BSP 빌드 시스템.',
+      en: 'Cross-layer distribution & build engines: Yocto, BitBake, Bazel, Soong, Buildroot, CMake, and AOSP build.',
+      ko: '전 레이어 커스텀 리눅스/안드로이드 빌드 엔진: Yocto, BitBake, Bazel, Soong, Buildroot, CMake.',
     },
     order: 10,
     layerType: 'cross-cutting',
+    colorTheme: 'rose',
   },
   {
     id: 'development-testing',
-    name: { en: 'Development & Testing', ko: '개발 도구, 테스팅 & 프로파일링' },
+    name: { en: 'Development, Testing & Profiling', ko: '개발 도구, 테스팅 & 프로파일링' },
     description: {
-      en: 'SocketCAN, ADB, Google Perfetto, Vector CANoe, HIL/SIL simulation, and debuggers.',
-      ko: 'SocketCAN, ADB, Perfetto, Vector CANoe, HIL/SIL 시뮬레이션 및 디버거.',
+      en: 'SocketCAN, ADB, Google Perfetto, Vector CANoe, Renode, HIL/SIL simulation, and debuggers.',
+      ko: 'SocketCAN, ADB, Perfetto, Vector CANoe, Renode, HIL/SIL 시뮬레이션 및 디버거.',
     },
     order: 11,
     layerType: 'cross-cutting',
+    colorTheme: 'teal',
   },
   {
     id: 'cloud-devops',
-    name: { en: 'Cloud & DevOps / OTA', ko: '클라우드 & DevOps / OTA' },
+    name: { en: 'Cloud & DevOps / OTA Platform', ko: '클라우드 & DevOps / OTA 플랫폼' },
     description: {
-      en: 'Vehicle-to-cloud sync, OTA software update agents, fleet telematics, and CI/CD pipelines.',
-      ko: '차량-클라우드 연동, OTA 무선 소프트웨어 업데이트 에이전트 및 텔레매틱스 플릿 관리.',
+      en: 'Vehicle-to-cloud sync, OTA software update agents, fleet telematics, Eclipse Ankaios/Leda, and CI/CD.',
+      ko: '차량-클라우드 연동, OTA 무선 소프트웨어 업데이트 에이전트, Eclipse Ankaios/Leda 및 CI/CD.',
     },
     order: 12,
     layerType: 'cross-cutting',
+    colorTheme: 'violet',
   },
 ];
