@@ -20,7 +20,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['sdv', 'adas', 'cloud'],
     website: 'https://www.nvidia.com/en-us/drive/thor/',
     companyIds: ['nvidia', 'mercedes-benz'],
-    relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino', 'ros2-autoware'],
+    relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino', 'nvidia-driveworks-sdk'],
     tags: ['thor', 'soc', 'central-compute', 'nvidia', 'ai'],
   },
   {
@@ -115,7 +115,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['adas', 'sdv'],
     website: 'https://www.horizon.cc/',
     companyIds: ['horizon-robotics'],
-    relatedTechnologyIds: ['ros2-autoware', 'linux-kernel'],
+    relatedTechnologyIds: ['ros2-autoware', 'linux-kernel', 'momenta-flywheel-ad'],
     tags: ['horizon', 'journey5', 'journey6', 'bpu', 'adas-soc'],
   },
   {
@@ -335,6 +335,65 @@ export const stackTechnologies: StackTechnology[] = [
   // 4. MIDDLEWARE & COMMUNICATION
   // ==========================================
   {
+    id: 'dlt-logging',
+    name: 'Diagnostic Log and Trace (DLT)',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'AUTOSAR and COVESA (GENIVI) standardized logging daemon & protocol for centralized ECU log aggregation and tracing.',
+      ko: '중앙 집중식 ECU 로깅 및 트레이싱을 지원하는 AUTOSAR 및 COVESA(GENIVI) 표준 DLT 로그 데몬 & 프로토콜.',
+    },
+    whereDoesItFit: {
+      en: 'Cross-ECU System Logging & Diagnostic Trace Middleware running on Linux, QNX, and AUTOSAR BSW.',
+      ko: '리눅스, QNX 및 AUTOSAR BSW 상에서 시스템 디버깅 로그를 수집/전송하는 중앙 로깅 미들웨어.',
+    },
+    categories: ['Middleware', 'Logging', 'AUTOSAR'],
+    topics: ['autosar', 'covesa', 'embedded-linux'],
+    website: 'https://covesa.github.io/dlt-daemon/',
+    repositoryUrl: 'https://github.com/COVESA/dlt-daemon',
+    openSourceProjectIds: ['covesa-vss'],
+    relatedTechnologyIds: ['someip-protocol', 'autosar-classic', 'linux-kernel'],
+    tags: ['dlt', 'logging', 'tracing', 'covesa', 'genivi', 'autosar-dlt'],
+  },
+  {
+    id: 'vsomeip-middleware',
+    name: 'vSomeIP (BMW SOME/IP Stack)',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'BMW open-source C++ implementation of SOME/IP, SOME/IP-SD (Service Discovery), and E2E communication protection.',
+      ko: 'BMW가 공개한 C++ 기반 오픈 소스 SOME/IP, SOME/IP-SD(서비스 디스커버리) 및 E2E 종단간 보호 미들웨어 스택.',
+    },
+    whereDoesItFit: {
+      en: 'Service-Oriented Communication Middleware running on Linux/Android IVI to talk with Adaptive AUTOSAR ECUs.',
+      ko: '리눅스/안드로이드 IVI에서 Adaptive AUTOSAR ECU와 고속 이더넷으로 서비스 통신하는 미들웨어.',
+    },
+    categories: ['Middleware', 'SOME/IP', 'Open Source'],
+    topics: ['someip', 'autosar', 'automotive-ethernet'],
+    website: 'https://github.com/COVESA/vsomeip',
+    repositoryUrl: 'https://github.com/COVESA/vsomeip',
+    companyIds: ['bmw-group', 'vector-informatik'],
+    relatedTechnologyIds: ['someip-protocol', 'autosar-adaptive'],
+    tags: ['vsomeip', 'someip-sd', 'bmw', 'covesa', 'service-discovery'],
+  },
+  {
+    id: 'autosar-secoc',
+    name: 'AUTOSAR SecOC (Secure On-Board Communication)',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'Cryptographic MAC authentication and freshness counter specification protecting CAN FD, LIN, and Ethernet frames.',
+      ko: 'CAN FD, LIN 및 이더넷 프레임의 위변조 방지를 위한 암호화 MAC 인증 및 프레시니스 카운터 스펙.',
+    },
+    whereDoesItFit: {
+      en: 'Vehicle Network Security Middleware preventing message injection, spoofing, and replay attacks on ECUs.',
+      ko: 'ECU 간 메시지 위조 및 재전송 공격을 방지하는 차량 내 네트워크 보안 인증 미들웨어.',
+    },
+    categories: ['Middleware', 'Cybersecurity', 'AUTOSAR'],
+    topics: ['cybersecurity', 'autosar', 'can'],
+    website: 'https://www.autosar.org/standards/classic-platform',
+    companyIds: ['vector-informatik', 'elektrobit'],
+    relatedTechnologyIds: ['can-protocol', 'autosar-classic'],
+    tags: ['secoc', 'mac', 'cybersecurity', 'freshness', 'autosar'],
+  },
+  {
     id: 'someip-protocol',
     name: 'SOME/IP (Scalable Service-Oriented MiddlewarE over IP)',
     layerId: 'middleware-communication',
@@ -352,7 +411,7 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'bmw-group', 'elektrobit', 'hyundai-motor-group'],
     toolIds: ['json-formatter', 'crc-calc'],
     resourceIds: ['autosar-standards'],
-    relatedTechnologyIds: ['autosar-adaptive', 'doip-protocol', 'eclipse-uprotocol'],
+    relatedTechnologyIds: ['autosar-adaptive', 'doip-protocol', 'eclipse-uprotocol', 'vsomeip-middleware'],
     tags: ['someip', 'rpc', 'pubsub', 'ethernet', 'autosar'],
   },
   {
@@ -395,27 +454,6 @@ export const stackTechnologies: StackTechnology[] = [
     openSourceProjectIds: ['ros2-autoware'],
     relatedTechnologyIds: ['ros2-autoware', 'someip-protocol'],
     tags: ['dds', 'fastdds', 'cyclonedds', 'pubsub', 'omg'],
-  },
-  {
-    id: 'ros2-autoware',
-    name: 'ROS 2 & Autoware Framework',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'DDS-based Robot Operating System middleware and open-source autonomous vehicle perception/planning stack.',
-      ko: 'DDS 기반 로봇 운영체제 미들웨어 및 오픈 소스 자율주행 인지/판단/제어 소프트웨어 스택.',
-    },
-    whereDoesItFit: {
-      en: 'Autonomous Driving (ADAS/AD) Software Stack & Node Communications Middleware.',
-      ko: '자율주행(ADAS/AD) 소프트웨어 스택 및 노드 간 통신 미들웨어.',
-    },
-    categories: ['Middleware', 'ADAS', 'ROS 2'],
-    topics: ['ros2', 'adas', 'open-source'],
-    website: 'https://www.autoware.org/',
-    openSourceProjectIds: ['ros2-autoware'],
-    companyIds: ['nvidia'],
-    resourceIds: ['ros2-automotive-nav'],
-    relatedTechnologyIds: ['dds-protocol', 'linux-kernel'],
-    tags: ['ros2', 'autoware', 'dds', 'adas', 'autonomous'],
   },
 
   // ==========================================
@@ -505,8 +543,65 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 6. APPLICATION & EXPERIENCE
+  // 6. APPLICATION & EXPERIENCE (Including Autonomous Driving Stacks!)
   // ==========================================
+  {
+    id: 'nvidia-driveworks-sdk',
+    name: 'NVIDIA DriveWorks SDK & DRIVE OS',
+    layerId: 'application-experience',
+    description: {
+      en: 'NVIDIA AV middleware & SDK providing Sensor Abstraction Layer (SAL), Compute Graph Framework (CGF), and TensorRT AI inference.',
+      ko: '센서 추상화 레이어(SAL), 컴퓨팅 그래프 프레임워크(CGF) 및 TensorRT AI 추론을 제공하는 NVIDIA 자율주행 SDK.',
+    },
+    whereDoesItFit: {
+      en: 'Autonomous Driving Perception, Sensor Fusion, and Motion Planning Middleware Platform sitting on DRIVE Thor/Orin.',
+      ko: 'DRIVE Thor/Orin 하드웨어 위에서 센서 퓨전, 인지 및 경로 계획을 구동하는 자율주행 핵심 소프트웨어 플랫폼.',
+    },
+    categories: ['ADAS Stack', 'NVIDIA', 'Autonomous Driving'],
+    topics: ['adas', 'sdv', 'ros2'],
+    website: 'https://developer.nvidia.com/drive/driveworks',
+    companyIds: ['nvidia', 'mercedes-benz'],
+    relatedTechnologyIds: ['nvidia-drive-thor', 'ros2-autoware', 'linux-kernel'],
+    tags: ['nvidia', 'driveworks', 'drive-os', 'sal', 'cgf', 'tensorrt'],
+  },
+  {
+    id: 'momenta-flywheel-ad',
+    name: 'Momenta Flywheel AD & Urban NOA Stack',
+    layerId: 'application-experience',
+    description: {
+      en: 'Momenta data-driven end-to-end foundation model autonomous driving stack enabling Urban NOA and Robotaxi fleets.',
+      ko: '도심 NOA 및 로보택시를 위해 데이터 드라이브 엔드투엔드 파운데이션 모델을 결합한 Momenta 자율주행 스택.',
+    },
+    whereDoesItFit: {
+      en: 'End-to-End Autonomous Driving Perception, Prediction, and Path Planning Application Stack.',
+      ko: '엔드투엔드 AI 모델 기반 인지/측위/경로 계획 자율주행 상위 애플리케이션 스택.',
+    },
+    categories: ['ADAS Stack', 'Autonomous Driving', 'End-to-End AI'],
+    topics: ['adas', 'sdv'],
+    website: 'https://www.momenta.ai/',
+    companyIds: ['mercedes-benz', 'bmw-group', 'qualcomm', 'horizon-robotics'],
+    relatedTechnologyIds: ['qualcomm-snapdragon-cockpit', 'horizon-robotics-journey', 'ros2-autoware'],
+    tags: ['momenta', 'flywheel-ad', 'urban-noa', 'robotaxi', 'end-to-end-ai'],
+  },
+  {
+    id: 'baidu-apollo-ad',
+    name: 'Baidu Apollo Open Autonomous Platform',
+    layerId: 'application-experience',
+    description: {
+      en: 'Open-source full-stack autonomous driving software architecture integrating Cyber RT IPC, HD mapping, and planning.',
+      ko: 'Cyber RT IPC, 고정밀 지도(HD Map) 및 제어 알고리즘을 결합한 오픈 소스 풀스택 자율주행 플랫폼.',
+    },
+    whereDoesItFit: {
+      en: 'Open-source Robotaxi & L4 Autonomous Driving Software Platform.',
+      ko: '오픈 소스 기반 로보택시 및 L4 자율주행 통합 소프트웨어 스택.',
+    },
+    categories: ['ADAS Stack', 'Open Source', 'Autonomous Driving'],
+    topics: ['adas', 'open-source', 'sdv'],
+    website: 'https://apollo.baidu.com/',
+    repositoryUrl: 'https://github.com/ApolloAuto/apollo',
+    relatedTechnologyIds: ['ros2-autoware', 'linux-kernel'],
+    tags: ['apollo', 'baidu', 'cyber-rt', 'robotaxi', 'autonomous'],
+  },
   {
     id: 'digital-cockpit-app',
     name: 'Digital Cockpit & Multi-Display IVI',
@@ -585,7 +680,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['sdv', 'android-automotive', 'open-source'],
     website: 'https://bazel.build/',
     repositoryUrl: 'https://github.com/bazelbuild/bazel',
-    relatedTechnologyIds: ['soong-build-system', 'cmake-build'],
+    relatedTechnologyIds: ['soong-build-system', 'yocto-project'],
     tags: ['bazel', 'build', 'hermetic', 'aosp', 'sdv'],
   },
   {
@@ -623,24 +718,6 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://buildroot.org/',
     relatedTechnologyIds: ['yocto-project', 'linux-kernel'],
     tags: ['buildroot', 'embedded-linux', 'makefile', 'rootfs'],
-  },
-  {
-    id: 'cmake-build',
-    name: 'CMake & Ninja Build Tools',
-    layerId: 'build-platform',
-    description: {
-      en: 'De facto standard meta-build tool generator for C/C++ automotive middleware including SOME/IP, ROS 2, and AUTOSAR ARA.',
-      ko: 'SOME/IP, ROS 2, AUTOSAR ARA 등 C/C++ 자동차 미들웨어를 빌드하기 위한 사실상의 표준 메타 빌드 도구.',
-    },
-    whereDoesItFit: {
-      en: 'Universal C/C++ cross-platform compilation generator for real-time applications and SDKs.',
-      ko: '실시간 애플리케이션 및 SDK를 위한 보편적 C/C++ 크로스 플랫폼 메타 빌드 제너레이터.',
-    },
-    categories: ['Build System', 'C/C++', 'Toolchain'],
-    topics: ['someip', 'ros2', 'autosar'],
-    website: 'https://cmake.org/',
-    relatedTechnologyIds: ['bazel-build-system', 'someip-protocol', 'ros2-autoware'],
-    tags: ['cmake', 'ninja', 'cpp', 'build-system'],
   },
 
   // ==========================================
