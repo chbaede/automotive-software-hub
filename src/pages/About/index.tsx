@@ -3,7 +3,7 @@ import { Info, ShieldCheck, Heart, FileCode2, Cpu } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export const AboutPage: React.FC = () => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="max-w-4xl mx-auto space-y-10">
