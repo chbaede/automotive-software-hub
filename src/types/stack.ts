@@ -12,11 +12,14 @@ export type StackLayerId =
   | 'cloud-devops'
   | 'development-testing';
 
+export type StackLayerType = 'core' | 'cross-cutting';
+
 export interface StackLayer {
   id: StackLayerId;
   name: LocalizedText;
   description: LocalizedText;
   order: number;
+  layerType: StackLayerType;
 }
 
 export interface StackTechnology {
@@ -34,9 +37,7 @@ export interface StackTechnology {
   companyIds?: string[];
   toolIds?: string[];
   resourceIds?: string[];
-  eventIdIds?: string[];
   eventIds?: string[];
   relatedTechnologyIds?: string[];
   tags?: string[];
 }
-

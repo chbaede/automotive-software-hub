@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Layers, Search, Filter, RotateCcw, Compass } from 'lucide-react';
+import { Layers, Search, RotateCcw, Compass, Wrench, Cpu, LayoutGrid } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { stackLayers } from '../../data/stackLayers';
 import { stackTechnologies } from '../../data/stackTechnologies';
-import { StackLayer, StackTechnology, StackLayerId } from '../../types/stack';
+import { StackTechnology } from '../../types/stack';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
@@ -82,9 +82,15 @@ export const StackPage: React.FC = () => {
     return matchesQuery && matchesLayer && matchesTopic;
   });
 
-  // Group Filtered Technologies by Layer
-  const displayedLayers = stackLayers
-    .filter((layer) => layerFilter === 'all' || layer.id === layerFilter)
+  // Separate Core Stack Layers vs Cross-Cutting Pillars
+  const coreLayers = stackLayers
+    .filter((l) => l.layerType === 'core')
+    .filter((l) => layerFilter === 'all' || l.id === layerFilter)
+    .sort((a, b) => a.order - b.order); // Order 1 (App at top) -> Order 6 (Hardware at base)
+
+  const crossCuttingLayers = stackLayers
+    .filter((l) => l.layerType === 'cross-cutting')
+    .filter((l) => layerFilter === 'all' || l.id === layerFilter)
     .sort((a, b) => a.order - b.order);
 
   return (
@@ -92,8 +98,8 @@ export const StackPage: React.FC = () => {
       {/* Header Banner */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
-          <Layers className="w-4 h-4" />
-          <span>Interactive Architectural Map</span>
+          <LayoutGrid className="w-4 h-4" />
+          <span>Layered Architecture Diagram Map</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.stack.title}
@@ -166,21 +172,65 @@ export const StackPage: React.FC = () => {
         <span>{t.stack.selectTechToInspect}</span>
       </div>
 
-      {/* Layers Architectural Flow Map */}
-      <div className="space-y-6">
-        {displayedLayers.map((layer) => {
-          const layerTechs = filteredTechs.filter((st) => st.layerId === layer.id);
-          return (
-            <StackLayerBlock
-              key={layer.id}
-              layer={layer}
-              technologies={layerTechs}
-              selectedTechId={selectedTech?.id}
-              highlightedTechIds={highlightedTechIds}
-              onSelectTech={handleSelectTech}
-            />
-          );
-        })}
+      {/* 2-Column Architecture Diagram Grid Canvas */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (75%): Core Vehicle Stack (App -> Hardware Base Foundation at bottom) */}
+        <div className="lg:col-span-8 xl:col-span-9 space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-brand-500" />
+              <span>Core Vehicle Software Stack (Top → Silicon Base)</span>
+            </h2>
+            <span className="text-[10px] font-mono text-slate-500 hidden sm:inline">
+              Hardware/SoC at Base Foundation
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {coreLayers.map((layer) => {
+              const layerTechs = filteredTechs.filter((st) => st.layerId === layer.id);
+              return (
+                <StackLayerBlock
+                  key={layer.id}
+                  layer={layer}
+                  technologies={layerTechs}
+                  selectedTechId={selectedTech?.id}
+                  highlightedTechIds={highlightedTechIds}
+                  onSelectTech={handleSelectTech}
+                  variant="core"
+                />
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Column (25%): Vertical Cross-Cutting Column (Build, Tools, Cloud spanning all layers) */}
+        <div className="lg:col-span-4 xl:col-span-3 space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Wrench className="w-4 h-4 text-brand-500" />
+              <span>Cross-Cutting Pillars</span>
+            </h2>
+            <span className="text-[10px] font-mono text-slate-500">Spans All Layers</span>
+          </div>
+
+          <div className="space-y-4 bg-slate-100/70 dark:bg-slate-950/70 p-3.5 rounded-2xl border border-slate-300 dark:border-slate-800">
+            {crossCuttingLayers.map((layer) => {
+              const layerTechs = filteredTechs.filter((st) => st.layerId === layer.id);
+              return (
+                <StackLayerBlock
+                  key={layer.id}
+                  layer={layer}
+                  technologies={layerTechs}
+                  selectedTechId={selectedTech?.id}
+                  highlightedTechIds={highlightedTechIds}
+                  onSelectTech={handleSelectTech}
+                  variant="cross-cutting"
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Technology Detail Drawer */}
@@ -196,4 +246,3 @@ export const StackPage: React.FC = () => {
     </div>
   );
 };
-
