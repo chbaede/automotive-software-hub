@@ -86,7 +86,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
                 <a
-                  href="https://github.com"
+                  href="https://github.com/chbaede/automotive-software-hub"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 hover:text-brand-500 transition"
@@ -96,16 +96,26 @@ export const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <Link to="/about" className="flex items-center gap-1.5 hover:text-brand-500 transition">
+                <a
+                  href="https://github.com/chbaede/automotive-software-hub/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-brand-500 transition"
+                >
                   <Heart className="w-3.5 h-3.5 text-red-500" />
                   <span>{t.footer.contribute}</span>
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/about" className="flex items-center gap-1.5 hover:text-brand-500 transition">
+                <a
+                  href="https://github.com/chbaede/automotive-software-hub/tree/main/src/data"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-brand-500 transition"
+                >
                   <FileText className="w-3.5 h-3.5" />
                   <span>{t.footer.dataValidation}</span>
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

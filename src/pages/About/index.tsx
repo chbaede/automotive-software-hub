@@ -46,14 +46,42 @@ export const AboutPage: React.FC = () => {
         </div>
 
         {/* Contribution */}
-        <div className="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-          <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-bold text-lg">
-            <Heart className="w-5 h-5 text-red-500" />
-            <h2>{t.about.contributionHeading}</h2>
+        <div className="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-bold text-lg">
+              <Heart className="w-5 h-5 text-red-500" />
+              <h2>{t.about.contributionHeading}</h2>
+            </div>
+            <a
+              href="https://github.com/chbaede/automotive-software-hub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white rounded-lg transition self-start sm:self-auto"
+            >
+              <span>GitHub Repository →</span>
+            </a>
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             {t.about.contributionBody}
           </p>
+          <div className="pt-2 flex flex-wrap gap-4 text-xs font-medium border-t border-slate-100 dark:border-slate-800">
+            <a
+              href="https://github.com/chbaede/automotive-software-hub/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+            >
+              ✦ {language === 'ko' ? '신규 기술 / 행사 / 기업 데이터 제보 (Issue)' : 'Submit Tech / Event / Company Data'}
+            </a>
+            <a
+              href="https://github.com/chbaede/automotive-software-hub/pulls"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+            >
+              ✦ {language === 'ko' ? '데이터 수정 및 Pull Request 보내기 (PR)' : 'Submit Data Pull Request (PR)'}
+            </a>
+          </div>
         </div>
 
         {/* Disclaimer */}

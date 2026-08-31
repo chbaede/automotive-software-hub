@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
 
             {/* GitHub Repo */}
             <a
-              href="https://github.com"
+              href="https://github.com/chbaede/automotive-software-hub"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition"
