@@ -44,3 +44,4 @@ export const GoogleAdBanner: React.FC<GoogleAdBannerProps> = ({
     </div>
   );
 };
+

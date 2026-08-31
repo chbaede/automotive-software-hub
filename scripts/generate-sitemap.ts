@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const SITE_URL = 'https://chbaede.github.io/automotive-software-hub';
+const SITE_URL = 'https://autohub.yocto.co.kr';
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
 const routes = [
@@ -21,7 +21,7 @@ function generateSitemap() {
   const xmlUrls = routes
     .map(
       (r) => `  <url>
-    <loc>${SITE_URL}/${r.path}</loc>
+    <loc>${SITE_URL}${r.path ? '/' + r.path : '/'}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>${r.changefreq}</changefreq>
     <priority>${r.priority}</priority>
@@ -43,8 +43,7 @@ ${xmlUrls}
 
   const sitemapPath = path.join(PUBLIC_DIR, 'sitemap.xml');
   fs.writeFileSync(sitemapPath, sitemapXml, 'utf-8');
-  console.log(`✅ Generated sitemap.xml at ${sitemapPath} (${routes.length} URLs)`);
+  console.log(`✅ Generated sitemap.xml at ${sitemapPath} (${routes.length} URLs for ${SITE_URL})`);
 }
 
 generateSitemap();
-

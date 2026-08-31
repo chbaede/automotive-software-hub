@@ -4,49 +4,49 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/</loc>
+    <loc>https://autohub.yocto.co.kr/</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/stack</loc>
+    <loc>https://autohub.yocto.co.kr/stack</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/tools</loc>
+    <loc>https://autohub.yocto.co.kr/tools</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/resources</loc>
+    <loc>https://autohub.yocto.co.kr/resources</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/open-source</loc>
+    <loc>https://autohub.yocto.co.kr/open-source</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/events</loc>
+    <loc>https://autohub.yocto.co.kr/events</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/companies</loc>
+    <loc>https://autohub.yocto.co.kr/companies</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://chbaede.github.io/automotive-software-hub/about</loc>
+    <loc>https://autohub.yocto.co.kr/about</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>

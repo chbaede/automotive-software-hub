@@ -2,5 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap Index
-Sitemap: https://chbaede.github.io/automotive-software-hub/sitemap.xml
-
+Sitemap: https://autohub.yocto.co.kr/sitemap.xml
