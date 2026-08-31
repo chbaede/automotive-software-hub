@@ -20,8 +20,27 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['sdv', 'adas', 'cloud'],
     website: 'https://www.nvidia.com/en-us/drive/thor/',
     companyIds: ['nvidia', 'mercedes-benz'],
-    relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino', 'nvidia-driveworks-sdk'],
+    relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino', 'nvidia-alpamayo-ad', 'nvidia-driveworks-sdk'],
     tags: ['thor', 'soc', 'central-compute', 'nvidia', 'ai'],
+  },
+  {
+    id: 'qualcomm-snapdragon-ride',
+    name: 'Qualcomm Snapdragon Ride & Ride Flex Platform',
+    layerId: 'hardware-compute',
+    description: {
+      en: 'Scalable central compute SoC unifying mixed-criticality ADAS, Level 2+ to Level 4 autonomous driving, and cockpit workloads.',
+      ko: '이종 안전도(Mixed-Criticality) ADAS, L2+~L4 자율주행 및 콕핏 워크로드를 통합하는 중앙 집적 SoC 플랫폼.',
+    },
+    whereDoesItFit: {
+      en: 'Unified ADAS & Cockpit Co-Pilot Compute Hardware Platform.',
+      ko: '안전 인지 ADAS와 인포테인먼트를 물리 통합 제어하는 하드웨어 컴퓨팅 플랫폼.',
+    },
+    categories: ['SoC', 'ADAS', 'Central Compute'],
+    topics: ['adas', 'sdv', 'qnx'],
+    website: 'https://www.qualcomm.com/products/automotive/snapdragon-ride-platform',
+    companyIds: ['qualcomm', 'bmw-group', 'bosch'],
+    relatedTechnologyIds: ['qualcomm-snapdragon-cockpit', 'momenta-flywheel-ad', 'qnx-hypervisor'],
+    tags: ['snapdragon-ride', 'ride-flex', 'qualcomm', 'adas-soc'],
   },
   {
     id: 'qualcomm-snapdragon-cockpit',
@@ -39,7 +58,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['android-automotive', 'sdv', 'qnx'],
     website: 'https://www.qualcomm.com/products/automotive/snapdragon-cockpit-platform',
     companyIds: ['qualcomm', 'bmw-group', 'lg-electronics-vs', 'harman-international'],
-    relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor'],
+    relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor', 'kanzi-ui-engine'],
     tags: ['snapdragon', 'cockpit', 'soc', 'qualcomm'],
   },
   {
@@ -222,7 +241,7 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['json-formatter', 'base64-tool', 'url-encoder'],
     resourceIds: ['android-automotive-docs'],
     eventIds: ['android-automotive-developer-webinar-2026'],
-    relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol'],
+    relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol', 'android-vhal-middleware'],
     tags: ['android-automotive', 'aaos', 'ivi', 'vhal', 'cockpit'],
   },
   {
@@ -265,7 +284,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://blackberry.qnx.com/',
     companyIds: ['qnx-blackberry', 'vector-informatik', 'bosch'],
     resourceIds: ['qnx-developer-portal', 'iso-26262-safety-guide'],
-    relatedTechnologyIds: ['qnx-hypervisor', 'autosar-adaptive'],
+    relatedTechnologyIds: ['qnx-hypervisor', 'autosar-adaptive', 'kanzi-ui-engine'],
     tags: ['qnx', 'rtos', 'neutrino', 'microkernel', 'asil-d'],
   },
   {
@@ -287,7 +306,7 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['crc-calc', 'endianness-conv', 'can-id-conv'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
-    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol'],
+    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol', 'dlt-logging', 'autosar-secoc'],
     tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu'],
   },
   {
@@ -308,7 +327,7 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'elektrobit', 'volkswagen-group', 'hyundai-mobis'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
-    relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino'],
+    relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino', 'dlt-logging'],
     tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip'],
   },
   {
@@ -392,6 +411,24 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'elektrobit'],
     relatedTechnologyIds: ['can-protocol', 'autosar-classic'],
     tags: ['secoc', 'mac', 'cybersecurity', 'freshness', 'autosar'],
+  },
+  {
+    id: 'android-vhal-middleware',
+    name: 'Android Vehicle HAL (VHAL) & CarService',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'Android Automotive HAL layer bridging Android Java CarService APIs with low-level vehicle CAN/SOME/IP bus signals.',
+      ko: '안드로이드 자바 CarService API를 하부 차량 CAN/SOME/IP 버스 신호와 브릿지하는 오토모티브 HAL 미들웨어.',
+    },
+    whereDoesItFit: {
+      en: 'Android Automotive Vehicle Data Binding Layer linking Android Apps with Vehicle Gateway ECUs.',
+      ko: '안드로이드 차량용 앱과 차량 게이트웨이 ECU 간 데이터 바인딩을 처리하는 미들웨어.',
+    },
+    categories: ['Middleware', 'VHAL', 'Android'],
+    topics: ['android-automotive', 'middleware', 'covesa'],
+    website: 'https://source.android.com/docs/devices/automotive/vhal',
+    relatedTechnologyIds: ['android-automotive-os', 'covesa-vss', 'can-protocol'],
+    tags: ['vhal', 'vehicle-hal', 'car-service', 'android', 'binder'],
   },
   {
     id: 'someip-protocol',
@@ -543,8 +580,27 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 6. APPLICATION & EXPERIENCE (Including Autonomous Driving Stacks!)
+  // 6. APPLICATION & EXPERIENCE (Including Cockpit UI & Autonomous Driving Stacks!)
   // ==========================================
+  {
+    id: 'nvidia-alpamayo-ad',
+    name: 'NVIDIA DRIVE Alpamayo (Reasoning VLA AI Model)',
+    layerId: 'application-experience',
+    description: {
+      en: 'Open-source 34B Vision-Language-Action (VLA) physical AI foundation model for autonomous driving providing Chain-of-Causation reasoning.',
+      ko: '인과관계 이유 설명(Chain-of-Causation)을 지원하는 NVIDIA 34B 비전-언어-행동(VLA) 자율주행 오픈 파운데이션 모델.',
+    },
+    whereDoesItFit: {
+      en: 'High-Level Reasoning-Based Autonomous Driving Foundation Model & Decision Stack.',
+      ko: '복잡한 실도로 상황 판단 및 의사결정을 수행하는 상위 자율주행 파운데이션 AI 모델.',
+    },
+    categories: ['ADAS Stack', 'NVIDIA', 'Physical AI'],
+    topics: ['adas', 'sdv', 'cloud'],
+    website: 'https://developer.nvidia.com/drive',
+    companyIds: ['nvidia', 'mercedes-benz'],
+    relatedTechnologyIds: ['nvidia-drive-thor', 'nvidia-driveworks-sdk'],
+    tags: ['alpamayo', 'vla', 'nvidia', 'physical-ai', 'robotaxi'],
+  },
   {
     id: 'nvidia-driveworks-sdk',
     name: 'NVIDIA DriveWorks SDK & DRIVE OS',
@@ -561,7 +617,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['adas', 'sdv', 'ros2'],
     website: 'https://developer.nvidia.com/drive/driveworks',
     companyIds: ['nvidia', 'mercedes-benz'],
-    relatedTechnologyIds: ['nvidia-drive-thor', 'ros2-autoware', 'linux-kernel'],
+    relatedTechnologyIds: ['nvidia-drive-thor', 'ros2-autoware', 'linux-kernel', 'nvidia-alpamayo-ad'],
     tags: ['nvidia', 'driveworks', 'drive-os', 'sal', 'cgf', 'tensorrt'],
   },
   {
@@ -580,7 +636,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['adas', 'sdv'],
     website: 'https://www.momenta.ai/',
     companyIds: ['mercedes-benz', 'bmw-group', 'qualcomm', 'horizon-robotics'],
-    relatedTechnologyIds: ['qualcomm-snapdragon-cockpit', 'horizon-robotics-journey', 'ros2-autoware'],
+    relatedTechnologyIds: ['qualcomm-snapdragon-ride', 'horizon-robotics-journey', 'ros2-autoware'],
     tags: ['momenta', 'flywheel-ad', 'urban-noa', 'robotaxi', 'end-to-end-ai'],
   },
   {
@@ -603,6 +659,25 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['apollo', 'baidu', 'cyber-rt', 'robotaxi', 'autonomous'],
   },
   {
+    id: 'kanzi-ui-engine',
+    name: 'Rightware Kanzi Studio & UI Engine',
+    layerId: 'application-experience',
+    description: {
+      en: 'Industry-standard 3D automotive UI design framework & realtime graphics engine powering digital instrument clusters.',
+      ko: '디지털 계기판 및 콕핏 3D 그래픽 UI를 구동하는 글로벌 오토모티브 표준 UI 그래픽 엔진 & Kanzi Studio.',
+    },
+    whereDoesItFit: {
+      en: 'High-Performance 3D Digital Instrument Cluster & Cockpit HMI Application Layer.',
+      ko: '디지털 계기판 및 콕핏 HMI용 고성능 3D 그래픽 애플리케이션 레이어.',
+    },
+    categories: ['Application', '3D UI', 'HMI'],
+    topics: ['qnx', 'embedded-linux', 'android-automotive'],
+    website: 'https://rightware.com/kanzi/',
+    companyIds: ['volkswagen-group', 'bmw-group', 'lg-electronics-vs'],
+    relatedTechnologyIds: ['qnx-neutrino', 'digital-cockpit-app'],
+    tags: ['kanzi', 'rightware', 'hmi', 'cluster-3d', 'gui'],
+  },
+  {
     id: 'digital-cockpit-app',
     name: 'Digital Cockpit & Multi-Display IVI',
     layerId: 'application-experience',
@@ -617,7 +692,7 @@ export const stackTechnologies: StackTechnology[] = [
     categories: ['Application', 'Cockpit', 'IVI'],
     topics: ['android-automotive', 'qnx', 'sdv'],
     companyIds: ['lg-electronics-vs', 'harman-international', 'bmw-group', 'mercedes-benz'],
-    relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor', 'qualcomm-snapdragon-cockpit'],
+    relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor', 'qualcomm-snapdragon-cockpit', 'kanzi-ui-engine'],
     tags: ['cockpit', 'ivi', 'hud', 'cluster', 'user-experience'],
   },
   {
@@ -721,8 +796,64 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 8. DEVELOPMENT, TESTING & PROFILING (Cross-Cutting Pillar)
+  // 8. DEVELOPMENT, TESTING & SIMULATION (Cross-Cutting Pillar)
   // ==========================================
+  {
+    id: 'dspace-scalexio-hil',
+    name: 'dSPACE SCALEXIO & ASM Simulation',
+    layerId: 'development-testing',
+    description: {
+      en: 'Industry-standard Hardware-in-the-Loop (HIL) real-time simulator and Automotive Simulation Models (ASM) for ECU testing.',
+      ko: 'ECU 수용성 검증 및 차량 동역학 시뮬레이션을 위한 글로벌 표준 dSPACE SCALEXIO HIL 테스트베드.',
+    },
+    whereDoesItFit: {
+      en: 'Hardware-in-the-Loop (HIL) & Real-Time ECU Validation Infrastructure.',
+      ko: '실제 ECU 하드웨어 제어 알고리즘 및 네트워크 통신을 실시간 검증하는 HIL 시험 검증 환경.',
+    },
+    categories: ['Simulation', 'HIL Testing', 'Validation'],
+    topics: ['functional-safety', 'can', 'autosar'],
+    website: 'https://www.dspace.com/en/inc/home/products/hw/scalexio.html',
+    companyIds: ['bosch', 'denso'],
+    relatedTechnologyIds: ['renode-emulator', 'socketcan'],
+    tags: ['dspace', 'scalexio', 'hil', 'asm', 'validation', 'testing'],
+  },
+  {
+    id: 'ipg-carmaker-sim',
+    name: 'IPG CarMaker Vehicle Simulator',
+    layerId: 'development-testing',
+    description: {
+      en: 'Open integration platform for virtual test driving, high-fidelity vehicle dynamics, and ADAS sensor simulation.',
+      ko: '차량 동역학, ADAS 레이더/카메라 센서 반응 및 가상 주행 검증을 위한 IPG CarMaker 시뮬레이터.',
+    },
+    whereDoesItFit: {
+      en: 'Software-in-the-Loop (SIL) & Driver-in-the-Loop (DIL) Sensor Simulation Suite.',
+      ko: '자율주행 인지 및 제어 소프트웨어를 가상 도로 환경에서 시험하는 SIL 시뮬레이션 환경.',
+    },
+    categories: ['Simulation', 'ADAS Simulator', 'SIL'],
+    topics: ['adas', 'ros2', 'functional-safety'],
+    website: 'https://ipg-automotive.com/en/products-services/simulation-software/carmaker/',
+    relatedTechnologyIds: ['ros2-autoware', 'nvidia-driveworks-sdk'],
+    tags: ['carmaker', 'ipg', 'simulation', 'sil', 'adas-test'],
+  },
+  {
+    id: 'carla-av-simulator',
+    name: 'CARLA Open Autonomous Driving Simulator',
+    layerId: 'development-testing',
+    description: {
+      en: 'Unreal Engine 4 based open-source urban driving simulator for training, prototyping, and validating AV algorithms.',
+      ko: '언리얼 엔진 기반으로 도심 자율주행 인지/판단 알고리즘을 훈련하고 검증하는 오픈 소스 시뮬레이터.',
+    },
+    whereDoesItFit: {
+      en: 'Open Source Synthetic Data Generation & Urban AV Perception Validation Platform.',
+      ko: '합성 데이터 생성 및 자율주행 인지 알고리즘 검증을 위한 오픈 소스 시뮬레이터.',
+    },
+    categories: ['Simulation', 'Open Source', 'AV Simulator'],
+    topics: ['adas', 'ros2', 'open-source'],
+    website: 'https://carla.org/',
+    repositoryUrl: 'https://github.com/carla-simulator/carla',
+    relatedTechnologyIds: ['ros2-autoware', 'baidu-apollo-ad'],
+    tags: ['carla', 'simulator', 'unreal-engine', 'av-sim', 'open-source'],
+  },
   {
     id: 'socketcan',
     name: 'Linux SocketCAN Subsystem & Tools',
