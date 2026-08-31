@@ -222,29 +222,6 @@ export const stackTechnologies: StackTechnology[] = [
   // 3. OPERATING SYSTEMS (OS - Real-Time & Rich OS Foundations)
   // ==========================================
   {
-    id: 'android-automotive-os',
-    name: 'Android Automotive OS (AAOS)',
-    layerId: 'operating-systems',
-    description: {
-      en: 'Google Android operating system platform built specifically for In-Vehicle Infotainment (IVI) and digital cockpits.',
-      ko: '차량용 인포테인먼트(IVI) 및 디지털 콕핏 시스템 전용 구글 안드로이드 운영체제 플랫폼.',
-    },
-    whereDoesItFit: {
-      en: 'High-level IVI OS running Car Service, Vehicle HAL (VHAL), and native Android applications.',
-      ko: 'Car Service, Vehicle HAL(VHAL) 및 안드로이드 전용 앱을 구동하는 상위 IVI 운영체제.',
-    },
-    categories: ['Operating System', 'IVI', 'Infotainment'],
-    topics: ['android-automotive', 'sdv', 'middleware'],
-    website: 'https://source.android.com/docs/devices/automotive',
-    documentationUrl: 'https://source.android.com/docs/devices/automotive',
-    companyIds: ['bmw-group', 'volkswagen-group', 'lg-electronics-vs', 'harman-international'],
-    toolIds: ['json-formatter', 'base64-tool', 'url-encoder'],
-    resourceIds: ['android-automotive-docs'],
-    eventIds: ['android-automotive-developer-webinar-2026'],
-    relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol', 'android-vhal-middleware'],
-    tags: ['android-automotive', 'aaos', 'ivi', 'vhal', 'cockpit'],
-  },
-  {
     id: 'linux-kernel',
     name: 'Embedded Linux Kernel',
     layerId: 'operating-systems',
@@ -383,8 +360,50 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 4. MIDDLEWARE & AUTOMOTIVE PLATFORMS (Layer 2: AUTOSAR Classic, AUTOSAR Adaptive & Middleware)
+  // 4. MIDDLEWARE & AUTOMOTIVE PLATFORMS (Layer 2: AAOS, AAOS SDV, AUTOSAR Classic, AUTOSAR Adaptive & Communication)
   // ==========================================
+  {
+    id: 'android-automotive-os',
+    name: 'Android Automotive OS (AAOS Platform)',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'Google Android automotive software platform built specifically for In-Vehicle Infotainment (IVI) and digital cockpits.',
+      ko: '차량용 인포테인먼트(IVI) 및 디지털 콕핏 시스템 전용 구글 안드로이드 오토모티브 플랫폼.',
+    },
+    whereDoesItFit: {
+      en: 'High-Level IVI Middleware & Application Execution Platform running Car Service and native Android apps.',
+      ko: 'Car Service 및 안드로이드 차량용 전용 앱을 구동하는 상위 IVI 미들웨어 & 플랫폼.',
+    },
+    categories: ['Automotive Platform', 'IVI', 'Infotainment'],
+    topics: ['android-automotive', 'sdv', 'middleware'],
+    website: 'https://source.android.com/docs/devices/automotive',
+    documentationUrl: 'https://source.android.com/docs/devices/automotive',
+    companyIds: ['bmw-group', 'volkswagen-group', 'lg-electronics-vs', 'harman-international'],
+    toolIds: ['json-formatter', 'base64-tool', 'url-encoder'],
+    resourceIds: ['android-automotive-docs'],
+    eventIds: ['android-automotive-developer-webinar-2026'],
+    relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol', 'aaos-sdv-platform'],
+    tags: ['android-automotive', 'aaos', 'ivi', 'cockpit', 'platform'],
+  },
+  {
+    id: 'aaos-sdv-platform',
+    name: 'AAOS SDV Architecture & Framework',
+    layerId: 'middleware-communication',
+    description: {
+      en: 'Cloud-native Software-Defined Vehicle framework for Android Automotive, integrating virtualized VHAL services, gRPC, and uProtocol bindings.',
+      ko: '가상화 VHAL 서비스, gRPC 및 uProtocol 바인딩을 통합하는 차세대 안드로이드 오토모티브 SDV 아키텍처 & 프레임워크.',
+    },
+    whereDoesItFit: {
+      en: 'Cloud-to-Car Software-Defined Vehicle Abstraction & App Services Middleware.',
+      ko: '클라우드 연동 및 SDV 앱 서비스를 처리하는 차세대 안드로이드 오토모티브 SDV 미들웨어.',
+    },
+    categories: ['Automotive Platform', 'SDV Architecture', 'Android'],
+    topics: ['android-automotive', 'sdv', 'middleware'],
+    website: 'https://source.android.com/docs/devices/automotive',
+    companyIds: ['volkswagen-group', 'bmw-group', 'lg-electronics-vs'],
+    relatedTechnologyIds: ['android-automotive-os', 'eclipse-uprotocol', 'covesa-vss'],
+    tags: ['aaos-sdv', 'sdv-framework', 'grpc', 'vhal', 'cloud-native'],
+  },
   {
     id: 'autosar-adaptive',
     name: 'AUTOSAR Adaptive Platform (ARA)',
@@ -403,7 +422,7 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'elektrobit', 'volkswagen-group', 'hyundai-mobis'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
-    relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino', 'dlt-logging'],
+    relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino'],
     tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip', 'platform'],
   },
   {
@@ -425,28 +444,8 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['crc-calc', 'endianness-conv', 'can-id-conv'],
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
-    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol', 'dlt-logging', 'autosar-secoc'],
+    relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol'],
     tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu', 'platform'],
-  },
-  {
-    id: 'dlt-logging',
-    name: 'Diagnostic Log and Trace (DLT)',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'AUTOSAR and COVESA (GENIVI) standardized logging daemon & protocol for centralized ECU log aggregation and tracing.',
-      ko: '중앙 집중식 ECU 로깅 및 트레이싱을 지원하는 AUTOSAR 및 COVESA(GENIVI) 표준 DLT 로그 데몬 & 프로토콜.',
-    },
-    whereDoesItFit: {
-      en: 'Cross-ECU System Logging & Diagnostic Trace Middleware running on Linux, QNX, and AUTOSAR BSW.',
-      ko: '리눅스, QNX 및 AUTOSAR BSW 상에서 시스템 디버깅 로그를 수집/전송하는 중앙 로깅 미들웨어.',
-    },
-    categories: ['Middleware', 'Logging', 'AUTOSAR'],
-    topics: ['autosar', 'covesa', 'embedded-linux'],
-    website: 'https://covesa.github.io/dlt-daemon/',
-    repositoryUrl: 'https://github.com/COVESA/dlt-daemon',
-    openSourceProjectIds: ['covesa-vss'],
-    relatedTechnologyIds: ['someip-protocol', 'autosar-classic', 'linux-kernel'],
-    tags: ['dlt', 'logging', 'tracing', 'covesa', 'genivi', 'autosar-dlt'],
   },
   {
     id: 'vsomeip-middleware',
@@ -469,25 +468,6 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['vsomeip', 'someip-sd', 'bmw', 'covesa', 'service-discovery'],
   },
   {
-    id: 'autosar-secoc',
-    name: 'AUTOSAR SecOC (Secure On-Board Communication)',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'Cryptographic MAC authentication and freshness counter specification protecting CAN FD, LIN, and Ethernet frames.',
-      ko: 'CAN FD, LIN 및 이더넷 프레임의 위변조 방지를 위한 암호화 MAC 인증 및 프레시니스 카운터 스펙.',
-    },
-    whereDoesItFit: {
-      en: 'Vehicle Network Security Middleware preventing message injection, spoofing, and replay attacks on ECUs.',
-      ko: 'ECU 간 메시지 위조 및 재전송 공격을 방지하는 차량 내 네트워크 보안 인증 미들웨어.',
-    },
-    categories: ['Middleware', 'Cybersecurity', 'AUTOSAR'],
-    topics: ['cybersecurity', 'autosar', 'can'],
-    website: 'https://www.autosar.org/standards/classic-platform',
-    companyIds: ['vector-informatik', 'elektrobit'],
-    relatedTechnologyIds: ['can-protocol', 'autosar-classic', 'iso-21434-cybersecurity'],
-    tags: ['secoc', 'mac', 'cybersecurity', 'freshness', 'autosar'],
-  },
-  {
     id: 'eclipse-iceoryx',
     name: 'Eclipse iceoryx / iceoryx2 (True Zero-Copy IPC)',
     layerId: 'middleware-communication',
@@ -505,42 +485,6 @@ export const stackTechnologies: StackTechnology[] = [
     repositoryUrl: 'https://github.com/eclipse-iceoryx/iceoryx',
     relatedTechnologyIds: ['dds-protocol', 'ros2-autoware'],
     tags: ['iceoryx', 'iceoryx2', 'zero-copy', 'ipc', 'shared-memory'],
-  },
-  {
-    id: 'android-vhal-middleware',
-    name: 'Android Vehicle HAL (VHAL) & CarService',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'Android Automotive HAL layer bridging Android Java CarService APIs with low-level vehicle CAN/SOME/IP bus signals.',
-      ko: '안드로이드 자바 CarService API를 하부 차량 CAN/SOME/IP 버스 신호와 브릿지하는 오토모티브 HAL 미들웨어.',
-    },
-    whereDoesItFit: {
-      en: 'Android Automotive Vehicle Data Binding Layer linking Android Apps with Vehicle Gateway ECUs.',
-      ko: '안드로이드 차량용 앱과 차량 게이트웨이 ECU 간 데이터 바인딩을 처리하는 미들웨어.',
-    },
-    categories: ['Middleware', 'VHAL', 'Android'],
-    topics: ['android-automotive', 'middleware', 'covesa'],
-    website: 'https://source.android.com/docs/devices/automotive/vhal',
-    relatedTechnologyIds: ['android-automotive-os', 'covesa-vss', 'can-protocol', 'android-binder-ipc'],
-    tags: ['vhal', 'vehicle-hal', 'car-service', 'android', 'binder'],
-  },
-  {
-    id: 'android-binder-ipc',
-    name: 'Android Binder IPC & ServiceManager',
-    layerId: 'middleware-communication',
-    description: {
-      en: 'High-performance inter-process communication (IPC) driver & framework underlying Android Automotive services.',
-      ko: '안드로이드 오토모티브 서브시스템 간 프로세스 간 통신(IPC)을 담당하는 커널 드라이버 및 프레임워크.',
-    },
-    whereDoesItFit: {
-      en: 'Android Automotive Internal Service Communication Broker.',
-      ko: '안드로이드 오토모티브 내 서비스 프로세스 간 통신 버스.',
-    },
-    categories: ['Middleware', 'Android IPC', 'Binder'],
-    topics: ['android-automotive', 'middleware'],
-    website: 'https://source.android.com/docs/core/architecture/hidl/binder-ipc',
-    relatedTechnologyIds: ['android-automotive-os', 'android-vhal-middleware'],
-    tags: ['binder', 'ipc', 'servicemanager', 'android-binder'],
   },
   {
     id: 'someip-protocol',
@@ -902,7 +846,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.iso.org/standard/70918.html',
     companyIds: ['vector-informatik', 'lg-electronics-vs'],
     resourceIds: ['iso-26262-safety-guide'],
-    relatedTechnologyIds: ['unece-r155-r156', 'autosar-secoc'],
+    relatedTechnologyIds: ['unece-r155-r156', 'can-protocol'],
     tags: ['iso21434', 'cybersecurity', 'tara', 'csms', 'security'],
   },
   {
