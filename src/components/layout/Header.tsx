@@ -36,6 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
 
   const navItems = [
     { to: '/', label: t.nav.home },
+    { to: '/stack', label: t.nav.stackExplorer },
     { to: '/tools', label: t.nav.tools },
     { to: '/resources', label: t.nav.resources },
     { to: '/open-source', label: t.nav.openSource },

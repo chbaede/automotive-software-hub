@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { HomePage } from '../pages/Home';
+import { StackPage } from '../pages/Stack';
 import { ToolsPage } from '../pages/Tools';
 import { ResourcesPage } from '../pages/Resources';
 import { OpenSourcePage } from '../pages/OpenSource';
@@ -16,6 +17,7 @@ export const AppRouter: React.FC = () => {
       <MainLayout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/stack" element={<StackPage />} />
           <Route path="/tools" element={<ToolsPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/open-source" element={<OpenSourcePage />} />
@@ -28,4 +30,3 @@ export const AppRouter: React.FC = () => {
     </HashRouter>
   );
 };
-

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, Wrench, BookOpen, Code2, Calendar, Building2, ExternalLink } from 'lucide-react';
+import { Search, X, Wrench, BookOpen, Code2, Calendar, Building2, ExternalLink, Layers } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { performGlobalSearch } from '../../utils/searchEngine';
 import { SearchResultItem } from '../../types/search';
@@ -34,6 +34,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   const results = performGlobalSearch(query, language);
   const totalResults =
+    (results.technologies?.length || 0) +
     results.tools.length +
     results.resources.length +
     results.projects.length +
@@ -134,6 +135,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             </div>
           ) : (
             <>
+              {renderSection(
+                `Stack Technologies (${results.technologies.length})`,
+                <Layers className="w-3.5 h-3.5 text-brand-500" />,
+                results.technologies
+              )}
               {renderSection(
                 t.searchModal.toolsHeader.replace('{count}', results.tools.length.toString()),
                 <Wrench className="w-3.5 h-3.5 text-brand-500" />,

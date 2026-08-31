@@ -1,6 +1,7 @@
 export const en = {
   nav: {
     home: 'Home',
+    stackExplorer: 'Stack Explorer',
     tools: 'Tools',
     resources: 'Resources',
     openSource: 'Open Source',
@@ -13,6 +14,25 @@ export const en = {
     searchPlaceholder: 'Search tools, resources, standards, companies...',
     searchShortcut: 'Cmd + K',
     language: 'Language',
+  },
+  stack: {
+    title: 'Automotive Stack Explorer',
+    subtitle: 'Interactive architectural map of modern automotive software stacks — from hardware & hypervisors to middleware, OS, vehicle services, and cloud.',
+    searchPlaceholder: 'Search technologies (e.g. Android Automotive, SOME/IP, QNX, Yocto)...',
+    allLayers: 'All Architectural Layers',
+    allTopics: 'All Tech Topics',
+    whereDoesItFit: 'Where Does It Fit?',
+    relatedTechHeader: 'Technology Dependencies & Relationships',
+    linkedToolsHeader: 'Interactive Developer Tools',
+    linkedResourcesHeader: 'Official Documentation & Standards',
+    linkedProjectsHeader: 'Open Source Projects',
+    linkedCompaniesHeader: 'Ecosystem Companies',
+    launchTool: 'Launch Developer Tool',
+    resetFilters: 'Reset Filters',
+    selectTechToInspect: 'Click any technology node to inspect its architectural position, dependencies, and developer ecosystem.',
+    exploreStackHeroTitle: 'Explore the Automotive Software Stack',
+    exploreStackHeroDesc: 'Understand how Android Automotive, QNX, AUTOSAR, Yocto, SOME/IP, and vehicle hardware fit together.',
+    exploreStackButton: 'Explore Stack Map →',
   },
   hero: {
     title: 'Automotive Software Hub',

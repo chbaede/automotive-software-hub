@@ -6,14 +6,40 @@ import { resources } from '../data/resources';
 import { projects } from '../data/projects';
 import { events } from '../data/events';
 import { companies } from '../data/companies';
+import { stackTechnologies } from '../data/stackTechnologies';
 
 export function performGlobalSearch(query: string, lang: Language): GroupedSearchResults {
   const cleanQuery = query.trim().toLowerCase();
   if (!cleanQuery) {
-    return { tools: [], resources: [], projects: [], events: [], companies: [] };
+    return { technologies: [], tools: [], resources: [], projects: [], events: [], companies: [] };
   }
 
   const matchText = (text: string) => text.toLowerCase().includes(cleanQuery);
+
+  // Search Stack Technologies
+  const matchedTechs: SearchResultItem[] = stackTechnologies
+    .filter((st) => {
+      const name = st.name;
+      const desc = getLocalizedText(st.description, lang);
+      const fit = getLocalizedText(st.whereDoesItFit, lang);
+      return (
+        matchText(name) ||
+        matchText(desc) ||
+        matchText(fit) ||
+        (st.tags && st.tags.some(matchText)) ||
+        st.topics.some(matchText)
+      );
+    })
+    .map((st) => ({
+      id: st.id,
+      type: 'tech',
+      title: st.name,
+      description: getLocalizedText(st.description, lang),
+      route: `/stack?tech=${st.id}`,
+      topics: st.topics,
+      badgeText: st.layerId.replace('-', ' ').toUpperCase(),
+      rawItem: st,
+    }));
 
   // Search Tools
   const matchedTools: SearchResultItem[] = tools
@@ -137,6 +163,7 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
     }));
 
   return {
+    technologies: matchedTechs,
     tools: matchedTools,
     resources: matchedResources,
     projects: matchedProjects,
@@ -144,4 +171,3 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
     companies: matchedCompanies,
   };
 }
-

@@ -3,6 +3,7 @@ import { Translations } from './en';
 export const ko: Translations = {
   nav: {
     home: '홈',
+    stackExplorer: '스택 탐색기',
     tools: '도구',
     resources: '자료 및 표준',
     openSource: '오픈 소스',
@@ -15,6 +16,25 @@ export const ko: Translations = {
     searchPlaceholder: '도구, 개발 문서, 표준, 기업 검색...',
     searchShortcut: 'Cmd + K',
     language: '언어',
+  },
+  stack: {
+    title: '오토모티브 소프트웨어 스택 탐색기',
+    subtitle: '하드웨어 & 가상화부터 미들웨어, OS, 차량 진단 서비스 및 클라우드까지 — 현대 자동차 소프트웨어 기술 스택의 대화형 아키텍처 맵.',
+    searchPlaceholder: '기술 검색 (예: Android Automotive, SOME/IP, QNX, Yocto)...',
+    allLayers: '전체 아키텍처 레이어',
+    allTopics: '전체 기술 토픽',
+    whereDoesItFit: '어디에 위치하나요? (Where Does It Fit?)',
+    relatedTechHeader: '기술 연관 관계 및 상호 의존성',
+    linkedToolsHeader: '연관 인터랙티브 개발자 도구',
+    linkedResourcesHeader: '공식 기술 문서 및 표준 규격',
+    linkedProjectsHeader: '연관 오픈 소스 프로젝트',
+    linkedCompaniesHeader: '관련 핵심 기업 생태계',
+    launchTool: '개발자 도구 실행하기',
+    resetFilters: '필터 초기화',
+    selectTechToInspect: '기술 노드를 클릭하여 해당 기술의 아키텍처 위치, 연관 의존성 및 개발자 생태계를 상세 탐색하세요.',
+    exploreStackHeroTitle: '자동차 소프트웨어 스택 탐색하기',
+    exploreStackHeroDesc: 'Android Automotive, QNX, AUTOSAR, Yocto, SOME/IP 및 차량 하드웨어가 어떻게 연결되는지 한눈에 파악하세요.',
+    exploreStackButton: '스택 지도 탐색하기 →',
   },
   hero: {
     title: 'Automotive Software Hub',

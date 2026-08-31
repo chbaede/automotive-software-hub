@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Wrench, BookOpen, Code2, Calendar, Building2, Search, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Wrench, BookOpen, Code2, Calendar, Building2, Search, ArrowRight, ShieldCheck, Layers } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { CategoryCard } from '../../components/cards/CategoryCard';
 import { tools } from '../../data/tools';
@@ -128,6 +128,29 @@ export const HomePage: React.FC = () => {
             )}
           </div>
         </div>
+      </section>
+
+      {/* Stack Explorer Feature Showcase Banner */}
+      <section className="p-8 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-lg relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-2xl z-10">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-brand-500/20 text-brand-300 text-xs font-mono font-bold rounded-full">
+            <Layers className="w-3.5 h-3.5" />
+            <span>Interactive Architecture Feature</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            {t.stack.exploreStackHeroTitle}
+          </h2>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            {t.stack.exploreStackHeroDesc}
+          </p>
+        </div>
+
+        <Link
+          to="/stack"
+          className="shrink-0 px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold rounded-xl shadow transition flex items-center gap-2 group z-10"
+        >
+          <span>{t.stack.exploreStackButton}</span>
+        </Link>
       </section>
 
       {/* Primary Category Grid (5 Core Sections) */}
