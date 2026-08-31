@@ -9,6 +9,7 @@ import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
+import { GoogleAdBanner } from '../../components/ads/GoogleAdBanner';
 import { getLocalizedText } from '../../types/i18n';
 import { Tool } from '../../types/tool';
 
@@ -240,6 +241,9 @@ export const StackPage: React.FC = () => {
         onSelectTech={handleSelectTech}
         onOpenTool={(tool) => setActiveTool(tool)}
       />
+
+      {/* Google AdSense Banner (Non-intrusive bottom unit) */}
+      <GoogleAdBanner slot="9426228178" />
 
       {/* Tool Runner Modal */}
       <ToolRunnerModal tool={activeTool} onClose={() => setActiveTool(null)} />

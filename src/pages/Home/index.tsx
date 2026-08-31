@@ -12,6 +12,7 @@ import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { TopicId } from '../../types/taxonomy';
 import { performGlobalSearch } from '../../utils/searchEngine';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
+import { GoogleAdBanner } from '../../components/ads/GoogleAdBanner';
 import { Tool } from '../../types/tool';
 
 export const HomePage: React.FC = () => {
@@ -228,6 +229,9 @@ export const HomePage: React.FC = () => {
           })}
         </div>
       </section>
+
+      {/* Google AdSense Banner (Non-intrusive bottom unit) */}
+      <GoogleAdBanner slot="9426228178" />
 
       {/* Tool Runner Modal */}
       <ToolRunnerModal tool={activeTool} onClose={() => setActiveTool(null)} />
