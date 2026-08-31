@@ -69,26 +69,37 @@ export const stackLayers: StackLayer[] = [
     colorTheme: 'slate',
   },
 
-  // --- CROSS-CUTTING PILLARS (Tooling, Build, Cloud & Process spanning all layers) ---
+  // --- CROSS-CUTTING PILLARS (Process, Tooling, Build, Cloud & Security spanning all layers) ---
+  {
+    id: 'process-compliance-security',
+    name: { en: 'Process, Safety & Compliance', ko: '프로세스, 안전, 보안 규제 & 컴플라이언스' },
+    description: {
+      en: 'Automotive SPICE (ASPICE 4.0), ISO 26262 ASIL-D, ISO 21434, EU Cyber Resilience Act (CRA), SBOM, and FOSS License Compliance.',
+      ko: 'Automotive SPICE (ASPICE 4.0), ISO 26262 ASIL-D, ISO 21434, EU 사이버 복원력 법안(CRA), SBOM 및 오픈소스 라이선스 컴플라이언스.',
+    },
+    order: 10,
+    layerType: 'cross-cutting',
+    colorTheme: 'amber',
+  },
   {
     id: 'build-platform',
     name: { en: 'Build & Platform Infrastructure', ko: '빌드 시스템 & 플랫폼 인프라' },
     description: {
-      en: 'Cross-layer distribution & build engines: Yocto, BitBake, Bazel, Soong, Buildroot, CMake, and AOSP build.',
-      ko: '전 레이어 커스텀 리눅스/안드로이드 빌드 엔진: Yocto, BitBake, Bazel, Soong, Buildroot, CMake.',
+      en: 'Cross-layer distribution & build engines: Yocto, BitBake, Bazel, Soong, Buildroot, and AOSP build.',
+      ko: '전 레이어 커스텀 리눅스/안드로이드 빌드 엔진: Yocto, BitBake, Bazel, Soong, Buildroot.',
     },
-    order: 10,
+    order: 11,
     layerType: 'cross-cutting',
     colorTheme: 'rose',
   },
   {
     id: 'development-testing',
-    name: { en: 'Development, Testing & Profiling', ko: '개발 도구, 테스팅 & 프로파일링' },
+    name: { en: 'Development, Testing & Simulation', ko: '개발 도구, 테스팅 & 시뮬레이션' },
     description: {
-      en: 'SocketCAN, ADB, Google Perfetto, Vector CANoe, Renode, HIL/SIL simulation, and debuggers.',
-      ko: 'SocketCAN, ADB, Perfetto, Vector CANoe, Renode, HIL/SIL 시뮬레이션 및 디버거.',
+      en: 'dSPACE SCALEXIO HIL, IPG CarMaker, CARLA Simulator, SocketCAN, ADB, Google Perfetto, and Renode.',
+      ko: 'dSPACE SCALEXIO HIL, IPG CarMaker, CARLA 시뮬레이터, SocketCAN, ADB, Perfetto 및 Renode.',
     },
-    order: 11,
+    order: 12,
     layerType: 'cross-cutting',
     colorTheme: 'teal',
   },
@@ -99,7 +110,7 @@ export const stackLayers: StackLayer[] = [
       en: 'Vehicle-to-cloud sync, OTA software update agents, fleet telematics, Eclipse Ankaios/Leda, and CI/CD.',
       ko: '차량-클라우드 연동, OTA 무선 소프트웨어 업데이트 에이전트, Eclipse Ankaios/Leda 및 CI/CD.',
     },
-    order: 12,
+    order: 13,
     layerType: 'cross-cutting',
     colorTheme: 'violet',
   },

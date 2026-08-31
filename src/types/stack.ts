@@ -10,7 +10,8 @@ export type StackLayerId =
   | 'vehicle-services'
   | 'application-experience'
   | 'cloud-devops'
-  | 'development-testing';
+  | 'development-testing'
+  | 'process-compliance-security';
 
 export type StackLayerType = 'core' | 'cross-cutting';
 

@@ -409,7 +409,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['cybersecurity', 'autosar', 'can'],
     website: 'https://www.autosar.org/standards/classic-platform',
     companyIds: ['vector-informatik', 'elektrobit'],
-    relatedTechnologyIds: ['can-protocol', 'autosar-classic'],
+    relatedTechnologyIds: ['can-protocol', 'autosar-classic', 'iso-21434-cybersecurity'],
     tags: ['secoc', 'mac', 'cybersecurity', 'freshness', 'autosar'],
   },
   {
@@ -715,7 +715,127 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 7. BUILD & PLATFORM INFRASTRUCTURE (Cross-Cutting Pillar)
+  // 7. PROCESS, SAFETY & COMPLIANCE (Cross-Cutting Pillar)
+  // ==========================================
+  {
+    id: 'aspice-process',
+    name: 'Automotive SPICE (ASPICE v4.0)',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'Industry-standard process assessment model for automotive software engineering defining SYS.1-5 and SWE.1-6 lifecycle processes.',
+      ko: 'SYS.1-5 및 SWE.1-6 릴리스 프로세스 평가를 정의하는 자동차 소프트웨어 엔지니어링 표준 프로세스 모델 (ASPICE 4.0).',
+    },
+    whereDoesItFit: {
+      en: 'Cross-Layer Software Development Lifecycle (SDLC) Process & Quality Management Infrastructure.',
+      ko: '소프트웨어 개발 수명주기(SDLC) 전반의 품질 및 프로세스 준수 평가 체계.',
+    },
+    categories: ['Process', 'Quality', 'ASPICE'],
+    topics: ['functional-safety', 'sdv'],
+    website: 'https://www.automotivespice.com/',
+    resourceIds: ['iso-26262-safety-guide'],
+    relatedTechnologyIds: ['iso-26262-functional-safety', 'iso-21434-cybersecurity'],
+    tags: ['aspice', 'process', 'quality', 'swe1', 'swe6', 'sdlc'],
+  },
+  {
+    id: 'eu-cra-sbom',
+    name: 'EU Cyber Resilience Act (CRA) & SBOM',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'European cybersecurity regulation mandating Software Bill of Materials (SPDX/CycloneDX SBOM), vulnerability management, and 5-year patch support.',
+      ko: 'Software Bill of Materials (SPDX/CycloneDX SBOM) 관리, 취약점 조치 및 5년 보안 업데이트를 의무화하는 EU 사이버 복원력 법안.',
+    },
+    whereDoesItFit: {
+      en: 'Cross-Layer Software Supply Chain Security & Regulatory Compliance Layer.',
+      ko: '소프트웨어 공급망 전체 라이선스 및 보안 취약점 추적성 관리 레이어.',
+    },
+    categories: ['Compliance', 'Cybersecurity', 'SBOM'],
+    topics: ['cybersecurity', 'open-source', 'sdv'],
+    website: 'https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act',
+    companyIds: ['lg-electronics-vs', 'red-hat'],
+    relatedTechnologyIds: ['openchain-foss-compliance', 'iso-21434-cybersecurity'],
+    tags: ['cra', 'eu-cra', 'sbom', 'spdx', 'cyclonedx', 'vulnerability'],
+  },
+  {
+    id: 'iso-21434-cybersecurity',
+    name: 'ISO/SAE 21434 Automotive Cybersecurity',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'International standard establishing cybersecurity risk management, TARA (Threat Analysis and Risk Assessment), and CSMS requirements.',
+      ko: '위협 분석 및 위험 평가(TARA)와 사이버 보안 관리 체계(CSMS) 요구사항을 규정한 자동차 사이버 보안 표준.',
+    },
+    whereDoesItFit: {
+      en: 'End-to-End Vehicle Cybersecurity Lifecycle Framework required for UN R155 Type Approval.',
+      ko: 'UN R155 형식 승인을 위해 필수적인 전 차량 사이버 보안 엔지니어링 프레임워크.',
+    },
+    categories: ['Compliance', 'Cybersecurity', 'ISO Standard'],
+    topics: ['cybersecurity', 'functional-safety'],
+    website: 'https://www.iso.org/standard/70918.html',
+    companyIds: ['vector-informatik', 'lg-electronics-vs'],
+    resourceIds: ['iso-26262-safety-guide'],
+    relatedTechnologyIds: ['unece-r155-r156', 'autosar-secoc'],
+    tags: ['iso21434', 'cybersecurity', 'tara', 'csms', 'security'],
+  },
+  {
+    id: 'iso-26262-functional-safety',
+    name: 'ISO 26262 Functional Safety (ASIL A-D)',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'Standard for functional safety of road vehicle E/E systems establishing ASIL A through ASIL D safety lifecycle requirements.',
+      ko: '도로 차량 전기/전자 시스템의 기능 안전 표준으로 ASIL A부터 최고 안전등급 ASIL D까지 안전 수명주기를 규정.',
+    },
+    whereDoesItFit: {
+      en: 'System-Wide Safety Assurance & Hazard Analysis Framework spanning hardware, hypervisor, OS, and software.',
+      ko: '하드웨어, 하이퍼바이저, OS 및 소프트웨어 전반을 아우르는 시스템 기능 안전 보장 체계.',
+    },
+    categories: ['Compliance', 'Safety', 'ISO Standard'],
+    topics: ['functional-safety', 'autosar', 'qnx'],
+    website: 'https://www.iso.org/standard/68383.html',
+    companyIds: ['vector-informatik', 'qnx-blackberry'],
+    resourceIds: ['iso-26262-safety-guide'],
+    relatedTechnologyIds: ['aspice-process', 'qnx-hypervisor', 'vxworks-rtos'],
+    tags: ['iso26262', 'asil-d', 'functional-safety', 'safety'],
+  },
+  {
+    id: 'openchain-foss-compliance',
+    name: 'OpenChain (ISO/IEC 5230) & FOSS Compliance',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'International standard for open-source license compliance governance, SPDX metadata management, and supply chain transparency.',
+      ko: '오픈소스 라이선스 의무사항 준수, SPDX 메타데이터 관리 및 자동차 소프트웨어 공급망 투명성을 위한 국제 표준.',
+    },
+    whereDoesItFit: {
+      en: 'Open Source Governance & Intellectual Property (IP) Compliance Infrastructure.',
+      ko: '오픈소스 소프트웨어 사용에 따른 지적재산권(IP) 보호 및 라이선스 고지 관리 체계.',
+    },
+    categories: ['Compliance', 'Open Source', 'FOSS'],
+    topics: ['open-source', 'sdv'],
+    website: 'https://www.openchainproject.org/',
+    openSourceProjectIds: ['automotive-grade-linux', 'yocto-project'],
+    relatedTechnologyIds: ['eu-cra-sbom', 'yocto-project'],
+    tags: ['openchain', 'iso5230', 'foss', 'license-compliance', 'spdx'],
+  },
+  {
+    id: 'unece-r155-r156',
+    name: 'UN ECE R155 / R156 Regulations (CSMS & SUMS)',
+    layerId: 'process-compliance-security',
+    description: {
+      en: 'United Nations regulations mandating Cybersecurity Management Systems (R155) and Software Update Management Systems (R156) for vehicle type approval.',
+      ko: '차량 형식 승인(Type Approval)을 위해 사이버 보안 관리(R155) 및 무선 소프트웨어 업데이트 관리(R156)를 법적 의무화한 UN 규정.',
+    },
+    whereDoesItFit: {
+      en: 'Global Regulatory Homologation & Vehicle Type Approval Compliance Infrastructure.',
+      ko: '글로벌 완성차 신차 출시 및 형식 승인(Homologation)을 위한 법적 규제 준수 체계.',
+    },
+    categories: ['Compliance', 'UN Regulation', 'OTA/Security'],
+    topics: ['cybersecurity', 'cloud', 'sdv'],
+    website: 'https://unece.org/',
+    companyIds: ['hyundai-motor-group', 'bmw-group', 'lg-electronics-vs'],
+    relatedTechnologyIds: ['iso-21434-cybersecurity', 'ota-cloud-fleet'],
+    tags: ['r155', 'r156', 'unece', 'csms', 'sums', 'homologation'],
+  },
+
+  // ==========================================
+  // 8. BUILD & PLATFORM INFRASTRUCTURE (Cross-Cutting Pillar)
   // ==========================================
   {
     id: 'yocto-project',
@@ -796,7 +916,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 8. DEVELOPMENT, TESTING & SIMULATION (Cross-Cutting Pillar)
+  // 9. DEVELOPMENT, TESTING & SIMULATION (Cross-Cutting Pillar)
   // ==========================================
   {
     id: 'dspace-scalexio-hil',
@@ -916,7 +1036,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
 
   // ==========================================
-  // 9. CLOUD & DEVOPS / OTA PLATFORM (Cross-Cutting Pillar)
+  // 10. CLOUD & DEVOPS / OTA PLATFORM (Cross-Cutting Pillar)
   // ==========================================
   {
     id: 'ota-cloud-fleet',
@@ -933,7 +1053,7 @@ export const stackTechnologies: StackTechnology[] = [
     categories: ['Cloud', 'OTA', 'DevOps'],
     topics: ['cloud', 'sdv', 'cybersecurity'],
     companyIds: ['hyundai-motor-group', 'tesla', 'red-hat'],
-    relatedTechnologyIds: ['eclipse-uprotocol', 'covesa-vss'],
+    relatedTechnologyIds: ['eclipse-uprotocol', 'covesa-vss', 'unece-r155-r156'],
     tags: ['ota', 'cloud', 'fleet', 'telematics', 'updates'],
   },
   {
