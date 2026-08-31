@@ -251,3 +251,4 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     </div>
   );
 };
+

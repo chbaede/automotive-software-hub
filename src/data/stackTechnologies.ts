@@ -382,7 +382,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://covesa.global/',
     openSourceProjectIds: ['covesa-vss'],
     resourceIds: ['covesa-specifications'],
-    eventIds: ['covesa-all-member-meeting-spring-2026'],
+    eventIds: ['covesa-spring-amm-2026'],
     relatedTechnologyIds: ['eclipse-uprotocol', 'android-automotive-os'],
     tags: ['covesa', 'vss', 'signals', 'taxonomy', 'data-model'],
   },
@@ -470,3 +470,4 @@ export const stackTechnologies: StackTechnology[] = [
     tags: ['adb', 'perfetto', 'tracing', 'profiling', 'debug'],
   },
 ];
+
