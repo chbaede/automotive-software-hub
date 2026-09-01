@@ -120,3 +120,4 @@ export const useSEO = () => {
     }
   }, [location.pathname, language]);
 };
+

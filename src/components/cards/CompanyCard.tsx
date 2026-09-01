@@ -59,8 +59,25 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
     }
   };
 
+  const getCountryFlag = (headquarters: string): string => {
+    const hq = headquarters.toLowerCase();
+    if (hq.includes('south korea') || hq.includes('korea')) return '🇰🇷';
+    if (hq.includes('usa') || hq.includes('united states') || hq.includes('california') || hq.includes('texas') || hq.includes('michigan') || hq.includes('connecticut')) return '🇺🇸';
+    if (hq.includes('germany')) return '🇩🇪';
+    if (hq.includes('japan')) return '🇯🇵';
+    if (hq.includes('france')) return '🇫🇷';
+    if (hq.includes('ireland') || hq.includes('dublin')) return '🇮🇪';
+    if (hq.includes('netherlands')) return '🇳🇱';
+    if (hq.includes('china') || hq.includes('hong kong') || hq.includes('taiwan')) return '🇨🇳';
+    if (hq.includes('israel')) return '🇮🇱';
+    if (hq.includes('canada')) return '🇨🇦';
+    if (hq.includes('uk') || hq.includes('united kingdom')) return '🇬🇧';
+    return '🌐';
+  };
+
   const style = getCategoryStyles(company.category);
   const websiteUrl = typeof company.website === 'string' ? company.website : getLocalizedText(company.website, language);
+  const flag = getCountryFlag(company.headquarters);
 
   return (
     <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${style.card}`}>
@@ -71,12 +88,14 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
           </span>
 
           {company.isPublic && company.ticker ? (
-            <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded font-semibold">
-              {company.exchange}: {company.ticker}
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded font-semibold flex items-center gap-1.5">
+              <span className="text-xs leading-none">{flag}</span>
+              <span>{company.exchange}: {company.ticker}</span>
             </span>
           ) : (
-            <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 dark:bg-slate-800/60 text-slate-400 rounded">
-              {t.companies.privateCompany}
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 rounded flex items-center gap-1.5">
+              <span className="text-xs leading-none">{flag}</span>
+              <span>{t.companies.privateCompany}</span>
             </span>
           )}
         </div>
@@ -87,7 +106,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
 
         <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-3">
           <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span>{company.headquarters}</span>
+          <span>{flag} {company.headquarters}</span>
         </div>
 
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">

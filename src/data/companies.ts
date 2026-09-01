@@ -279,6 +279,40 @@ export const companies: Company[] = [
     technologies: ['Qiankun ADS 3.0', 'HarmonySpace Cockpit', 'MDC Autonomous Drive Controller', 'VOS Platform'],
     tags: ['tier1', 'huawei', 'qiankun-ads', 'harmonyos', 'mdc', 'adas'],
   },
+  {
+    id: 'visteon-corporation',
+    name: 'Visteon Corporation',
+    category: 'tier1',
+    description: {
+      en: 'Global automotive electronics leader delivering SmartCore cockpit domain controllers, digital clusters, and wireless BMS.',
+      ko: 'SmartCore 콕핏 도메인 제어기, 디지털 계기판 및 무선 배터리 관리 시스템(BMS)을 제공하는 글로벌 전장 부품 기업.',
+    },
+    website: 'https://www.visteon.com/',
+    headquarters: 'Van Buren Township, Michigan, USA',
+    ticker: 'VC',
+    exchange: 'NASDAQ',
+    isPublic: true,
+    automotiveTopics: ['android-automotive', 'sdv', 'qnx'],
+    technologies: ['SmartCore Cockpit Controller', 'Digital Cluster UI', 'Wireless BMS'],
+    tags: ['tier1', 'visteon', 'smartcore', 'cockpit', 'bms'],
+  },
+  {
+    id: 'panasonic-automotive',
+    name: 'Panasonic Automotive Systems',
+    category: 'tier1',
+    description: {
+      en: 'Major Tier 1 automotive supplier offering SkipGen IVI platforms, large AR-HUDs, automotive batteries, and ELS audio systems.',
+      ko: 'SkipGen 인포테인먼트 플랫폼, 대형 AR-HUD, 차량용 배터리 및 프리미엄 오디오 시스템을 공급하는 대형 전장 부품사.',
+    },
+    website: 'https://automotive.panasonic.com/',
+    headquarters: 'Yokohama, Kanagawa, Japan',
+    ticker: '6752',
+    exchange: 'TSE',
+    isPublic: true,
+    automotiveTopics: ['android-automotive', 'sdv', 'cloud'],
+    technologies: ['SkipGen IVI System', 'Large AR-HUD', 'Automotive Battery Systems'],
+    tags: ['tier1', 'panasonic', 'skipgen', 'hud', 'battery'],
+  },
 
   // Semiconductors
   {
