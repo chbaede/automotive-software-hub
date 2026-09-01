@@ -6,6 +6,8 @@
  * - Known taxonomy topics
  * - Valid URL formats
  * - Valid Stack Layers and cross-referenced entity IDs
+ * - Valid Architecture Profiles and referenced technology IDs
+ * - Valid Semantic Technology Relationships
  */
 
 import { tools } from '../src/data/tools.js';
@@ -15,6 +17,8 @@ import { events } from '../src/data/events.js';
 import { companies } from '../src/data/companies.js';
 import { stackLayers } from '../src/data/stackLayers.js';
 import { stackTechnologies } from '../src/data/stackTechnologies.js';
+import { architectureProfiles } from '../src/data/architectureProfiles.js';
+import { stackRelationships } from '../src/data/stackRelationships.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
 
 const validTopicIds = new Set(Object.keys(TOPIC_TAXONOMY));
@@ -24,6 +28,7 @@ const validProjectIds = new Set(projects.map((p) => p.id));
 const validEventIds = new Set(events.map((e) => e.id));
 const validCompanyIds = new Set(companies.map((c) => c.id));
 const validLayerIds = new Set(stackLayers.map((l) => l.id));
+const validTechIds = new Set(stackTechnologies.map((st) => st.id));
 
 let hasError = false;
 
@@ -110,6 +115,10 @@ stackTechnologies.forEach((st) => {
     error(`[Stack Tech ID: ${st.id}] Unknown layer ID: '${st.layerId}'`);
   }
 
+  (st.relatedTechnologyIds || []).forEach((rtid) => {
+    if (!validTechIds.has(rtid)) error(`[Stack Tech ID: ${st.id}] Unknown relatedTechnologyId: '${rtid}'`);
+  });
+
   (st.toolIds || []).forEach((tid) => {
     if (!validToolIds.has(tid)) error(`[Stack Tech ID: ${st.id}] Unknown toolId: '${tid}'`);
   });
@@ -132,9 +141,53 @@ stackTechnologies.forEach((st) => {
 });
 console.log(`✅ Stack Technologies: ${stackTechnologies.length} technologies & cross-references validated.`);
 
+// Validate Architecture Profiles
+const profileIds = new Set<string>();
+architectureProfiles.forEach((prof) => {
+  if (profileIds.has(prof.id)) error(`[Architecture Profile] Duplicate profile ID: '${prof.id}'`);
+  profileIds.add(prof.id);
+
+  if (!prof.name?.en) error(`[Architecture Profile ID: ${prof.id}] Missing English name.`);
+  if (!prof.description?.en) error(`[Architecture Profile ID: ${prof.id}] Missing English description.`);
+
+  prof.technologyIds.forEach((tid) => {
+    if (!validTechIds.has(tid)) {
+      error(`[Architecture Profile ID: ${prof.id}] Unknown technologyId: '${tid}'`);
+    }
+  });
+
+  (prof.layerIds || []).forEach((lid) => {
+    if (!validLayerIds.has(lid)) {
+      error(`[Architecture Profile ID: ${prof.id}] Unknown layerId: '${lid}'`);
+    }
+  });
+
+  (prof.topics || []).forEach((top) => {
+    if (!validTopicIds.has(top)) {
+      error(`[Architecture Profile ID: ${prof.id}] Unknown topic: '${top}'`);
+    }
+  });
+});
+console.log(`✅ Architecture Profiles: ${architectureProfiles.length} profiles validated.`);
+
+// Validate Explicit Stack Relationships
+const validRelationshipTypes = new Set(['depends-on', 'runs-on', 'implemented-by', 'used-with', 'alternative', 'related']);
+stackRelationships.forEach((rel, idx) => {
+  if (!validTechIds.has(rel.sourceId)) {
+    error(`[Relationship #${idx}] Unknown sourceId: '${rel.sourceId}'`);
+  }
+  if (!validTechIds.has(rel.targetId)) {
+    error(`[Relationship #${idx}] Unknown targetId: '${rel.targetId}'`);
+  }
+  if (!validRelationshipTypes.has(rel.type)) {
+    error(`[Relationship #${idx}] Unknown relationship type: '${rel.type}'`);
+  }
+});
+console.log(`✅ Semantic Stack Relationships: ${stackRelationships.length} relationships validated.`);
+
 if (hasError) {
   console.error('\n❌ Data validation FAILED.');
   process.exit(1);
 } else {
-  console.log('\n✨ All data collections & stack graph relationships validated clean!');
+  console.log('\n✨ All data collections, architecture profiles & knowledge graph relationships validated clean!');
 }

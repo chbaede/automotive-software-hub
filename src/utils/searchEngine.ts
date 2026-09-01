@@ -7,14 +7,46 @@ import { projects } from '../data/projects';
 import { events } from '../data/events';
 import { companies } from '../data/companies';
 import { stackTechnologies } from '../data/stackTechnologies';
+import { architectureProfiles } from '../data/architectureProfiles';
 
 export function performGlobalSearch(query: string, lang: Language): GroupedSearchResults {
   const cleanQuery = query.trim().toLowerCase();
   if (!cleanQuery) {
-    return { technologies: [], tools: [], resources: [], projects: [], events: [], companies: [] };
+    return {
+      architectures: [],
+      technologies: [],
+      tools: [],
+      resources: [],
+      projects: [],
+      events: [],
+      companies: [],
+    };
   }
 
   const matchText = (text: string) => text.toLowerCase().includes(cleanQuery);
+
+  // Search Architecture Profiles
+  const matchedArchitectures: SearchResultItem[] = architectureProfiles
+    .filter((ap) => {
+      const name = getLocalizedText(ap.name, lang);
+      const desc = getLocalizedText(ap.description, lang);
+      return (
+        matchText(name) ||
+        matchText(desc) ||
+        (ap.tags && ap.tags.some(matchText)) ||
+        (ap.topics && ap.topics.some(matchText))
+      );
+    })
+    .map((ap) => ({
+      id: ap.id,
+      type: 'architecture',
+      title: getLocalizedText(ap.name, lang),
+      description: getLocalizedText(ap.description, lang),
+      route: `/stack?architecture=${ap.id}`,
+      topics: ap.topics,
+      badgeText: 'Architecture Profile',
+      rawItem: ap,
+    }));
 
   // Search Stack Technologies
   const matchedTechs: SearchResultItem[] = stackTechnologies
@@ -118,9 +150,9 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
       const name = getLocalizedText(e.name, lang);
       const desc = getLocalizedText(e.description, lang);
       return (
+        matchText(e.city && matchText(e.city) ? e.city : '') ||
         matchText(name) ||
         matchText(desc) ||
-        (e.city && matchText(e.city)) ||
         (e.country && matchText(e.country)) ||
         e.topics.some(matchText)
       );
@@ -163,6 +195,7 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
     }));
 
   return {
+    architectures: matchedArchitectures,
     technologies: matchedTechs,
     tools: matchedTools,
     resources: matchedResources,

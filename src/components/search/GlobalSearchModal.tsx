@@ -34,6 +34,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   const results = performGlobalSearch(query, language);
   const totalResults =
+    (results.architectures?.length || 0) +
     (results.technologies?.length || 0) +
     results.tools.length +
     results.resources.length +
@@ -135,6 +136,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             </div>
           ) : (
             <>
+              {renderSection(
+                `Architecture Profiles (${results.architectures.length})`,
+                <Layers className="w-3.5 h-3.5 text-brand-500" />,
+                results.architectures
+              )}
               {renderSection(
                 `Stack Technologies (${results.technologies.length})`,
                 <Layers className="w-3.5 h-3.5 text-brand-500" />,

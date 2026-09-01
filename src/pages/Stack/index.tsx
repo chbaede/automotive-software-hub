@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Layers, Search, RotateCcw, Compass, Wrench, Cpu, LayoutGrid } from 'lucide-react';
+import { Layers, Search, RotateCcw, Compass, Wrench, LayoutGrid, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { stackLayers } from '../../data/stackLayers';
 import { stackTechnologies } from '../../data/stackTechnologies';
+import { architectureProfiles } from '../../data/architectureProfiles';
+import { stackRelationships } from '../../data/stackRelationships';
 import { StackTechnology } from '../../types/stack';
+import { ArchitectureProfile } from '../../types/architecture';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
+import { ArchitectureSelector } from '../../components/stack/ArchitectureSelector';
+import { ArchitectureProfilePanel } from '../../components/stack/ArchitectureProfilePanel';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
 import { GoogleAdBanner } from '../../components/ads/GoogleAdBanner';
 import { getLocalizedText } from '../../types/i18n';
@@ -22,16 +27,29 @@ export const StackPage: React.FC = () => {
   const [topicFilter, setTopicFilter] = useState<string>(searchParams.get('topic') || 'all');
 
   const [selectedTech, setSelectedTech] = useState<StackTechnology | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<ArchitectureProfile | null>(null);
   const [activeTool, setActiveTool] = useState<Tool | null>(null);
 
-  // Sync URL ?tech=android-automotive parameter
+  // Sync URL parameters (?tech=... & ?architecture=...)
   useEffect(() => {
     const techIdParam = searchParams.get('tech');
     if (techIdParam) {
-      const found = stackTechnologies.find((st) => st.id === techIdParam);
-      if (found) {
-        setSelectedTech(found);
+      const foundTech = stackTechnologies.find((st) => st.id === techIdParam);
+      if (foundTech) {
+        setSelectedTech(foundTech);
       }
+    } else {
+      setSelectedTech(null);
+    }
+
+    const archParam = searchParams.get('architecture');
+    if (archParam) {
+      const foundArch = architectureProfiles.find((ap) => ap.id === archParam);
+      if (foundArch) {
+        setSelectedProfile(foundArch);
+      }
+    } else {
+      setSelectedProfile(null);
     }
   }, [searchParams]);
 
@@ -51,43 +69,96 @@ export const StackPage: React.FC = () => {
     });
   };
 
+  const handleSelectProfile = (profile: ArchitectureProfile | null) => {
+    setSelectedProfile(profile);
+    setSearchParams((prev) => {
+      if (profile) {
+        prev.set('architecture', profile.id);
+      } else {
+        prev.delete('architecture');
+      }
+      return prev;
+    });
+  };
+
   const handleResetFilters = () => {
     setSearchQuery('');
     setLayerFilter('all');
     setTopicFilter('all');
+    setSelectedProfile(null);
+    setSelectedTech(null);
     setSearchParams({});
   };
 
+  // Compute Active Profile Technology IDs
+  const activeProfileTechIds = useMemo(() => {
+    if (!selectedProfile) return new Set<string>();
+    return new Set(selectedProfile.technologyIds);
+  }, [selectedProfile]);
+
   // Compute Highlighted Technology IDs (when a tech is selected)
-  const highlightedTechIds = new Set<string>();
-  if (selectedTech) {
-    highlightedTechIds.add(selectedTech.id);
-    (selectedTech.relatedTechnologyIds || []).forEach((id) => highlightedTechIds.add(id));
-  }
+  const highlightedTechIds = useMemo(() => {
+    const set = new Set<string>();
+    if (!selectedTech) return set;
 
-  // Filter Technologies
-  const filteredTechs = stackTechnologies.filter((tech) => {
-    const name = tech.name.toLowerCase();
-    const desc = getLocalizedText(tech.description, language).toLowerCase();
-    const query = searchQuery.trim().toLowerCase();
+    set.add(selectedTech.id);
+    (selectedTech.relatedTechnologyIds || []).forEach((id) => set.add(id));
 
-    const matchesQuery =
-      !query ||
-      name.includes(query) ||
-      desc.includes(query) ||
-      (tech.tags && tech.tags.some((t) => t.includes(query)));
+    // Add semantic relationship targets and sources
+    stackRelationships.forEach((rel) => {
+      if (rel.sourceId === selectedTech.id) set.add(rel.targetId);
+      if (rel.targetId === selectedTech.id) set.add(rel.sourceId);
+    });
 
-    const matchesLayer = layerFilter === 'all' || tech.layerId === layerFilter;
-    const matchesTopic = topicFilter === 'all' || tech.topics.includes(topicFilter as any);
+    return set;
+  }, [selectedTech]);
 
-    return matchesQuery && matchesLayer && matchesTopic;
-  });
+  // Is any interactive filter active (for subtle dimming of unrelated nodes)
+  const isFilterActive = Boolean(selectedTech || selectedProfile);
+
+  // Relationship-aware Search & Filtering
+  const filteredTechs = useMemo(() => {
+    return stackTechnologies.filter((tech) => {
+      const name = tech.name.toLowerCase();
+      const desc = getLocalizedText(tech.description, language).toLowerCase();
+      const fit = getLocalizedText(tech.whereDoesItFit, language).toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
+
+      // Check containing architecture profile names for keyword discovery
+      const profileNames = architectureProfiles
+        .filter((p) => p.technologyIds.includes(tech.id))
+        .map((p) => getLocalizedText(p.name, language).toLowerCase())
+        .join(' ');
+
+      // Check related technology names
+      const relatedNames = (tech.relatedTechnologyIds || [])
+        .map((rid) => {
+          const rTech = stackTechnologies.find((st) => st.id === rid);
+          return rTech ? rTech.name.toLowerCase() : '';
+        })
+        .join(' ');
+
+      const matchesQuery =
+        !query ||
+        name.includes(query) ||
+        desc.includes(query) ||
+        fit.includes(query) ||
+        profileNames.includes(query) ||
+        relatedNames.includes(query) ||
+        (tech.tags && tech.tags.some((t) => t.toLowerCase().includes(query)));
+
+      const matchesLayer = layerFilter === 'all' || tech.layerId === layerFilter;
+      const matchesTopic = topicFilter === 'all' || tech.topics.includes(topicFilter as any);
+
+      return matchesQuery && matchesLayer && matchesTopic;
+    });
+  }, [searchQuery, layerFilter, topicFilter, language]);
 
   // Separate Core Stack Layers vs Cross-Cutting Pillars
   const coreLayers = stackLayers
     .filter((l) => l.layerType === 'core')
     .filter((l) => layerFilter === 'all' || l.id === layerFilter)
-    .sort((a, b) => a.order - b.order); // Order 1 (App at top) -> Order 6 (Hardware at base)
+    .sort((a, b) => a.order - b.order); // Top to bottom foundation
 
   const crossCuttingLayers = stackLayers
     .filter((l) => l.layerType === 'cross-cutting')
@@ -95,12 +166,12 @@ export const StackPage: React.FC = () => {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header Banner */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <LayoutGrid className="w-4 h-4" />
-          <span>Layered Architecture Diagram Map</span>
+          <span>Knowledge Graph & Layered Architecture Explorer</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.stack.title}
@@ -109,6 +180,24 @@ export const StackPage: React.FC = () => {
           {t.stack.subtitle}
         </p>
       </div>
+
+      {/* Architecture Profile Selector Bar */}
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <ArchitectureSelector
+          selectedProfileId={selectedProfile?.id || null}
+          onSelectProfile={handleSelectProfile}
+        />
+      </div>
+
+      {/* Active Architecture Profile Knowledge Panel */}
+      {selectedProfile && (
+        <ArchitectureProfilePanel
+          profile={selectedProfile}
+          onClose={() => handleSelectProfile(null)}
+          onSelectTech={handleSelectTech}
+          onOpenTool={(tool) => setActiveTool(tool)}
+        />
+      )}
 
       {/* Search & Filter Controls */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -155,7 +244,7 @@ export const StackPage: React.FC = () => {
           </select>
 
           {/* Reset Button */}
-          {(searchQuery || layerFilter !== 'all' || topicFilter !== 'all') && (
+          {(searchQuery || layerFilter !== 'all' || topicFilter !== 'all' || selectedProfile) && (
             <button
               onClick={handleResetFilters}
               className="px-3 py-2 text-xs font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition flex items-center gap-1"
@@ -197,6 +286,8 @@ export const StackPage: React.FC = () => {
                   technologies={layerTechs}
                   selectedTechId={selectedTech?.id}
                   highlightedTechIds={highlightedTechIds}
+                  activeProfileTechIds={activeProfileTechIds}
+                  isFilterActive={isFilterActive}
                   onSelectTech={handleSelectTech}
                   variant="core"
                 />
@@ -225,6 +316,8 @@ export const StackPage: React.FC = () => {
                   technologies={layerTechs}
                   selectedTechId={selectedTech?.id}
                   highlightedTechIds={highlightedTechIds}
+                  activeProfileTechIds={activeProfileTechIds}
+                  isFilterActive={isFilterActive}
                   onSelectTech={handleSelectTech}
                   variant="cross-cutting"
                 />
@@ -239,6 +332,7 @@ export const StackPage: React.FC = () => {
         technology={selectedTech}
         onClose={handleCloseTechDrawer}
         onSelectTech={handleSelectTech}
+        onSelectProfile={handleSelectProfile}
         onOpenTool={(tool) => setActiveTool(tool)}
       />
 

@@ -10,6 +10,8 @@ interface StackLayerBlockProps {
   technologies: StackTechnology[];
   selectedTechId?: string;
   highlightedTechIds?: Set<string>;
+  activeProfileTechIds?: Set<string>;
+  isFilterActive?: boolean;
   onSelectTech: (tech: StackTechnology) => void;
   isExpandedMobile?: boolean;
   onToggleMobileExpand?: () => void;
@@ -78,6 +80,8 @@ export const StackLayerBlock: React.FC<StackLayerBlockProps> = ({
   technologies,
   selectedTechId,
   highlightedTechIds,
+  activeProfileTechIds,
+  isFilterActive,
   onSelectTech,
   isExpandedMobile = true,
   onToggleMobileExpand,
@@ -143,15 +147,28 @@ export const StackLayerBlock: React.FC<StackLayerBlockProps> = ({
                   : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5'
               }
             >
-              {technologies.map((tech) => (
-                <StackTechCard
-                  key={tech.id}
-                  technology={tech}
-                  isSelected={selectedTechId === tech.id}
-                  isHighlighted={highlightedTechIds?.has(tech.id)}
-                  onSelect={onSelectTech}
-                />
-              ))}
+              {technologies.map((tech) => {
+                const isSelected = selectedTechId === tech.id;
+                const isHighlighted = highlightedTechIds?.has(tech.id);
+                const isInActiveProfile = activeProfileTechIds?.has(tech.id);
+
+                // If a profile or selection is active, dim technologies that are not highlighted or in profile
+                const isDimmed = isFilterActive
+                  ? !isSelected && !isHighlighted && !isInActiveProfile
+                  : false;
+
+                return (
+                  <StackTechCard
+                    key={tech.id}
+                    technology={tech}
+                    isSelected={isSelected}
+                    isHighlighted={isHighlighted}
+                    isDimmed={isDimmed}
+                    isInActiveProfile={isInActiveProfile}
+                    onSelect={onSelectTech}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

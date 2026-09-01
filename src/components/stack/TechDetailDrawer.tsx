@@ -1,13 +1,29 @@
 import React from 'react';
-import { X, ExternalLink, Wrench, BookOpen, Code2, Building2, MapPin, Play, Compass } from 'lucide-react';
+import {
+  X,
+  ExternalLink,
+  Wrench,
+  BookOpen,
+  Code2,
+  Building2,
+  Calendar,
+  Sparkles,
+  Play,
+  Compass,
+  FileCode,
+  Globe,
+} from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
+import { ArchitectureProfile } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { tools } from '../../data/tools';
 import { resources } from '../../data/resources';
 import { projects } from '../../data/projects';
 import { companies } from '../../data/companies';
+import { events } from '../../data/events';
 import { stackLayers } from '../../data/stackLayers';
+import { architectureProfiles } from '../../data/architectureProfiles';
 import { TechRelationshipTree } from './TechRelationshipTree';
 import { Tool } from '../../types/tool';
 
@@ -15,6 +31,7 @@ interface TechDetailDrawerProps {
   technology: StackTechnology | null;
   onClose: () => void;
   onSelectTech: (tech: StackTechnology) => void;
+  onSelectProfile?: (profile: ArchitectureProfile) => void;
   onOpenTool?: (tool: Tool) => void;
 }
 
@@ -22,6 +39,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   technology,
   onClose,
   onSelectTech,
+  onSelectProfile,
   onOpenTool,
 }) => {
   const { language, t } = useLanguage();
@@ -33,6 +51,11 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
   const layer = stackLayers.find((l) => l.id === technology.layerId);
   const layerName = layer ? getLocalizedText(layer.name, language) : technology.layerId;
+
+  // Resolve Linked Architecture Profiles
+  const containingProfiles = architectureProfiles.filter((p) =>
+    p.technologyIds.includes(technology.id)
+  );
 
   // Resolve Linked Entity Objects
   const linkedTools = (technology.toolIds || [])
@@ -51,6 +74,10 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     .map((id) => companies.find((c) => c.id === id))
     .filter(Boolean);
 
+  const linkedEvents = (technology.eventIds || [])
+    .map((id) => events.find((e) => e.id === id))
+    .filter(Boolean);
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-slate-900/60 backdrop-blur-sm animate-fade-in"
@@ -62,7 +89,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
       >
         {/* Drawer Header */}
         <div className="flex items-start justify-between p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded">
                 {layerName}
@@ -87,9 +114,22 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                       : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-400/40'
                   }`}
                 >
-                  {technology.licenseType === 'oss' ? 'OSS (Open Source)' : 'Commercial (Proprietary)'}
+                  {technology.licenseType === 'oss' ? 'OSS' : 'Commercial'}
                 </span>
               )}
+              {technology.status && (
+                <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded font-semibold">
+                  {technology.status}
+                </span>
+              )}
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
+              {technology.name}
+            </h2>
+
+            {/* Quick Links */}
+            <div className="flex items-center gap-3 pt-0.5">
               {technology.website && (
                 <a
                   href={technology.website}
@@ -97,14 +137,24 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                   rel="noopener noreferrer"
                   className="text-xs font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-1 hover:underline"
                 >
+                  <Globe className="w-3.5 h-3.5" />
                   <span>Official Website</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              )}
+              {technology.repositoryUrl && (
+                <a
+                  href={technology.repositoryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1 hover:underline"
+                >
+                  <FileCode className="w-3.5 h-3.5" />
+                  <span>Repository</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
                 </a>
               )}
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
-              {technology.name}
-            </h2>
           </div>
 
           <button
@@ -122,7 +172,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Overview & Architecture Description
             </h3>
-            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 font-normal">
               {description}
             </p>
           </div>
@@ -138,7 +188,28 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </p>
           </div>
 
-          {/* Technology Relationship Node Tree */}
+          {/* Architecture Profiles It Belongs To */}
+          {containingProfiles.length > 0 && (
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+                <span>{t.stack.architectureProfilesBelongsTo} ({containingProfiles.length})</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {containingProfiles.map((prof) => (
+                  <button
+                    key={prof.id}
+                    onClick={() => onSelectProfile && onSelectProfile(prof)}
+                    className="px-3 py-1.5 bg-gradient-to-r from-brand-500/15 to-indigo-500/10 hover:from-brand-500 hover:to-indigo-600 hover:text-white border border-brand-500/30 rounded-lg text-xs font-bold text-brand-900 dark:text-brand-200 transition shadow-2xs flex items-center gap-1.5"
+                  >
+                    <span>{getLocalizedText(prof.name, language)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Technology Semantic Relationship Node Tree */}
           <TechRelationshipTree technology={technology} onSelectTech={onSelectTech} />
 
           {/* Linked Interactive Developer Tools */}
@@ -152,7 +223,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                 {linkedTools.map((tool) => (
                   <div
                     key={tool.id}
-                    className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800"
+                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800"
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
@@ -192,7 +263,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                     href={res.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
+                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
@@ -221,7 +292,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                     href={p.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
+                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
@@ -247,13 +318,44 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                 {linkedCompanies.map((c: any) => (
                   <a
                     key={c.id}
-                    href={c.website}
+                    href={typeof c.website === 'string' ? c.website : getLocalizedText(c.website, language)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
+                    className="px-3 py-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
                   >
                     <span>{c.name}</span>
                     <ExternalLink className="w-3 h-3 text-slate-400" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Linked Events */}
+          {linkedEvents.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <Calendar className="w-4 h-4 text-brand-500" />
+                <span>Relevant Technical Events ({linkedEvents.length})</span>
+              </div>
+              <div className="grid gap-2">
+                {linkedEvents.map((evt: any) => (
+                  <a
+                    key={evt.id}
+                    href={evt.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                        {getLocalizedText(evt.name, language)}
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-mono">
+                        {evt.startDate} · {evt.city || 'Online'}
+                      </div>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   </a>
                 ))}
               </div>
@@ -274,4 +376,3 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     </div>
   );
 };
-

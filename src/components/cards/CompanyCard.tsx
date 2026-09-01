@@ -1,8 +1,9 @@
 import React from 'react';
-import { MapPin, ExternalLink } from 'lucide-react';
+import { MapPin, ExternalLink, Layers } from 'lucide-react';
 import { Company } from '../../types/company';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { stackTechnologies } from '../../data/stackTechnologies';
 
 interface CompanyCardProps {
   company: Company;
@@ -79,6 +80,11 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   const websiteUrl = typeof company.website === 'string' ? company.website : getLocalizedText(company.website, language);
   const flag = getCountryFlag(company.headquarters);
 
+  // Find linked technologies in Stack Explorer
+  const linkedStackTechs = stackTechnologies.filter((st) =>
+    st.companyIds?.includes(company.id)
+  );
+
   return (
     <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${style.card}`}>
       <div>
@@ -123,6 +129,27 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
                 <span key={tech} className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 dark:bg-slate-800/70 text-slate-700 dark:text-slate-300 rounded border border-slate-200 dark:border-slate-800">
                   {tech}
                 </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Stack Explorer Connected Technologies */}
+        {linkedStackTechs.length > 0 && (
+          <div className="mb-4 space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="text-[10px] font-bold uppercase text-brand-600 dark:text-brand-400 tracking-wider flex items-center gap-1">
+              <Layers className="w-3 h-3" />
+              <span>Stack Explorer Nodes</span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {linkedStackTechs.map((tech) => (
+                <a
+                  key={tech.id}
+                  href={`/#/stack?tech=${tech.id}`}
+                  className="text-[10px] font-mono px-2 py-0.5 bg-brand-500/10 hover:bg-brand-500 hover:text-white text-brand-700 dark:text-brand-300 rounded border border-brand-500/30 transition flex items-center gap-1"
+                >
+                  <span>{tech.name}</span>
+                </a>
               ))}
             </div>
           </div>

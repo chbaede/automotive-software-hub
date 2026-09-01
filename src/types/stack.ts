@@ -46,6 +46,9 @@ export interface StackTechnology {
   website?: string;
   documentationUrl?: string;
   repositoryUrl?: string;
+  sourceUrl?: string;
+  lastVerified?: string;
+  status?: 'active' | 'deprecated' | 'emerging';
   openSourceProjectIds?: string[];
   companyIds?: string[];
   toolIds?: string[];

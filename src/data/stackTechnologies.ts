@@ -124,7 +124,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.nxp.com/products/processors-and-microcontrollers/s32-automotive-platform:S32',
     companyIds: ['nxp'],
     toolIds: ['can-id-conv', 'can-frame-vis'],
-    relatedTechnologyIds: ['autosar-classic', 'can-fd', 'doip-protocol'],
+    relatedTechnologyIds: ['autosar-classic', 'can-protocol', 'doip-protocol'],
     tags: ['nxp-s32', 'mcu', 'zonal', 'can-gateway', 'Commercial'],
   },
   {
@@ -298,7 +298,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['android-automotive', 'sdv', 'functional-safety'],
     website: 'https://semiconductor.samsung.com/processor/automotive-processor/',
     companyIds: ['samsung-electronics'],
-    relatedTechnologyIds: ['samsung-exynos-auto-v920', 'android-automotive-os'],
+    relatedTechnologyIds: ['android-automotive-os', 'open-synergy-coqos', 'linux-kernel'],
     tags: ['samsung-hv', 'exynos-auto', 'hypervisor', 'koreantech', 'asil-b', 'Commercial'],
   },
   {
@@ -466,7 +466,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['embedded-linux', 'open-source', 'functional-safety'],
     website: 'https://wiki.linuxfoundation.org/realtime/start',
     openSourceProjectIds: ['linux-kernel'],
-    relatedTechnologyIds: ['linux-kernel', 'socketcan-protocol'],
+    relatedTechnologyIds: ['linux-kernel', 'socketcan'],
     tags: ['linux-rt', 'preempt-rt', 'real-time', 'kernel', 'embedded-linux', 'OSS'],
   },
   {
@@ -485,7 +485,7 @@ export const stackTechnologies: StackTechnology[] = [
     categories: ['RTOS', 'Microcontroller', 'Embedded'],
     topics: ['can', 'functional-safety', 'open-source'],
     website: 'https://www.freertos.org/',
-    relatedTechnologyIds: ['infineon-aurix', 'nxp-s32k'],
+    relatedTechnologyIds: ['nxp-s32', 'autosar-classic'],
     tags: ['freertos', 'rtos', 'mcu', 'microcontroller', 'embedded', 'OSS'],
   },
   {
@@ -505,7 +505,7 @@ export const stackTechnologies: StackTechnology[] = [
     categories: ['RTOS', 'Open Source', 'Microcontroller'],
     topics: ['functional-safety', 'open-source', 'can'],
     website: 'https://www.zephyrproject.org/',
-    relatedTechnologyIds: ['infineon-aurix', 'nxp-s32k', 'embedded-linux-rt'],
+    relatedTechnologyIds: ['nxp-s32', 'embedded-linux-rt'],
     tags: ['zephyr', 'rtos', 'linux-foundation', 'mcu', 'safety', 'OSS'],
   },
   {
@@ -612,7 +612,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['adas', 'sdv', 'functional-safety'],
     website: 'https://www.huawei.com/',
     companyIds: ['huawei-technologies'],
-    relatedTechnologyIds: ['ros2-autoware-stack', 'nvidia-drive-thor'],
+    relatedTechnologyIds: ['ros2-autoware', 'nvidia-drive-thor'],
     tags: ['huawei', 'qiankun-ads', 'mdc', 'autonomous-driving', 'adas', 'god-network', 'Commercial'],
   },
   {
@@ -960,6 +960,27 @@ export const stackTechnologies: StackTechnology[] = [
     repositoryUrl: 'https://github.com/ApolloAuto/apollo',
     relatedTechnologyIds: ['ros2-autoware', 'linux-kernel'],
     tags: ['apollo', 'baidu', 'cyber-rt', 'robotaxi', 'autonomous', 'OSS'],
+  },
+  {
+    id: 'ros2-autoware',
+    licenseType: 'oss',
+    name: 'Autoware (ROS 2 Autonomous Driving Platform)',
+    layerId: 'application-experience',
+    description: {
+      en: 'World-leading open-source autonomous driving software stack built on ROS 2, covering localization, perception, planning, and control.',
+      ko: 'ROS 2를 기반으로 위치 추정, 인지, 경로 계획 및 차량 제어를 수행하는 세계 선도 자율주행 오픈소스 플랫폼.',
+    },
+    whereDoesItFit: {
+      en: 'Autonomous Driving (AD) Application & Perception Stack executing on compute nodes.',
+      ko: '고성능 자율주행 컴퓨팅 노드 상에서 구동되는 자율주행 상위 애플리케이션 및 인지/제어 스택.',
+    },
+    categories: ['Automotive Platform', 'ADAS Stack', 'Open Source'],
+    topics: ['adas', 'ros2', 'open-source'],
+    website: 'https://www.autoware.org/',
+    repositoryUrl: 'https://github.com/autowarefoundation/autoware',
+    openSourceProjectIds: ['ros2-autoware'],
+    relatedTechnologyIds: ['dds-protocol', 'eclipse-iceoryx', 'carla-av-simulator', 'baidu-apollo-ad'],
+    tags: ['autoware', 'ros2', 'autonomous-driving', 'adas', 'perception', 'OSS'],
   },
   {
     id: 'kanzi-ui-engine',
