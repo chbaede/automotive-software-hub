@@ -159,12 +159,29 @@ stackTechnologies.forEach((st) => {
     if (fs.claimType && !validSafetyClaimTypes.has(fs.claimType)) {
       error(`[Stack Tech ID: ${st.id}] Invalid functionalSafety.claimType: '${fs.claimType}'`);
     }
-    if (fs.claimType && fs.claimType !== 'certified') {
-      const descEn = st.description?.en || '';
-      if (/\b(asil-[abcd]\s+certified|safety-certified)\b/i.test(descEn)) {
-        error(`[Stack Tech ID: ${st.id}] Description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
+
+    // Strict requirements for 'certified' claimType
+    if (fs.claimType === 'certified') {
+      if (!fs.sourceUrl) {
+        error(`[Stack Tech ID: ${st.id}] 'certified' claimType requires an explicit sourceUrl.`);
+      }
+      if (!fs.lastVerified) {
+        error(`[Stack Tech ID: ${st.id}] 'certified' claimType requires lastVerified verification date.`);
       }
     }
+
+    // Text consistency checks: reject 'certified' claims when claimType !== 'certified'
+    if (fs.claimType && fs.claimType !== 'certified') {
+      const descEn = st.description?.en || '';
+      const descKo = st.description?.ko || '';
+      if (/(\basil-[abcd]\s+certified|\bsafety-certified|\biso\s*26262\s+certified|\bcertified\s+for\s+iso\b)/i.test(descEn)) {
+        error(`[Stack Tech ID: ${st.id}] English description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
+      }
+      if (/(인증을\s*획득|기능\s*안전\s*인증|안전\s*인증\s*획득|ASIL-[ABCD]\s*인증\s*획득)/i.test(descKo)) {
+        error(`[Stack Tech ID: ${st.id}] Korean description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
+      }
+    }
+
     if (fs.lastVerified) {
       validateIsoDate(fs.lastVerified, `[Stack Tech ID: ${st.id} functionalSafety]`);
     }

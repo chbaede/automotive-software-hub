@@ -222,5 +222,69 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 12 Passed: Grouped Technology Relationships helper resolves correctly.');
 }
 
+// Test 13: Certified Claim Evidence Completeness (sourceUrl & lastVerified mandatory)
+{
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  stackTechnologies.forEach((tech) => {
+    if (tech.functionalSafety && tech.functionalSafety.claimType === 'certified') {
+      assert.ok(
+        tech.functionalSafety.sourceUrl,
+        `Tech '${tech.id}' with 'certified' claimType must provide an explicit sourceUrl`
+      );
+      assert.ok(
+        tech.functionalSafety.lastVerified,
+        `Tech '${tech.id}' with 'certified' claimType must provide a lastVerified date`
+      );
+    }
+  });
+  console.log('✅ Test 13 Passed: Certified claim evidence completeness verified (sourceUrl & lastVerified).');
+}
+
+// Test 14: Bilingual Safety Claim Consistency (no ungrounded certification claims)
+{
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  stackTechnologies.forEach((tech) => {
+    const fs = tech.functionalSafety;
+    if (fs && fs.claimType && fs.claimType !== 'certified') {
+      const descEn = tech.description?.en || '';
+      const descKo = tech.description?.ko || '';
+
+      const enViolation = /(\basil-[abcd]\s+certified|\bsafety-certified|\biso\s*26262\s+certified|\bcertified\s+for\s+iso\b)/i.test(descEn);
+      assert.strictEqual(
+        enViolation,
+        false,
+        `Tech '${tech.id}' claims 'certified' in EN description but claimType is '${fs.claimType}'`
+      );
+
+      const koViolation = /(인증을\s*획득|기능\s*안전\s*인증|안전\s*인증\s*획득|ASIL-[ABCD]\s*인증\s*획득)/i.test(descKo);
+      assert.strictEqual(
+        koViolation,
+        false,
+        `Tech '${tech.id}' claims 'certified' in KO description but claimType is '${fs.claimType}'`
+      );
+    }
+  });
+  console.log('✅ Test 14 Passed: Bilingual safety claim consistency verified across EN and KO.');
+}
+
+// Test 15: Relationship Confidence Taxonomy Validity
+{
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
+  const validConfidence = new Set(['official', 'vendor', 'community']);
+
+  stackRelationships.forEach((rel, idx) => {
+    if (rel.confidence) {
+      assert.ok(
+        validConfidence.has(rel.confidence),
+        `Relationship #${idx} (${rel.sourceId} -> ${rel.targetId}) has invalid confidence '${rel.confidence}'`
+      );
+    }
+  });
+  console.log('✅ Test 15 Passed: Relationship confidence taxonomy validity verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
