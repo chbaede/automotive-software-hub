@@ -199,7 +199,7 @@ export const companies: Company[] = [
       ko: '차량용 인포테인먼트(IVI), webOS Auto, 5G 텔레매틱스 및 Cybellum 차량 보안 솔루션을 공급하는 전자 부품사.',
     },
     website: {
-      en: 'https://www.lg.com/global/mobility/business',
+      en: 'https://www.lg.com/global/mobility',
       ko: 'https://www.lg.com/kr/mobility',
     },
     headquarters: 'Seoul, South Korea',
@@ -605,7 +605,7 @@ export const companies: Company[] = [
       en: 'Korean mobility software engineering startup specializing in AI-based SDV architecture design, ECU control platforms, and vehicle system governance.',
       ko: 'AI 기반 차량 소프트웨어 아키텍처 설계, ECU 기능 제어 플랫폼 및 SDV(소프트웨어 중심 자동차) 통합 모빌리티 SW 개발사.',
     },
-    website: 'https://www.mootuslab.com/',
+    website: 'https://www.mutuus-lab.com/',
     headquarters: 'Seoul, South Korea',
     isPublic: false,
     automotiveTopics: ['sdv', 'can', 'autosar'],
