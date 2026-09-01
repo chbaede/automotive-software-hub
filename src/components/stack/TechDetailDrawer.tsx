@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   Layers,
   Network,
+  ShieldCheck,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile, STACK_PATH_TYPE_METADATA } from '../../types/architecture';
@@ -305,6 +306,71 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
               {whereDoesItFit}
             </p>
           </div>
+
+          {/* Functional Safety & Evidence Trust Card */}
+          {technology.functionalSafety && (() => {
+            const fs = technology.functionalSafety;
+            const claimLabels: Record<string, { en: string; ko: string }> = {
+              certified: { en: 'Certified', ko: '기능안전 인증' },
+              qualified: { en: 'Safety-Qualified', ko: '기능안전 검증' },
+              compliant: { en: 'ISO 26262 Compliant', ko: '규격 준수' },
+              capable: { en: 'ASIL Capable', ko: 'ASIL 대응 가능' },
+              supports: { en: 'Supports Safety Mechanisms', ko: '안전 메커니즘 지원' },
+              suitable: { en: 'Safety Standard', ko: '안전 표준' },
+            };
+            const rawClaim = fs.claimType || 'capable';
+            const claimLabelObj = claimLabels[rawClaim];
+            const claimLabel = claimLabelObj ? getLocalizedText(claimLabelObj, language) : rawClaim;
+
+            return (
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <span>Functional Safety & Evidence</span>
+                  </div>
+                  {fs.lastVerified && (
+                    <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-slate-400" />
+                      <span>{t.trust.lastVerified.replace('{date}', formatVerifiedDate(fs.lastVerified, language))}</span>
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 space-y-0.5">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase font-semibold">ASIL Level</div>
+                    <div className="font-extrabold text-slate-900 dark:text-slate-100">{fs.asilLevel || 'N/A'}</div>
+                  </div>
+                  <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 space-y-0.5">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase font-semibold">Claim Type</div>
+                    <div className="font-extrabold text-slate-900 dark:text-slate-100">{claimLabel}</div>
+                  </div>
+                  <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 space-y-0.5">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase font-semibold">Standard</div>
+                    <div className="font-extrabold text-slate-900 dark:text-slate-100">{fs.standard || 'ISO 26262'}</div>
+                  </div>
+                  <div className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 space-y-0.5">
+                    <div className="text-[10px] font-mono text-slate-500 uppercase font-semibold">Evidence</div>
+                    {fs.sourceUrl ? (
+                      <a
+                        href={fs.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 truncate"
+                        title={fs.sourceUrl}
+                      >
+                        <span className="truncate">Datasheet / Spec</span>
+                        <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                      </a>
+                    ) : (
+                      <span className="font-bold text-slate-500">Documented</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Architecture Profiles It Belongs To */}
           {containingProfiles.length > 0 && (

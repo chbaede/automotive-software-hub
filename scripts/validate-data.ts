@@ -55,6 +55,28 @@ function validateIsoDate(dateStr: string, contextMsg: string) {
   }
 }
 
+function hasMisleadingCertificationLanguage(text: string): boolean {
+  if (!text) return false;
+  const enMisleading = /\b(asil-[abcd]\s+certified|safety-certified|iso\s*26262\s+certified|certified\s+for\s+iso|certified\s+up\s+to\s+asil)\b/i;
+  const koMisleading = /(인증을\s*획득|기능\s*안전\s*인증|안전\s*인증\s*획득|ASIL-[ABCD]\s*인증\s*획득|ASIL-[ABCD]\s*인증)/i;
+  return enMisleading.test(text) || koMisleading.test(text);
+}
+
+function getSafetyRelevantTexts(st: any): { text: string; location: string }[] {
+  const items: { text: string; location: string }[] = [];
+  if (st.description?.en) items.push({ text: st.description.en, location: 'description.en' });
+  if (st.description?.ko) items.push({ text: st.description.ko, location: 'description.ko' });
+  if (st.whereDoesItFit?.en) items.push({ text: st.whereDoesItFit.en, location: 'whereDoesItFit.en' });
+  if (st.whereDoesItFit?.ko) items.push({ text: st.whereDoesItFit.ko, location: 'whereDoesItFit.ko' });
+  (st.tags || []).forEach((tag: string, idx: number) => {
+    items.push({ text: tag, location: `tags[${idx}]` });
+  });
+  (st.categories || []).forEach((cat: string, idx: number) => {
+    items.push({ text: cat, location: `categories[${idx}]` });
+  });
+  return items;
+}
+
 function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any }>(
   collectionName: string,
   items: T[]
@@ -170,15 +192,13 @@ stackTechnologies.forEach((st) => {
       }
     }
 
-    // Text consistency checks: reject 'certified' claims when claimType !== 'certified'
+    // Text consistency checks: reject 'certified' claims across all user-visible text when claimType !== 'certified'
     if (fs.claimType && fs.claimType !== 'certified') {
-      const descEn = st.description?.en || '';
-      const descKo = st.description?.ko || '';
-      if (/(\basil-[abcd]\s+certified|\bsafety-certified|\biso\s*26262\s+certified|\bcertified\s+for\s+iso\b)/i.test(descEn)) {
-        error(`[Stack Tech ID: ${st.id}] English description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
-      }
-      if (/(인증을\s*획득|기능\s*안전\s*인증|안전\s*인증\s*획득|ASIL-[ABCD]\s*인증\s*획득)/i.test(descKo)) {
-        error(`[Stack Tech ID: ${st.id}] Korean description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
+      const relevantTexts = getSafetyRelevantTexts(st);
+      for (const item of relevantTexts) {
+        if (hasMisleadingCertificationLanguage(item.text)) {
+          error(`[Stack Tech ID: ${st.id}] Field '${item.location}' contains misleading certification claim while claimType is '${fs.claimType}': "${item.text}"`);
+        }
       }
     }
 

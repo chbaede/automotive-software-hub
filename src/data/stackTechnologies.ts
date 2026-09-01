@@ -348,7 +348,7 @@ export const stackTechnologies: StackTechnology[] = [
     },
     whereDoesItFit: {
       en: 'Safety-Critical Silicon-Grade Type-1 Hypervisor Layer running on NVIDIA DRIVE Thor/Orin.',
-      ko: 'NVIDIA DRIVE Thor/Orin 실리콘 위에서 구동되는 최고 안전 등급(ASIL-D) 가상화 하이퍼바이저 레이어.',
+      ko: 'NVIDIA DRIVE Thor/Orin 실리콘 위에서 ASIL-D 도메인 격리를 지원하는 가상화 하이퍼바이저 레이어.',
     },
     categories: ['Hypervisor', 'Virtualization', 'Safety'],
     topics: ['adas', 'functional-safety', 'sdv'],

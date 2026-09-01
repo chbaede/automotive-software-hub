@@ -285,6 +285,73 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 15 Passed: Relationship confidence taxonomy validity verified.');
 }
 
+// Test 16: Safety Claim Consistency across whereDoesItFit, Tags, and Categories
+{
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const enMisleading = /\b(asil-[abcd]\s+certified|safety-certified|iso\s*26262\s+certified|certified\s+for\s+iso|certified\s+up\s+to\s+asil)\b/i;
+  const koMisleading = /(인증을\s*획득|기능\s*안전\s*인증|안전\s*인증\s*획득|ASIL-[ABCD]\s*인증\s*획득|ASIL-[ABCD]\s*인증)/i;
+
+  stackTechnologies.forEach((tech) => {
+    const fs = tech.functionalSafety;
+    if (fs && fs.claimType && fs.claimType !== 'certified') {
+      const fitEn = tech.whereDoesItFit?.en || '';
+      const fitKo = tech.whereDoesItFit?.ko || '';
+
+      assert.strictEqual(
+        enMisleading.test(fitEn),
+        false,
+        `Tech '${tech.id}' has misleading certification claim in whereDoesItFit.en: "${fitEn}"`
+      );
+      assert.strictEqual(
+        koMisleading.test(fitKo),
+        false,
+        `Tech '${tech.id}' has misleading certification claim in whereDoesItFit.ko: "${fitKo}"`
+      );
+
+      (tech.tags || []).forEach((tag) => {
+        assert.strictEqual(
+          enMisleading.test(tag) || koMisleading.test(tag),
+          false,
+          `Tech '${tech.id}' has misleading certification tag: "${tag}"`
+        );
+      });
+
+      (tech.categories || []).forEach((cat) => {
+        assert.strictEqual(
+          enMisleading.test(cat) || koMisleading.test(cat),
+          false,
+          `Tech '${tech.id}' has misleading certification category: "${cat}"`
+        );
+      });
+    }
+  });
+  console.log('✅ Test 16 Passed: Safety claim consistency verified across whereDoesItFit, tags, and categories.');
+}
+
+// Test 17: Semantic Independence of ASIL Level and Claim Type
+{
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  const capableAsilD = stackTechnologies.filter(
+    (t) => t.functionalSafety?.asilLevel === 'ASIL-D' && t.functionalSafety?.claimType === 'capable'
+  );
+  assert.ok(
+    capableAsilD.length > 0,
+    'Must have valid ASIL-D Capable technologies (e.g. NVIDIA Thor, QNX Neutrino, Perseus)'
+  );
+
+  const certifiedAsilD = stackTechnologies.filter(
+    (t) => t.functionalSafety?.asilLevel === 'ASIL-D' && t.functionalSafety?.claimType === 'certified'
+  );
+  assert.ok(
+    certifiedAsilD.length > 0,
+    'Must have valid ASIL-D Certified technologies with evidence (e.g. QNX Hypervisor, INTEGRITY, VxWorks)'
+  );
+
+  console.log('✅ Test 17 Passed: ASIL Level and Claim Type maintain semantic independence.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
 
