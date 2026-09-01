@@ -1,9 +1,10 @@
 import { stackTechnologies } from '../data/stackTechnologies';
 import { architectureProfiles } from '../data/architectureProfiles';
 import { stackRelationships } from '../data/stackRelationships';
+import { stackPaths } from '../data/stackPaths';
 import { StackTechnology } from '../types/stack';
-import { ArchitectureProfile } from '../types/architecture';
-import { TechnologyRelationship, RELATIONSHIP_METADATA } from '../types/relationship';
+import { ArchitectureProfile, StackPath } from '../types/architecture';
+import { TechnologyRelationship } from '../types/relationship';
 
 // Index: Technology by ID
 export const technologyById = new Map<string, StackTechnology>(
@@ -23,6 +24,24 @@ architectureProfiles.forEach((profile) => {
     const list = profilesByTechnologyId.get(techId) || [];
     list.push(profile);
     profilesByTechnologyId.set(techId, list);
+  });
+});
+
+// Index: Stack Paths by ID
+export const pathById = new Map<string, StackPath>(
+  stackPaths.map((path) => [path.id, path])
+);
+
+// Index: Stack Paths by Technology ID
+export const pathsByTechnologyId = new Map<string, StackPath[]>();
+
+stackPaths.forEach((path) => {
+  path.hops.forEach((hop) => {
+    const list = pathsByTechnologyId.get(hop.technologyId) || [];
+    if (!list.some((p) => p.id === path.id)) {
+      list.push(path);
+      pathsByTechnologyId.set(hop.technologyId, list);
+    }
   });
 });
 
@@ -85,4 +104,3 @@ export function getTechnologyRelationships(techId: string) {
   const incoming = incomingRelationshipsByTechnologyId.get(techId) || [];
   return { outgoing, incoming };
 }
-

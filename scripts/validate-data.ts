@@ -18,6 +18,7 @@ import { stackLayers } from '../src/data/stackLayers.js';
 import { stackTechnologies } from '../src/data/stackTechnologies.js';
 import { architectureProfiles } from '../src/data/architectureProfiles.js';
 import { stackRelationships } from '../src/data/stackRelationships.js';
+import { stackPaths } from '../src/data/stackPaths.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
 import { RELATIONSHIP_METADATA } from '../src/types/relationship.js';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../src/types/architecture.js';
@@ -253,6 +254,34 @@ stackRelationships.forEach((rel, idx) => {
   }
 });
 console.log(`✅ Semantic Stack Relationships: ${stackRelationships.length} relationships & graph integrity rules validated.`);
+
+// Validate Stack Paths (Representative Architectural Journeys)
+const seenPathIds = new Set<string>();
+stackPaths.forEach((path) => {
+  if (seenPathIds.has(path.id)) error(`[Stack Path] Duplicate path ID: '${path.id}'`);
+  seenPathIds.add(path.id);
+
+  if (!path.name?.en) error(`[Stack Path ID: ${path.id}] Missing English name.`);
+  if (!path.description?.en) error(`[Stack Path ID: ${path.id}] Missing English description.`);
+
+  if (path.architectureProfileId && !profileIds.has(path.architectureProfileId)) {
+    error(`[Stack Path ID: ${path.id}] Unknown architectureProfileId: '${path.architectureProfileId}'`);
+  }
+
+  if (!path.hops || path.hops.length < 2) {
+    error(`[Stack Path ID: ${path.id}] Path must have at least 2 hops.`);
+  }
+
+  path.hops.forEach((hop, hopIdx) => {
+    if (!validTechIds.has(hop.technologyId)) {
+      error(`[Stack Path ID: ${path.id} Hop #${hopIdx}] Unknown technologyId: '${hop.technologyId}'`);
+    }
+    if (hop.relationshipToNext && !RELATIONSHIP_METADATA[hop.relationshipToNext]) {
+      error(`[Stack Path ID: ${path.id} Hop #${hopIdx}] Unknown relationshipToNext type: '${hop.relationshipToNext}'`);
+    }
+  });
+});
+console.log(`✅ Stack Paths: ${stackPaths.length} representative automotive software stack paths validated.`);
 
 if (hasError) {
   console.error('\n❌ Data validation FAILED.');

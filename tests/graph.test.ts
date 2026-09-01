@@ -127,4 +127,26 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 7 Passed: Architecture profile classifications are valid.');
 }
 
+// Test 8: Representative Automotive Stack Paths Validation
+{
+  const { stackPaths } = await import('../src/data/stackPaths.js');
+  const { pathById, pathsByTechnologyId } = await import('../src/utils/graphIndexes.js');
+
+  assert.ok(stackPaths.length >= 6, 'Must define at least 6 canonical representative stack paths');
+  
+  stackPaths.forEach((path) => {
+    assert.ok(pathById.get(path.id), `Path '${path.id}' must exist in pathById index`);
+    assert.ok(path.hops.length >= 2, `Path '${path.id}' must have at least 2 hops`);
+    
+    path.hops.forEach((hop) => {
+      const tech = technologyById.get(hop.technologyId);
+      assert.ok(tech, `Hop technology '${hop.technologyId}' in path '${path.id}' must exist`);
+      
+      const techPaths = pathsByTechnologyId.get(hop.technologyId);
+      assert.ok(techPaths && techPaths.some((p) => p.id === path.id), `Technology '${hop.technologyId}' must map to path '${path.id}'`);
+    });
+  });
+  console.log('✅ Test 8 Passed: Representative automotive stack paths and graph index resolution verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
