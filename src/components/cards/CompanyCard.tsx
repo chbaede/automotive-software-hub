@@ -24,16 +24,28 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
         return t.companies.catSoftwarePlatform;
       case 'cloud-tech':
         return t.companies.catCloudTech;
+      case 'korean-tech':
+        return t.companies.catKoreanTech;
       default:
         return cat;
     }
   };
 
+  const isKoreanTech = company.category === 'korean-tech';
+
   return (
-    <div className="flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition shadow-sm">
+    <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${
+      isKoreanTech
+        ? 'border-rose-300/70 dark:border-rose-900/50 hover:border-rose-500/80 dark:hover:border-rose-500'
+        : 'border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
+    }`}>
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded">
+          <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded ${
+            isKoreanTech
+              ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-300/40 dark:border-rose-800/40'
+              : 'bg-brand-500/10 text-brand-600 dark:text-brand-400'
+          }`}>
             {getCategoryLabel(company.category)}
           </span>
 

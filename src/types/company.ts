@@ -1,7 +1,13 @@
 import { LocalizedText } from './i18n';
 import { TopicId } from './taxonomy';
 
-export type CompanyCategory = 'oem' | 'tier1' | 'semiconductor' | 'software-platform' | 'cloud-tech';
+export type CompanyCategory =
+  | 'oem'
+  | 'tier1'
+  | 'semiconductor'
+  | 'software-platform'
+  | 'cloud-tech'
+  | 'korean-tech';
 
 export interface Company {
   id: string;
@@ -17,4 +23,3 @@ export interface Company {
   technologies: string[];
   tags: string[];
 }
-

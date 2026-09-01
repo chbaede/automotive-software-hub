@@ -125,6 +125,7 @@ export const ko: Translations = {
     catSemiconductor: '반도체 제조사 (Semiconductor)',
     catSoftwarePlatform: '소프트웨어 & 플랫폼 (Software)',
     catCloudTech: '클라우드 & 테크 (Cloud)',
+    catKoreanTech: '한국 테크 & 스타트업 (Korean Tech)',
     allCategories: '전체 카테고리',
     headquarters: '본사 위치',
     technologies: '핵심 기술 스택',

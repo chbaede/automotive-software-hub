@@ -93,6 +93,7 @@ export const CompaniesPage: React.FC = () => {
             <option value="semiconductor">{t.companies.catSemiconductor}</option>
             <option value="software-platform">{t.companies.catSoftwarePlatform}</option>
             <option value="cloud-tech">{t.companies.catCloudTech}</option>
+            <option value="korean-tech">{t.companies.catKoreanTech}</option>
           </select>
 
           {/* Topic Select */}

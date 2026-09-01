@@ -123,6 +123,7 @@ export const en = {
     catSemiconductor: 'Semiconductor',
     catSoftwarePlatform: 'Software & Platform',
     catCloudTech: 'Cloud & Tech',
+    catKoreanTech: 'Korean Tech & Startup',
     allCategories: 'All Categories',
     headquarters: 'Headquarters',
     technologies: 'Key Technologies',
