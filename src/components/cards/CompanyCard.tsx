@@ -33,6 +33,8 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
 
   const isKoreanTech = company.category === 'korean-tech';
 
+  const websiteUrl = typeof company.website === 'string' ? company.website : getLocalizedText(company.website, language);
+
   return (
     <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${
       isKoreanTech
@@ -91,7 +93,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
 
       <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
         <a
-          href={company.website}
+          href={websiteUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-700 dark:text-slate-300 rounded-lg transition"

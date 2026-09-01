@@ -32,7 +32,7 @@ function error(msg: string) {
   hasError = true;
 }
 
-function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: string; url?: string }>(
+function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any }>(
   collectionName: string,
   items: T[]
 ) {
@@ -70,7 +70,8 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
     }
 
     // URL Validation
-    const url = item.url || item.website;
+    const rawUrl = item.url || item.website;
+    const url = typeof rawUrl === 'string' ? rawUrl : rawUrl?.en;
     if (url) {
       try {
         new URL(url);

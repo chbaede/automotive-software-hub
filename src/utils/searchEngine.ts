@@ -155,7 +155,7 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
       type: 'company',
       title: c.name,
       description: getLocalizedText(c.description, lang),
-      url: c.website,
+      url: typeof c.website === 'string' ? c.website : getLocalizedText(c.website, lang),
       route: `/companies?id=${c.id}`,
       topics: c.automotiveTopics,
       badgeText: c.category.toUpperCase(),

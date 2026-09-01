@@ -14,7 +14,7 @@ export interface Company {
   name: string;
   category: CompanyCategory;
   description: LocalizedText;
-  website: string;
+  website: string | LocalizedText;
   headquarters: string;
   ticker?: string;
   exchange?: string;
