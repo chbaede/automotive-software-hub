@@ -1,6 +1,6 @@
 import { Event } from '../types/event';
 
-// Events sorted strictly by startDate ascending (Verified against 2026 official schedules)
+// Events sorted strictly by startDate ascending (Verified against official schedules)
 export const events: Event[] = [
   {
     id: 'covesa-spring-amm-2026',
@@ -85,6 +85,27 @@ export const events: Event[] = [
     registrationStatus: 'open',
   },
   {
+    id: 'droidcon-berlin-2026',
+    name: { en: 'droidcon Berlin 2026', ko: '드루이드콘 베를린 2026 (droidcon Berlin)' },
+    description: {
+      en: 'Premier European Android & Android Automotive OS developer conference focusing on IVI apps, AAOS system architecture, Kotlin, and automotive UX.',
+      ko: '안드로이드 오토모티브(AAOS) IVI 앱 개발, 차량 시스템 아키텍처 및 안드로이드 개발 생태계를 다루는 대표 기술 컨퍼런스.',
+    },
+    startDate: '2026-10-07',
+    endDate: '2026-10-09',
+    city: 'Berlin',
+    country: 'Germany',
+    region: 'europe',
+    venue: 'CityCube Berlin',
+    url: 'https://berlin.droidcon.com/',
+    categories: ['Android', 'AAOS', 'Mobile & IVI'],
+    topics: ['android-automotive', 'open-source', 'sdv'],
+    format: 'conference',
+    cfpStatus: 'open',
+    cfpDeadline: '2026-06-30',
+    registrationStatus: 'open',
+  },
+  {
     id: 'incabin-barcelona-2026',
     name: { en: 'InCabin Europe 2026 (Barcelona)', ko: '인캐빈 바르셀로나 2026 (InCabin Europe)' },
     description: {
@@ -148,6 +169,27 @@ export const events: Event[] = [
     registrationStatus: 'open',
   },
   {
+    id: 'electronica-munich-2026',
+    name: { en: 'electronica 2026 (Munich)', ko: '일렉트로니카 2026 (electronica 뮌헨)' },
+    description: {
+      en: 'World\'s leading trade fair and conference for electronic components, automotive semiconductors, sensors, and Software-Defined Vehicle electronics.',
+      ko: '차량용 반도체, 센서, 전자 부품 및 차세대 SDV 전장 솔루션을 전시하는 세계 최대 규모의 엘렉트로닉스/오토모티브 박람회.',
+    },
+    startDate: '2026-11-10',
+    endDate: '2026-11-13',
+    city: 'Munich',
+    country: 'Germany',
+    region: 'europe',
+    venue: 'Trade Fair Center Messe München',
+    url: 'https://electronica.de/en/',
+    categories: ['Semiconductors', 'Electronics', 'Automotive Hardware'],
+    topics: ['sdv', 'functional-safety', 'adas'],
+    format: 'exhibition',
+    cfpStatus: 'open',
+    cfpDeadline: '2026-05-31',
+    registrationStatus: 'open',
+  },
+  {
     id: 'eclipse-sdv-community-day-2026',
     name: { en: 'Eclipse SDV Q4 Community Day 2026 (Munich)', ko: 'Eclipse SDV 2026 Q4 커뮤니티 데이 (뮌헨)' },
     description: {
@@ -186,6 +228,27 @@ export const events: Event[] = [
     format: 'conference',
     cfpStatus: 'open',
     cfpDeadline: '2026-08-31',
+    registrationStatus: 'open',
+  },
+  {
+    id: 'embedded-world-2027',
+    name: { en: 'embedded world Exhibition & Conference 2027 (Nuremberg)', ko: '임베디드 월드 2027 (embedded world 뉘른베르크)' },
+    description: {
+      en: 'The global meeting place for embedded system engineers, real-time Linux developers, RTOS architects, and automotive ECU hardware/software vendors.',
+      ko: '임베디드 시스템 엔지니어, 실시간 리눅스/RTOS 아키텍트 및 차량용 ECU SW/HW 기업들이 한자리에 모이는 글로벌 전시회 & 컨퍼런스.',
+    },
+    startDate: '2027-03-16',
+    endDate: '2027-03-18',
+    city: 'Nuremberg',
+    country: 'Germany',
+    region: 'europe',
+    venue: 'NürnbergMesse (Exhibition Centre Nuremberg)',
+    url: 'https://www.embedded-world.de/',
+    categories: ['Embedded Systems', 'RTOS', 'Automotive ECU'],
+    topics: ['embedded-linux', 'autosar', 'functional-safety', 'can'],
+    format: 'exhibition',
+    cfpStatus: 'open',
+    cfpDeadline: '2026-10-31',
     registrationStatus: 'open',
   },
 ];

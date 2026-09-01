@@ -1,7 +1,7 @@
 import { LocalizedText } from './i18n';
 import { TopicId } from './taxonomy';
 
-export type EventFormat = 'conference' | 'meetup' | 'webinar' | 'workshop';
+export type EventFormat = 'conference' | 'meetup' | 'webinar' | 'workshop' | 'exhibition';
 
 export type CfpStatus = 'open' | 'closed' | 'upcoming' | 'none';
 

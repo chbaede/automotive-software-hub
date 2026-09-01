@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, MapPin, ExternalLink, Cpu } from 'lucide-react';
+import { MapPin, ExternalLink } from 'lucide-react';
 import { Company } from '../../types/company';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -143,4 +143,3 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
     </div>
   );
 };
-
