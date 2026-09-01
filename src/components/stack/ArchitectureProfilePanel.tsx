@@ -234,3 +234,4 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
     </div>
   );
 };
+

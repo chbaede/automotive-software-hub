@@ -12,3 +12,4 @@ export interface ArchitectureProfile {
   tags?: string[];
   icon?: string;
 }
+

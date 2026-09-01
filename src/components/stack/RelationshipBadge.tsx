@@ -56,3 +56,4 @@ export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({ type, clas
     </span>
   );
 };
+

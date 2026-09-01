@@ -80,3 +80,4 @@ export const ArchitectureSelector: React.FC<ArchitectureSelectorProps> = ({
     </div>
   );
 };
+

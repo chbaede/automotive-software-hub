@@ -295,3 +295,4 @@ export const architectureProfiles: ArchitectureProfile[] = [
     tags: ['sdv', 'uprotocol', 'ankaios', 'vss', 'cloud-native', 'containers', 'ota'],
   },
 ];
+
