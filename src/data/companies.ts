@@ -287,6 +287,26 @@ export const companies: Company[] = [
     tags: ['semiconductor', 'samsung', 'exynos-auto', 'v920', 'koreantech'],
   },
   {
+    id: 'telechips',
+    name: 'Telechips Inc. (텔레칩스)',
+    category: 'semiconductor',
+    description: {
+      en: 'Leading Korean automotive fabless semiconductor vendor providing Dolphin3 / Dolphin+ smart IVI SoCs, N-Xon AI NPU chips, and ASIL-D safety MCUs.',
+      ko: '차량용 콕핏/IVI Dolphin3 SoC, N-Xon AI NPU 및 ASIL-D 기능 안전 마이크로컨트롤러를 공급하는 대한민국 대표 반도체 팹리스.',
+    },
+    website: {
+      en: 'https://www.telechips.com/en/',
+      ko: 'https://www.telechips.com/kr/',
+    },
+    headquarters: 'Seoul, South Korea',
+    ticker: '054450',
+    exchange: 'KOSDAQ',
+    isPublic: true,
+    automotiveTopics: ['android-automotive', 'sdv', 'functional-safety', 'adas'],
+    technologies: ['Dolphin3 IVI SoC (TCC805x)', 'Dolphin+ Processor', 'N-Xon AI NPU', 'AXON Safety MCU'],
+    tags: ['semiconductor', 'telechips', 'dolphin3', 'n-xon', 'koreantech', 'fabless', 'soc'],
+  },
+  {
     id: 'amd-automotive',
     name: 'AMD (Versal Auto & Ryzen Embedded)',
     category: 'semiconductor',
