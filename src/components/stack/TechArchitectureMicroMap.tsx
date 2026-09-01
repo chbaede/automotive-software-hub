@@ -147,3 +147,4 @@ export const TechArchitectureMicroMap: React.FC<TechArchitectureMicroMapProps> =
     </div>
   );
 };
+
