@@ -27,6 +27,21 @@ export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({ type, clas
           label: t.relationships.implementedBy,
           classes: 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-400/40',
         };
+      case 'integrates-with':
+        return {
+          label: t.relationships.integratesWith,
+          classes: 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-400/40',
+        };
+      case 'coexists-with':
+        return {
+          label: t.relationships.coexistsWith,
+          classes: 'bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-400/40',
+        };
+      case 'compatible-with':
+        return {
+          label: t.relationships.compatibleWith,
+          classes: 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-400/40',
+        };
       case 'used-with':
         return {
           label: t.relationships.usedWith,
@@ -35,13 +50,13 @@ export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({ type, clas
       case 'alternative':
         return {
           label: t.relationships.alternative,
-          classes: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-400/40',
+          classes: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-400/40',
         };
       case 'related':
       default:
         return {
           label: t.relationships.related,
-          classes: 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-400/40',
+          classes: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-400/40',
         };
     }
   };
@@ -56,4 +71,3 @@ export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({ type, clas
     </span>
   );
 };
-

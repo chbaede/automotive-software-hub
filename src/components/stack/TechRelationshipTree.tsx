@@ -1,12 +1,15 @@
 import React from 'react';
-import { Network, ArrowRight, CornerDownRight, Layers, ArrowUpRight } from 'lucide-react';
+import { Network, ArrowRight, ArrowLeftRight, Layers, ArrowUpRight, ShieldCheck, ExternalLink } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { stackTechnologies } from '../../data/stackTechnologies';
-import { stackRelationships } from '../../data/stackRelationships';
+import { RELATIONSHIP_METADATA, TechnologyRelationship } from '../../types/relationship';
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { RelationshipType } from '../../types/relationship';
+import {
+  technologyById,
+  outgoingRelationshipsByTechnologyId,
+  incomingRelationshipsByTechnologyId,
+} from '../../utils/graphIndexes';
 
 interface TechRelationshipTreeProps {
   technology: StackTechnology;
@@ -19,13 +22,9 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
 }) => {
   const { language, t } = useLanguage();
 
-  // Outgoing relationships where this technology is source
-  const outgoingRels = stackRelationships.filter((r) => r.sourceId === technology.id);
+  const outgoingRels = outgoingRelationshipsByTechnologyId.get(technology.id) || [];
+  const incomingRels = incomingRelationshipsByTechnologyId.get(technology.id) || [];
 
-  // Incoming relationships where this technology is target
-  const incomingRels = stackRelationships.filter((r) => r.targetId === technology.id);
-
-  // Fallback direct related technologies
   const explicitRelatedIds = new Set([
     ...outgoingRels.map((r) => r.targetId),
     ...incomingRels.map((r) => r.sourceId),
@@ -33,13 +32,111 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
 
   const fallbackRelatedTechs = (technology.relatedTechnologyIds || [])
     .filter((id) => !explicitRelatedIds.has(id))
-    .map((id) => stackTechnologies.find((st) => st.id === id))
+    .map((id) => technologyById.get(id))
     .filter((st): st is StackTechnology => Boolean(st));
 
   const hasAnyRelationships =
     outgoingRels.length > 0 || incomingRels.length > 0 || fallbackRelatedTechs.length > 0;
 
   if (!hasAnyRelationships) return null;
+
+  const renderRelationshipItem = (
+    rel: TechnologyRelationship,
+    otherTech: StackTechnology,
+    isOutgoing: boolean,
+    idx: number
+  ) => {
+    const relMeta = RELATIONSHIP_METADATA[rel.type];
+    const isSymmetric = relMeta?.isSymmetric || false;
+    const relDesc = rel.description ? getLocalizedText(rel.description, language) : null;
+
+    return (
+      <div
+        key={`${otherTech.id}-${idx}`}
+        className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition space-y-1.5"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {isOutgoing ? (
+              <>
+                <RelationshipBadge type={rel.type} />
+                {isSymmetric ? (
+                  <ArrowLeftRight className="w-3.5 h-3.5 text-slate-400" />
+                ) : (
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                )}
+                <button
+                  onClick={() => onSelectTech(otherTech)}
+                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
+                >
+                  <span>{otherTech.name}</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-400" />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => onSelectTech(otherTech)}
+                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
+                >
+                  <span>{otherTech.name}</span>
+                  <ArrowUpRight className="w-3 h-3 text-slate-400" />
+                </button>
+                {isSymmetric ? (
+                  <ArrowLeftRight className="w-3.5 h-3.5 text-slate-400" />
+                ) : (
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                )}
+                <RelationshipBadge type={rel.type} />
+              </>
+            )}
+          </div>
+
+          <span className="text-[9px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded shrink-0">
+            {otherTech.layerId.split('-')[0]}
+          </span>
+        </div>
+
+        {relDesc && (
+          <p className="text-[11px] text-slate-600 dark:text-slate-400 pl-1 leading-relaxed">
+            {relDesc}
+          </p>
+        )}
+
+        {/* Evidence & Trust metadata */}
+        {(rel.confidence || rel.sourceUrl || rel.lastVerified) && (
+          <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+            {rel.confidence && (
+              <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
+                <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                <span>
+                  {rel.confidence === 'official'
+                    ? t.trust.officialSource
+                    : rel.confidence === 'vendor'
+                    ? t.trust.vendorSource
+                    : t.trust.communitySource}
+                </span>
+              </span>
+            )}
+            {rel.lastVerified && (
+              <span>{t.trust.lastVerified.replace('{date}', rel.lastVerified)}</span>
+            )}
+            {rel.sourceUrl && (
+              <a
+                href={rel.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-0.5"
+              >
+                <span>{t.trust.sourceLink}</span>
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
@@ -73,41 +170,9 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
           </div>
           <div className="grid gap-2">
             {outgoingRels.map((rel, idx) => {
-              const targetTech = stackTechnologies.find((st) => st.id === rel.targetId);
+              const targetTech = technologyById.get(rel.targetId);
               if (!targetTech) return null;
-
-              const relDesc = rel.description ? getLocalizedText(rel.description, language) : null;
-
-              return (
-                <div
-                  key={`${rel.targetId}-${idx}`}
-                  className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition space-y-1.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <RelationshipBadge type={rel.type} />
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                      <button
-                        onClick={() => onSelectTech(targetTech)}
-                        className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
-                      >
-                        <span>{targetTech.name}</span>
-                        <ArrowUpRight className="w-3 h-3 text-slate-400" />
-                      </button>
-                    </div>
-
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded shrink-0">
-                      {targetTech.layerId.split('-')[0]}
-                    </span>
-                  </div>
-
-                  {relDesc && (
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 pl-1 leading-relaxed">
-                      {relDesc}
-                    </p>
-                  )}
-                </div>
-              );
+              return renderRelationshipItem(rel, targetTech, true, idx);
             })}
           </div>
         </div>
@@ -121,41 +186,9 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
           </div>
           <div className="grid gap-2">
             {incomingRels.map((rel, idx) => {
-              const sourceTech = stackTechnologies.find((st) => st.id === rel.sourceId);
+              const sourceTech = technologyById.get(rel.sourceId);
               if (!sourceTech) return null;
-
-              const relDesc = rel.description ? getLocalizedText(rel.description, language) : null;
-
-              return (
-                <div
-                  key={`${rel.sourceId}-${idx}`}
-                  className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition space-y-1.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <button
-                        onClick={() => onSelectTech(sourceTech)}
-                        className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
-                      >
-                        <span>{sourceTech.name}</span>
-                        <ArrowUpRight className="w-3 h-3 text-slate-400" />
-                      </button>
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                      <RelationshipBadge type={rel.type} />
-                    </div>
-
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded shrink-0">
-                      {sourceTech.layerId.split('-')[0]}
-                    </span>
-                  </div>
-
-                  {relDesc && (
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 pl-1 leading-relaxed">
-                      {relDesc}
-                    </p>
-                  )}
-                </div>
-              );
+              return renderRelationshipItem(rel, sourceTech, false, idx);
             })}
           </div>
         </div>

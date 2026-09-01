@@ -8,6 +8,7 @@
     "build": "tsx scripts/generate-sitemap.ts && tsc && vite build",
     "preview": "vite preview",
     "validate-data": "tsx scripts/validate-data.ts",
+    "test": "tsx tests/graph.test.ts",
     "generate-sitemap": "tsx scripts/generate-sitemap.ts"
   },
   "dependencies": {

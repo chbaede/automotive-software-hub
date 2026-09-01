@@ -1,13 +1,12 @@
 /**
- * Data Schema Validation Script for Automotive Software Hub
- * Runs during build / CI to verify data integrity:
- * - Unique IDs
- * - Non-empty titles and descriptions (EN)
- * - Known taxonomy topics
- * - Valid URL formats
- * - Valid Stack Layers and cross-referenced entity IDs
- * - Valid Architecture Profiles and referenced technology IDs
- * - Valid Semantic Technology Relationships
+ * Knowledge Graph Quality & Data Validation Script for Automotive Software Hub
+ * Runs during build / CI to verify graph integrity:
+ * - Unique IDs across all entity collections
+ * - Valid cross-reference links
+ * - Valid relationship types, directionality, and duplicate detection
+ * - Valid Architecture Profile classification
+ * - Valid ISO date formats for lastVerified fields
+ * - Valid Functional Safety / ASIL metadata
  */
 
 import { tools } from '../src/data/tools.js';
@@ -20,6 +19,8 @@ import { stackTechnologies } from '../src/data/stackTechnologies.js';
 import { architectureProfiles } from '../src/data/architectureProfiles.js';
 import { stackRelationships } from '../src/data/stackRelationships.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
+import { RELATIONSHIP_METADATA } from '../src/types/relationship.js';
+import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../src/types/architecture.js';
 
 const validTopicIds = new Set(Object.keys(TOPIC_TAXONOMY));
 const validToolIds = new Set(tools.map((t) => t.id));
@@ -35,6 +36,13 @@ let hasError = false;
 function error(msg: string) {
   console.error(`❌ Validation Error: ${msg}`);
   hasError = true;
+}
+
+function validateIsoDate(dateStr: string, contextMsg: string) {
+  const dateRegex = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
+  if (!dateRegex.test(dateStr)) {
+    error(`${contextMsg}: Invalid ISO date format '${dateStr}' (expected YYYY-MM-DD or YYYY-MM).`);
+  }
 }
 
 function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any }>(
@@ -89,7 +97,7 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
   console.log(`✅ ${collectionName}: ${items.length} items validated successfully.`);
 }
 
-console.log('🔍 Starting Automotive Software Hub Data Validation...\n');
+console.log('🔍 Starting Automotive Software Hub Knowledge Graph Validation...\n');
 
 checkCollection('Tools', tools);
 checkCollection('Resources', resources);
@@ -105,14 +113,45 @@ stackLayers.forEach((l) => {
 });
 console.log(`✅ Stack Layers: ${stackLayers.length} layers validated.`);
 
-// Validate Stack Technologies Cross-References
+// Validate Stack Technologies & Functional Safety Metadata
 const techIds = new Set<string>();
+const validAsilLevels = new Set(['ASIL-A', 'ASIL-B', 'ASIL-C', 'ASIL-D']);
+const validSafetyClaimTypes = new Set([
+  'certified',
+  'qualified',
+  'compliant',
+  'capable',
+  'supports',
+  'suitable',
+]);
+
 stackTechnologies.forEach((st) => {
   if (techIds.has(st.id)) error(`[Stack Tech] Duplicate tech ID: '${st.id}'`);
   techIds.add(st.id);
 
   if (!validLayerIds.has(st.layerId)) {
     error(`[Stack Tech ID: ${st.id}] Unknown layer ID: '${st.layerId}'`);
+  }
+
+  if (st.lastVerified) {
+    validateIsoDate(st.lastVerified, `[Stack Tech ID: ${st.id}]`);
+  }
+
+  if (st.asilLevel && !validAsilLevels.has(st.asilLevel)) {
+    error(`[Stack Tech ID: ${st.id}] Invalid ASIL level: '${st.asilLevel}'`);
+  }
+
+  if (st.functionalSafety) {
+    const fs = st.functionalSafety;
+    if (fs.asilLevel && !validAsilLevels.has(fs.asilLevel)) {
+      error(`[Stack Tech ID: ${st.id}] Invalid functionalSafety.asilLevel: '${fs.asilLevel}'`);
+    }
+    if (fs.claimType && !validSafetyClaimTypes.has(fs.claimType)) {
+      error(`[Stack Tech ID: ${st.id}] Invalid functionalSafety.claimType: '${fs.claimType}'`);
+    }
+    if (fs.lastVerified) {
+      validateIsoDate(fs.lastVerified, `[Stack Tech ID: ${st.id} functionalSafety]`);
+    }
   }
 
   (st.relatedTechnologyIds || []).forEach((rtid) => {
@@ -139,7 +178,7 @@ stackTechnologies.forEach((st) => {
     if (!validCompanyIds.has(cid)) error(`[Stack Tech ID: ${st.id}] Unknown companyId: '${cid}'`);
   });
 });
-console.log(`✅ Stack Technologies: ${stackTechnologies.length} technologies & cross-references validated.`);
+console.log(`✅ Stack Technologies: ${stackTechnologies.length} technologies & safety metadata validated.`);
 
 // Validate Architecture Profiles
 const profileIds = new Set<string>();
@@ -149,6 +188,10 @@ architectureProfiles.forEach((prof) => {
 
   if (!prof.name?.en) error(`[Architecture Profile ID: ${prof.id}] Missing English name.`);
   if (!prof.description?.en) error(`[Architecture Profile ID: ${prof.id}] Missing English description.`);
+
+  if (prof.profileType && !ARCHITECTURE_PROFILE_TYPE_METADATA[prof.profileType]) {
+    error(`[Architecture Profile ID: ${prof.id}] Invalid profileType: '${prof.profileType}'`);
+  }
 
   prof.technologyIds.forEach((tid) => {
     if (!validTechIds.has(tid)) {
@@ -168,10 +211,11 @@ architectureProfiles.forEach((prof) => {
     }
   });
 });
-console.log(`✅ Architecture Profiles: ${architectureProfiles.length} profiles validated.`);
+console.log(`✅ Architecture Profiles: ${architectureProfiles.length} profiles & classifications validated.`);
 
-// Validate Explicit Stack Relationships
-const validRelationshipTypes = new Set(['depends-on', 'runs-on', 'implemented-by', 'used-with', 'alternative', 'related']);
+// Validate Explicit Stack Relationships (Directionality, Types & Duplicates)
+const seenRelationshipKeys = new Set<string>();
+
 stackRelationships.forEach((rel, idx) => {
   if (!validTechIds.has(rel.sourceId)) {
     error(`[Relationship #${idx}] Unknown sourceId: '${rel.sourceId}'`);
@@ -179,11 +223,36 @@ stackRelationships.forEach((rel, idx) => {
   if (!validTechIds.has(rel.targetId)) {
     error(`[Relationship #${idx}] Unknown targetId: '${rel.targetId}'`);
   }
-  if (!validRelationshipTypes.has(rel.type)) {
+
+  if (rel.sourceId === rel.targetId) {
+    error(`[Relationship #${idx}] Self-referencing relationship detected: '${rel.sourceId}' -> '${rel.targetId}'`);
+  }
+
+  const relMeta = RELATIONSHIP_METADATA[rel.type];
+  if (!relMeta) {
     error(`[Relationship #${idx}] Unknown relationship type: '${rel.type}'`);
   }
+
+  if (rel.lastVerified) {
+    validateIsoDate(rel.lastVerified, `[Relationship #${idx}]`);
+  }
+
+  // Duplicate relationship check
+  const directionalKey = `${rel.sourceId}->${rel.targetId}:${rel.type}`;
+  if (seenRelationshipKeys.has(directionalKey)) {
+    error(`[Relationship #${idx}] Duplicate relationship detected: '${directionalKey}'`);
+  }
+  seenRelationshipKeys.add(directionalKey);
+
+  // Symmetric duplicate check
+  if (relMeta?.isSymmetric) {
+    const reverseSymmetricKey = `${rel.targetId}->${rel.sourceId}:${rel.type}`;
+    if (seenRelationshipKeys.has(reverseSymmetricKey)) {
+      error(`[Relationship #${idx}] Symmetric duplicate relationship detected: '${reverseSymmetricKey}' already exists.`);
+    }
+  }
 });
-console.log(`✅ Semantic Stack Relationships: ${stackRelationships.length} relationships validated.`);
+console.log(`✅ Semantic Stack Relationships: ${stackRelationships.length} relationships & graph integrity rules validated.`);
 
 if (hasError) {
   console.error('\n❌ Data validation FAILED.');

@@ -35,6 +35,30 @@ export interface StackLayer {
   colorTheme: LayerColorTheme;
 }
 
+export type SafetyAsilLevel = 'ASIL-A' | 'ASIL-B' | 'ASIL-C' | 'ASIL-D';
+
+export type SafetyClaimType =
+  | 'certified'
+  | 'qualified'
+  | 'compliant'
+  | 'capable'
+  | 'supports'
+  | 'suitable';
+
+export interface FunctionalSafetyInfo {
+  asilLevel?: SafetyAsilLevel;
+  claimType?: SafetyClaimType;
+  standard?: string; // e.g. 'ISO 26262'
+  sourceUrl?: string;
+  lastVerified?: string;
+}
+
+export interface TechnologyEvidence {
+  sourceUrl: string;
+  lastVerified?: string;
+  confidence?: 'official' | 'vendor' | 'community';
+}
+
 export interface StackTechnology {
   id: string;
   name: string;
@@ -48,7 +72,9 @@ export interface StackTechnology {
   repositoryUrl?: string;
   sourceUrl?: string;
   lastVerified?: string;
+  confidence?: 'official' | 'vendor' | 'community';
   status?: 'active' | 'deprecated' | 'emerging';
+  evidence?: TechnologyEvidence;
   openSourceProjectIds?: string[];
   companyIds?: string[];
   toolIds?: string[];
@@ -56,6 +82,7 @@ export interface StackTechnology {
   eventIds?: string[];
   relatedTechnologyIds?: string[];
   licenseType?: 'oss' | 'commercial';
-  asilLevel?: 'ASIL-A' | 'ASIL-B' | 'ASIL-C' | 'ASIL-D';
+  asilLevel?: SafetyAsilLevel;
+  functionalSafety?: FunctionalSafetyInfo;
   tags?: string[];
 }

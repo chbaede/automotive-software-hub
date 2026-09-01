@@ -172,12 +172,16 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   // 2. HYPERVISOR & VIRTUALIZATION
   // ==========================================
-  // 2. HYPERVISORS & VIRTUALIZATION
-  // ==========================================
   {
     id: 'qnx-hypervisor',
     licenseType: 'commercial',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://blackberry.qnx.com/en/software-solutions/automotive/qnx-hypervisor',
+    },
     name: 'BlackBerry QNX Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -200,6 +204,12 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'open-synergy-coqos',
     licenseType: 'commercial',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.opensynergy.com/coqos-hypervisor-sdk/',
+    },
     name: 'OpenSynergy COQOS Hypervisor SDK',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -221,6 +231,12 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'perseus-hypervisor',
     licenseType: 'oss',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://github.com/perseus-kvm',
+    },
     name: 'Perseus Pegasus Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {

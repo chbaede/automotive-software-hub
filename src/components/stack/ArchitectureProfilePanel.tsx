@@ -13,7 +13,7 @@ import {
   ArrowRight,
   ExternalLink,
 } from 'lucide-react';
-import { ArchitectureProfile } from '../../types/architecture';
+import { ArchitectureProfile, ARCHITECTURE_PROFILE_TYPE_METADATA } from '../../types/architecture';
 import { StackTechnology } from '../../types/stack';
 import { stackTechnologies } from '../../data/stackTechnologies';
 import { companies } from '../../data/companies';
@@ -73,11 +73,20 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-brand-600 text-white rounded-md flex items-center gap-1 shadow-sm">
               <Sparkles className="w-3 h-3" />
               <span>{t.stack.activeProfileTitle}</span>
             </span>
+            {profile.profileType && (() => {
+              const typeMeta = ARCHITECTURE_PROFILE_TYPE_METADATA[profile.profileType];
+              const typeLabel = typeMeta ? getLocalizedText(typeMeta.label, language) : profile.profileType;
+              return (
+                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 rounded">
+                  {typeLabel}
+                </span>
+              );
+            })()}
             <span className="text-xs font-mono text-slate-500">
               {t.stack.coreTechnologiesCount.replace('{count}', coreTechs.length.toString())}
             </span>

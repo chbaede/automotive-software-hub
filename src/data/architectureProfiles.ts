@@ -3,6 +3,7 @@ import { ArchitectureProfile } from '../types/architecture';
 export const architectureProfiles: ArchitectureProfile[] = [
   {
     id: 'android-automotive',
+    profileType: 'platform',
     name: {
       en: 'Android Automotive OS (AAOS)',
       ko: 'Android Automotive OS (AAOS) 콕핏',
@@ -39,6 +40,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'modern-ivi',
+    profileType: 'domain-architecture',
     name: {
       en: 'Modern Digital Cockpit & IVI',
       ko: '차세대 디지털 콕핏 & 멀티 디스플레이 IVI',
@@ -77,6 +79,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'adas-autonomous',
+    profileType: 'reference-stack',
     name: {
       en: 'ADAS & Autonomous Driving Platform',
       ko: 'ADAS & 자율주행 컴퓨팅 플랫폼',
@@ -118,6 +121,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'centralized-compute',
+    profileType: 'vehicle-architecture',
     name: {
       en: 'Centralized Vehicle Compute (HPC)',
       ko: '중앙 집중형 고성능 차량 컴퓨팅 (HPC)',
@@ -154,6 +158,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'zonal-architecture',
+    profileType: 'vehicle-architecture',
     name: {
       en: 'Zonal E/E Controller Architecture',
       ko: '영역 제어기 (Zonal E/E) 아키텍처',
@@ -190,6 +195,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'autosar-adaptive',
+    profileType: 'platform',
     name: {
       en: 'AUTOSAR Adaptive Platform (ARA)',
       ko: 'AUTOSAR Adaptive 미들웨어 플랫폼',
@@ -225,6 +231,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'mixed-criticality',
+    profileType: 'design-pattern',
     name: {
       en: 'Mixed-Criticality Virtualized Systems',
       ko: '이종 안전도 (Mixed-Criticality) 가상화 시스템',
@@ -262,6 +269,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
   },
   {
     id: 'sdv-platform',
+    profileType: 'reference-stack',
     name: {
       en: 'Cloud-Native SDV Platform',
       ko: '클라우드 네이티브 SDV 통합 플랫폼',
@@ -295,4 +303,3 @@ export const architectureProfiles: ArchitectureProfile[] = [
     tags: ['sdv', 'uprotocol', 'ankaios', 'vss', 'cloud-native', 'containers', 'ota'],
   },
 ];
-
