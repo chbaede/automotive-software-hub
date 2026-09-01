@@ -81,7 +81,7 @@ export const CompaniesPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {/* Category Filter */}
+          {/* Category Filter Dropdown */}
           <select
             value={categoryFilter}
             onChange={(e) => handleCategoryChange(e.target.value)}
@@ -110,6 +110,29 @@ export const CompaniesPage: React.FC = () => {
             ))}
           </select>
         </div>
+      </div>
+
+      {/* Quick Color-Coded Category Filter Pills */}
+      <div className="flex flex-wrap items-center gap-2 pt-1">
+        {[
+          { id: 'all', label: t.companies.allCategories, activeClass: 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900', inactiveClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200' },
+          { id: 'oem', label: t.companies.catOem, activeClass: 'bg-amber-600 text-white dark:bg-amber-500 dark:text-slate-950', inactiveClass: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-300/40 hover:bg-amber-500/20' },
+          { id: 'tier1', label: t.companies.catTier1, activeClass: 'bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950', inactiveClass: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-300/40 hover:bg-blue-500/20' },
+          { id: 'semiconductor', label: t.companies.catSemiconductor, activeClass: 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950', inactiveClass: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40 hover:bg-emerald-500/20' },
+          { id: 'software-platform', label: t.companies.catSoftwarePlatform, activeClass: 'bg-purple-600 text-white dark:bg-purple-500 dark:text-slate-950', inactiveClass: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-300/40 hover:bg-purple-500/20' },
+          { id: 'cloud-tech', label: t.companies.catCloudTech, activeClass: 'bg-sky-600 text-white dark:bg-sky-500 dark:text-slate-950', inactiveClass: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-300/40 hover:bg-sky-500/20' },
+          { id: 'korean-tech', label: t.companies.catKoreanTech, activeClass: 'bg-rose-600 text-white dark:bg-rose-500 dark:text-slate-950', inactiveClass: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-300/40 hover:bg-rose-500/20' },
+        ].map((pill) => (
+          <button
+            key={pill.id}
+            onClick={() => handleCategoryChange(pill.id)}
+            className={`px-3 py-1 text-xs font-bold rounded-full transition ${
+              categoryFilter === pill.id ? pill.activeClass : pill.inactiveClass
+            }`}
+          >
+            {pill.label}
+          </button>
+        ))}
       </div>
 
       {/* Grid */}

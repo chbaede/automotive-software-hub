@@ -12,43 +12,62 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   const { language, t } = useLanguage();
   const description = getLocalizedText(company.description, language);
 
-  const getCategoryLabel = (cat: string) => {
+  const getCategoryStyles = (cat: string) => {
     switch (cat) {
       case 'oem':
-        return t.companies.catOem;
+        return {
+          label: t.companies.catOem,
+          badge: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-300/40 dark:border-amber-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-amber-500/70 dark:hover:border-amber-500/70',
+        };
       case 'tier1':
-        return t.companies.catTier1;
+        return {
+          label: t.companies.catTier1,
+          badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-300/40 dark:border-blue-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-blue-500/70 dark:hover:border-blue-500/70',
+        };
       case 'semiconductor':
-        return t.companies.catSemiconductor;
+        return {
+          label: t.companies.catSemiconductor,
+          badge: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40 dark:border-emerald-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-emerald-500/70 dark:hover:border-emerald-500/70',
+        };
       case 'software-platform':
-        return t.companies.catSoftwarePlatform;
+        return {
+          label: t.companies.catSoftwarePlatform,
+          badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-300/40 dark:border-purple-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-purple-500/70 dark:hover:border-purple-500/70',
+        };
       case 'cloud-tech':
-        return t.companies.catCloudTech;
+        return {
+          label: t.companies.catCloudTech,
+          badge: 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-300/40 dark:border-sky-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-sky-500/70 dark:hover:border-sky-500/70',
+        };
       case 'korean-tech':
-        return t.companies.catKoreanTech;
+        return {
+          label: t.companies.catKoreanTech,
+          badge: 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-300/40 dark:border-rose-800/40',
+          card: 'border-rose-300/70 dark:border-rose-900/50 hover:border-rose-500/80 dark:hover:border-rose-500',
+        };
       default:
-        return cat;
+        return {
+          label: cat,
+          badge: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-300/40 dark:border-slate-800/40',
+          card: 'border-slate-200 dark:border-slate-800 hover:border-brand-500/50',
+        };
     }
   };
 
-  const isKoreanTech = company.category === 'korean-tech';
-
+  const style = getCategoryStyles(company.category);
   const websiteUrl = typeof company.website === 'string' ? company.website : getLocalizedText(company.website, language);
 
   return (
-    <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${
-      isKoreanTech
-        ? 'border-rose-300/70 dark:border-rose-900/50 hover:border-rose-500/80 dark:hover:border-rose-500'
-        : 'border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
-    }`}>
+    <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${style.card}`}>
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded ${
-            isKoreanTech
-              ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-300/40 dark:border-rose-800/40'
-              : 'bg-brand-500/10 text-brand-600 dark:text-brand-400'
-          }`}>
-            {getCategoryLabel(company.category)}
+          <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded ${style.badge}`}>
+            {style.label}
           </span>
 
           {company.isPublic && company.ticker ? (
