@@ -276,8 +276,8 @@ stackPaths.forEach((path) => {
     if (!validTechIds.has(hop.technologyId)) {
       error(`[Stack Path ID: ${path.id} Hop #${hopIdx}] Unknown technologyId: '${hop.technologyId}'`);
     }
-    if (hop.relationshipToNext && !RELATIONSHIP_METADATA[hop.relationshipToNext]) {
-      error(`[Stack Path ID: ${path.id} Hop #${hopIdx}] Unknown relationshipToNext type: '${hop.relationshipToNext}'`);
+    if (hopIdx > 0 && path.hops[hopIdx - 1].technologyId === hop.technologyId) {
+      error(`[Stack Path ID: ${path.id} Hop #${hopIdx}] Consecutive duplicate technologyId: '${hop.technologyId}'`);
     }
   });
 });

@@ -1,7 +1,6 @@
 import { LocalizedText } from './i18n';
 import { StackLayerId } from './stack';
 import { TopicId } from './taxonomy';
-import { RelationshipType } from './relationship';
 
 export type ArchitectureProfileType =
   | 'vehicle-architecture'
@@ -76,7 +75,6 @@ export interface ArchitectureProfile {
 
 export interface StackPathHop {
   technologyId: string;
-  relationshipToNext?: RelationshipType;
   note?: LocalizedText;
 }
 
