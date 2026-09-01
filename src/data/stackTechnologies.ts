@@ -381,7 +381,7 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['bmw-group', 'volkswagen-group', 'lg-electronics-vs', 'harman-international'],
     toolIds: ['json-formatter', 'base64-tool', 'url-encoder'],
     resourceIds: ['android-automotive-docs'],
-    eventIds: ['android-automotive-developer-webinar-2026'],
+    eventIds: ['incabin-barcelona-2026'],
     relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol', 'aaos-sdv-platform'],
     tags: ['android-automotive', 'aaos', 'ivi', 'cockpit', 'platform'],
   },

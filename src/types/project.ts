@@ -8,7 +8,8 @@ export type ProjectCategory =
   | 'covesa'
   | 'yocto'
   | 'ros'
-  | 'linux-kernel';
+  | 'linux-kernel'
+  | 'android-automotive';
 
 export interface OpenSourceProject {
   id: string;

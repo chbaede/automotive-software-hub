@@ -2,6 +2,38 @@ import { OpenSourceProject } from '../types/project';
 
 export const projects: OpenSourceProject[] = [
   {
+    id: 'android-automotive-os',
+    name: 'Android Automotive OS (AAOS)',
+    description: {
+      en: 'Google\'s open-source operating system platform built specifically for in-vehicle infotainment (IVI) and digital cockpit head units.',
+      ko: '차량용 인포테인먼트(IVI) 및 디지털 콕핏 헤드유닛을 위해 구글이 오픈소스로 공개한 차세대 차량 전용 운영체제 플랫폼.',
+    },
+    category: 'android-automotive',
+    topics: ['android-automotive', 'sdv', 'open-source'],
+    website: 'https://source.android.com/docs/devices/automotive',
+    repository: 'https://android.googlesource.com/platform/packages/services/Car/',
+    organization: 'Google / AOSP',
+    languages: ['C++', 'Java', 'Rust', 'Kotlin'],
+    license: 'Apache-2.0',
+    tags: ['aaos', 'android-automotive', 'aosp', 'ivi', 'vhal'],
+  },
+  {
+    id: 'aaos-sdv-extension',
+    name: 'AAOS SDV (Android Automotive OS for SDV)',
+    description: {
+      en: 'Extension of Android Automotive OS targeting centralized Software-Defined Vehicle (SDV) architectures, multi-display virtualized cockpits, and vehicle HAL integration.',
+      ko: '중앙 집중식 SDV 아키텍처, 다중 디스플레이 가상화 콕핏 및 VHAL 통합을 지원하도록 확장된 Android Automotive OS 플랫폼.',
+    },
+    category: 'android-automotive',
+    topics: ['android-automotive', 'sdv', 'open-source'],
+    website: 'https://source.android.com/docs/devices/automotive/sdv',
+    repository: 'https://android.googlesource.com/platform/hardware/interfaces/+/refs/heads/main/automotive/',
+    organization: 'Google / AOSP Automotive',
+    languages: ['C++', 'Rust', 'Kotlin'],
+    license: 'Apache-2.0',
+    tags: ['aaos-sdv', 'sdv', 'virtualization', 'vhal', 'zonal-architecture'],
+  },
+  {
     id: 'yocto-project',
     name: 'Yocto Project',
     description: {
@@ -114,4 +146,3 @@ export const projects: OpenSourceProject[] = [
     tags: ['kernel', 'socketcan', 'tsn', 'drivers'],
   },
 ];
-
