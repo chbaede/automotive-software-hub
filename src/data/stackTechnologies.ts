@@ -6,6 +6,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'nvidia-drive-thor',
+    asilLevel: 'ASIL-D',
     licenseType: 'commercial',
     name: 'NVIDIA DRIVE Thor',
     layerId: 'hardware-compute',
@@ -26,6 +27,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'qualcomm-snapdragon-ride',
+    asilLevel: 'ASIL-D',
     licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Ride & Ride Flex Platform',
     layerId: 'hardware-compute',
@@ -46,6 +48,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'qualcomm-snapdragon-cockpit',
+    asilLevel: 'ASIL-B',
     licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Digital Cockpit',
     layerId: 'hardware-compute',
@@ -126,6 +129,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'horizon-robotics-journey',
+    asilLevel: 'ASIL-B',
     licenseType: 'commercial',
     name: 'Horizon Robotics Journey 5/6 BPU SoC',
     layerId: 'hardware-compute',
@@ -168,9 +172,12 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   // 2. HYPERVISOR & VIRTUALIZATION
   // ==========================================
+  // 2. HYPERVISORS & VIRTUALIZATION
+  // ==========================================
   {
     id: 'qnx-hypervisor',
     licenseType: 'commercial',
+    asilLevel: 'ASIL-D',
     name: 'BlackBerry QNX Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -188,6 +195,111 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['qnx-developer-portal'],
     relatedTechnologyIds: ['qnx-neutrino', 'android-automotive-os', 'linux-kernel'],
     tags: ['qnx-hypervisor', 'virtualization', 'asil-d', 'type1', 'Commercial'],
+  },
+  {
+    id: 'open-synergy-coqos',
+    licenseType: 'commercial',
+    asilLevel: 'ASIL-B',
+    name: 'OpenSynergy COQOS Hypervisor SDK',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'Standards-based Type-1 automotive hypervisor supporting VirtIO and mixed-criticality cockpit ECUs.',
+      ko: 'VirtIO 오픈 디바이스 가상화 표준 및 이종 안전도 콕핏 ECU를 지원하는 OpenSynergy의 Type-1 오토모티브 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Type-1 Hardware Virtualization Layer partitioning multi-display cockpit workloads between Linux, Android, and RTOS.',
+      ko: '리눅스, 안드로이드 및 RTOS 간 다중 디스플레이 콕핏 워크로드를 분할 구동하는 Type-1 하드웨어 가상화 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Safety'],
+    topics: ['functional-safety', 'android-automotive', 'embedded-linux'],
+    website: 'https://www.opensynergy.com/coqos-hypervisor/',
+    companyIds: ['volkswagen-group', 'bmw-group'],
+    relatedTechnologyIds: ['linux-kernel', 'android-automotive-os'],
+    tags: ['coqos', 'opensynergy', 'hypervisor', 'virtio', 'asil-b', 'Commercial'],
+  },
+  {
+    id: 'perseus-hypervisor',
+    licenseType: 'oss',
+    asilLevel: 'ASIL-B',
+    name: 'Perseus Pegasus Hypervisor',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'Real-time open-source based automotive hypervisor and virtualization stack engineered for mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
+      ko: '이종 안전도(Mixed-Criticality) SDV 차량을 위해 (주)페르세우스가 자체 개발한 오픈소스 기반 실시간 오토모티브 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Real-time open-source automotive virtualization layer running on mixed-criticality zonal controllers.',
+      ko: '이종 안전도가 요구되는 영역 제어기(Zonal ECU)에서 구동되는 오픈소스 기반 실시간 차량용 가상화 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Open Source'],
+    topics: ['embedded-linux', 'open-source', 'sdv', 'functional-safety'],
+    website: 'https://www.cyberperseus.com/',
+    companyIds: ['perseus-automotive'],
+    relatedTechnologyIds: ['kvm-automotive', 'linux-kernel'],
+    tags: ['perseus', 'pegasus', 'hypervisor', 'koreantech', 'asil-b', 'OSS'],
+  },
+  {
+    id: 'qualcomm-hypervisor',
+    licenseType: 'commercial',
+    asilLevel: 'ASIL-B',
+    name: 'Qualcomm Snapdragon Type-1 Hypervisor',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'Proprietary bare-metal Type-1 hypervisor integrated into Snapdragon Cockpit and Ride platforms to partition QNX, Android, and Linux domains.',
+      ko: '스냅드래곤 콕핏 및 Ride 플랫폼에 밀접하게 통합되어 QNX, 안드로이드, 리눅스 도메인을 하드웨어 수준에서 격리하는 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Silicon-Optimized Type-1 Virtualization Layer built into Qualcomm Snapdragon Automotive Platforms.',
+      ko: '퀄컴 스냅드래곤 오토모티브 칩셋에 하드웨어 가속 처리되는 전용 Type-1 가상화 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Silicon HV'],
+    topics: ['android-automotive', 'qnx', 'adas'],
+    website: 'https://www.qualcomm.com/products/automotive',
+    companyIds: ['qualcomm'],
+    relatedTechnologyIds: ['qualcomm-snapdragon-cockpit', 'qnx-neutrino', 'android-automotive-os'],
+    tags: ['qualcomm-hv', 'snapdragon', 'hypervisor', 'asil-b', 'Commercial'],
+  },
+  {
+    id: 'nvidia-drive-hypervisor',
+    licenseType: 'commercial',
+    asilLevel: 'ASIL-D',
+    name: 'NVIDIA DRIVE OS Type-1 Hypervisor',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'ISO 26262 ASIL-D certified Type-1 hypervisor built into NVIDIA DRIVE OS for deterministic hardware partition isolation on DRIVE Thor and Orin SoCs.',
+      ko: 'DRIVE Thor 및 Orin SoC 하드웨어에서 미션 크리티컬 자율주행 알고리즘과 IVI 도메인을 하드웨어 수준 격리하는 ISO 26262 ASIL-D 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Safety-Critical Silicon-Grade Type-1 Hypervisor Layer running on NVIDIA DRIVE Thor/Orin.',
+      ko: 'NVIDIA DRIVE Thor/Orin 실리콘 위에서 구동되는 최고 안전 등급(ASIL-D) 가상화 하이퍼바이저 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Safety'],
+    topics: ['adas', 'functional-safety', 'sdv'],
+    website: 'https://www.nvidia.com/en-us/self-driving-cars/',
+    companyIds: ['nvidia'],
+    relatedTechnologyIds: ['nvidia-drive-thor', 'nvidia-driveworks-sdk', 'linux-kernel'],
+    tags: ['nvidia-hv', 'drive-os', 'hypervisor', 'asil-d', 'Commercial'],
+  },
+  {
+    id: 'samsung-exynos-hypervisor',
+    licenseType: 'commercial',
+    asilLevel: 'ASIL-B',
+    name: 'Samsung Exynos Auto Hypervisor Framework',
+    layerId: 'hypervisor-virtualization',
+    description: {
+      en: 'Hardware-assisted virtualization framework for Exynos Auto V920/V9 SoCs driving multi-display IVI, cluster, and HUD guest OS instances.',
+      ko: 'Exynos Auto V920/V9 프로세서의 하드웨어 가속 가상화를 활용하여 계기판, HUD 및 다중 인포테인먼트 게스트 OS를 안정화하는 하이퍼바이저.',
+    },
+    whereDoesItFit: {
+      en: 'Hardware-Assisted Virtualization Layer on Samsung Exynos Auto Processors.',
+      ko: '삼성 엑시노스 오토 반도체상에서 멀티 디스플레이 게스트 OS를 안정 구동시키는 가상화 레이어.',
+    },
+    categories: ['Hypervisor', 'Virtualization', 'Silicon HV'],
+    topics: ['android-automotive', 'sdv', 'functional-safety'],
+    website: 'https://semiconductor.samsung.com/processor/automotive-processor/',
+    companyIds: ['samsung-electronics'],
+    relatedTechnologyIds: ['samsung-exynos-auto-v920', 'android-automotive-os'],
+    tags: ['samsung-hv', 'exynos-auto', 'hypervisor', 'koreantech', 'asil-b', 'Commercial'],
   },
   {
     id: 'kvm-automotive',
@@ -258,6 +370,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'qnx-neutrino',
+    asilLevel: 'ASIL-D',
     licenseType: 'commercial',
     name: 'QNX Neutrino RTOS',
     layerId: 'operating-systems',
@@ -377,6 +490,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'zephyr-rtos',
+    asilLevel: 'ASIL-B',
     licenseType: 'oss',
     name: 'Zephyr RTOS',
     layerId: 'operating-systems',
@@ -396,6 +510,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'redhat-in-vehicle-os',
+    asilLevel: 'ASIL-B',
     licenseType: 'commercial',
     name: 'Red Hat In-Vehicle Operating System',
     layerId: 'operating-systems',
@@ -502,6 +617,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'autosar-adaptive',
+    asilLevel: 'ASIL-B',
     licenseType: 'commercial',
     name: 'AUTOSAR Adaptive Platform (ARA)',
     layerId: 'middleware-communication',
@@ -524,6 +640,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'autosar-classic',
+    asilLevel: 'ASIL-D',
     licenseType: 'commercial',
     name: 'AUTOSAR Classic Platform (BSW & RTE)',
     layerId: 'middleware-communication',
@@ -970,6 +1087,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'iso-26262-functional-safety',
+    asilLevel: 'ASIL-D',
     licenseType: 'commercial',
     name: 'ISO 26262 Functional Safety (ASIL A-D)',
     layerId: 'process-compliance-security',

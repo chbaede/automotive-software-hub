@@ -67,6 +67,18 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
               <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded">
                 {layerName}
               </span>
+              {technology.asilLevel && (
+                <span
+                  className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded border ${
+                    technology.asilLevel === 'ASIL-D'
+                      ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-400/40'
+                      : 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/40'
+                  }`}
+                  title={`ISO 26262 Safety Certified: ${technology.asilLevel}`}
+                >
+                  {technology.asilLevel} Certified
+                </span>
+              )}
               {technology.licenseType && (
                 <span
                   className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded border ${

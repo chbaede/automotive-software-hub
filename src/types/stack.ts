@@ -53,5 +53,6 @@ export interface StackTechnology {
   eventIds?: string[];
   relatedTechnologyIds?: string[];
   licenseType?: 'oss' | 'commercial';
+  asilLevel?: 'ASIL-A' | 'ASIL-B' | 'ASIL-C' | 'ASIL-D';
   tags?: string[];
 }

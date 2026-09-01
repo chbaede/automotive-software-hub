@@ -51,6 +51,20 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
             {technology.name}
           </span>
           <div className="flex items-center gap-1 shrink-0">
+            {technology.asilLevel && (
+              <span
+                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                  technology.asilLevel === 'ASIL-D'
+                    ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-400/40'
+                    : technology.asilLevel === 'ASIL-C' || technology.asilLevel === 'ASIL-B'
+                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/40'
+                    : 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-400/40'
+                }`}
+                title={`ISO 26262 Functional Safety Level: ${technology.asilLevel}`}
+              >
+                {technology.asilLevel}
+              </span>
+            )}
             {technology.licenseType && (
               <span
                 className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
