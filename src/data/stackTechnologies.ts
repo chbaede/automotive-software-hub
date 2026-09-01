@@ -7,6 +7,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'nvidia-drive-thor',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.nvidia.com/en-us/drive/thor/',
+    },
     licenseType: 'commercial',
     name: 'NVIDIA DRIVE Thor',
     layerId: 'hardware-compute',
@@ -28,6 +34,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'qualcomm-snapdragon-ride',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.qualcomm.com/products/automotive/snapdragon-ride-platform',
+    },
     licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Ride & Ride Flex Platform',
     layerId: 'hardware-compute',
@@ -49,6 +61,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'qualcomm-snapdragon-cockpit',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.qualcomm.com/products/automotive/snapdragon-cockpit-platform',
+    },
     licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Digital Cockpit',
     layerId: 'hardware-compute',
@@ -387,6 +405,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'qnx-neutrino',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://blackberry.qnx.com/',
+    },
     licenseType: 'commercial',
     name: 'QNX Neutrino RTOS',
     layerId: 'operating-systems',
@@ -408,6 +432,13 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'ghs-integrity-rtos',
+    asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.ghs.com/products/rtos/integrity.html',
+    },
     licenseType: 'commercial',
     name: 'Green Hills INTEGRITY RTOS',
     layerId: 'operating-systems',
@@ -427,6 +458,13 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'sysgo-pikeos',
+    asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.sysgo.com/pikeos',
+    },
     licenseType: 'commercial',
     name: 'SYSGO PikeOS Real-Time OS & Hypervisor',
     layerId: 'operating-systems',
@@ -507,6 +545,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'zephyr-rtos',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.zephyrproject.org/',
+    },
     licenseType: 'oss',
     name: 'Zephyr RTOS',
     layerId: 'operating-systems',
@@ -527,6 +571,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'redhat-in-vehicle-os',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'compliant',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.redhat.com/en/solutions/automotive',
+    },
     licenseType: 'commercial',
     name: 'Red Hat In-Vehicle Operating System',
     layerId: 'operating-systems',
@@ -542,11 +592,18 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['sdv', 'embedded-linux', 'cloud'],
     website: 'https://www.redhat.com/en/solutions/automotive',
     companyIds: ['red-hat'],
-    relatedTechnologyIds: ['linux-kernel', 'eclipse-ankaios', 'ota-cloud-fleet'],
-    tags: ['redhat', 'rhivos', 'sdv-os', 'linux', 'enterprise-automotive', 'Commercial'],
+    relatedTechnologyIds: ['linux-kernel', 'eclipse-ankaios', 'autosar-adaptive'],
+    tags: ['redhat', 'rhel', 'in-vehicle-os', 'sdv-linux', 'Commercial'],
   },
   {
     id: 'vxworks-rtos',
+    asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.windriver.com/products/vxworks',
+    },
     licenseType: 'commercial',
     name: 'Wind River VxWorks RTOS',
     layerId: 'operating-systems',
@@ -1125,6 +1182,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'iso-26262-functional-safety',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'suitable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.iso.org/standard/68383.html',
+    },
     licenseType: 'commercial',
     name: 'ISO 26262 Functional Safety (ASIL A-D)',
     layerId: 'process-compliance-security',

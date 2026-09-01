@@ -85,3 +85,4 @@ export function getTechnologyRelationships(techId: string) {
   const incoming = incomingRelationshipsByTechnologyId.get(techId) || [];
   return { outgoing, incoming };
 }
+

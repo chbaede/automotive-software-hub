@@ -422,4 +422,64 @@ export const stackRelationships: TechnologyRelationship[] = [
       ko: 'UN R155 차량 사이버 보안 관리 체계(CSMS) 형식 승인을 위한 기술적 기반 엔지니어링 표준입니다.',
     },
   },
+  {
+    sourceId: 'someip-protocol',
+    targetId: 'vsomeip-middleware',
+    type: 'implemented-by',
+    confidence: 'official',
+    description: {
+      en: 'COVESA vsomeip is an open-source C++ implementation of the SOME/IP communication protocol specification.',
+      ko: 'COVESA vsomeip는 SOME/IP 통신 프로토콜 명세의 C++ 오픈소스 래퍼런스 구현체입니다.',
+    },
+  },
+  {
+    sourceId: 'doip-protocol',
+    targetId: 'uds-protocol',
+    type: 'depends-on',
+    confidence: 'official',
+    description: {
+      en: 'Diagnostic over IP (ISO 13400) encapsulates ISO 14229 Unified Diagnostic Services (UDS) over Ethernet/TCP.',
+      ko: 'DoIP(ISO 13400)는 차량 이더넷 TCP/IP 네트워크를 통해 ISO 14229 UDS 진단 메시지를 캡슐화 전송합니다.',
+    },
+  },
+  {
+    sourceId: 'socketcan',
+    targetId: 'linux-kernel',
+    type: 'depends-on',
+    confidence: 'official',
+    description: {
+      en: 'SocketCAN is the official open-source CAN network subsystem integrated directly into the mainline Linux kernel.',
+      ko: 'SocketCAN은 메인라인 리눅스 커널 패밀리에 내장된 공식 오픈소스 CAN 네트워크 서브시스템입니다.',
+    },
+  },
+  {
+    sourceId: 'redhat-in-vehicle-os',
+    targetId: 'linux-kernel',
+    type: 'depends-on',
+    confidence: 'official',
+    description: {
+      en: 'Red Hat In-Vehicle OS is built on the Linux kernel with functional-safety certification pipelines.',
+      ko: 'Red Hat In-Vehicle OS는 기능 안전 검증 파이프라인을 갖춘 리눅스 커널 기반 오토모티브 OS입니다.',
+    },
+  },
+  {
+    sourceId: 'renode-emulator',
+    targetId: 'zephyr-rtos',
+    type: 'used-with',
+    confidence: 'community',
+    description: {
+      en: 'Renode emulates multi-node MCU target hardware for automated Zephyr RTOS testing without physical hardware.',
+      ko: 'Renode는 실물 타겟 없이 Zephyr RTOS 바이너리를 자동화 테스트하기 위한 가상 하드웨어 에뮬레이션을 제공합니다.',
+    },
+  },
+  {
+    sourceId: 'buildroot',
+    targetId: 'yocto-project',
+    type: 'alternative',
+    confidence: 'community',
+    description: {
+      en: 'Buildroot is a lightweight Makefile-based alternative to Yocto for building embedded Linux root filesystems.',
+      ko: 'Buildroot는 맞춤형 임베디드 리눅스 rootfs 생성을 위한 Yocto의 경량 Makefile 기반 대안 도구입니다.',
+    },
+  },
 ];
