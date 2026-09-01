@@ -264,6 +264,21 @@ export const companies: Company[] = [
     technologies: ['DENSO AUTOSAR Stack', 'Global Safety Package', 'Subaru EyeSight Hardware'],
     tags: ['tier1', 'denso', 'powertrain', 'ecu'],
   },
+  {
+    id: 'huawei-technologies',
+    name: 'Huawei Technologies Co., Ltd. (화웨이 / 华为)',
+    category: 'tier1',
+    description: {
+      en: 'Leading ICT & automotive technology vendor delivering Qiankun ADS 3.0 autonomous driving platform, HarmonySpace cockpit, and MDC domain controllers.',
+      ko: 'Qiankun ADS 3.0 자율주행 플랫폼, HarmonySpace 스마트 콕핏 및 MDC 차량 도메인 제어기를 개발/공급하는 오토모티브 솔루션 거인.',
+    },
+    website: 'https://www.huawei.com/',
+    headquarters: 'Shenzhen, China',
+    isPublic: false,
+    automotiveTopics: ['adas', 'sdv', 'android-automotive', 'functional-safety'],
+    technologies: ['Qiankun ADS 3.0', 'HarmonySpace Cockpit', 'MDC Autonomous Drive Controller', 'VOS Platform'],
+    tags: ['tier1', 'huawei', 'qiankun-ads', 'harmonyos', 'mdc', 'adas'],
+  },
 
   // Semiconductors
   {
