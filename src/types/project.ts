@@ -9,7 +9,8 @@ export type ProjectCategory =
   | 'yocto'
   | 'ros'
   | 'linux-kernel'
-  | 'android-automotive';
+  | 'android-automotive'
+  | 'apollo';
 
 export interface OpenSourceProject {
   id: string;
