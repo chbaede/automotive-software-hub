@@ -65,13 +65,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
           </Link>
 
           {/* Desktop Main Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 font-medium text-xs">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 font-medium text-xs whitespace-nowrap shrink-0">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-lg transition ${
+                  `px-2 xl:px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
                     isActive
                       ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900'
@@ -84,16 +84,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Global Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
+              className="flex items-center gap-2 px-2.5 xl:px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
               aria-label="Search"
             >
               <Search className="w-4 h-4 text-slate-400" />
-              <span className="hidden sm:inline font-sans">{t.nav.searchPlaceholder}</span>
-              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-slate-200 dark:bg-slate-800 text-slate-500 rounded">
+              <span className="hidden xl:inline font-sans">{t.nav.searchPlaceholder}</span>
+              <kbd className="hidden xl:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-slate-200 dark:bg-slate-800 text-slate-500 rounded">
                 ⌘K
               </kbd>
             </button>
