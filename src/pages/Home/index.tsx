@@ -49,11 +49,6 @@ export const HomePage: React.FC = () => {
       {/* Hero Banner Section */}
       <section className="relative p-8 sm:p-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-center sm:text-left">
         <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-full text-xs font-semibold font-mono">
-            <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping" />
-            Phase 1 Release • Open Developer Resource
-          </div>
-
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
             {t.hero.title}
           </h1>

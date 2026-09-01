@@ -73,6 +73,71 @@ export interface ArchitectureProfile {
   icon?: string;
 }
 
+export type StackPathType =
+  | 'runtime-stack'
+  | 'communication-flow'
+  | 'diagnostic-flow'
+  | 'data-flow'
+  | 'development-validation'
+  | 'reference-architecture';
+
+export interface StackPathTypeMeta {
+  type: StackPathType;
+  label: LocalizedText;
+  description: LocalizedText;
+}
+
+export const STACK_PATH_TYPE_METADATA: Record<StackPathType, StackPathTypeMeta> = {
+  'runtime-stack': {
+    type: 'runtime-stack',
+    label: { en: 'Runtime Stack', ko: '런타임 실행 스택' },
+    description: {
+      en: 'Execution hierarchy from hardware silicon to guest OS and application framework.',
+      ko: '하드웨어 실리콘부터 게스트 OS 및 애플리케이션 프레임워크로 이어지는 런타임 계층.',
+    },
+  },
+  'communication-flow': {
+    type: 'communication-flow',
+    label: { en: 'Communication Flow', ko: '통신 프로토콜 흐름' },
+    description: {
+      en: 'Service messaging and bus communication transport sequence.',
+      ko: '서비스 메시징 및 버스 통신 프로토콜 전송 경로.',
+    },
+  },
+  'diagnostic-flow': {
+    type: 'diagnostic-flow',
+    label: { en: 'Diagnostic Flow', ko: '차량 진단 통신 흐름' },
+    description: {
+      en: 'Diagnostic communication and firmware programming sequence (DoIP, UDS).',
+      ko: '진단 통신 및 펌웨어 프로그래밍 전송 경로 (DoIP, UDS).',
+    },
+  },
+  'data-flow': {
+    type: 'data-flow',
+    label: { en: 'Data Model & Signal Flow', ko: '데이터 모델 및 신호 흐름' },
+    description: {
+      en: 'Vehicle signal tree, telemetry encoding, and cloud messaging abstraction.',
+      ko: '차량 신호 트리, 텔레매틱스 인코딩 및 클라우드 메시징 추상화.',
+    },
+  },
+  'development-validation': {
+    type: 'development-validation',
+    label: { en: 'Validation & Simulation Journey', ko: '검증 및 시뮬레이션 환경' },
+    description: {
+      en: 'Software-in-the-Loop (SIL) simulation, virtual testing, and development environment.',
+      ko: '가상 시뮬레이션(SIL), 시험 및 개발 검증 환경.',
+    },
+  },
+  'reference-architecture': {
+    type: 'reference-architecture',
+    label: { en: 'Reference Architecture', ko: '대표 아키텍처 레퍼런스' },
+    description: {
+      en: 'Representative ecosystem combination of hardware, OS, orchestrator, and cloud services.',
+      ko: '하드웨어, OS, 오케스트레이터 및 클라우드 서비스의 대표적인 생태계 아키텍처 조합.',
+    },
+  },
+};
+
 export interface StackPathHop {
   technologyId: string;
   note?: LocalizedText;
@@ -82,6 +147,7 @@ export interface StackPath {
   id: string;
   name: LocalizedText;
   description: LocalizedText;
+  pathType?: StackPathType;
   architectureProfileId?: string;
   hops: StackPathHop[];
   topics?: TopicId[];

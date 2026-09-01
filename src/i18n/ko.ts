@@ -79,7 +79,7 @@ export const ko: Translations = {
   },
   hero: {
     title: 'Automotive Software Hub',
-    subtitle: '자동차 소프트웨어 개발자, 임베디드 리눅스 엔지니어, AUTOSAR & SDV 전문가를 위한 통합 개발 도구 및 리퍼런스 포털',
+    subtitle: '차량용 소프트웨어 기술, 아키텍처, 기업, 개발 도구 및 오픈소스 프로젝트를 하나로 연결합니다.',
     searchPlaceholder: 'CAN ID, SOME/IP, AUTOSAR, Yocto, ISO 26262, OEM 검색...',
     exploreTopics: '주요 추천 토픽',
   },

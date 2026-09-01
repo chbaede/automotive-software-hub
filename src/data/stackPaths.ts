@@ -3,12 +3,13 @@ import { StackPath } from '../types/architecture';
 export const stackPaths: StackPath[] = [
   {
     id: 'android-cockpit-path',
+    pathType: 'runtime-stack',
     name: {
-      en: 'Android Automotive Digital Cockpit Path',
-      ko: '안드로이드 오토모티브 디지털 콕핏 탐색 경로',
+      en: 'Representative Android Automotive Cockpit Architecture Journey',
+      ko: '대표 안드로이드 오토모티브 디지털 콕핏 탐색 경로',
     },
     description: {
-      en: 'Representative cockpit flow from SoC hardware -> Type-1 Hypervisor -> Guest Linux kernel -> AAOS platform & userspace VHAL -> Vehicle Signal Specification data tree.',
+      en: 'Representative cockpit journey from SoC hardware -> Type-1 Hypervisor -> Guest Linux kernel -> Android Automotive OS platform framework & userspace VHAL -> COVESA VSS vehicle signal model.',
       ko: '콕핏 SoC 하드웨어 -> Type-1 하이퍼바이저 -> 게스트 리눅스 커널 -> 안드로이드 오토모티브 OS & 유저스페이스 VHAL -> 차량 신호 명세 데이터 트리로 이어지는 콕핏 아키텍처 탐색 경로.',
     },
     architectureProfileId: 'android-automotive',
@@ -31,21 +32,21 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'linux-kernel',
         note: {
-          en: 'Guest OS Linux kernel providing Binder IPC and VHAL driver interfaces.',
-          ko: '바인더 IPC 및 VHAL 드라이버 인터페이스를 구동하는 게스트 리눅스 커널.',
+          en: 'Guest OS Linux kernel providing Binder IPC and display drivers.',
+          ko: '바인더 IPC 및 디스플레이 드라이버를 구동하는 게스트 리눅스 커널.',
         },
       },
       {
         technologyId: 'android-automotive-os',
         note: {
-          en: 'Android Automotive OS platform framework, CarService, and userspace VHAL layer.',
+          en: 'Android Automotive OS framework, CarService, and userspace VHAL layer (userspace HAL, not a kernel driver).',
           ko: '안드로이드 오토모티브 OS 프레임워크, CarService 및 유저스페이스 VHAL 계층.',
         },
       },
       {
         technologyId: 'covesa-vss',
         note: {
-          en: 'Standardized COVESA Vehicle Signal Specification data model for cockpit telemetry.',
+          en: 'Standardized COVESA Vehicle Signal Specification data tree defining vehicle telemetry (signal model concern).',
           ko: '콕핏 텔레매틱스 연동을 위한 COVESA 표준 차량 신호 데이터 모델.',
         },
       },
@@ -53,12 +54,13 @@ export const stackPaths: StackPath[] = [
   },
   {
     id: 'autosar-adaptive-path',
+    pathType: 'communication-flow',
     name: {
-      en: 'AUTOSAR Adaptive Service-Oriented (SOA) Path',
-      ko: 'AUTOSAR Adaptive 서비스 지향 아키텍처 탐색 경로',
+      en: 'Representative AUTOSAR Adaptive SOA & Diagnostic Journey',
+      ko: '대표 AUTOSAR Adaptive 서비스 지향 및 진단 탐색 경로',
     },
     description: {
-      en: 'High-performance MPU middleware path: POSIX RTOS (QNX Neutrino) -> ARA runtime -> SOME/IP protocol -> vsomeip C++ implementation -> DoIP -> UDS diagnostics.',
+      en: 'High-performance MPU middleware journey: POSIX RTOS (QNX Neutrino) -> ARA runtime -> SOME/IP protocol -> vsomeip C++ implementation -> DoIP -> UDS diagnostics.',
       ko: 'POSIX RTOS (QNX) -> ARA 런타임 -> SOME/IP 프로토콜 명세 -> vsomeip C++ 구현체 -> DoIP -> UDS 진단 서비스로 연계되는 미들웨어 탐색 경로.',
     },
     architectureProfileId: 'autosar-adaptive',
@@ -88,7 +90,7 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'vsomeip-middleware',
         note: {
-          en: 'COVESA open-source C++ reference implementation of SOME/IP protocol.',
+          en: 'COVESA open-source C++ reference implementation of SOME/IP protocol (implements SOME/IP spec, not full ARA).',
           ko: 'COVESA SOME/IP 통신 프로토콜의 C++ 오픈소스 래퍼런스 구현체.',
         },
       },
@@ -102,7 +104,7 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'uds-protocol',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services for ECU flashing and diagnostics.',
+          en: 'ISO 14229 Unified Diagnostic Services for ECU firmware flashing.',
           ko: 'ECU 펌웨어 프로그래밍 및 진단을 위한 ISO 14229 UDS 규격.',
         },
       },
@@ -110,9 +112,10 @@ export const stackPaths: StackPath[] = [
   },
   {
     id: 'autosar-classic-ecu-path',
+    pathType: 'runtime-stack',
     name: {
-      en: 'AUTOSAR Classic Microcontroller (MCU) Path',
-      ko: 'AUTOSAR Classic 마이크로컨트롤러(MCU) 섀시 제어 경로',
+      en: 'Representative AUTOSAR Classic Safety ECU Journey',
+      ko: '대표 AUTOSAR Classic 마이크로컨트롤러(MCU) 섀시 제어 경로',
     },
     description: {
       en: 'Representative real-time safety ECU path: NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN bus communication -> UDS diagnostic services.',
@@ -145,7 +148,7 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'uds-protocol',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services manager for ECU maintenance.',
+          en: 'ISO 14229 Unified Diagnostic Services manager module for ECU maintenance.',
           ko: 'ISO 14229 UDS 진단 통신 관리자 모듈.',
         },
       },
@@ -153,13 +156,14 @@ export const stackPaths: StackPath[] = [
   },
   {
     id: 'centralized-hpc-path',
+    pathType: 'reference-architecture',
     name: {
-      en: 'Centralized Vehicle Compute (HPC) Path',
-      ko: '중앙 집중식 고성능 컴퓨팅 (HPC) 아키텍처 경로',
+      en: 'Representative Centralized Vehicle Compute Ecosystem',
+      ko: '대표 중앙 집중식 고성능 컴퓨팅 (HPC) 생태계 경로',
     },
     description: {
-      en: 'Server-class vehicle central compute: NVIDIA Thor -> DRIVE OS Hypervisor -> Red Hat In-Vehicle OS -> Ankaios orchestrator -> uProtocol messaging.',
-      ko: 'NVIDIA Thor -> DRIVE OS 하이퍼바이저 -> Red Hat In-Vehicle OS -> Ankaios 오케스트레이터 -> uProtocol 메시징으로 연계되는 고성능 컴퓨팅 경로.',
+      en: 'Representative server-class central vehicle compute ecosystem: NVIDIA Thor -> DRIVE OS Hypervisor -> Red Hat In-Vehicle OS -> Ankaios orchestrator -> uProtocol messaging.',
+      ko: 'NVIDIA Thor -> DRIVE OS 하이퍼바이저 -> Red Hat In-Vehicle OS -> Ankaios 오케스트레이터 -> uProtocol 메시징으로 연계되는 고성능 컴퓨팅 생태계 탐색 경로.',
     },
     architectureProfileId: 'centralized-compute',
     topics: ['sdv', 'cloud', 'cybersecurity', 'someip'],
@@ -203,12 +207,13 @@ export const stackPaths: StackPath[] = [
   },
   {
     id: 'sdv-cloud-to-car-path',
+    pathType: 'data-flow',
     name: {
-      en: 'Cloud-Native SDV Service Path',
-      ko: '클라우드 네이티브 SDV 서비스 연동 탐색 경로',
+      en: 'Representative Cloud-Native SDV Service & Telemetry Journey',
+      ko: '대표 클라우드 네이티브 SDV 서비스 및 텔레매틱스 경로',
     },
     description: {
-      en: 'End-to-end cloud-to-vehicle pipeline: Cloud Fleet OTA -> uProtocol transport -> COVESA VSS signal model -> Ankaios containers.',
+      en: 'Representative end-to-end cloud-to-vehicle journey: Cloud Fleet OTA -> uProtocol transport -> COVESA VSS signal model -> Ankaios containers.',
       ko: '클라우드 플릿 OTA 서비스 -> uProtocol 전송 계층 -> COVESA VSS 신호 모델 -> Ankaios 컨테이너로 연계되는 클라우드-차량 연동 탐색 경로.',
     },
     architectureProfileId: 'sdv-platform',
@@ -246,12 +251,13 @@ export const stackPaths: StackPath[] = [
   },
   {
     id: 'adas-autonomous-path',
+    pathType: 'development-validation',
     name: {
-      en: 'ADAS & Autonomous Perception Pipeline Path',
-      ko: 'ADAS 및 자율주행 인지 파이프라인 경로',
+      en: 'Representative ADAS Perception & SIL Simulation Journey',
+      ko: '대표 ADAS 인지 및 SIL 시뮬레이션 검증 경로',
     },
     description: {
-      en: 'Representative perception pipeline: NVIDIA Thor -> Real-Time Linux (PREEMPT_RT) -> ROS 2 / Autoware -> DDS -> iceoryx zero-copy IPC -> CARLA Simulator.',
+      en: 'Representative perception and simulation journey: NVIDIA Thor -> Real-Time Linux (PREEMPT_RT) -> ROS 2 / Autoware -> DDS -> iceoryx zero-copy IPC -> CARLA Simulator.',
       ko: 'NVIDIA Thor -> 실시간 리눅스 -> ROS 2 / Autoware -> DDS -> iceoryx 제로카피 IPC -> CARLA 시뮬레이터로 연계되는 자율주행 데이터 경로.',
     },
     architectureProfileId: 'adas-autonomous',
@@ -267,8 +273,8 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'embedded-linux-rt',
         note: {
-          en: 'PREEMPT_RT real-time kernel ensuring microsecond-level determinism.',
-          ko: '마이크로초 수준 결정론적 성능을 보장하는 PREEMPT_RT 실시간 커널.',
+          en: 'PREEMPT_RT real-time kernel supporting deterministic scheduling.',
+          ko: '결정론적 스케줄링 성능을 지원하는 PREEMPT_RT 실시간 커널.',
         },
       },
       {
@@ -295,7 +301,7 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'carla-av-simulator',
         note: {
-          en: 'CARLA virtual simulator for SIL validation (testing environment, not in-vehicle runtime).',
+          en: 'CARLA virtual simulator for SIL validation (virtual testing environment, not in-vehicle runtime).',
           ko: '자율주행 SIL 검증을 위한 CARLA 가상 시뮬레이터 (차량 탑재용이 아닌 테스트 환경).',
         },
       },

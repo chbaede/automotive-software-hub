@@ -77,7 +77,7 @@ export const en = {
   },
   hero: {
     title: 'Automotive Software Hub',
-    subtitle: 'Essential tools, documentation, open-source projects, events, and industry reference directory for automotive software developers & embedded engineers.',
+    subtitle: 'Connect technologies, architectures, companies, tools, and open-source projects.',
     searchPlaceholder: 'Search by CAN ID, SOME/IP, AUTOSAR, Yocto, ISO 26262, OEM...',
     exploreTopics: 'Popular Topics',
   },

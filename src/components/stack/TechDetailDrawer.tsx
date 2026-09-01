@@ -16,7 +16,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { ArchitectureProfile } from '../../types/architecture';
+import { ArchitectureProfile, STACK_PATH_TYPE_METADATA } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { tools } from '../../data/tools';
@@ -257,9 +257,20 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                       key={path.id}
                       className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 space-y-2"
                     >
-                      <div className="space-y-0.5">
-                        <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
-                          {getLocalizedText(path.name, language)}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
+                            {getLocalizedText(path.name, language)}
+                          </div>
+                          {path.pathType && (() => {
+                            const meta = STACK_PATH_TYPE_METADATA[path.pathType];
+                            const label = meta ? getLocalizedText(meta.label, language) : path.pathType;
+                            return (
+                              <span className="px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 rounded">
+                                {label}
+                              </span>
+                            );
+                          })()}
                         </div>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
                           {getLocalizedText(path.description, language)}

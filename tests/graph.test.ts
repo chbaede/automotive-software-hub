@@ -149,4 +149,19 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 8 Passed: Representative automotive stack paths and graph index resolution verified.');
 }
 
+// Test 9: Stack Path Type Classification Validation
+{
+  const { stackPaths } = await import('../src/data/stackPaths.js');
+  const { STACK_PATH_TYPE_METADATA } = await import('../src/types/architecture.js');
+
+  stackPaths.forEach((path) => {
+    assert.ok(path.pathType, `Path '${path.id}' should declare a pathType`);
+    assert.ok(
+      STACK_PATH_TYPE_METADATA[path.pathType!],
+      `Path '${path.id}' has invalid pathType '${path.pathType}'`
+    );
+  });
+  console.log('✅ Test 9 Passed: Stack Path Type classifications and localized metadata verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

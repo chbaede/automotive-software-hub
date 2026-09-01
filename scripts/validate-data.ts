@@ -21,7 +21,7 @@ import { stackRelationships } from '../src/data/stackRelationships.js';
 import { stackPaths } from '../src/data/stackPaths.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
 import { RELATIONSHIP_METADATA } from '../src/types/relationship.js';
-import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../src/types/architecture.js';
+import { ARCHITECTURE_PROFILE_TYPE_METADATA, STACK_PATH_TYPE_METADATA } from '../src/types/architecture.js';
 
 const validTopicIds = new Set(Object.keys(TOPIC_TAXONOMY));
 const validToolIds = new Set(tools.map((t) => t.id));
@@ -266,6 +266,10 @@ stackPaths.forEach((path) => {
 
   if (path.architectureProfileId && !profileIds.has(path.architectureProfileId)) {
     error(`[Stack Path ID: ${path.id}] Unknown architectureProfileId: '${path.architectureProfileId}'`);
+  }
+
+  if (path.pathType && !STACK_PATH_TYPE_METADATA[path.pathType]) {
+    error(`[Stack Path ID: ${path.id}] Invalid pathType: '${path.pathType}'`);
   }
 
   if (!path.hops || path.hops.length < 2) {
