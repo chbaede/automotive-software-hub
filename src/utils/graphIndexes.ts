@@ -63,6 +63,15 @@ stackRelationships.forEach((rel) => {
   incomingRelationshipsByTechnologyId.set(rel.targetId, inList);
 });
 
+// Index: Technologies by Layer ID
+export const technologiesByLayerId = new Map<string, StackTechnology[]>();
+
+stackTechnologies.forEach((tech) => {
+  const list = technologiesByLayerId.get(tech.layerId) || [];
+  list.push(tech);
+  technologiesByLayerId.set(tech.layerId, list);
+});
+
 /**
  * Fast graph traversal helper returning all directly connected Stack Technologies
  * via semantic relationships or fallback related IDs.
@@ -103,4 +112,39 @@ export function getTechnologyRelationships(techId: string) {
   const outgoing = outgoingRelationshipsByTechnologyId.get(techId) || [];
   const incoming = incomingRelationshipsByTechnologyId.get(techId) || [];
   return { outgoing, incoming };
+}
+
+export interface GroupedRelationshipItem {
+  relationship: TechnologyRelationship;
+  targetOrSourceTech: StackTechnology;
+  isOutgoing: boolean;
+}
+
+/**
+ * Returns all relationships for a given technology grouped by relationship type.
+ */
+export function getGroupedTechnologyRelationships(techId: string): Map<string, GroupedRelationshipItem[]> {
+  const groups = new Map<string, GroupedRelationshipItem[]>();
+
+  const outgoing = outgoingRelationshipsByTechnologyId.get(techId) || [];
+  outgoing.forEach((rel) => {
+    const targetTech = technologyById.get(rel.targetId);
+    if (targetTech) {
+      const list = groups.get(rel.type) || [];
+      list.push({ relationship: rel, targetOrSourceTech: targetTech, isOutgoing: true });
+      groups.set(rel.type, list);
+    }
+  });
+
+  const incoming = incomingRelationshipsByTechnologyId.get(techId) || [];
+  incoming.forEach((rel) => {
+    const sourceTech = technologyById.get(rel.sourceId);
+    if (sourceTech) {
+      const list = groups.get(rel.type) || [];
+      list.push({ relationship: rel, targetOrSourceTech: sourceTech, isOutgoing: false });
+      groups.set(rel.type, list);
+    }
+  });
+
+  return groups;
 }

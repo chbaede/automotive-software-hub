@@ -194,4 +194,33 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 10 Passed: Information freshness (lastVerified) ISO dates and non-future validity verified.');
 }
 
+// Test 11: Technologies by Layer ID Index Resolution
+{
+  const { technologiesByLayerId } = await import('../src/utils/graphIndexes.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+
+  stackLayers.forEach((layer) => {
+    const techsInLayer = technologiesByLayerId.get(layer.id) || [];
+    assert.ok(Array.isArray(techsInLayer), `Layer '${layer.id}' must map to an array of technologies`);
+    techsInLayer.forEach((t) => {
+      assert.strictEqual(t.layerId, layer.id, `Tech '${t.id}' mapped in layer index must match layerId '${layer.id}'`);
+    });
+  });
+  console.log('✅ Test 11 Passed: Technologies by Layer ID index verified across all stack layers.');
+}
+
+// Test 12: Grouped Technology Relationships Helper Resolution
+{
+  const { getGroupedTechnologyRelationships } = await import('../src/utils/graphIndexes.js');
+
+  const aaosGrouped = getGroupedTechnologyRelationships('android-automotive-os');
+  assert.ok(aaosGrouped.size > 0, 'AAOS must return grouped relationships');
+  assert.ok(aaosGrouped.has('depends-on'), 'AAOS must group depends-on relationships');
+
+  const linuxGrouped = getGroupedTechnologyRelationships('linux-kernel');
+  assert.ok(linuxGrouped.size > 0, 'Linux Kernel must return grouped relationships');
+  console.log('✅ Test 12 Passed: Grouped Technology Relationships helper resolves correctly.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+

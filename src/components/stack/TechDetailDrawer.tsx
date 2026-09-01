@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   ExternalLink,
@@ -14,6 +14,9 @@ import {
   Globe,
   Route,
   ArrowRight,
+  ChevronLeft,
+  Layers,
+  Network,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile, STACK_PATH_TYPE_METADATA } from '../../types/architecture';
@@ -27,6 +30,7 @@ import { events } from '../../data/events';
 import { stackLayers } from '../../data/stackLayers';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { TechRelationshipTree } from './TechRelationshipTree';
+import { TechArchitectureMicroMap } from './TechArchitectureMicroMap';
 import { Tool } from '../../types/tool';
 import { pathsByTechnologyId, technologyById } from '../../utils/graphIndexes';
 
@@ -60,6 +64,29 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   onOpenTool,
 }) => {
   const { language, t } = useLanguage();
+
+  // Navigation History Stack for Context Preservation
+  const [history, setHistory] = useState<StackTechnology[]>([]);
+
+  useEffect(() => {
+    if (technology) {
+      setHistory((prev) => {
+        // If current tech is already top of stack, don't duplicate
+        if (prev.length > 0 && prev[prev.length - 1].id === technology.id) {
+          return prev;
+        }
+        // If user clicked an earlier breadcrumb item, trim stack to that item
+        const existingIdx = prev.findIndex((item) => item.id === technology.id);
+        if (existingIdx !== -1) {
+          return prev.slice(0, existingIdx + 1);
+        }
+        // Otherwise append to history
+        return [...prev, technology];
+      });
+    } else {
+      setHistory([]);
+    }
+  }, [technology]);
 
   if (!technology) return null;
 
@@ -95,6 +122,13 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     .map((id) => events.find((e) => e.id === id))
     .filter(Boolean);
 
+  const handleBackHistory = () => {
+    if (history.length > 1) {
+      const prevTech = history[history.length - 2];
+      onSelectTech(prevTech);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-slate-900/60 backdrop-blur-sm animate-fade-in"
@@ -104,6 +138,41 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
         className="w-full max-w-2xl h-full bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Breadcrumb / Navigation Trail */}
+        {history.length > 1 && (
+          <div className="bg-slate-100 dark:bg-slate-950 px-6 py-2 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 overflow-x-auto text-xs no-scrollbar">
+            <button
+              onClick={handleBackHistory}
+              className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1 shrink-0"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
+
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar font-mono text-[11px]">
+              {history.map((item, idx) => {
+                const isLast = idx === history.length - 1;
+                return (
+                  <React.Fragment key={`hist-${item.id}-${idx}`}>
+                    <button
+                      onClick={() => onSelectTech(item)}
+                      className={`truncate max-w-[140px] px-1.5 py-0.5 rounded transition ${
+                        isLast
+                          ? 'font-bold text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 shadow-2xs'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+                      }`}
+                      title={item.name}
+                    >
+                      {item.name}
+                    </button>
+                    {!isLast && <span className="text-slate-400">›</span>}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Drawer Header */}
         <div className="flex items-start justify-between p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
           <div className="space-y-1.5">
@@ -258,7 +327,10 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           )}
 
-          {/* Technology Semantic Relationship Node Tree */}
+          {/* Interactive Architecture Micro-Map */}
+          <TechArchitectureMicroMap technology={technology} onSelectTech={onSelectTech} />
+
+          {/* Technology Semantic Relationship Node Tree (Grouped & Directional) */}
           <TechRelationshipTree technology={technology} onSelectTech={onSelectTech} />
 
           {/* Canonical Automotive Stack Paths */}
@@ -344,7 +416,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             );
           })()}
 
-          {/* Linked Interactive Developer Tools */}
+          {/* Connected Developer Tools */}
           {linkedTools.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -381,7 +453,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           )}
 
-          {/* Linked Resources / Specs */}
+          {/* Connected Resources & Standards */}
           {linkedResources.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -410,7 +482,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           )}
 
-          {/* Linked Open Source Projects */}
+          {/* Connected Open Source Projects */}
           {linkedProjects.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -439,7 +511,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           )}
 
-          {/* Linked Companies */}
+          {/* Connected Companies */}
           {linkedCompanies.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -463,7 +535,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           )}
 
-          {/* Linked Events */}
+          {/* Connected Technical Events */}
           {linkedEvents.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">

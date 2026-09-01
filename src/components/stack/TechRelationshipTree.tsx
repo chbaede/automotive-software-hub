@@ -1,7 +1,17 @@
-import React from 'react';
-import { Network, ArrowRight, ArrowLeftRight, Layers, ArrowUpRight, ShieldCheck, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  Network,
+  ArrowRight,
+  ArrowLeftRight,
+  Layers,
+  ArrowUpRight,
+  ShieldCheck,
+  ExternalLink,
+  ListFilter,
+  GitFork,
+} from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { RELATIONSHIP_METADATA, TechnologyRelationship } from '../../types/relationship';
+import { RELATIONSHIP_METADATA, TechnologyRelationship, RelationshipType } from '../../types/relationship';
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -9,6 +19,7 @@ import {
   technologyById,
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
+  getGroupedTechnologyRelationships,
 } from '../../utils/graphIndexes';
 
 interface TechRelationshipTreeProps {
@@ -21,9 +32,11 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
   onSelectTech,
 }) => {
   const { language, t } = useLanguage();
+  const [viewMode, setViewMode] = useState<'grouped' | 'directional'>('grouped');
 
   const outgoingRels = outgoingRelationshipsByTechnologyId.get(technology.id) || [];
   const incomingRels = incomingRelationshipsByTechnologyId.get(technology.id) || [];
+  const groupedRels = getGroupedTechnologyRelationships(technology.id);
 
   const explicitRelatedIds = new Set([
     ...outgoingRels.map((r) => r.targetId),
@@ -35,12 +48,11 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
     .map((id) => technologyById.get(id))
     .filter((st): st is StackTechnology => Boolean(st));
 
-  const hasAnyRelationships =
-    outgoingRels.length > 0 || incomingRels.length > 0 || fallbackRelatedTechs.length > 0;
+  const totalConnections = outgoingRels.length + incomingRels.length + fallbackRelatedTechs.length;
 
-  if (!hasAnyRelationships) return null;
+  if (totalConnections === 0) return null;
 
-  const renderRelationshipItem = (
+  const renderRelationshipCard = (
     rel: TechnologyRelationship,
     otherTech: StackTechnology,
     isOutgoing: boolean,
@@ -53,7 +65,7 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
     return (
       <div
         key={`${otherTech.id}-${idx}`}
-        className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition space-y-1.5"
+        className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition space-y-1.5 shadow-2xs"
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -67,7 +79,7 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
                 )}
                 <button
                   onClick={() => onSelectTech(otherTech)}
-                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
+                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline text-left"
                 >
                   <span>{otherTech.name}</span>
                   <ArrowUpRight className="w-3 h-3 text-slate-400" />
@@ -77,7 +89,7 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
               <>
                 <button
                   onClick={() => onSelectTech(otherTech)}
-                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline"
+                  className="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 hover:underline text-left"
                 >
                   <span>{otherTech.name}</span>
                   <ArrowUpRight className="w-3 h-3 text-slate-400" />
@@ -92,20 +104,20 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
             )}
           </div>
 
-          <span className="text-[9px] font-mono px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded shrink-0">
+          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded shrink-0">
             {otherTech.layerId.split('-')[0]}
           </span>
         </div>
 
         {relDesc && (
-          <p className="text-[11px] text-slate-600 dark:text-slate-400 pl-1 leading-relaxed">
+          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed pl-1">
             {relDesc}
           </p>
         )}
 
         {/* Evidence & Trust metadata */}
         {(rel.confidence || rel.sourceUrl || rel.lastVerified) && (
-          <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+          <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500 dark:text-slate-400 font-mono flex-wrap">
             {rel.confidence && (
               <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
                 <ShieldCheck className="w-3 h-3 text-emerald-500" />
@@ -140,15 +152,37 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
 
   return (
     <div className="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header with View Toggle */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
           <Network className="w-4 h-4 text-brand-500" />
-          <span>{t.stack.semanticRelationshipsHeader}</span>
+          <span>{t.stack.semanticRelationshipsHeader} ({totalConnections})</span>
         </div>
-        <span className="text-[10px] font-mono text-slate-500">
-          {outgoingRels.length + incomingRels.length + fallbackRelatedTechs.length} Connections
-        </span>
+
+        <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 text-[10px] font-semibold">
+          <button
+            onClick={() => setViewMode('grouped')}
+            className={`px-2 py-1 rounded-md transition flex items-center gap-1 ${
+              viewMode === 'grouped'
+                ? 'bg-brand-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+            }`}
+          >
+            <ListFilter className="w-3 h-3" />
+            <span>Semantic Groups</span>
+          </button>
+          <button
+            onClick={() => setViewMode('directional')}
+            className={`px-2 py-1 rounded-md transition flex items-center gap-1 ${
+              viewMode === 'directional'
+                ? 'bg-brand-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+            }`}
+          >
+            <GitFork className="w-3 h-3" />
+            <span>Directional</span>
+          </button>
+        </div>
       </div>
 
       {/* Primary Center Node */}
@@ -162,43 +196,82 @@ export const TechRelationshipTree: React.FC<TechRelationshipTreeProps> = ({
         </span>
       </div>
 
-      {/* Outgoing Relationships List */}
-      {outgoingRels.length > 0 && (
-        <div className="space-y-2 pt-1">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Outward Dependencies & Integrations
-          </div>
-          <div className="grid gap-2">
-            {outgoingRels.map((rel, idx) => {
-              const targetTech = technologyById.get(rel.targetId);
-              if (!targetTech) return null;
-              return renderRelationshipItem(rel, targetTech, true, idx);
-            })}
-          </div>
+      {/* View Mode 1: Grouped by Semantic Category */}
+      {viewMode === 'grouped' && (
+        <div className="space-y-4">
+          {Array.from(groupedRels.entries()).map(([relType, items]) => {
+            const typedRelType = relType as RelationshipType;
+            const relMeta = RELATIONSHIP_METADATA[typedRelType];
+            const typeLabel = relMeta ? getLocalizedText(relMeta.label, language) : relType;
+
+            return (
+              <div key={relType} className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5">
+                    <RelationshipBadge type={typedRelType} />
+                    <span>{typeLabel}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-500">
+                    {items.length}
+                  </span>
+                </div>
+
+                <div className="grid gap-2">
+                  {items.map((item, idx) =>
+                    renderRelationshipCard(
+                      item.relationship,
+                      item.targetOrSourceTech,
+                      item.isOutgoing,
+                      idx
+                    )
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {/* Incoming Relationships List */}
-      {incomingRels.length > 0 && (
-        <div className="space-y-2 pt-1">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Adopted & Utilized By (Inward Connections)
-          </div>
-          <div className="grid gap-2">
-            {incomingRels.map((rel, idx) => {
-              const sourceTech = technologyById.get(rel.sourceId);
-              if (!sourceTech) return null;
-              return renderRelationshipItem(rel, sourceTech, false, idx);
-            })}
-          </div>
+      {/* View Mode 2: Inward / Outward Directional */}
+      {viewMode === 'directional' && (
+        <div className="space-y-4">
+          {outgoingRels.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Outward Dependencies & Downstream Integrations ({outgoingRels.length})
+              </div>
+              <div className="grid gap-2">
+                {outgoingRels.map((rel, idx) => {
+                  const targetTech = technologyById.get(rel.targetId);
+                  if (!targetTech) return null;
+                  return renderRelationshipCard(rel, targetTech, true, idx);
+                })}
+              </div>
+            </div>
+          )}
+
+          {incomingRels.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Adopted & Utilized By / Upstream Callers ({incomingRels.length})
+              </div>
+              <div className="grid gap-2">
+                {incomingRels.map((rel, idx) => {
+                  const sourceTech = technologyById.get(rel.sourceId);
+                  if (!sourceTech) return null;
+                  return renderRelationshipCard(rel, sourceTech, false, idx);
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Fallback Related Nodes */}
       {fallbackRelatedTechs.length > 0 && (
-        <div className="space-y-1.5 pt-1">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Other Related Stack Nodes
+        <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Other Related Stack Nodes ({fallbackRelatedTechs.length})
           </div>
           <div className="flex flex-wrap gap-1.5">
             {fallbackRelatedTechs.map((rel) => (
