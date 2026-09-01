@@ -12,9 +12,9 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6854824605420161" crossorigin="anonymous"></script>
 
     <!-- Primary Search Engine SEO Meta Tags -->
-    <title>Automotive Software Hub — Interactive SDV, AUTOSAR, QNX & Yocto Developer Portal</title>
-    <meta name="description" content="Open reference portal and interactive developer tools for automotive software engineers, SDV developers, embedded Linux/Yocto engineers, AUTOSAR specialists, and QNX professionals. Explore CAN, SOME/IP, DoIP, ISO 26262, and automotive technology stacks." />
-    <meta name="keywords" content="Automotive Software, Software Defined Vehicle, SDV, AUTOSAR Classic, AUTOSAR Adaptive, Android Automotive OS, AAOS, Yocto Project, QNX Neutrino, CAN FD, SOME/IP, DoIP, UDS ISO 14229, ISO 26262, ISO 21434, Automotive Ethernet, Embedded Linux, dSPACE HIL, NVIDIA DriveWorks, CARLA" />
+    <title>Automotive Software Hub — Interactive SDV, AUTOSAR, AAOS & Developer Portal</title>
+    <meta name="description" content="Automotive Software Hub (오토모티브 소프트웨어 허브) is the open developer reference portal & interactive toolkit for Software-Defined Vehicles (SDV), AUTOSAR Classic/Adaptive, Android Automotive OS (AAOS), Yocto, QNX, hypervisors, and automotive SoC semiconductors." />
+    <meta name="keywords" content="automotive, hub, automotive software, software defined vehicle, sdv, autosar, autosar classic, autosar adaptive, android automotive, aaos, yocto project, automotive grade linux, agl, qnx, embedded linux, automotive soc, exynos auto, snapdragon cockpit, nvidia drive, telechips, perseus, can bus, some/ip, doip, iso 26262, iso 21434, automotive ethernet, 오토모티브, 오토모티브 소프트웨어, 자동차 소프트웨어, SDV, 차량용 소프트웨어, 오토모티브 팹리스, 안드로이드 오토모티브, 차량용 반도체, 오토모티브 하이퍼바이저, 한국 오토모티브 스타트업, 차량용 리눅스, 기능 안전, 차량 사이버 보안" />
     <meta name="author" content="Changhyeok Bae" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
@@ -23,8 +23,8 @@
     <!-- Open Graph / Facebook / LinkedIn Social Meta Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://autohub.yocto.co.kr/" />
-    <meta property="og:title" content="Automotive Software Hub — Interactive SDV, AUTOSAR & Yocto Developer Portal" />
-    <meta property="og:description" content="Interactive map of modern vehicle software stacks, in-browser CAN/SOME/IP developer utilities, standards, open-source projects, and industry directory." />
+    <meta property="og:title" content="Automotive Software Hub — Interactive SDV, AUTOSAR & Developer Portal" />
+    <meta property="og:description" content="Explore interactive vehicle software architecture graphs, in-browser CAN/SOME/IP developer utilities, standards, open-source projects, and global automotive ecosystem directory." />
     <meta property="og:site_name" content="Automotive Software Hub" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="ko_KR" />
@@ -32,27 +32,37 @@
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Automotive Software Hub — SDV & AUTOSAR Developer Portal" />
-    <meta name="twitter:description" content="Interactive automotive software stack map, in-browser protocol tools, resources, events, and industry directory." />
+    <meta name="twitter:description" content="Interactive automotive software stack map, in-browser protocol tools, standards documentation, events, and industry ecosystem directory." />
 
     <!-- Structured Data: JSON-LD (Schema.org) for Google Indexing -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Automotive Software Hub",
-        "alternateName": "Automotive Software Developer Portal",
-        "url": "https://autohub.yocto.co.kr/",
-        "description": "Essential developer tools, documentation, open-source projects, events, and industry reference directory for automotive software developers, embedded Linux engineers, AUTOSAR engineers, and SDV professionals.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Automotive Software Hub",
-          "url": "https://github.com/chbaede/automotive-software-hub"
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://autohub.yocto.co.kr/resources?search={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://autohub.yocto.co.kr/#website",
+            "url": "https://autohub.yocto.co.kr/",
+            "name": "Automotive Software Hub",
+            "alternateName": ["Automotive Software Portal", "오토모티브 소프트웨어 허브", "SDV Hub"],
+            "description": "Essential developer portal, architecture reference, in-browser protocol tools, and ecosystem directory for automotive software engineers, SDV architects, and embedded Linux developers.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Automotive Software Hub",
+              "url": "https://github.com/chbaede/automotive-software-hub"
+            },
+            "inLanguage": ["en-US", "ko-KR"]
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://autohub.yocto.co.kr/#application",
+            "name": "Automotive Software Hub Tools",
+            "operatingSystem": "Web, All OS",
+            "applicationCategory": "DeveloperApplication",
+            "description": "In-browser automotive protocol visualizers and converters for CAN ID, CAN Frame, SOME/IP, CRC, Endianness, and Base64.",
+            "url": "https://autohub.yocto.co.kr/tools"
+          }
+        ]
       }
     </script>
   </head>
