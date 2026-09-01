@@ -38,6 +38,20 @@ interface TechDetailDrawerProps {
   onOpenTool?: (tool: Tool) => void;
 }
 
+const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
+  const [year, month, day] = isoDate.split('-');
+  if (!year || !month || !day) return isoDate;
+  if (lang === 'ko') {
+    return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
+  }
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  const monthName = months[parseInt(month, 10) - 1] || month;
+  return `${monthName} ${parseInt(day, 10)}, ${year}`;
+};
+
 export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   technology,
   onClose,
@@ -146,6 +160,17 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                   {technology.status}
                 </span>
               )}
+              {(technology.functionalSafety?.lastVerified || technology.lastVerified) && (() => {
+                const verifiedDate = technology.functionalSafety?.lastVerified || technology.lastVerified;
+                if (!verifiedDate) return null;
+                const formatted = formatVerifiedDate(verifiedDate, language);
+                return (
+                  <span className="px-2 py-0.5 text-[10px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded font-medium flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-slate-400" />
+                    <span>{t.trust.lastVerified.replace('{date}', formatted)}</span>
+                  </span>
+                );
+              })()}
             </div>
 
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
@@ -259,18 +284,26 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                     >
                       <div className="space-y-1">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
-                            {getLocalizedText(path.name, language)}
+                          <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            <span>{getLocalizedText(path.name, language)}</span>
                           </div>
-                          {path.pathType && (() => {
-                            const meta = STACK_PATH_TYPE_METADATA[path.pathType];
-                            const label = meta ? getLocalizedText(meta.label, language) : path.pathType;
-                            return (
-                              <span className="px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 rounded">
-                                {label}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {path.lastVerified && (
+                              <span className="text-[9px] font-mono text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                <Calendar className="w-2.5 h-2.5" />
+                                <span>{t.trust.lastVerified.replace('{date}', formatVerifiedDate(path.lastVerified, language))}</span>
                               </span>
-                            );
-                          })()}
+                            )}
+                            {path.pathType && (() => {
+                              const meta = STACK_PATH_TYPE_METADATA[path.pathType];
+                              const label = meta ? getLocalizedText(meta.label, language) : path.pathType;
+                              return (
+                                <span className="px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 rounded">
+                                  {label}
+                                </span>
+                              );
+                            })()}
+                          </div>
                         </div>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
                           {getLocalizedText(path.description, language)}

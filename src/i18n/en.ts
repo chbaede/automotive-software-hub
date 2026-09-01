@@ -72,7 +72,7 @@ export const en = {
     officialSource: 'Official Source',
     vendorSource: 'Vendor Documentation',
     communitySource: 'Ecosystem Mapping',
-    lastVerified: 'Verified: {date}',
+    lastVerified: 'Last verified: {date}',
     sourceLink: 'Evidence Source',
   },
   hero: {

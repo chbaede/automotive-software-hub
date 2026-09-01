@@ -164,4 +164,34 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 9 Passed: Stack Path Type classifications and localized metadata verified.');
 }
 
+// Test 10: Information Freshness (lastVerified) Date Format & Validity
+{
+  const { stackPaths } = await import('../src/data/stackPaths.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  const isoRegex = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
+  const now = Date.now() + 86400000;
+
+  stackPaths.forEach((path) => {
+    if (path.lastVerified) {
+      assert.ok(isoRegex.test(path.lastVerified), `Path '${path.id}' has malformed lastVerified date '${path.lastVerified}'`);
+      const ts = Date.parse(path.lastVerified);
+      assert.ok(!isNaN(ts), `Path '${path.id}' has invalid lastVerified date value '${path.lastVerified}'`);
+      assert.ok(ts <= now, `Path '${path.id}' lastVerified date '${path.lastVerified}' cannot be in the future`);
+    }
+  });
+
+  stackTechnologies.forEach((tech) => {
+    const verifiedDate = tech.functionalSafety?.lastVerified || tech.lastVerified;
+    if (verifiedDate) {
+      assert.ok(isoRegex.test(verifiedDate), `Tech '${tech.id}' has malformed lastVerified date '${verifiedDate}'`);
+      const ts = Date.parse(verifiedDate);
+      assert.ok(!isNaN(ts), `Tech '${tech.id}' has invalid lastVerified date value '${verifiedDate}'`);
+      assert.ok(ts <= now, `Tech '${tech.id}' lastVerified date '${verifiedDate}' cannot be in the future`);
+    }
+  });
+
+  console.log('✅ Test 10 Passed: Information freshness (lastVerified) ISO dates and non-future validity verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

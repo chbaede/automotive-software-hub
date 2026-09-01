@@ -151,4 +151,5 @@ export interface StackPath {
   architectureProfileId?: string;
   hops: StackPathHop[];
   topics?: TopicId[];
+  lastVerified?: string;
 }

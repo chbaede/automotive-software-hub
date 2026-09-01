@@ -74,7 +74,7 @@ export const ko: Translations = {
     officialSource: '공식 문서 출처',
     vendorSource: '벤더 제공 문서',
     communitySource: '생태계 매핑',
-    lastVerified: '검증 일자: {date}',
+    lastVerified: '최종 확인: {date}',
     sourceLink: '근거 출처 링크',
   },
   hero: {

@@ -43,6 +43,15 @@ function validateIsoDate(dateStr: string, contextMsg: string) {
   const dateRegex = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/;
   if (!dateRegex.test(dateStr)) {
     error(`${contextMsg}: Invalid ISO date format '${dateStr}' (expected YYYY-MM-DD or YYYY-MM).`);
+    return;
+  }
+  const timestamp = Date.parse(dateStr);
+  if (isNaN(timestamp)) {
+    error(`${contextMsg}: Invalid ISO date value '${dateStr}'.`);
+    return;
+  }
+  if (timestamp > Date.now() + 86400000) {
+    error(`${contextMsg}: Date '${dateStr}' cannot be in the future.`);
   }
 }
 
@@ -270,6 +279,10 @@ stackPaths.forEach((path) => {
 
   if (path.pathType && !STACK_PATH_TYPE_METADATA[path.pathType]) {
     error(`[Stack Path ID: ${path.id}] Invalid pathType: '${path.pathType}'`);
+  }
+
+  if (path.lastVerified) {
+    validateIsoDate(path.lastVerified, `[Stack Path ID: ${path.id} lastVerified]`);
   }
 
   if (!path.hops || path.hops.length < 2) {

@@ -14,6 +14,7 @@ export const stackPaths: StackPath[] = [
     },
     architectureProfileId: 'android-automotive',
     topics: ['android-automotive', 'qnx', 'embedded-linux', 'someip'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'qualcomm-snapdragon-cockpit',
@@ -60,11 +61,12 @@ export const stackPaths: StackPath[] = [
       ko: '대표 AUTOSAR Adaptive 서비스 지향 및 진단 탐색 경로',
     },
     description: {
-      en: 'High-performance MPU middleware journey: POSIX RTOS (QNX Neutrino) -> ARA runtime -> SOME/IP protocol -> vsomeip C++ implementation -> DoIP -> UDS diagnostics.',
-      ko: 'POSIX RTOS (QNX) -> ARA 런타임 -> SOME/IP 프로토콜 명세 -> vsomeip C++ 구현체 -> DoIP -> UDS 진단 서비스로 연계되는 미들웨어 탐색 경로.',
+      en: 'High-performance MPU middleware journey illustrating service-oriented communication (POSIX RTOS -> ARA -> SOME/IP -> vsomeip) and diagnostic transport (DoIP -> UDS).',
+      ko: 'POSIX RTOS (QNX) -> ARA 런타임 -> SOME/IP 프로토콜 명세 -> vsomeip 구현체 연동 및 DoIP -> UDS 진단 전송 흐름을 나타내는 미들웨어 탐색 경로.',
     },
     architectureProfileId: 'autosar-adaptive',
     topics: ['autosar', 'someip', 'functional-safety', 'sdv'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'qnx-neutrino',
@@ -97,14 +99,14 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'doip-protocol',
         note: {
-          en: 'Diagnostic over IP (ISO 13400) high-speed Ethernet transport layer.',
+          en: 'Diagnostic over IP (ISO 13400) high-speed Ethernet transport layer for diagnostic services.',
           ko: '차량 이더넷 기반 고속 DoIP (ISO 13400) 진단 전송 계층.',
         },
       },
       {
         technologyId: 'uds-protocol',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services for ECU firmware flashing.',
+          en: 'ISO 14229 Unified Diagnostic Services protocol for ECU flashing and diagnostics.',
           ko: 'ECU 펌웨어 프로그래밍 및 진단을 위한 ISO 14229 UDS 규격.',
         },
       },
@@ -118,11 +120,11 @@ export const stackPaths: StackPath[] = [
       ko: '대표 AUTOSAR Classic 마이크로컨트롤러(MCU) 섀시 제어 경로',
     },
     description: {
-      en: 'Representative real-time safety ECU path: NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN bus communication -> UDS diagnostic services.',
+      en: 'Representative real-time safety ECU platform path: NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN bus communication -> UDS diagnostic services.',
       ko: 'NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN 버스 통신 드라이버 -> UDS 진단 서비스로 연결되는 실시간 안전 제어기 탐색 경로.',
     },
-    architectureProfileId: 'zonal-architecture',
     topics: ['can', 'autosar', 'functional-safety'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'nxp-s32',
@@ -134,21 +136,21 @@ export const stackPaths: StackPath[] = [
       {
         technologyId: 'autosar-classic',
         note: {
-          en: 'AUTOSAR Classic Platform Basic Software (BSW), RTE, and OSEK/VDX RTOS.',
-          ko: 'AUTOSAR Classic BSW 계층, RTE 및 OSEK/VDX 실시간 OS.',
+          en: 'AUTOSAR Classic Platform architecture consisting of BSW, RTE, and OSEK/VDX RTOS.',
+          ko: 'AUTOSAR Classic BSW 계층, RTE 및 OSEK/VDX 실시간 OS 플랫폼 아키텍처.',
         },
       },
       {
         technologyId: 'can-protocol',
         note: {
-          en: 'Representative CAN / CAN-FD bus network communication drivers.',
+          en: 'Representative CAN / CAN-FD bus network communication drivers and physical layer.',
           ko: '대표적인 CAN / CAN-FD 버스 네트워크 통신 드라이버 계층.',
         },
       },
       {
         technologyId: 'uds-protocol',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services manager module for ECU maintenance.',
+          en: 'ISO 14229 Unified Diagnostic Services manager protocol module for ECU maintenance.',
           ko: 'ISO 14229 UDS 진단 통신 관리자 모듈.',
         },
       },
@@ -167,12 +169,13 @@ export const stackPaths: StackPath[] = [
     },
     architectureProfileId: 'centralized-compute',
     topics: ['sdv', 'cloud', 'cybersecurity', 'someip'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'nvidia-drive-thor',
         note: {
-          en: 'Representative 2,000 TFLOPS centralized compute SoC silicon platform.',
-          ko: '2,000 TFLOPS 성능의 중앙 집중식 고성능 컴퓨팅 SoC 실리콘 플랫폼.',
+          en: 'Representative high-performance centralized compute SoC silicon platform.',
+          ko: '중앙 집중식 고성능 컴퓨팅 SoC 실리콘 플랫폼.',
         },
       },
       {
@@ -218,6 +221,7 @@ export const stackPaths: StackPath[] = [
     },
     architectureProfileId: 'sdv-platform',
     topics: ['sdv', 'open-source', 'cloud', 'covesa'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'ota-cloud-fleet',
@@ -262,6 +266,7 @@ export const stackPaths: StackPath[] = [
     },
     architectureProfileId: 'adas-autonomous',
     topics: ['adas', 'ros2', 'functional-safety', 'open-source'],
+    lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'nvidia-drive-thor',
