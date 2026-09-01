@@ -793,4 +793,19 @@ export const companies: Company[] = [
     technologies: ['Red Hat In-Vehicle Operating System', 'Fedora Automotive', 'Podman Containers'],
     tags: ['software', 'redhat', 'linux', 'in-vehicle-os'],
   },
+  {
+    id: 'canonical',
+    name: 'Canonical Ltd. (Ubuntu)',
+    category: 'software-platform',
+    description: {
+      en: 'Publisher of Ubuntu Linux delivering Ubuntu for Automotive, real-time PREEMPT_RT kernels, enterprise security maintenance, and cloud-native container ecosystems for SDVs.',
+      ko: '우분투(Ubuntu) 개발사로서 차량용 우분투(Ubuntu for Automotive), 실시간 PREEMPT_RT 커널 및 SDV용 엔터프라이즈 리눅스 솔루션을 제공하는 글로벌 벤더.',
+    },
+    website: 'https://canonical.com/automotive',
+    headquarters: 'London, United Kingdom',
+    isPublic: false,
+    automotiveTopics: ['sdv', 'embedded-linux', 'open-source', 'cloud'],
+    technologies: ['Ubuntu for Automotive', 'Real-time Ubuntu', 'Anbox Cloud', 'MicroK8s'],
+    tags: ['software', 'canonical', 'ubuntu', 'linux', 'sdv'],
+  },
 ];

@@ -482,4 +482,34 @@ export const stackRelationships: TechnologyRelationship[] = [
       ko: 'Buildroot는 맞춤형 임베디드 리눅스 rootfs 생성을 위한 Yocto의 경량 Makefile 기반 대안 도구입니다.',
     },
   },
+  {
+    sourceId: 'ubuntu-for-automotive',
+    targetId: 'linux-kernel',
+    type: 'depends-on',
+    confidence: 'official',
+    description: {
+      en: 'Canonical Ubuntu for Automotive is built on the Linux kernel with real-time PREEMPT_RT patchset.',
+      ko: 'Canonical Ubuntu for Automotive는 실시간 PREEMPT_RT 패치셋이 적용된 리눅스 커널 기반으로 구축됩니다.',
+    },
+  },
+  {
+    sourceId: 'eb-corbos-linux',
+    targetId: 'ubuntu-for-automotive',
+    type: 'depends-on',
+    confidence: 'official',
+    description: {
+      en: 'Elektrobit EB corbos Linux is a commercial safety-compliant automotive OS built directly on Ubuntu Linux.',
+      ko: 'Elektrobit EB corbos Linux는 우분투(Ubuntu) 리눅스를 직접적인 기반으로 구축된 상용 오토모티브 OS입니다.',
+    },
+  },
+  {
+    sourceId: 'eb-corbos-linux',
+    targetId: 'autosar-adaptive',
+    type: 'integrates-with',
+    confidence: 'vendor',
+    description: {
+      en: 'EB corbos Linux integrates natively with EB corbos Adaptive AUTOSAR platform middleware.',
+      ko: 'EB corbos Linux는 EB corbos Adaptive AUTOSAR 미들웨어 플랫폼과 네이티브로 연동 구동됩니다.',
+    },
+  },
 ];

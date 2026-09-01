@@ -283,6 +283,8 @@ export const architectureProfiles: ArchitectureProfile[] = [
       'eclipse-ankaios',
       'covesa-vss',
       'redhat-in-vehicle-os',
+      'ubuntu-for-automotive',
+      'eb-corbos-linux',
       'ota-cloud-fleet',
       'someip-protocol',
       'mqtt-automotive',
