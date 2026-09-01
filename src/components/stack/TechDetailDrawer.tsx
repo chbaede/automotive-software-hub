@@ -67,6 +67,17 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
               <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded">
                 {layerName}
               </span>
+              {technology.licenseType && (
+                <span
+                  className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded border ${
+                    technology.licenseType === 'oss'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-400/40'
+                      : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-400/40'
+                  }`}
+                >
+                  {technology.licenseType === 'oss' ? 'OSS (Open Source)' : 'Commercial (Proprietary)'}
+                </span>
+              )}
               {technology.website && (
                 <a
                   href={technology.website}

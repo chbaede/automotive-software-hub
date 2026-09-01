@@ -50,19 +50,32 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
           >
             {technology.name}
           </span>
-          {isPlatform && (
-            <span
-              className={`shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-wider ${
-                isSelected
-                  ? 'bg-white/20 text-white'
-                  : 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-xs'
-              }`}
-              title="Automotive Full Platform"
-            >
-              <Layers className="w-2.5 h-2.5" />
-              Platform
-            </span>
-          )}
+          <div className="flex items-center gap-1 shrink-0">
+            {technology.licenseType && (
+              <span
+                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                  technology.licenseType === 'oss'
+                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30'
+                    : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-400/30'
+                }`}
+              >
+                {technology.licenseType === 'oss' ? 'OSS' : 'Commercial'}
+              </span>
+            )}
+            {isPlatform && (
+              <span
+                className={`shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-wider ${
+                  isSelected
+                    ? 'bg-white/20 text-white'
+                    : 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-xs'
+                }`}
+                title="Automotive Full Platform"
+              >
+                <Layers className="w-2.5 h-2.5" />
+                Platform
+              </span>
+            )}
+          </div>
         </div>
 
         <p

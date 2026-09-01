@@ -6,6 +6,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'nvidia-drive-thor',
+    licenseType: 'commercial',
     name: 'NVIDIA DRIVE Thor',
     layerId: 'hardware-compute',
     description: {
@@ -21,10 +22,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.nvidia.com/en-us/drive/thor/',
     companyIds: ['nvidia', 'mercedes-benz'],
     relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino', 'nvidia-alpamayo-ad', 'nvidia-driveworks-sdk'],
-    tags: ['thor', 'soc', 'central-compute', 'nvidia', 'ai'],
+    tags: ['thor', 'soc', 'central-compute', 'nvidia', 'ai', 'Commercial'],
   },
   {
     id: 'qualcomm-snapdragon-ride',
+    licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Ride & Ride Flex Platform',
     layerId: 'hardware-compute',
     description: {
@@ -40,10 +42,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.qualcomm.com/products/automotive/snapdragon-ride-platform',
     companyIds: ['qualcomm', 'bmw-group', 'bosch'],
     relatedTechnologyIds: ['qualcomm-snapdragon-cockpit', 'momenta-flywheel-ad', 'qnx-hypervisor'],
-    tags: ['snapdragon-ride', 'ride-flex', 'qualcomm', 'adas-soc'],
+    tags: ['snapdragon-ride', 'ride-flex', 'qualcomm', 'adas-soc', 'Commercial'],
   },
   {
     id: 'qualcomm-snapdragon-cockpit',
+    licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Digital Cockpit',
     layerId: 'hardware-compute',
     description: {
@@ -59,10 +62,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.qualcomm.com/products/automotive/snapdragon-cockpit-platform',
     companyIds: ['qualcomm', 'bmw-group', 'lg-electronics-vs', 'harman-international'],
     relatedTechnologyIds: ['android-automotive-os', 'qnx-hypervisor', 'kanzi-ui-engine'],
-    tags: ['snapdragon', 'cockpit', 'soc', 'qualcomm'],
+    tags: ['snapdragon', 'cockpit', 'soc', 'qualcomm', 'Commercial'],
   },
   {
     id: 'renesas-rcar',
+    licenseType: 'commercial',
     name: 'Renesas R-Car SoC Family',
     layerId: 'hardware-compute',
     description: {
@@ -78,10 +82,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.renesas.com/products/automotive-products/automotive-system-chips-socs',
     companyIds: ['denso', 'toyota-motor'],
     relatedTechnologyIds: ['qnx-neutrino', 'linux-kernel'],
-    tags: ['renesas', 'rcar', 'soc', 'automotive-chip'],
+    tags: ['renesas', 'rcar', 'soc', 'automotive-chip', 'Commercial'],
   },
   {
     id: 'ti-jacinto',
+    licenseType: 'commercial',
     name: 'Texas Instruments Jacinto Processor Family',
     layerId: 'hardware-compute',
     description: {
@@ -96,10 +101,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['can', 'automotive-ethernet', 'functional-safety'],
     website: 'https://www.ti.com/processors/jacinto-automotive-processors/overview.html',
     relatedTechnologyIds: ['nxp-s32', 'can-protocol', 'doip-protocol'],
-    tags: ['ti', 'jacinto', 'tda4vm', 'dra829', 'gateway'],
+    tags: ['ti', 'jacinto', 'tda4vm', 'dra829', 'gateway', 'Commercial'],
   },
   {
     id: 'nxp-s32',
+    licenseType: 'commercial',
     name: 'NXP S32 Vehicle Compute Platform',
     layerId: 'hardware-compute',
     description: {
@@ -116,10 +122,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['nxp'],
     toolIds: ['can-id-conv', 'can-frame-vis'],
     relatedTechnologyIds: ['autosar-classic', 'can-fd', 'doip-protocol'],
-    tags: ['nxp-s32', 'mcu', 'zonal', 'can-gateway'],
+    tags: ['nxp-s32', 'mcu', 'zonal', 'can-gateway', 'Commercial'],
   },
   {
     id: 'horizon-robotics-journey',
+    licenseType: 'commercial',
     name: 'Horizon Robotics Journey 5/6 BPU SoC',
     layerId: 'hardware-compute',
     description: {
@@ -135,10 +142,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.horizon.cc/',
     companyIds: ['horizon-robotics'],
     relatedTechnologyIds: ['ros2-autoware', 'linux-kernel', 'momenta-flywheel-ad'],
-    tags: ['horizon', 'journey5', 'journey6', 'bpu', 'adas-soc'],
+    tags: ['horizon', 'journey5', 'journey6', 'bpu', 'adas-soc', 'Commercial'],
   },
   {
     id: 'black-sesame-huashan',
+    licenseType: 'commercial',
     name: 'Black Sesame Huashan A1000 SoC',
     layerId: 'hardware-compute',
     description: {
@@ -154,7 +162,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.blacksesame.com.cn/',
     companyIds: ['black-sesame-technologies'],
     relatedTechnologyIds: ['linux-kernel', 'qnx-neutrino'],
-    tags: ['black-sesame', 'huashan', 'a1000', 'adas'],
+    tags: ['black-sesame', 'huashan', 'a1000', 'adas', 'Commercial'],
   },
 
   // ==========================================
@@ -162,6 +170,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'qnx-hypervisor',
+    licenseType: 'commercial',
     name: 'BlackBerry QNX Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -178,10 +187,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['qnx-blackberry', 'aptiv', 'elektrobit'],
     resourceIds: ['qnx-developer-portal'],
     relatedTechnologyIds: ['qnx-neutrino', 'android-automotive-os', 'linux-kernel'],
-    tags: ['qnx-hypervisor', 'virtualization', 'asil-d', 'type1'],
+    tags: ['qnx-hypervisor', 'virtualization', 'asil-d', 'type1', 'Commercial'],
   },
   {
     id: 'kvm-automotive',
+    licenseType: 'oss',
     name: 'KVM (Kernel-based Virtual Machine)',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -197,10 +207,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.linux-kvm.org/',
     openSourceProjectIds: ['automotive-grade-linux', 'linux-kernel'],
     relatedTechnologyIds: ['linux-kernel', 'android-automotive-os'],
-    tags: ['kvm', 'linux', 'hypervisor', 'virtualization'],
+    tags: ['kvm', 'linux', 'hypervisor', 'virtualization', 'OSS'],
   },
   {
     id: 'xen-automotive',
+    licenseType: 'oss',
     name: 'Xen Project Automotive Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -215,7 +226,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['embedded-linux', 'open-source', 'sdv'],
     website: 'https://xenproject.org/',
     relatedTechnologyIds: ['kvm-automotive', 'linux-kernel'],
-    tags: ['xen', 'hypervisor', 'bare-metal', 'virtualization'],
+    tags: ['xen', 'hypervisor', 'bare-metal', 'virtualization', 'OSS'],
   },
 
   // ==========================================
@@ -223,6 +234,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'linux-kernel',
+    licenseType: 'oss',
     name: 'Embedded Linux Kernel',
     layerId: 'operating-systems',
     description: {
@@ -242,10 +254,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['linux-kernel-embedded-docs', 'socketcan-documentation'],
     eventIds: ['elce-oss-prague-2026', 'automotive-linux-summit-2026'],
     relatedTechnologyIds: ['yocto-project', 'socketcan', 'can-protocol'],
-    tags: ['linux', 'kernel', 'preempt-rt', 'socketcan'],
+    tags: ['linux', 'kernel', 'preempt-rt', 'socketcan', 'OSS'],
   },
   {
     id: 'qnx-neutrino',
+    licenseType: 'commercial',
     name: 'QNX Neutrino RTOS',
     layerId: 'operating-systems',
     description: {
@@ -262,10 +275,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['qnx-blackberry', 'vector-informatik', 'bosch'],
     resourceIds: ['qnx-developer-portal', 'iso-26262-safety-guide'],
     relatedTechnologyIds: ['qnx-hypervisor', 'autosar-adaptive', 'kanzi-ui-engine'],
-    tags: ['qnx', 'rtos', 'neutrino', 'microkernel', 'asil-d'],
+    tags: ['qnx', 'rtos', 'neutrino', 'microkernel', 'asil-d', 'Commercial'],
   },
   {
     id: 'ghs-integrity-rtos',
+    licenseType: 'commercial',
     name: 'Green Hills INTEGRITY RTOS',
     layerId: 'operating-systems',
     description: {
@@ -280,10 +294,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['functional-safety', 'qnx'],
     website: 'https://www.ghs.com/products/rtos/integrity.html',
     relatedTechnologyIds: ['qnx-neutrino', 'iso-26262-functional-safety'],
-    tags: ['integrity', 'green-hills', 'rtos', 'asil-d', 'safety'],
+    tags: ['integrity', 'green-hills', 'rtos', 'asil-d', 'safety', 'Commercial'],
   },
   {
     id: 'sysgo-pikeos',
+    licenseType: 'commercial',
     name: 'SYSGO PikeOS Real-Time OS & Hypervisor',
     layerId: 'operating-systems',
     description: {
@@ -298,10 +313,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['functional-safety', 'cybersecurity'],
     website: 'https://www.sysgo.com/pikeos',
     relatedTechnologyIds: ['qnx-hypervisor', 'iso-26262-functional-safety'],
-    tags: ['pikeos', 'sysgo', 'mils', 'rtos', 'hypervisor'],
+    tags: ['pikeos', 'sysgo', 'mils', 'rtos', 'hypervisor', 'Commercial'],
   },
   {
     id: 'agl-unified-codebase',
+    licenseType: 'oss',
     name: 'Automotive Grade Linux (AGL UCB Platform)',
     layerId: 'middleware-communication',
     description: {
@@ -318,10 +334,11 @@ export const stackTechnologies: StackTechnology[] = [
     openSourceProjectIds: ['automotive-grade-linux', 'yocto-project'],
     eventIds: ['agl-amm-berlin-2026'],
     relatedTechnologyIds: ['linux-kernel', 'yocto-project'],
-    tags: ['agl', 'ucb', 'automotive-linux', 'linux-foundation', 'platform'],
+    tags: ['agl', 'ucb', 'automotive-linux', 'linux-foundation', 'platform', 'OSS'],
   },
   {
     id: 'embedded-linux-rt',
+    licenseType: 'oss',
     name: 'Embedded Linux RT (PREEMPT_RT Kernel)',
     layerId: 'operating-systems',
     description: {
@@ -337,10 +354,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://wiki.linuxfoundation.org/realtime/start',
     openSourceProjectIds: ['linux-kernel'],
     relatedTechnologyIds: ['linux-kernel', 'socketcan-protocol'],
-    tags: ['linux-rt', 'preempt-rt', 'real-time', 'kernel', 'embedded-linux'],
+    tags: ['linux-rt', 'preempt-rt', 'real-time', 'kernel', 'embedded-linux', 'OSS'],
   },
   {
     id: 'freertos',
+    licenseType: 'oss',
     name: 'FreeRTOS Kernel',
     layerId: 'operating-systems',
     description: {
@@ -355,10 +373,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['can', 'functional-safety', 'open-source'],
     website: 'https://www.freertos.org/',
     relatedTechnologyIds: ['infineon-aurix', 'nxp-s32k'],
-    tags: ['freertos', 'rtos', 'mcu', 'microcontroller', 'embedded'],
+    tags: ['freertos', 'rtos', 'mcu', 'microcontroller', 'embedded', 'OSS'],
   },
   {
     id: 'zephyr-rtos',
+    licenseType: 'oss',
     name: 'Zephyr RTOS',
     layerId: 'operating-systems',
     description: {
@@ -373,10 +392,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['functional-safety', 'open-source', 'can'],
     website: 'https://www.zephyrproject.org/',
     relatedTechnologyIds: ['infineon-aurix', 'nxp-s32k', 'embedded-linux-rt'],
-    tags: ['zephyr', 'rtos', 'linux-foundation', 'mcu', 'safety'],
+    tags: ['zephyr', 'rtos', 'linux-foundation', 'mcu', 'safety', 'OSS'],
   },
   {
     id: 'redhat-in-vehicle-os',
+    licenseType: 'commercial',
     name: 'Red Hat In-Vehicle Operating System',
     layerId: 'operating-systems',
     description: {
@@ -392,10 +412,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.redhat.com/en/solutions/automotive',
     companyIds: ['red-hat'],
     relatedTechnologyIds: ['linux-kernel', 'eclipse-ankaios', 'ota-cloud-fleet'],
-    tags: ['redhat', 'rhivos', 'sdv-os', 'linux', 'enterprise-automotive'],
+    tags: ['redhat', 'rhivos', 'sdv-os', 'linux', 'enterprise-automotive', 'Commercial'],
   },
   {
     id: 'vxworks-rtos',
+    licenseType: 'commercial',
     name: 'Wind River VxWorks RTOS',
     layerId: 'operating-systems',
     description: {
@@ -411,7 +432,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.windriver.com/products/vxworks',
     companyIds: ['wind-river'],
     relatedTechnologyIds: ['autosar-classic', 'qnx-neutrino'],
-    tags: ['vxworks', 'rtos', 'windriver', 'asil-d'],
+    tags: ['vxworks', 'rtos', 'windriver', 'asil-d', 'Commercial'],
   },
 
   // ==========================================
@@ -419,6 +440,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'android-automotive-os',
+    licenseType: 'oss',
     name: 'Android Automotive OS (AAOS Platform)',
     layerId: 'middleware-communication',
     description: {
@@ -438,10 +460,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['android-automotive-docs'],
     eventIds: ['incabin-barcelona-2026'],
     relatedTechnologyIds: ['linux-kernel', 'qnx-hypervisor', 'someip-protocol', 'aaos-sdv-platform'],
-    tags: ['android-automotive', 'aaos', 'ivi', 'cockpit', 'platform'],
+    tags: ['android-automotive', 'aaos', 'ivi', 'cockpit', 'platform', 'OSS'],
   },
   {
     id: 'aaos-sdv-platform',
+    licenseType: 'commercial',
     name: 'AAOS SDV Architecture & Framework',
     layerId: 'middleware-communication',
     description: {
@@ -455,10 +478,11 @@ export const stackTechnologies: StackTechnology[] = [
     categories: ['Automotive Platform', 'SDV Architecture', 'Android'],
     topics: ['android-automotive', 'sdv', 'middleware'],
     website: 'https://source.android.com/docs/devices/automotive',
-    tags: ['aaos-sdv', 'sdv-framework', 'grpc', 'vhal', 'cloud-native'],
+    tags: ['aaos-sdv', 'sdv-framework', 'grpc', 'vhal', 'cloud-native', 'Commercial'],
   },
   {
     id: 'huawei-qiankun-ads',
+    licenseType: 'commercial',
     name: 'Huawei Qiankun ADS Platform',
     layerId: 'middleware-communication',
     description: {
@@ -474,10 +498,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.huawei.com/',
     companyIds: ['huawei-technologies'],
     relatedTechnologyIds: ['ros2-autoware-stack', 'nvidia-drive-thor'],
-    tags: ['huawei', 'qiankun-ads', 'mdc', 'autonomous-driving', 'adas', 'god-network'],
+    tags: ['huawei', 'qiankun-ads', 'mdc', 'autonomous-driving', 'adas', 'god-network', 'Commercial'],
   },
   {
     id: 'autosar-adaptive',
+    licenseType: 'commercial',
     name: 'AUTOSAR Adaptive Platform (ARA)',
     layerId: 'middleware-communication',
     description: {
@@ -495,10 +520,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
     relatedTechnologyIds: ['autosar-classic', 'someip-protocol', 'linux-kernel', 'qnx-neutrino'],
-    tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip', 'platform'],
+    tags: ['autosar-adaptive', 'ara', 'posix', 'cpp', 'someip', 'platform', 'Commercial'],
   },
   {
     id: 'autosar-classic',
+    licenseType: 'commercial',
     name: 'AUTOSAR Classic Platform (BSW & RTE)',
     layerId: 'middleware-communication',
     description: {
@@ -517,10 +543,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['autosar-standards'],
     eventIds: ['autosar-open-conference-2026'],
     relatedTechnologyIds: ['autosar-adaptive', 'can-protocol', 'uds-protocol'],
-    tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu', 'platform'],
+    tags: ['autosar-classic', 'bsw', 'mcal', 'rte', 'ecu', 'platform', 'Commercial'],
   },
   {
     id: 'vsomeip-middleware',
+    licenseType: 'commercial',
     name: 'vSomeIP (BMW SOME/IP Stack)',
     layerId: 'middleware-communication',
     description: {
@@ -537,10 +564,11 @@ export const stackTechnologies: StackTechnology[] = [
     repositoryUrl: 'https://github.com/COVESA/vsomeip',
     companyIds: ['bmw-group', 'vector-informatik'],
     relatedTechnologyIds: ['someip-protocol', 'autosar-adaptive'],
-    tags: ['vsomeip', 'someip-sd', 'bmw', 'covesa', 'service-discovery'],
+    tags: ['vsomeip', 'someip-sd', 'bmw', 'covesa', 'service-discovery', 'Commercial'],
   },
   {
     id: 'eclipse-iceoryx',
+    licenseType: 'commercial',
     name: 'Eclipse iceoryx / iceoryx2 (True Zero-Copy IPC)',
     layerId: 'middleware-communication',
     description: {
@@ -556,10 +584,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://iceoryx.io/',
     repositoryUrl: 'https://github.com/eclipse-iceoryx/iceoryx',
     relatedTechnologyIds: ['dds-protocol', 'ros2-autoware'],
-    tags: ['iceoryx', 'iceoryx2', 'zero-copy', 'ipc', 'shared-memory'],
+    tags: ['iceoryx', 'iceoryx2', 'zero-copy', 'ipc', 'shared-memory', 'Commercial'],
   },
   {
     id: 'someip-protocol',
+    licenseType: 'oss',
     name: 'SOME/IP (Scalable Service-Oriented MiddlewarE over IP)',
     layerId: 'middleware-communication',
     description: {
@@ -577,10 +606,11 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['json-formatter', 'crc-calc'],
     resourceIds: ['autosar-standards'],
     relatedTechnologyIds: ['autosar-adaptive', 'doip-protocol', 'eclipse-uprotocol', 'vsomeip-middleware'],
-    tags: ['someip', 'rpc', 'pubsub', 'ethernet', 'autosar'],
+    tags: ['someip', 'rpc', 'pubsub', 'ethernet', 'autosar', 'OSS'],
   },
   {
     id: 'mqtt-automotive',
+    licenseType: 'commercial',
     name: 'MQTT Telemetry & Mosquitto Middleware',
     layerId: 'middleware-communication',
     description: {
@@ -595,10 +625,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['cloud', 'sdv', 'open-source'],
     website: 'https://mqtt.org/',
     relatedTechnologyIds: ['ota-cloud-fleet', 'covesa-vss'],
-    tags: ['mqtt', 'mosquitto', 'telematics', 'v2c', 'pubsub'],
+    tags: ['mqtt', 'mosquitto', 'telematics', 'v2c', 'pubsub', 'Commercial'],
   },
   {
     id: 'eclipse-uprotocol',
+    licenseType: 'oss',
     name: 'Eclipse uProtocol',
     layerId: 'middleware-communication',
     description: {
@@ -617,10 +648,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['eclipse-sdv-docs'],
     eventIds: ['eclipse-sdv-community-day-2026'],
     relatedTechnologyIds: ['someip-protocol', 'dds-protocol', 'covesa-vss'],
-    tags: ['uprotocol', 'eclipse-sdv', 'rpc', 'pubsub', 'sdv'],
+    tags: ['uprotocol', 'eclipse-sdv', 'rpc', 'pubsub', 'sdv', 'OSS'],
   },
   {
     id: 'dds-protocol',
+    licenseType: 'commercial',
     name: 'DDS (Data Distribution Service - FastDDS / CycloneDDS)',
     layerId: 'middleware-communication',
     description: {
@@ -636,7 +668,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.omg.org/omg-dds-portal/',
     openSourceProjectIds: ['ros2-autoware'],
     relatedTechnologyIds: ['ros2-autoware', 'someip-protocol', 'eclipse-iceoryx'],
-    tags: ['dds', 'fastdds', 'cyclonedds', 'pubsub', 'omg'],
+    tags: ['dds', 'fastdds', 'cyclonedds', 'pubsub', 'omg', 'Commercial'],
   },
 
   // ==========================================
@@ -644,6 +676,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'can-protocol',
+    licenseType: 'commercial',
     name: 'CAN / CAN FD Protocol (ISO 11898)',
     layerId: 'vehicle-services',
     description: {
@@ -661,10 +694,11 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['can-id-conv', 'can-frame-vis', 'bit-manipulation'],
     resourceIds: ['socketcan-documentation'],
     relatedTechnologyIds: ['socketcan', 'uds-protocol', 'doip-protocol'],
-    tags: ['can', 'can-fd', 'j1939', 'iso11898', 'bus'],
+    tags: ['can', 'can-fd', 'j1939', 'iso11898', 'bus', 'Commercial'],
   },
   {
     id: 'uds-protocol',
+    licenseType: 'commercial',
     name: 'UDS Protocol (Unified Diagnostic Services / ISO 14229)',
     layerId: 'vehicle-services',
     description: {
@@ -681,10 +715,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'etas', 'bosch'],
     toolIds: ['hex-dec-bin', 'crc-calc'],
     relatedTechnologyIds: ['doip-protocol', 'can-protocol'],
-    tags: ['uds', 'iso14229', 'dtc', 'diagnostics', 'flashing'],
+    tags: ['uds', 'iso14229', 'dtc', 'diagnostics', 'flashing', 'Commercial'],
   },
   {
     id: 'doip-protocol',
+    licenseType: 'commercial',
     name: 'DoIP (Diagnostic Communication over IP / ISO 13400)',
     layerId: 'vehicle-services',
     description: {
@@ -701,10 +736,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'continental'],
     toolIds: ['url-encoder', 'hex-dec-bin'],
     relatedTechnologyIds: ['uds-protocol', 'someip-protocol'],
-    tags: ['doip', 'iso13400', 'diagnostics', 'ethernet', 'flashing'],
+    tags: ['doip', 'iso13400', 'diagnostics', 'ethernet', 'flashing', 'Commercial'],
   },
   {
     id: 'covesa-vss',
+    licenseType: 'oss',
     name: 'COVESA Vehicle Signal Specification (VSS)',
     layerId: 'vehicle-services',
     description: {
@@ -722,7 +758,7 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['covesa-specifications'],
     eventIds: ['covesa-spring-amm-2026'],
     relatedTechnologyIds: ['eclipse-uprotocol', 'android-automotive-os'],
-    tags: ['covesa', 'vss', 'signals', 'taxonomy', 'data-model'],
+    tags: ['covesa', 'vss', 'signals', 'taxonomy', 'data-model', 'OSS'],
   },
 
   // ==========================================
@@ -730,6 +766,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'nvidia-alpamayo-ad',
+    licenseType: 'commercial',
     name: 'NVIDIA DRIVE Alpamayo (Reasoning VLA AI Model)',
     layerId: 'application-experience',
     description: {
@@ -745,10 +782,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://developer.nvidia.com/drive',
     companyIds: ['nvidia', 'mercedes-benz'],
     relatedTechnologyIds: ['nvidia-drive-thor', 'nvidia-driveworks-sdk'],
-    tags: ['alpamayo', 'vla', 'nvidia', 'physical-ai', 'robotaxi'],
+    tags: ['alpamayo', 'vla', 'nvidia', 'physical-ai', 'robotaxi', 'Commercial'],
   },
   {
     id: 'nvidia-driveworks-sdk',
+    licenseType: 'commercial',
     name: 'NVIDIA DriveWorks SDK & DRIVE OS',
     layerId: 'application-experience',
     description: {
@@ -764,10 +802,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://developer.nvidia.com/drive/driveworks',
     companyIds: ['nvidia', 'mercedes-benz'],
     relatedTechnologyIds: ['nvidia-drive-thor', 'ros2-autoware', 'linux-kernel', 'nvidia-alpamayo-ad'],
-    tags: ['nvidia', 'driveworks', 'drive-os', 'sal', 'cgf', 'tensorrt'],
+    tags: ['nvidia', 'driveworks', 'drive-os', 'sal', 'cgf', 'tensorrt', 'Commercial'],
   },
   {
     id: 'momenta-flywheel-ad',
+    licenseType: 'commercial',
     name: 'Momenta Flywheel AD & Urban NOA Stack',
     layerId: 'application-experience',
     description: {
@@ -783,10 +822,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.momenta.ai/',
     companyIds: ['mercedes-benz', 'bmw-group', 'qualcomm', 'horizon-robotics'],
     relatedTechnologyIds: ['qualcomm-snapdragon-ride', 'horizon-robotics-journey', 'ros2-autoware'],
-    tags: ['momenta', 'flywheel-ad', 'urban-noa', 'robotaxi', 'end-to-end-ai'],
+    tags: ['momenta', 'flywheel-ad', 'urban-noa', 'robotaxi', 'end-to-end-ai', 'Commercial'],
   },
   {
     id: 'baidu-apollo-ad',
+    licenseType: 'oss',
     name: 'Baidu Apollo Open Autonomous Platform',
     layerId: 'application-experience',
     description: {
@@ -802,10 +842,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://apollo.baidu.com/',
     repositoryUrl: 'https://github.com/ApolloAuto/apollo',
     relatedTechnologyIds: ['ros2-autoware', 'linux-kernel'],
-    tags: ['apollo', 'baidu', 'cyber-rt', 'robotaxi', 'autonomous'],
+    tags: ['apollo', 'baidu', 'cyber-rt', 'robotaxi', 'autonomous', 'OSS'],
   },
   {
     id: 'kanzi-ui-engine',
+    licenseType: 'commercial',
     name: 'Rightware Kanzi Studio & UI Engine',
     layerId: 'application-experience',
     description: {
@@ -821,10 +862,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://rightware.com/kanzi/',
     companyIds: ['volkswagen-group', 'bmw-group', 'lg-electronics-vs'],
     relatedTechnologyIds: ['qnx-neutrino', 'flutter-automotive'],
-    tags: ['kanzi', 'rightware', 'hmi', 'cluster-3d', 'gui'],
+    tags: ['kanzi', 'rightware', 'hmi', 'cluster-3d', 'gui', 'Commercial'],
   },
   {
     id: 'flutter-automotive',
+    licenseType: 'oss',
     name: 'Flutter for Automotive (Flutter Embedded UI)',
     layerId: 'application-experience',
     description: {
@@ -840,10 +882,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://flutter.dev/',
     companyIds: ['toyota-motor', 'bmw-group', 'lg-electronics-vs'],
     relatedTechnologyIds: ['android-automotive-os', 'qt-automotive', 'kanzi-ui-engine'],
-    tags: ['flutter', 'flutter-embedded', 'ui-framework', 'ivi', 'cluster', 'google'],
+    tags: ['flutter', 'flutter-embedded', 'ui-framework', 'ivi', 'cluster', 'google', 'OSS'],
   },
   {
     id: 'qt-automotive',
+    licenseType: 'commercial',
     name: 'Qt for Automotive Framework',
     layerId: 'application-experience',
     description: {
@@ -858,7 +901,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['qnx', 'embedded-linux', 'android-automotive'],
     website: 'https://www.qt.io/solutions/automotive',
     relatedTechnologyIds: ['qnx-neutrino', 'flutter-automotive'],
-    tags: ['qt', 'qml', 'cluster-ui', 'gui', '3d-cockpit'],
+    tags: ['qt', 'qml', 'cluster-ui', 'gui', '3d-cockpit', 'Commercial'],
   },
 
   // ==========================================
@@ -866,6 +909,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'aspice-process',
+    licenseType: 'commercial',
     name: 'Automotive SPICE (ASPICE v4.0)',
     layerId: 'process-compliance-security',
     description: {
@@ -881,10 +925,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.automotivespice.com/',
     resourceIds: ['iso-26262-safety-guide'],
     relatedTechnologyIds: ['iso-26262-functional-safety', 'iso-21434-cybersecurity'],
-    tags: ['aspice', 'process', 'quality', 'swe1', 'swe6', 'sdlc'],
+    tags: ['aspice', 'process', 'quality', 'swe1', 'swe6', 'sdlc', 'Commercial'],
   },
   {
     id: 'eu-cra-sbom',
+    licenseType: 'commercial',
     name: 'EU Cyber Resilience Act (CRA) & SBOM',
     layerId: 'process-compliance-security',
     description: {
@@ -900,10 +945,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act',
     companyIds: ['lg-electronics-vs', 'red-hat'],
     relatedTechnologyIds: ['openchain-foss-compliance', 'iso-21434-cybersecurity'],
-    tags: ['cra', 'eu-cra', 'sbom', 'spdx', 'cyclonedx', 'vulnerability'],
+    tags: ['cra', 'eu-cra', 'sbom', 'spdx', 'cyclonedx', 'vulnerability', 'Commercial'],
   },
   {
     id: 'iso-21434-cybersecurity',
+    licenseType: 'commercial',
     name: 'ISO/SAE 21434 Automotive Cybersecurity',
     layerId: 'process-compliance-security',
     description: {
@@ -920,10 +966,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'lg-electronics-vs'],
     resourceIds: ['iso-26262-safety-guide'],
     relatedTechnologyIds: ['unece-r155-r156', 'can-protocol'],
-    tags: ['iso21434', 'cybersecurity', 'tara', 'csms', 'security'],
+    tags: ['iso21434', 'cybersecurity', 'tara', 'csms', 'security', 'Commercial'],
   },
   {
     id: 'iso-26262-functional-safety',
+    licenseType: 'commercial',
     name: 'ISO 26262 Functional Safety (ASIL A-D)',
     layerId: 'process-compliance-security',
     description: {
@@ -940,10 +987,11 @@ export const stackTechnologies: StackTechnology[] = [
     companyIds: ['vector-informatik', 'qnx-blackberry'],
     resourceIds: ['iso-26262-safety-guide'],
     relatedTechnologyIds: ['aspice-process', 'qnx-hypervisor', 'vxworks-rtos'],
-    tags: ['iso26262', 'asil-d', 'functional-safety', 'safety'],
+    tags: ['iso26262', 'asil-d', 'functional-safety', 'safety', 'Commercial'],
   },
   {
     id: 'openchain-foss-compliance',
+    licenseType: 'commercial',
     name: 'OpenChain (ISO/IEC 5230) & FOSS Compliance',
     layerId: 'process-compliance-security',
     description: {
@@ -959,10 +1007,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.openchainproject.org/',
     openSourceProjectIds: ['automotive-grade-linux', 'yocto-project'],
     relatedTechnologyIds: ['eu-cra-sbom', 'yocto-project'],
-    tags: ['openchain', 'iso5230', 'foss', 'license-compliance', 'spdx'],
+    tags: ['openchain', 'iso5230', 'foss', 'license-compliance', 'spdx', 'Commercial'],
   },
   {
     id: 'unece-r155-r156',
+    licenseType: 'commercial',
     name: 'UN ECE R155 / R156 Regulations (CSMS & SUMS)',
     layerId: 'process-compliance-security',
     description: {
@@ -978,7 +1027,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://unece.org/',
     companyIds: ['hyundai-motor-group', 'bmw-group', 'lg-electronics-vs'],
     relatedTechnologyIds: ['iso-21434-cybersecurity', 'ota-cloud-fleet'],
-    tags: ['r155', 'r156', 'unece', 'csms', 'sums', 'homologation'],
+    tags: ['r155', 'r156', 'unece', 'csms', 'sums', 'homologation', 'Commercial'],
   },
 
   // ==========================================
@@ -986,6 +1035,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'yocto-project',
+    licenseType: 'oss',
     name: 'Yocto Project & BitBake',
     layerId: 'build-platform',
     description: {
@@ -1004,10 +1054,11 @@ export const stackTechnologies: StackTechnology[] = [
     resourceIds: ['yocto-docs-manual'],
     eventIds: ['agl-amm-berlin-2026', 'automotive-linux-summit-2026'],
     relatedTechnologyIds: ['linux-kernel', 'socketcan'],
-    tags: ['yocto', 'bitbake', 'bsp', 'buildroot', 'embedded-linux'],
+    tags: ['yocto', 'bitbake', 'bsp', 'buildroot', 'embedded-linux', 'OSS'],
   },
   {
     id: 'bazel-build-system',
+    licenseType: 'commercial',
     name: 'Bazel Build System',
     layerId: 'build-platform',
     description: {
@@ -1023,10 +1074,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://bazel.build/',
     repositoryUrl: 'https://github.com/bazelbuild/bazel',
     relatedTechnologyIds: ['soong-build-system', 'yocto-project'],
-    tags: ['bazel', 'build', 'hermetic', 'aosp', 'sdv'],
+    tags: ['bazel', 'build', 'hermetic', 'aosp', 'sdv', 'Commercial'],
   },
   {
     id: 'soong-build-system',
+    licenseType: 'commercial',
     name: 'Soong & Kati (Android Build System)',
     layerId: 'build-platform',
     description: {
@@ -1041,10 +1093,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['android-automotive', 'embedded-linux'],
     website: 'https://source.android.com/docs/setup/build',
     relatedTechnologyIds: ['android-automotive-os', 'bazel-build-system'],
-    tags: ['soong', 'kati', 'android-bp', 'aosp', 'ninja'],
+    tags: ['soong', 'kati', 'android-bp', 'aosp', 'ninja', 'Commercial'],
   },
   {
     id: 'buildroot',
+    licenseType: 'oss',
     name: 'Buildroot Embedded Linux Builder',
     layerId: 'build-platform',
     description: {
@@ -1059,7 +1112,7 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['embedded-linux', 'open-source'],
     website: 'https://buildroot.org/',
     relatedTechnologyIds: ['yocto-project', 'linux-kernel'],
-    tags: ['buildroot', 'embedded-linux', 'makefile', 'rootfs'],
+    tags: ['buildroot', 'embedded-linux', 'makefile', 'rootfs', 'OSS'],
   },
 
   // ==========================================
@@ -1067,6 +1120,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'dspace-scalexio-hil',
+    licenseType: 'commercial',
     name: 'dSPACE SCALEXIO & ASM Simulation',
     layerId: 'development-testing',
     description: {
@@ -1082,10 +1136,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.dspace.com/en/inc/home/products/hw/scalexio.html',
     companyIds: ['bosch', 'denso'],
     relatedTechnologyIds: ['renode-emulator', 'socketcan'],
-    tags: ['dspace', 'scalexio', 'hil', 'asm', 'validation', 'testing'],
+    tags: ['dspace', 'scalexio', 'hil', 'asm', 'validation', 'testing', 'Commercial'],
   },
   {
     id: 'ipg-carmaker-sim',
+    licenseType: 'commercial',
     name: 'IPG CarMaker Vehicle Simulator',
     layerId: 'development-testing',
     description: {
@@ -1100,10 +1155,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['adas', 'ros2', 'functional-safety'],
     website: 'https://ipg-automotive.com/en/products-services/simulation-software/carmaker/',
     relatedTechnologyIds: ['ros2-autoware', 'nvidia-driveworks-sdk'],
-    tags: ['carmaker', 'ipg', 'simulation', 'sil', 'adas-test'],
+    tags: ['carmaker', 'ipg', 'simulation', 'sil', 'adas-test', 'Commercial'],
   },
   {
     id: 'carla-av-simulator',
+    licenseType: 'commercial',
     name: 'CARLA Open Autonomous Driving Simulator',
     layerId: 'development-testing',
     description: {
@@ -1119,10 +1175,11 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://carla.org/',
     repositoryUrl: 'https://github.com/carla-simulator/carla',
     relatedTechnologyIds: ['ros2-autoware', 'baidu-apollo-ad'],
-    tags: ['carla', 'simulator', 'unreal-engine', 'av-sim', 'open-source'],
+    tags: ['carla', 'simulator', 'unreal-engine', 'av-sim', 'open-source', 'Commercial'],
   },
   {
     id: 'socketcan',
+    licenseType: 'commercial',
     name: 'Linux SocketCAN Subsystem & Tools',
     layerId: 'development-testing',
     description: {
@@ -1140,10 +1197,11 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['can-id-conv', 'can-frame-vis', 'bit-manipulation'],
     resourceIds: ['socketcan-documentation'],
     relatedTechnologyIds: ['can-protocol', 'linux-kernel'],
-    tags: ['socketcan', 'candump', 'cansend', 'vcan', 'linux-can'],
+    tags: ['socketcan', 'candump', 'cansend', 'vcan', 'linux-can', 'Commercial'],
   },
   {
     id: 'adb-perfetto-tools',
+    licenseType: 'commercial',
     name: 'ADB & Perfetto Tracing Tools',
     layerId: 'development-testing',
     description: {
@@ -1160,10 +1218,11 @@ export const stackTechnologies: StackTechnology[] = [
     toolIds: ['json-formatter', 'unix-timestamp'],
     resourceIds: ['android-automotive-docs'],
     relatedTechnologyIds: ['android-automotive-os'],
-    tags: ['adb', 'perfetto', 'tracing', 'profiling', 'debug'],
+    tags: ['adb', 'perfetto', 'tracing', 'profiling', 'debug', 'Commercial'],
   },
   {
     id: 'renode-emulator',
+    licenseType: 'commercial',
     name: 'Renode Simulation & Emulation Framework',
     layerId: 'development-testing',
     description: {
@@ -1179,7 +1238,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://renode.io/',
     repositoryUrl: 'https://github.com/renode/renode',
     relatedTechnologyIds: ['socketcan', 'nxp-s32'],
-    tags: ['renode', 'antmicro', 'emulation', 'qemu', 'sil'],
+    tags: ['renode', 'antmicro', 'emulation', 'qemu', 'sil', 'Commercial'],
   },
 
   // ==========================================
@@ -1187,6 +1246,7 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'ota-cloud-fleet',
+    licenseType: 'commercial',
     name: 'Connected Car OTA & Fleet Platform',
     layerId: 'cloud-devops',
     description: {
@@ -1201,10 +1261,11 @@ export const stackTechnologies: StackTechnology[] = [
     topics: ['cloud', 'sdv', 'cybersecurity'],
     companyIds: ['hyundai-motor-group', 'tesla', 'red-hat'],
     relatedTechnologyIds: ['eclipse-uprotocol', 'covesa-vss', 'unece-r155-r156'],
-    tags: ['ota', 'cloud', 'fleet', 'telematics', 'updates'],
+    tags: ['ota', 'cloud', 'fleet', 'telematics', 'updates', 'Commercial'],
   },
   {
     id: 'eclipse-ankaios',
+    licenseType: 'commercial',
     name: 'Eclipse Ankaios (SDV Container Orchestrator)',
     layerId: 'cloud-devops',
     description: {
@@ -1221,6 +1282,6 @@ export const stackTechnologies: StackTechnology[] = [
     repositoryUrl: 'https://github.com/eclipse-ankaios/ankaios',
     openSourceProjectIds: ['eclipse-score', 'eclipse-uprotocol'],
     relatedTechnologyIds: ['eclipse-uprotocol', 'ota-cloud-fleet'],
-    tags: ['ankaios', 'eclipse-sdv', 'containers', 'kubernetes', 'orchestrator'],
+    tags: ['ankaios', 'eclipse-sdv', 'containers', 'kubernetes', 'orchestrator', 'Commercial'],
   },
 ];

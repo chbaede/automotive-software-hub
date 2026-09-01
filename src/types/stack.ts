@@ -52,5 +52,6 @@ export interface StackTechnology {
   resourceIds?: string[];
   eventIds?: string[];
   relatedTechnologyIds?: string[];
+  licenseType?: 'oss' | 'commercial';
   tags?: string[];
 }
