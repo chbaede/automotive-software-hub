@@ -220,12 +220,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'perseus-hypervisor',
     licenseType: 'oss',
-    asilLevel: 'ASIL-B',
+    asilLevel: 'ASIL-D',
     name: 'Perseus Pegasus Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
-      en: 'Real-time open-source based automotive hypervisor and virtualization stack engineered for mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
-      ko: '이종 안전도(Mixed-Criticality) SDV 차량을 위해 (주)페르세우스가 자체 개발한 오픈소스 기반 실시간 오토모티브 하이퍼바이저.',
+      en: 'ISO 26262 ASIL-D certified real-time open-source based automotive hypervisor and virtualization stack engineered for mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
+      ko: 'ISO 26262 ASIL-D 최고 기능 안전 인증을 획득하고 이종 안전도(Mixed-Criticality) SDV 차량을 위해 (주)페르세우스가 개발한 오픈소스 기반 실시간 오토모티브 하이퍼바이저.',
     },
     whereDoesItFit: {
       en: 'Real-time open-source automotive virtualization layer running on mixed-criticality zonal controllers.',
@@ -236,7 +236,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://www.cyberperseus.com/',
     companyIds: ['perseus-automotive'],
     relatedTechnologyIds: ['kvm-automotive', 'linux-kernel'],
-    tags: ['perseus', 'pegasus', 'hypervisor', 'koreantech', 'asil-b', 'OSS'],
+    tags: ['perseus', 'pegasus', 'hypervisor', 'koreantech', 'asil-d', 'OSS'],
   },
   {
     id: 'qualcomm-hypervisor',
@@ -685,7 +685,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'eclipse-iceoryx',
-    licenseType: 'commercial',
+    licenseType: 'oss',
     name: 'Eclipse iceoryx / iceoryx2 (True Zero-Copy IPC)',
     layerId: 'middleware-communication',
     description: {
@@ -701,7 +701,7 @@ export const stackTechnologies: StackTechnology[] = [
     website: 'https://iceoryx.io/',
     repositoryUrl: 'https://github.com/eclipse-iceoryx/iceoryx',
     relatedTechnologyIds: ['dds-protocol', 'ros2-autoware'],
-    tags: ['iceoryx', 'iceoryx2', 'zero-copy', 'ipc', 'shared-memory', 'Commercial'],
+    tags: ['iceoryx', 'iceoryx2', 'zero-copy', 'ipc', 'shared-memory', 'OSS'],
   },
   {
     id: 'someip-protocol',
@@ -1383,7 +1383,7 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'eclipse-ankaios',
-    licenseType: 'commercial',
+    licenseType: 'oss',
     name: 'Eclipse Ankaios (SDV Container Orchestrator)',
     layerId: 'cloud-devops',
     description: {
@@ -1400,6 +1400,6 @@ export const stackTechnologies: StackTechnology[] = [
     repositoryUrl: 'https://github.com/eclipse-ankaios/ankaios',
     openSourceProjectIds: ['eclipse-score', 'eclipse-uprotocol'],
     relatedTechnologyIds: ['eclipse-uprotocol', 'ota-cloud-fleet'],
-    tags: ['ankaios', 'eclipse-sdv', 'containers', 'kubernetes', 'orchestrator', 'Commercial'],
+    tags: ['ankaios', 'eclipse-sdv', 'containers', 'kubernetes', 'orchestrator', 'OSS'],
   },
 ];

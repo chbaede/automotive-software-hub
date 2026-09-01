@@ -38,9 +38,9 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
       }`}
     >
       <div>
-        <div className="flex items-start justify-between gap-2 mb-1.5">
+        <div className="flex flex-col gap-1.5 mb-2">
           <span
-            className={`font-bold text-sm leading-tight transition-colors ${
+            className={`font-bold text-sm leading-snug transition-colors ${
               isSelected
                 ? 'text-white'
                 : isPlatform
@@ -50,46 +50,49 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
           >
             {technology.name}
           </span>
-          <div className="flex items-center gap-1 shrink-0">
-            {technology.asilLevel && (
-              <span
-                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                  technology.asilLevel === 'ASIL-D'
-                    ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-400/40'
-                    : technology.asilLevel === 'ASIL-C' || technology.asilLevel === 'ASIL-B'
-                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/40'
-                    : 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-400/40'
-                }`}
-                title={`ISO 26262 Functional Safety Level: ${technology.asilLevel}`}
-              >
-                {technology.asilLevel}
-              </span>
-            )}
-            {technology.licenseType && (
-              <span
-                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                  technology.licenseType === 'oss'
-                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30'
-                    : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-400/30'
-                }`}
-              >
-                {technology.licenseType === 'oss' ? 'OSS' : 'Commercial'}
-              </span>
-            )}
-            {isPlatform && (
-              <span
-                className={`shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-wider ${
-                  isSelected
-                    ? 'bg-white/20 text-white'
-                    : 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-xs'
-                }`}
-                title="Automotive Full Platform"
-              >
-                <Layers className="w-2.5 h-2.5" />
-                Platform
-              </span>
-            )}
-          </div>
+
+          {(technology.asilLevel || technology.licenseType || isPlatform) && (
+            <div className="flex flex-wrap items-center gap-1">
+              {technology.asilLevel && (
+                <span
+                  className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                    technology.asilLevel === 'ASIL-D'
+                      ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-400/40'
+                      : technology.asilLevel === 'ASIL-C' || technology.asilLevel === 'ASIL-B'
+                      ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/40'
+                      : 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-400/40'
+                  }`}
+                  title={`ISO 26262 Functional Safety Level: ${technology.asilLevel}`}
+                >
+                  {technology.asilLevel}
+                </span>
+              )}
+              {technology.licenseType && (
+                <span
+                  className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                    technology.licenseType === 'oss'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-400/30'
+                      : 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-400/30'
+                  }`}
+                >
+                  {technology.licenseType === 'oss' ? 'OSS' : 'Commercial'}
+                </span>
+              )}
+              {isPlatform && (
+                <span
+                  className={`shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md flex items-center gap-1 uppercase tracking-wider ${
+                    isSelected
+                      ? 'bg-white/20 text-white'
+                      : 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-xs'
+                  }`}
+                  title="Automotive Full Platform"
+                >
+                  <Layers className="w-2.5 h-2.5" />
+                  Platform
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <p
