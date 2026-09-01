@@ -142,7 +142,7 @@ export const stackRelationships: TechnologyRelationship[] = [
     sourceId: 'autosar-adaptive',
     targetId: 'qnx-neutrino',
     type: 'runs-on',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
       en: 'POSIX PSE51 compliant OS providing execution runtime for ARA middleware.',
       ko: 'AUTOSAR Adaptive (ARA) 미들웨어를 실행하는 POSIX PSE51 규격의 운영체제입니다.',
@@ -152,7 +152,7 @@ export const stackRelationships: TechnologyRelationship[] = [
     sourceId: 'autosar-adaptive',
     targetId: 'embedded-linux-rt',
     type: 'runs-on',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
       en: 'Runs on real-time Linux kernels with PREEMPT_RT for high-throughput gateway nodes.',
       ko: 'PREEMPT_RT 실시간 패치가 적용된 임베디드 리눅스 상에서 서비스 노드로 실행됩니다.',
@@ -328,8 +328,8 @@ export const stackRelationships: TechnologyRelationship[] = [
     type: 'depends-on',
     confidence: 'official',
     description: {
-      en: 'Built directly upon the QNX Neutrino microkernel architecture for microsecond context switching.',
-      ko: 'QNX Neutrino 마이크로커널 아키텍처 위에 구축되어 마이크로초 단위의 컨텍스트 스위칭을 실현합니다.',
+      en: 'Built directly upon the QNX Neutrino microkernel architecture for fast context switching and partition isolation.',
+      ko: 'QNX Neutrino 마이크로커널 아키텍처 위에 구축되어 신속한 컨텍스트 스위칭 및 파티션 격리를 제공합니다.',
     },
   },
   {
@@ -366,17 +366,17 @@ export const stackRelationships: TechnologyRelationship[] = [
     sourceId: 'nvidia-drive-hypervisor',
     targetId: 'nvidia-drive-thor',
     type: 'runs-on',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
-      en: 'Native Type-1 hypervisor for DRIVE OS running on NVIDIA DRIVE Thor 2,000 TFLOPS centralized SoC.',
-      ko: '2,000 TFLOPS 성능의 NVIDIA DRIVE Thor 중앙 컴퓨팅 SoC 전용 Type-1 하이퍼바이저입니다.',
+      en: 'Native Type-1 hypervisor for DRIVE OS running on NVIDIA DRIVE Thor centralized compute SoC.',
+      ko: 'NVIDIA DRIVE Thor 중앙 컴퓨팅 SoC 전용 Type-1 하이퍼바이저입니다.',
     },
   },
   {
     sourceId: 'qualcomm-hypervisor',
     targetId: 'qualcomm-snapdragon-cockpit',
     type: 'runs-on',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
       en: 'Embedded Type-1 hypervisor partitioning Snapdragon 8295 cockpit compute resources.',
       ko: 'Snapdragon 8295 콕핏 칩의 CPU/GPU 자원을 안드로이드와 계기판으로 분할 구동하는 하이퍼바이저입니다.',
@@ -406,7 +406,7 @@ export const stackRelationships: TechnologyRelationship[] = [
     sourceId: 'eclipse-ankaios',
     targetId: 'redhat-in-vehicle-os',
     type: 'runs-on',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
       en: 'Orchestrates Podman/Docker containers dynamically on Red Hat In-Vehicle OS nodes.',
       ko: 'Red Hat In-Vehicle OS 노드 상에서 Podman/Docker 컨테이너 워크로드를 동적으로 오케스트레이션합니다.',

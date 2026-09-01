@@ -159,6 +159,12 @@ stackTechnologies.forEach((st) => {
     if (fs.claimType && !validSafetyClaimTypes.has(fs.claimType)) {
       error(`[Stack Tech ID: ${st.id}] Invalid functionalSafety.claimType: '${fs.claimType}'`);
     }
+    if (fs.claimType && fs.claimType !== 'certified') {
+      const descEn = st.description?.en || '';
+      if (/\b(asil-[abcd]\s+certified|safety-certified)\b/i.test(descEn)) {
+        error(`[Stack Tech ID: ${st.id}] Description claims 'certified' but functionalSafety.claimType is '${fs.claimType}'.`);
+      }
+    }
     if (fs.lastVerified) {
       validateIsoDate(fs.lastVerified, `[Stack Tech ID: ${st.id} functionalSafety]`);
     }

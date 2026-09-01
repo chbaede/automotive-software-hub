@@ -17,8 +17,8 @@ export const stackTechnologies: StackTechnology[] = [
     name: 'NVIDIA DRIVE Thor',
     layerId: 'hardware-compute',
     description: {
-      en: 'Next-generation 2,000 TFLOPS centralized AV & cockpit SoC integrating Blackwell GPU architecture and Transformer Engine.',
-      ko: 'Blackwell GPU 아키텍처 및 트랜스포머 엔진을 통합한 2,000 TFLOPS 차세대 중앙 집중식 자율주행 & 콕핏 SoC.',
+      en: 'Next-generation centralized AV & cockpit SoC integrating Blackwell GPU architecture and Transformer Engine.',
+      ko: 'Blackwell GPU 아키텍처 및 트랜스포머 엔진을 통합한 차세대 중앙 집중식 자율주행 & 콕핏 SoC.',
     },
     whereDoesItFit: {
       en: 'Centralized Vehicle Computer (Zonal/Domain Compute) replacing separate IVI & ADAS ECUs.',
@@ -87,6 +87,13 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'renesas-rcar',
+    asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.renesas.com/products/automotive-products/automotive-system-chips-socs',
+    },
     licenseType: 'commercial',
     name: 'Renesas R-Car SoC Family',
     layerId: 'hardware-compute',
@@ -148,12 +155,18 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'horizon-robotics-journey',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.horizon.cc/',
+    },
     licenseType: 'commercial',
     name: 'Horizon Robotics Journey 5/6 BPU SoC',
     layerId: 'hardware-compute',
     description: {
-      en: 'High-performance AI Brain Processing Unit (BPU) SoC family delivering up to 560 TOPS for urban NOA and autonomous driving.',
-      ko: '도심 NOA 및 자율주행을 위해 최대 560 TOPS 성능을 제공하는 고성능 AI BPU(Brain Processing Unit) SoC.',
+      en: 'High-performance AI Brain Processing Unit (BPU) SoC family engineered for urban NOA and autonomous driving perception pipelines.',
+      ko: '도심 NOA 및 자율주행 인지 파이프라인을 위해 설계된 고성능 AI BPU(Brain Processing Unit) SoC.',
     },
     whereDoesItFit: {
       en: 'Autonomous Driving (ADAS/AD) High-Performance Domain Controller Silicon.',
@@ -168,12 +181,19 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'black-sesame-huashan',
+    asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.blacksesame.com.cn/',
+    },
     licenseType: 'commercial',
     name: 'Black Sesame Huashan A1000 SoC',
     layerId: 'hardware-compute',
     description: {
-      en: 'Automotive ASIL-B / ISO 26262 certified high-performance autonomous driving SoC supporting multi-camera fusion.',
-      ko: '멀티 카메라 센서 퓨전을 지원하는 자동차 ASIL-B / ISO 26262 인증 고성능 자율주행 SoC.',
+      en: 'High-performance autonomous driving SoC supporting multi-camera fusion and ISO 26262 ASIL-B functional safety design.',
+      ko: '멀티 카메라 센서 퓨전 및 ISO 26262 ASIL-B 기능 안전 설계를 지원하는 고성능 자율주행 SoC.',
     },
     whereDoesItFit: {
       en: 'L2+ to L3 Autonomous Driving & Parking Domain Processor.',
@@ -258,8 +278,8 @@ export const stackTechnologies: StackTechnology[] = [
     name: 'Perseus Pegasus Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
-      en: 'ISO 26262 ASIL-D certified real-time open-source based automotive hypervisor and virtualization stack engineered for mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
-      ko: 'ISO 26262 ASIL-D 최고 기능 안전 인증을 획득하고 이종 안전도(Mixed-Criticality) SDV 차량을 위해 (주)페르세우스가 개발한 오픈소스 기반 실시간 오토모티브 하이퍼바이저.',
+      en: 'Open-source based real-time automotive hypervisor engineered to support ISO 26262 ASIL-D mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
+      ko: 'ISO 26262 ASIL-D 이종 안전도(Mixed-Criticality) SDV 차량 아키텍처 지원을 목표로 (주)페르세우스가 개발한 오픈소스 기반 실시간 오토모티브 하이퍼바이저.',
     },
     whereDoesItFit: {
       en: 'Real-time open-source automotive virtualization layer running on mixed-criticality zonal controllers.',
@@ -274,8 +294,14 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'qualcomm-hypervisor',
-    licenseType: 'commercial',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.qualcomm.com/products/automotive',
+    },
+    licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Type-1 Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -295,8 +321,14 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'nvidia-drive-hypervisor',
-    licenseType: 'commercial',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'certified',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://developer.nvidia.com/drive/drive-os',
+    },
+    licenseType: 'commercial',
     name: 'NVIDIA DRIVE OS Type-1 Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -309,15 +341,21 @@ export const stackTechnologies: StackTechnology[] = [
     },
     categories: ['Hypervisor', 'Virtualization', 'Safety'],
     topics: ['adas', 'functional-safety', 'sdv'],
-    website: 'https://www.nvidia.com/en-us/self-driving-cars/',
+    website: 'https://developer.nvidia.com/drive/drive-os',
     companyIds: ['nvidia'],
     relatedTechnologyIds: ['nvidia-drive-thor', 'nvidia-driveworks-sdk', 'linux-kernel'],
     tags: ['nvidia-hv', 'drive-os', 'hypervisor', 'asil-d', 'Commercial'],
   },
   {
     id: 'samsung-exynos-hypervisor',
-    licenseType: 'commercial',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'capable',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://semiconductor.samsung.com/processor/automotive-processor/',
+    },
+    licenseType: 'commercial',
     name: 'Samsung Exynos Auto Hypervisor Framework',
     layerId: 'hypervisor-virtualization',
     description: {
@@ -509,8 +547,8 @@ export const stackTechnologies: StackTechnology[] = [
     name: 'Embedded Linux RT (PREEMPT_RT Kernel)',
     layerId: 'operating-systems',
     description: {
-      en: 'Real-time Linux kernel with PREEMPT_RT patchset providing hard real-time determinism for automotive domain controllers and gateway ECUs.',
-      ko: 'PREEMPT_RT 패치셋을 통해 결정론적 하드 실시간(Hard Real-Time) 성능을 보장하는 오토모티브 임베디드 리눅스 RT 커널.',
+      en: 'Real-time Linux kernel with PREEMPT_RT patchset supporting deterministic real-time scheduling for automotive domain controllers and gateway ECUs.',
+      ko: 'PREEMPT_RT 패치셋을 통해 결정론적 실시간(Real-Time) 스케줄링을 지원하는 오토모티브 임베디드 리눅스 RT 커널.',
     },
     whereDoesItFit: {
       en: 'Real-Time Linux OS kernel layer powering domain controllers and gateway ECUs requiring low latency.',
@@ -745,6 +783,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'autosar-adaptive',
     asilLevel: 'ASIL-B',
+    functionalSafety: {
+      asilLevel: 'ASIL-B',
+      claimType: 'supports',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.autosar.org/standards/adaptive-platform',
+    },
     licenseType: 'commercial',
     name: 'AUTOSAR Adaptive Platform (ARA)',
     layerId: 'middleware-communication',
@@ -768,6 +812,12 @@ export const stackTechnologies: StackTechnology[] = [
   {
     id: 'autosar-classic',
     asilLevel: 'ASIL-D',
+    functionalSafety: {
+      asilLevel: 'ASIL-D',
+      claimType: 'supports',
+      standard: 'ISO 26262',
+      sourceUrl: 'https://www.autosar.org/standards/classic-platform',
+    },
     licenseType: 'commercial',
     name: 'AUTOSAR Classic Platform (BSW & RTE)',
     layerId: 'middleware-communication',
