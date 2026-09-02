@@ -556,5 +556,7 @@ export function getGraphInsights(): GraphInsightsData {
   };
 }
 
-// Re-export Knowledge Graph Intelligence Engine
-export * from './intelligence';
+// Re-export Scoring and Knowledge Graph Intelligence Engine
+export * from './scoring';
+export * from './intelligence/index';
+

@@ -2,9 +2,9 @@
 
 ## 1. Overview & Purpose
 
-The **Knowledge Graph Intelligence Engine** (`src/lib/graph/intelligence.ts`) transforms the Automotive Software Hub's curated graph dataset into a deterministic, explainable, and strongly-typed discovery system.
+The **Knowledge Graph Intelligence Engine** (`src/lib/graph/intelligence/`) transforms the Automotive Software Hub's curated graph dataset into a deterministic, explainable, and modular discovery system.
 
-It powers answers to key automotive architectural inquiries:
+It answers core architectural questions:
 - Which runtime platforms can host this application or middleware?
 - What dependencies are fundamentally required vs. optional companion tools?
 - What competing architectural alternatives exist?
@@ -14,7 +14,29 @@ It powers answers to key automotive architectural inquiries:
 
 ---
 
-## 2. Directed vs. Exploratory Traversal
+## 2. Modular Architecture & Responsibilities
+
+The intelligence layer is decomposed into focused, single-responsibility modules:
+
+```text
+src/lib/graph/
+├── index.ts                      # Canonical graph indexes & traversal
+├── scoring.ts                    # Centralized priority weights & deterministic scoring formulas
+├── intelligence.ts               # Compatibility facade
+└── intelligence/
+    ├── types.ts                  # Shared data structures and contracts
+    ├── relationships.ts          # Directed relationship selectors (dependencies, platforms, etc.)
+    ├── bridges.ts                # Cross-layer bridge detection algorithms
+    ├── architectures.ts          # Architecture profile relevance & ranking
+    ├── paths.ts                  # Stack Path journey relevance & ranking
+    ├── recommendations.ts        # Explainable next-technology recommendations
+    ├── stackInsights.ts          # Partial-stack gap analysis & builder intelligence
+    └── index.ts                  # Top-level 360-degree discovery profile aggregator
+```
+
+---
+
+## 3. Directed vs. Exploratory Traversal
 
 The Knowledge Graph maintains a strict semantic distinction between exploratory traversal and directed dependency queries:
 
@@ -25,9 +47,12 @@ The Knowledge Graph maintains a strict semantic distinction between exploratory 
 
 ---
 
-## 3. Relationship Priority & Confidence Scoring
+## 4. Scoring Formulas & Semantic Meaning
 
-Recommendation and discovery rankings use explicit weights and confidence multipliers:
+> [!IMPORTANT]
+> **Numeric scores are strictly internal deterministic ranking signals** designed to prioritize results stably across renders. They are **NOT** probabilities, product quality ratings, adoption percentages, or factual certainty metrics.
+
+### Canonical Priority Weights & Confidence Multipliers (`scoring.ts`)
 
 ```ts
 export const RELATIONSHIP_PRIORITY: Record<RelationshipType, number> = {
@@ -39,7 +64,7 @@ export const RELATIONSHIP_PRIORITY: Record<RelationshipType, number> = {
   'implemented-by': 5,  // Realization of spec / standard
   'coexists-with': 4,   // Multi-ECU domain coexistence
   'related': 2,         // Broad domain relationship
-  'alternative': 1,     // Architectural competitor (separated from additive recommendations)
+  'alternative': 1,     // Architectural competitor (isolated from additive recommendations)
 };
 
 export const CONFIDENCE_WEIGHT: Record<RelationshipConfidence, number> = {
@@ -51,30 +76,30 @@ export const CONFIDENCE_WEIGHT: Record<RelationshipConfidence, number> = {
 
 ---
 
-## 4. Cross-Layer Bridge Detection
+## 5. Cross-Layer Bridge Detection
 
 A **Bridge Technology** is defined as a technology that links the currently inspected technology to two or more *different* canonical stack layers.
 
-For instance:
-- **Middleware** (e.g. `vsomeip`, `ros2-middleware`) bridging `application-experience` (Layer 7) with `operating-systems` (Layer 3) and `hardware-compute` (Layer 1).
-- **Hypervisors** (e.g. `qnx-hypervisor`, `perseus-hypervisor`) bridging `operating-systems` (Layer 3) with `hardware-compute` (Layer 1).
+- **Relationship-Strength Awareness**: Only meaningful relationship edges (`runs-on`, `depends-on`, `integrates-with`, `compatible-with`, `used-with`, `implemented-by`) qualify as bridge connections. Weak connections alone cannot turn an unrelated node into a bridge.
+- **Explainability**: Bridge candidates return clear, human-readable explanations detailing which layers are bridged.
 
 ---
 
-## 5. Architectural Gap Analysis & Partial Stack Intelligence
+## 6. Architectural Gap Analysis & Partial Stack Intelligence
 
 When a user constructs a partial stack in Stack Builder:
-1. **Gap Analysis**: Identifies unpopulated layers across the 7 Core Runtime Layers (`hardware-compute`, `hypervisor-virtualization`, `operating-systems`, `build-platform`, `middleware-communication`, `vehicle-services`, `application-experience`).
-2. **Targeted Additive Recommendations**: Prioritizes technologies that directly connect to selected nodes and fill currently empty layers.
-3. **Alternative Separation**: Surfaces architectural alternatives separately so users are never advised to add competing alternatives into the same stack.
+1. **Gap Analysis**: Evaluates completeness against the 7 **Core Runtime Layers** (`hardware-compute`, `hypervisor-virtualization`, `operating-systems`, `build-platform`, `middleware-communication`, `vehicle-services`, `application-experience`). Supporting layers (e.g. Cloud/DevOps, Testing, Compliance) do not make a runtime stack appear incomplete.
+2. **Targeted Additive Recommendations**: Prioritizes technologies that directly connect to selected nodes and fill currently empty core layers.
+3. **Alternative Isolation**: Surfaces architectural alternatives separately so users are never advised to add competing alternatives into the same stack.
 
 ---
 
-## 6. Conservative Invariants & Non-Inferences
+## 7. Conservative Invariants & Non-Inferences
 
 To preserve data credibility and avoid misleading engineering claims:
 1. **No Inferred Hard Dependencies**: `related`, `coexists-with`, or `used-with` are never converted into hard `depends-on`.
-2. **No Inferred Certification**: A technology having an ASIL level (e.g. ASIL-D Capable) is NEVER reported as `certified` unless `functionalSafety.claimType === 'certified'`.
-3. **Evidence Isolation**: Official entity status does not upgrade relationship confidence; relationship confidence is strictly derived from verified edge documentation.
-4. **Alternative Isolation**: `alternative` relationships represent choice options and are excluded from additive next-step suggestions.
-
+2. **Perspective-Corrected Alternative Wording**: Explanations always express that candidate $B$ is an alternative to current technology $A$.
+3. **No Inferred Certification**: A technology having an ASIL level (e.g. ASIL-D Capable) is NEVER reported as `certified` unless `functionalSafety.claimType === 'certified'`.
+4. **Perseus Pegasus Hypervisor**: Maintained strictly as **ASIL-D Certified** with verified vendor documentation URL.
+5. **Evidence Isolation**: Official entity status does not upgrade relationship confidence; relationship confidence is strictly derived from verified edge documentation.
+6. **Alternative Isolation**: `alternative` relationships represent choice options and are excluded from additive next-step suggestions.

@@ -1564,6 +1564,90 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 30 Passed: Phase 8.2 Intelligent Technology Discovery UX & Invariants verified.');
 }
 
+// Test 31: Phase 8.2.5 — Refactor & Harden Knowledge Graph Intelligence
+{
+  const scoring = await import('../src/lib/graph/scoring.js');
+  const rels = await import('../src/lib/graph/intelligence/relationships.js');
+  const bridges = await import('../src/lib/graph/intelligence/bridges.js');
+  const archs = await import('../src/lib/graph/intelligence/architectures.js');
+  const paths = await import('../src/lib/graph/intelligence/paths.js');
+  const recs = await import('../src/lib/graph/intelligence/recommendations.js');
+  const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
+  const intelIndex = await import('../src/lib/graph/intelligence/index.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  // 1. Scoring Calculations & Constants
+  assert.strictEqual(scoring.RELATIONSHIP_PRIORITY['runs-on'], 10);
+  assert.strictEqual(scoring.RELATIONSHIP_PRIORITY['depends-on'], 9);
+  assert.strictEqual(scoring.RELATIONSHIP_PRIORITY['integrates-with'], 8);
+  assert.strictEqual(scoring.CONFIDENCE_WEIGHT['official'], 1.0);
+  assert.strictEqual(scoring.CONFIDENCE_WEIGHT['vendor'], 0.85);
+  assert.strictEqual(scoring.CONFIDENCE_WEIGHT['community'], 0.7);
+
+  assert.strictEqual(scoring.calculateRelationshipScore('runs-on', 'official'), 100);
+  assert.strictEqual(scoring.calculateRelationshipScore('runs-on', 'vendor'), 85);
+  assert.strictEqual(scoring.calculateRelationshipScore('depends-on', 'community'), 63);
+
+  const strongBridgeScore = scoring.calculateBridgeScore(3, 5, 10, 'official');
+  const weakBridgeScore = scoring.calculateBridgeScore(2, 2, 2, 'community');
+  assert.ok(strongBridgeScore > weakBridgeScore, 'Strong bridge must outscore weak bridge');
+
+  // 2. Strict Dependency & Platform Directional Invariants
+  // AUTOSAR Adaptive (ARA) depends on SOME/IP Protocol
+  const araDeps = rels.getDependencies('autosar-adaptive');
+  const someipDependents = rels.getDependents('someip-protocol');
+  const someipDeps = rels.getDependencies('someip-protocol');
+  const araDependents = rels.getDependents('autosar-adaptive');
+
+  assert.ok(araDeps.some((d) => d.technology.id === 'someip-protocol'), 'ARA depends on SOME/IP Protocol');
+  assert.ok(someipDependents.some((d) => d.technology.id === 'autosar-adaptive'), 'SOME/IP is depended on by ARA');
+  assert.ok(!someipDeps.some((d) => d.technology.id === 'autosar-adaptive'), 'SOME/IP does NOT depend on ARA');
+  assert.ok(!araDependents.some((d) => d.technology.id === 'someip-protocol'), 'ARA is NOT depended on by SOME/IP');
+
+  // AUTOSAR Adaptive (ARA) runs on QNX Neutrino
+  const araPlatforms = rels.getPlatforms('autosar-adaptive');
+  const qnxHosted = rels.getHostedTechnologies('qnx-neutrino');
+  const qnxPlatforms = rels.getPlatforms('qnx-neutrino');
+  const araHosted = rels.getHostedTechnologies('autosar-adaptive');
+
+  assert.ok(araPlatforms.some((p) => p.technology.id === 'qnx-neutrino'), 'ARA runs on QNX Neutrino');
+  assert.ok(qnxHosted.some((h) => h.technology.id === 'autosar-adaptive'), 'QNX Neutrino hosts ARA');
+  assert.ok(!qnxPlatforms.some((p) => p.technology.id === 'autosar-adaptive'), 'QNX Neutrino does NOT run on ARA');
+  assert.ok(!araHosted.some((h) => h.technology.id === 'qnx-neutrino'), 'ARA does NOT host QNX Neutrino');
+
+  // 3. Perspective-Corrected Alternative Wording
+  const qnxHypAlts = rels.getAlternatives('qnx-hypervisor');
+  assert.ok(qnxHypAlts.length > 0, 'QNX Hypervisor has alternatives');
+  const coqosAlt = qnxHypAlts.find((a) => a.technology.id === 'opensynergy-coqos-hypervisor');
+  if (coqosAlt) {
+    assert.ok(
+      coqosAlt.reason.en.includes('is an architectural alternative to QNX Hypervisor'),
+      'Alternative wording must state that neighbor is an alternative to current tech'
+    );
+    assert.ok(
+      coqosAlt.reason.ko.includes('QNX Hypervisor의 아키텍처 대안 솔루션'),
+      'Korean alternative wording must state that neighbor is an alternative to current tech'
+    );
+  }
+
+  // 4. Deterministic Ordering
+  const run1Archs = archs.getRelatedArchitectures('nvidia-drive-thor');
+  const run2Archs = archs.getRelatedArchitectures('nvidia-drive-thor');
+  assert.deepStrictEqual(run1Archs, run2Archs, 'Architecture relevance ranking must be 100% deterministic');
+
+  const run1Recs = recs.getNextTechnologiesToExplore('nvidia-drive-thor');
+  const run2Recs = recs.getNextTechnologiesToExplore('nvidia-drive-thor');
+  assert.deepStrictEqual(run1Recs, run2Recs, 'Exploration recommendations must be 100% deterministic');
+
+  // 5. Perseus Safety Certification Invariant
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.ok(perseus, 'Perseus Pegasus Hypervisor exists in knowledge graph');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified', 'Perseus remains ASIL-D Certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D', 'Perseus remains ASIL-D');
+
+  console.log('✅ Test 31 Passed: Phase 8.2.5 Refactor & Harden Knowledge Graph Intelligence verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 
