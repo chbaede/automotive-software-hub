@@ -243,7 +243,13 @@ export const GraphInsightsPanel: React.FC<GraphInsightsPanelProps> = ({
                           : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                       }`}
                     >
-                      {isCore ? (language === 'ko' ? '코어' : 'Core') : (language === 'ko' ? '크로스' : 'Pillar')}
+                      {isCore
+                        ? language === 'ko'
+                          ? '코어'
+                          : 'Core'
+                        : language === 'ko'
+                          ? '공통 영역'
+                          : 'Cross-cutting'}
                     </span>
                     <span className="font-semibold text-slate-200 truncate" title={layerName}>
                       {layerName}
