@@ -10,6 +10,7 @@ const staticRoutes = [
   { path: '', priority: '1.0', changefreq: 'weekly' },
   { path: 'stack', priority: '0.95', changefreq: 'weekly' },
   { path: 'architectures', priority: '0.90', changefreq: 'weekly' },
+  { path: 'stack-builder', priority: '0.90', changefreq: 'weekly' },
   { path: 'tools', priority: '0.90', changefreq: 'monthly' },
   { path: 'resources', priority: '0.85', changefreq: 'weekly' },
   { path: 'open-source', priority: '0.85', changefreq: 'monthly' },

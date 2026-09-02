@@ -200,26 +200,37 @@ export const TechnologyDetailPage: React.FC = () => {
           </span>
         </div>
 
-        {/* Share Button */}
-        <button
-          onClick={handleCopyLink}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition text-xs font-semibold shrink-0 shadow-2xs"
-          title={t.techDetail.copyLink}
-        >
-          {copied ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                {t.techDetail.linkCopied}
-              </span>
-            </>
-          ) : (
-            <>
-              <Share2 className="w-3.5 h-3.5 text-slate-400" />
-              <span>{t.techDetail.copyLink}</span>
-            </>
-          )}
-        </button>
+        {/* Actions Row */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            to={`/stack-builder?${technology.layerId}=${technology.id}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition text-xs font-bold shadow-xs"
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            <span>{t.techDetail.buildWithThisTech}</span>
+          </Link>
+
+          {/* Share Button */}
+          <button
+            onClick={handleCopyLink}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition text-xs font-semibold shrink-0 shadow-2xs"
+            title={t.techDetail.copyLink}
+          >
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  {t.techDetail.linkCopied}
+                </span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-3.5 h-3.5 text-slate-400" />
+                <span>{t.techDetail.copyLink}</span>
+              </>
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}

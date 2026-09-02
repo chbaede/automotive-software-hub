@@ -13,6 +13,7 @@ import { NotFoundPage } from '../pages/NotFound';
 import { TechnologyDetailPage } from '../pages/Stack/TechnologyDetailPage';
 import { ArchitecturesPage } from '../pages/Architectures';
 import { ArchitectureDetailPage } from '../pages/Architectures/ArchitectureDetailPage';
+import { StackBuilderPage } from '../pages/StackBuilder';
 
 export const AppRouter: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/stack/:technologyId" element={<TechnologyDetailPage />} />
           <Route path="/architectures" element={<ArchitecturesPage />} />
           <Route path="/architectures/:architectureId" element={<ArchitectureDetailPage />} />
+          <Route path="/stack-builder" element={<StackBuilderPage />} />
           <Route path="/tools" element={<ToolsPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/open-source" element={<OpenSourcePage />} />

@@ -816,6 +816,162 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 24 Passed: Architecture Explorer & Technology Neighborhood Graph Resolution verified.');
 }
 
+// Test 25: Automotive Stack Builder Validation, Architecture & Path Matching, and URL State
+{
+  const {
+    validateStack,
+    matchArchitectures,
+    matchStackPaths,
+    getSuggestedCandidates,
+    encodeStackToSearchParams,
+    decodeStackFromSearchParams,
+    CORE_STACK_LAYER_IDS,
+    SUPPORTING_STACK_LAYER_IDS,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  // 1. Incomplete stack handling
+  const incompleteResult = validateStack({});
+  assert.strictEqual(incompleteResult.health, 'incomplete');
+  assert.strictEqual(incompleteResult.totalSelected, 0);
+
+  const singleResult = validateStack({ 'hardware-compute': 'nvidia-drive-thor' });
+  assert.strictEqual(singleResult.health, 'incomplete');
+  assert.strictEqual(singleResult.totalSelected, 1);
+
+  // 2. Verified relationship detection
+  const verifiedSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'hypervisor-virtualization': 'nvidia-drive-hypervisor',
+    'operating-systems': 'qnx-neutrino',
+  };
+  const verifiedResult = validateStack(verifiedSelection);
+  assert.ok(verifiedResult.verifiedCount >= 1, 'Should detect verified relationships in valid stack');
+  assert.ok(
+    verifiedResult.items.some(
+      (item) =>
+        item.status === 'verified' &&
+        ((item.sourceTech.id === 'nvidia-drive-hypervisor' && item.targetTech.id === 'nvidia-drive-thor') ||
+         (item.sourceTech.id === 'nvidia-drive-thor' && item.targetTech.id === 'nvidia-drive-hypervisor'))
+    ),
+    'Should identify runs-on/depends-on verified relationship between Thor and Drive Hypervisor'
+  );
+
+  // 3. Unverified warning detection across adjacent layers with no explicit relationship
+  const unverifiedSelection = {
+    'hardware-compute': 'horizon-robotics-journey',
+    'application-experience': 'autoware-universe',
+  };
+  const unverifiedResult = validateStack(unverifiedSelection);
+  assert.ok(unverifiedResult.totalSelected === 2);
+  // Warning messages must clarify that lack of relationship does NOT imply incompatibility
+  unverifiedResult.items
+    .filter((i) => i.status === 'warning')
+    .forEach((item) => {
+      assert.ok(
+        item.explanation.en.includes('does not imply incompatibility'),
+        'Warning explanation must explicitly state that it does not imply incompatibility'
+      );
+      assert.ok(
+        item.explanation.ko.includes('기술적 비호환을 의미하지 않습니다'),
+        'Korean warning explanation must explicitly state non-incompatibility'
+      );
+    });
+
+  // 4. Architecture Matching
+  const archMatches = matchArchitectures({
+    'hardware-compute': 'nvidia-drive-thor',
+    'hypervisor-virtualization': 'nvidia-drive-hypervisor',
+    'operating-systems': 'qnx-neutrino',
+    'middleware-communication': 'eclipse-iceoryx',
+  });
+  assert.ok(archMatches.length > 0, 'Should match architecture profiles');
+  assert.ok(
+    archMatches.some((m) => m.profile.id === 'adas-autonomous'),
+    'Should match ADAS & Autonomous Driving Platform profile'
+  );
+  const adasMatch = archMatches.find((m) => m.profile.id === 'adas-autonomous');
+  assert.ok(adasMatch!.matchedTechnologies.length >= 3);
+  assert.ok(adasMatch!.overlapPercentage > 0);
+
+  // 5. Related Stack Path Matching
+  const pathMatches = matchStackPaths({
+    'hardware-compute': 'qualcomm-snapdragon-ride',
+    'operating-systems': 'android-automotive-os',
+  });
+  assert.ok(pathMatches.length > 0, 'Should match representative stack paths');
+  assert.ok(
+    pathMatches.some((p) => p.matchedHopsCount >= 1),
+    'Matched stack paths must have matched hops'
+  );
+
+  // 6. Deterministic Next-Technology Suggestions
+  const suggestions = getSuggestedCandidates({
+    'operating-systems': 'qnx-neutrino',
+  });
+  assert.ok(suggestions.length > 0, 'Should provide graph-driven technology suggestions');
+  suggestions.forEach((cand) => {
+    assert.notStrictEqual(cand.technology.layerId, 'operating-systems', 'Suggestions should not target already populated layers');
+    assert.notStrictEqual(cand.relationship.type, 'alternative', 'Suggestions should not recommend alternatives as additive');
+    assert.ok(cand.priority >= 1);
+  });
+
+  // 7. URL Search Params Serialization & Deserialization
+  const testSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'operating-systems': 'qnx-neutrino',
+  };
+  const searchParams = encodeStackToSearchParams(testSelection);
+  assert.strictEqual(searchParams.get('hardware-compute'), 'nvidia-drive-thor');
+  assert.strictEqual(searchParams.get('operating-systems'), 'qnx-neutrino');
+
+  // Decode valid params
+  const decoded = decodeStackFromSearchParams(searchParams);
+  assert.strictEqual(decoded['hardware-compute'], 'nvidia-drive-thor');
+  assert.strictEqual(decoded['operating-systems'], 'qnx-neutrino');
+
+  // Decode params with invalid technology ID and mismatched layer ID
+  const invalidParams = new URLSearchParams({
+    'hardware-compute': 'non-existent-silicon',
+    'operating-systems': 'nvidia-drive-thor', // wrong layer
+  });
+  const decodedInvalid = decodeStackFromSearchParams(invalidParams);
+  assert.strictEqual(decodedInvalid['hardware-compute'], undefined);
+  assert.strictEqual(decodedInvalid['operating-systems'], undefined);
+
+  // 8. Functional Safety semantics preservation
+  const qnxNeutrino = technologyById.get('qnx-neutrino');
+  assert.strictEqual(qnxNeutrino?.functionalSafety?.claimType, 'capable');
+  assert.notStrictEqual(qnxNeutrino?.functionalSafety?.claimType, 'certified');
+
+  // 9. Bilingual i18n completeness for Stack Builder
+  assert.ok(en.nav.stackBuilder, 'en.nav.stackBuilder must exist');
+  assert.ok(ko.nav.stackBuilder, 'ko.nav.stackBuilder must exist');
+  assert.ok(en.stackBuilder.title, 'en.stackBuilder.title must exist');
+  assert.ok(ko.stackBuilder.title, 'ko.stackBuilder.title must exist');
+  assert.ok(en.stackBuilder.healthValidated, 'en.stackBuilder.healthValidated must exist');
+  assert.ok(ko.stackBuilder.healthValidated, 'ko.stackBuilder.healthValidated must exist');
+  assert.ok(en.techDetail.buildWithThisTech, 'en.techDetail.buildWithThisTech must exist');
+  assert.ok(ko.techDetail.buildWithThisTech, 'ko.techDetail.buildWithThisTech must exist');
+
+  // 10. Sitemap includes /stack-builder
+  const fs = await import('fs');
+  const path = await import('path');
+  const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+    assert.ok(
+      sitemapContent.includes('<loc>https://autohub.yocto.co.kr/stack-builder</loc>'),
+      'Sitemap must contain /stack-builder route'
+    );
+  }
+
+  console.log('✅ Test 25 Passed: Automotive Stack Builder validation, architecture/path matching & URL state verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

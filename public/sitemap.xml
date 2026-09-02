@@ -22,6 +22,12 @@
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>https://autohub.yocto.co.kr/stack-builder</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://autohub.yocto.co.kr/tools</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
