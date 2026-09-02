@@ -27,9 +27,19 @@ export function getBridgeTechnologies(
   const candidates: BridgeTechnologyCandidate[] = [];
   const seenNeighborIds = new Set<string>();
 
+  const MEANINGFUL_BRIDGE_REL_TYPES = new Set([
+    'runs-on',
+    'depends-on',
+    'integrates-with',
+    'compatible-with',
+    'used-with',
+    'implemented-by',
+    'coexists-with',
+  ]);
+
   edges.forEach((edge) => {
-    // Exclude alternatives from bridge discovery
-    if (edge.relationship.type === 'alternative') return;
+    // Only meaningful architectural relationships qualify for bridge detection
+    if (!MEANINGFUL_BRIDGE_REL_TYPES.has(edge.relationship.type)) return;
     if (seenNeighborIds.has(edge.neighborId)) return;
     seenNeighborIds.add(edge.neighborId);
 
@@ -42,7 +52,7 @@ export function getBridgeTechnologies(
 
     neighborEdges.forEach((nEdge) => {
       // Only meaningful relationship edges contribute to layer bridging
-      if (nEdge.relationship.type === 'alternative') return;
+      if (!MEANINGFUL_BRIDGE_REL_TYPES.has(nEdge.relationship.type)) return;
       const nNeighbor = technologyById.get(nEdge.neighborId);
       if (nNeighbor && nNeighbor.layerId !== currentTech.layerId) {
         connectedLayersSet.add(nNeighbor.layerId);

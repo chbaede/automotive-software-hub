@@ -14,7 +14,7 @@ import {
   StackValidationSummary,
   ArchitectureMatchResult,
   StackPathMatchResult,
-} from '../../builder/stackBuilderEngine';
+} from '../matching';
 
 export interface TechnologyInsightItem {
   technology: StackTechnology;

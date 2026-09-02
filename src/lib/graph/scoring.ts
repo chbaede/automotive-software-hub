@@ -3,9 +3,9 @@
  *
  * Provides pure, deterministic, explainable scoring formulas used across:
  * - Direct relationship ranking
- * - Cross-layer bridge detection
- * - Architecture profile relevance
- * - Stack Path relevance
+ * - Cross-layer bridge / connection detection
+ * - Architecture profile relevance & match scoring
+ * - Stack Path relevance & journey match scoring
  * - Exploration candidate recommendations
  *
  * NOTE: Numeric scores are strictly internal deterministic ranking signals,
@@ -62,7 +62,7 @@ export function calculateRelationshipScore(
 }
 
 /**
- * Calculates cross-layer bridge technology score.
+ * Calculates cross-layer bridge / connection score.
  * Rewards diversity of bridged layers, total connectivity, and primary edge priority.
  */
 export function calculateBridgeScore(
@@ -80,7 +80,7 @@ export function calculateBridgeScore(
 }
 
 /**
- * Calculates architecture profile relevance score for a given technology.
+ * Calculates architecture profile relevance score for a given technology in Technology Detail.
  * Explicit profile members receive a baseline score of 80 + profile member count bonus.
  * 1-hop connected neighbors receive a baseline score of 40 + matched technology count bonus.
  */
@@ -95,7 +95,24 @@ export function calculateArchitectureRelevance(
 }
 
 /**
- * Calculates Stack Path relevance score for a given technology.
+ * Calculates architecture profile matching score for a stack selection in Stack Builder.
+ * Composite score weighting:
+ * - 60% weight on selection overlap (precision)
+ * - 40% weight on profile coverage (recall)
+ * - +3 pts bonus per matched technology
+ */
+export function calculateArchitectureMatchScore(
+  overlapPercentage: number,
+  profileCoveragePercentage: number,
+  matchedCount: number
+): number {
+  return Math.round(
+    overlapPercentage * 0.6 + profileCoveragePercentage * 0.4 + matchedCount * 3
+  );
+}
+
+/**
+ * Calculates Stack Path relevance score for a given technology in Technology Detail.
  * Earlier and central execution hops in concise paths receive higher scores.
  */
 export function calculatePathRelevance(
@@ -104,6 +121,20 @@ export function calculatePathRelevance(
 ): number {
   const safeHopIndex = Math.max(0, hopIndex);
   return Math.round(70 + Math.max(0, totalHops - safeHopIndex) * 5);
+}
+
+/**
+ * Calculates Stack Path matching score for a stack selection in Stack Builder.
+ * Composite score considering path coverage, matched hop count, and contiguous sequence length.
+ */
+export function calculateStackPathMatchScore(
+  overlapPercentage: number,
+  matchedCount: number,
+  maxContiguousHops: number
+): number {
+  return Math.round(
+    overlapPercentage * 0.5 + matchedCount * 10 + maxContiguousHops * 5
+  );
 }
 
 /**
@@ -125,4 +156,3 @@ export function calculateRecommendationScore(params: {
   if (params.isHub) score += 8;
   return score;
 }
-

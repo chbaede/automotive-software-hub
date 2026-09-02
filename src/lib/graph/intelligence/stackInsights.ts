@@ -2,7 +2,8 @@
  * Partial-Stack Gap Analysis & Intelligence for Knowledge Graph
  *
  * Evaluates partial or full Stack Builder selections against canonical graph rules,
- * identifying missing core layers, targeted recommendations, alternatives, and bridges.
+ * identifying missing core layers (with optional Hypervisor for bare-metal architectures),
+ * targeted recommendations, alternatives, and bridge opportunities with multi-select support.
  */
 
 import { StackLayerId, StackTechnology } from '../../../types/stack';
@@ -17,11 +18,16 @@ import {
 } from '../index';
 import {
   CORE_STACK_LAYER_IDS,
+  MANDATORY_CORE_STACK_LAYER_IDS,
   StackSelection,
+  FlexibleStackSelection,
+  normalizeStackSelection,
+  getSelectedTechIds,
+  getLayerTechIds,
   validateStack,
   matchArchitectures,
   matchStackPaths,
-} from '../../builder/stackBuilderEngine';
+} from '../matching';
 import { calculateRelationshipScore } from '../scoring';
 import {
   StackGapAnalysis,
@@ -35,18 +41,26 @@ import { getBridgeTechnologies } from './bridges';
 
 /**
  * Performs comprehensive intelligence analysis for a partially or fully selected stack.
+ * Supports multi-technology selection and optional Hypervisor (Bare-Metal) architectures.
  */
-export function getStackInsights(selection: StackSelection): StackIntelligenceReport {
-  const selectedTechIds = Object.values(selection).filter((id): id is string => Boolean(id));
+export function getStackInsights(rawSelection: FlexibleStackSelection): StackIntelligenceReport {
+  const selection = normalizeStackSelection(rawSelection);
+  const selectedTechIds = getSelectedTechIds(selection);
 
-  // 1. Identify Gap Analysis across 7 Core Stack Layers (Supporting layers do not make runtime stack incomplete)
+  // 1. Gap Analysis across Mandatory Core Stack Layers (Hypervisor is optional for Bare Metal)
   const populatedCoreLayers: StackLayerId[] = [];
   const missingCoreLayers: StackLayerId[] = [];
 
   CORE_STACK_LAYER_IDS.forEach((layerId) => {
-    if (selection[layerId]) {
+    const techIds = getLayerTechIds(selection, layerId);
+    if (techIds.length > 0) {
       populatedCoreLayers.push(layerId);
-    } else {
+    }
+  });
+
+  MANDATORY_CORE_STACK_LAYER_IDS.forEach((layerId) => {
+    const techIds = getLayerTechIds(selection, layerId);
+    if (techIds.length === 0) {
       missingCoreLayers.push(layerId);
     }
   });
@@ -64,7 +78,7 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
   const architectureMatches = matchArchitectures(selection);
   const stackPathMatches = matchStackPaths(selection);
 
-  // 3. Next Candidate Recommendations Targeted for Missing Layers
+  // 3. Next Candidate Recommendations Targeted for Missing or Complementary Layers
   const candidateScores = new Map<
     string,
     {
@@ -90,8 +104,8 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
       const neighbor = technologyById.get(edge.neighborId);
       if (!neighbor) return;
 
-      // Only recommend technologies for layers that are currently MISSING in the selection
-      if (selection[neighbor.layerId]) return;
+      // In partial-stack insights, recommendations target unpopulated layers
+      if (populatedCoreLayers.includes(neighbor.layerId as any)) return;
 
       const baseScore = calculateRelationshipScore(
         edge.relationship.type,
@@ -101,6 +115,8 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
       const relMeta = RELATIONSHIP_METADATA[edge.relationship.type];
       const relLabelEn = relMeta?.label.en || edge.relationship.type;
       const relLabelKo = relMeta?.label.ko || edge.relationship.type;
+
+      const isMissingCore = missingCoreLayers.includes(neighbor.layerId as any);
 
       const existing = candidateScores.get(neighbor.id);
       if (existing) {
@@ -112,7 +128,7 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
       } else {
         candidateScores.set(neighbor.id, {
           technology: neighbor,
-          score: baseScore + (missingCoreLayers.includes(neighbor.layerId as any) ? 20 : 0),
+          score: baseScore + (isMissingCore ? 20 : 0),
           primaryRelationship: edge.relationship,
           reasons: [
             {
@@ -128,7 +144,7 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
   // Architecture profile completion bonus
   architectureMatches.slice(0, 3).forEach((match) => {
     match.missingTechnologies.forEach((missingTech) => {
-      if (selection[missingTech.layerId]) return;
+      if (selectedSet.has(missingTech.id)) return;
       const existing = candidateScores.get(missingTech.id);
       if (existing) {
         existing.score += 25;
@@ -169,19 +185,20 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
 
   // 4. Alternatives for Populated Layers (Isolated from Additive Recommendations)
   const alternativeOptions: StackAlternativeOption[] = [];
-  Object.entries(selection).forEach(([layerId, techId]) => {
-    if (!techId) return;
-    const currentTech = technologyById.get(techId);
-    if (!currentTech) return;
+  Object.entries(selection).forEach(([layerId, techIds]) => {
+    (techIds || []).forEach((techId) => {
+      const currentTech = technologyById.get(techId);
+      if (!currentTech) return;
 
-    const altInsights = getAlternatives(techId);
-    if (altInsights.length > 0) {
-      alternativeOptions.push({
-        layerId: layerId as StackLayerId,
-        currentTechnology: currentTech,
-        alternatives: altInsights.map((alt) => alt.technology),
-      });
-    }
+      const altInsights = getAlternatives(techId);
+      if (altInsights.length > 0) {
+        alternativeOptions.push({
+          layerId: layerId as StackLayerId,
+          currentTechnology: currentTech,
+          alternatives: altInsights.map((alt) => alt.technology),
+        });
+      }
+    });
   });
 
   // 5. Bridge Opportunities
@@ -206,4 +223,3 @@ export function getStackInsights(selection: StackSelection): StackIntelligenceRe
     bridgeOpportunities: Array.from(bridgeMap.values()).slice(0, 4),
   };
 }
-
