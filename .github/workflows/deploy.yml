@@ -35,8 +35,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Validate Data
-        run: npm run validate-data
+      - name: Validate Data & Run Tests
+        run: |
+          npm run validate-data
+          npm test
 
       - name: Build Project & Sitemap
         run: npm run build

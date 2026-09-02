@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ExternalLink, Code2, Layers } from 'lucide-react';
 import { OpenSourceProject } from '../../types/project';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -59,13 +60,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             </div>
             <div className="flex flex-wrap gap-1">
               {linkedStackTechs.map((tech) => (
-                <a
+                <Link
                   key={tech.id}
-                  href={`/#/stack?tech=${tech.id}`}
+                  to={`/stack/${tech.id}`}
                   className="text-[10px] font-mono px-2 py-0.5 bg-brand-500/10 hover:bg-brand-500 hover:text-white text-brand-700 dark:text-brand-300 rounded border border-brand-500/30 transition flex items-center gap-1"
                 >
                   <span>{tech.name}</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

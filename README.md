@@ -42,7 +42,7 @@ Hosted entirely on **GitHub Pages** with zero backend infrastructure required.
 
 - **Framework**: [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - **Build Tool**: [Vite 6](https://vitejs.dev/)
-- **Routing**: [React Router DOM](https://reactrouter.com/) (`HashRouter` for zero-configuration, 100% reliable GitHub Pages hosting)
+- **Routing**: [React Router DOM](https://reactrouter.com/) (`BrowserRouter` with GitHub Pages SPA fallback)
 - **Styling**: [Tailwind CSS v3](https://tailwindcss.com/) + [Lucide Icons](https://lucide.dev/)
 - **i18n**: React `LanguageContext` with localized text dictionaries (`LocalizedText`)
 - **CI/CD**: GitHub Actions workflow (`.github/workflows/deploy.yml`)

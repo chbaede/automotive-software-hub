@@ -550,18 +550,54 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   } = await import('../src/lib/graph/index.js');
   const { stackLayers } = await import('../src/data/stackLayers.js');
   const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
 
-  // Test A: Valid Technology ID resolution
-  const qnx = getTechnology('qnx-neutrino');
-  assert.ok(qnx, 'Should resolve valid technology ID qnx-neutrino');
-  assert.strictEqual(qnx?.id, 'qnx-neutrino');
-  assert.strictEqual(qnx?.name, 'QNX Neutrino RTOS');
+  // Test A: Valid representative Technology ID resolution & canonical paths
+  const representativeIds = [
+    'qnx-neutrino',
+    'qnx-hypervisor',
+    'android-automotive-os',
+    'nvidia-drive-thor',
+  ];
+  representativeIds.forEach((id) => {
+    const tech = getTechnology(id);
+    assert.ok(tech, `Should resolve valid technology ID '${id}'`);
+    assert.strictEqual(tech?.id, id);
+    const canonicalPath = `/stack/${tech?.id}`;
+    assert.strictEqual(canonicalPath, `/stack/${id}`);
+  });
 
   // Test B: Invalid Technology ID handling
-  const invalidTech = getTechnology('invalid-technology-id-404');
-  assert.strictEqual(invalidTech, undefined, 'Invalid ID must return undefined without throwing');
+  const invalidIds = ['does-not-exist', 'invalid-technology-id-404', 'undefined'];
+  invalidIds.forEach((id) => {
+    const invalidTech = getTechnology(id);
+    assert.strictEqual(invalidTech, undefined, `Invalid ID '${id}' must return undefined without throwing`);
+  });
 
-  // Test C: Relationship context from canonical stackRelationships
+  // Test C: Technology-to-technology navigation assumptions
+  const qnx = getTechnology('qnx-neutrino');
+  const qnxHypervisor = getTechnology('qnx-hypervisor');
+  const aaos = getTechnology('android-automotive-os');
+  const linux = getTechnology('linux-kernel');
+  assert.ok(qnx && qnxHypervisor && aaos && linux, 'All representative connected nodes must exist');
+
+  // Verify QNX Neutrino <-> QNX Hypervisor connection exists in canonical stackRelationships
+  const qnxToHypervisor = stackRelationships.some(
+    (rel) =>
+      (rel.sourceId === 'qnx-neutrino' && rel.targetId === 'qnx-hypervisor') ||
+      (rel.sourceId === 'qnx-hypervisor' && rel.targetId === 'qnx-neutrino')
+  );
+  assert.ok(qnxToHypervisor, 'QNX Neutrino <-> QNX Hypervisor relationship must exist');
+
+  // Verify AAOS <-> Linux Kernel connection exists
+  const aaosToLinux = stackRelationships.some(
+    (rel) =>
+      (rel.sourceId === 'android-automotive-os' && rel.targetId === 'linux-kernel') ||
+      (rel.sourceId === 'linux-kernel' && rel.targetId === 'android-automotive-os')
+  );
+  assert.ok(aaosToLinux, 'AAOS <-> Linux Kernel relationship must exist');
+
+  // Test D: Relationship context from canonical stackRelationships
   const qnxNeighbors = getNeighbors('qnx-neutrino');
   assert.ok(qnxNeighbors.length > 0, 'QNX should have verified canonical neighbors');
   qnxNeighbors.forEach((neighbor) => {
@@ -569,13 +605,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     assert.notStrictEqual(neighbor.id, 'qnx-neutrino', 'Neighbor must not be self');
   });
 
-  // Test D: Layer context resolution
+  // Test E: Layer context resolution
   const qnxLayer = stackLayers.find((l) => l.id === qnx?.layerId);
   assert.ok(qnxLayer, 'QNX layer must resolve to a valid StackLayer');
   assert.strictEqual(qnxLayer?.id, 'operating-systems');
   assert.strictEqual(qnxLayer?.layerType, 'core');
 
-  // Test E: Stack Path context resolution
+  // Test F: Stack Path context resolution
   const aaosPaths = getStackPathsForTechnology('android-automotive-os');
   assert.ok(aaosPaths.length > 0, 'AAOS must participate in Stack Paths');
   aaosPaths.forEach((path) => {
@@ -585,7 +621,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     );
   });
 
-  // Test F: Architecture Profile context resolution
+  // Test G: Architecture Profile context resolution
   const autosarArchs = getArchitecturesForTechnology('autosar-classic');
   assert.ok(autosarArchs.length > 0, 'AUTOSAR Classic must participate in Architecture Profiles');
   autosarArchs.forEach((profile) => {
@@ -595,23 +631,23 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     );
   });
 
-  // Test G: Safety metadata integrity (certified vs capable distinction)
-  const qnxHypervisor = getTechnology('qnx-hypervisor');
+  // Test H: Safety metadata integrity (certified vs capable distinction)
   assert.strictEqual(qnxHypervisor?.functionalSafety?.claimType, 'certified', 'QNX Hypervisor claimType must be certified');
   assert.strictEqual(qnxHypervisor?.functionalSafety?.asilLevel, 'ASIL-D', 'QNX Hypervisor ASIL level must be ASIL-D');
   assert.strictEqual(qnx?.functionalSafety?.claimType, 'capable', 'QNX Neutrino claimType must be capable');
   assert.strictEqual(qnx?.functionalSafety?.asilLevel, 'ASIL-D', 'QNX Neutrino ASIL level must be ASIL-D');
 
-  // Test H: Deep-link URL format & sequential graph navigation
+  // Test I: Deep-link URL format & sequential graph navigation
   const seq = ['qnx-neutrino', 'qnx-hypervisor', 'android-automotive-os'];
   seq.forEach((id) => {
     const tech = getTechnology(id);
     assert.ok(tech, `Technology ${id} must resolve`);
     const deepLinkPath = `/stack/${tech?.id}`;
     assert.strictEqual(deepLinkPath, `/stack/${id}`);
+    assert.ok(!deepLinkPath.includes('#'), 'Deep link path must NOT contain hash');
   });
 
-  // Test I: Safety badge bilingual localization completeness
+  // Test J: Safety badge bilingual localization completeness
   const { en } = await import('../src/i18n/en.js');
   const { ko } = await import('../src/i18n/ko.js');
   assert.ok(en.safety.certifiedBadge.includes('{asil}'));
@@ -620,6 +656,24 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(ko.safety.certifiedBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D 인증');
   assert.strictEqual(en.safety.capableBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D Capable');
   assert.strictEqual(ko.safety.capableBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D 대응 가능');
+
+  // Test K: Sitemap consistency and NO hash URLs
+  const fs = await import('fs');
+  const path = await import('path');
+  const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+    assert.ok(!sitemapContent.includes('/#/'), 'Sitemap must not contain hash URLs');
+    assert.ok(sitemapContent.includes('<loc>https://autohub.yocto.co.kr/</loc>'), 'Sitemap must contain root canonical URL');
+    assert.ok(sitemapContent.includes('<loc>https://autohub.yocto.co.kr/stack/qnx-neutrino</loc>'), 'Sitemap must contain canonical tech URL');
+    
+    // Verify each tech URL is in the sitemap exactly once
+    stackTechnologies.forEach((tech) => {
+      const expectedUrl = `<loc>https://autohub.yocto.co.kr/stack/${tech.id}</loc>`;
+      const matchCount = sitemapContent.split(expectedUrl).length - 1;
+      assert.strictEqual(matchCount, 1, `Technology ${tech.id} must be in sitemap exactly once`);
+    });
+  }
 
   console.log('✅ Test 23 Passed: Technology detail resolution, deep linking & context queries verified.');
 }
