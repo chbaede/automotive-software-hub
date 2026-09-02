@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
   X,
   ExternalLink,
@@ -289,12 +290,25 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/stack/${technology.id}`}
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition shadow-xs shrink-0"
+              title={t.techDetail.openDetailPage}
+            >
+              <span>{t.techDetail.openDetailPage}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Drawer Scrollable Content */}

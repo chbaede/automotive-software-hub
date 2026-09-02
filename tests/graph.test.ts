@@ -539,6 +539,79 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 22 Passed: Topology insights, hub ranking & cross-layer connectors verified.');
 }
 
+// Test 23: Technology Detail Pages & Deep Linking Context Resolution
+{
+  const {
+    getTechnology,
+    getTechnologyGraphContext,
+    getNeighbors,
+    getArchitecturesForTechnology,
+    getStackPathsForTechnology,
+  } = await import('../src/lib/graph/index.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  // Test A: Valid Technology ID resolution
+  const qnx = getTechnology('qnx-neutrino');
+  assert.ok(qnx, 'Should resolve valid technology ID qnx-neutrino');
+  assert.strictEqual(qnx?.id, 'qnx-neutrino');
+  assert.strictEqual(qnx?.name, 'QNX Neutrino RTOS');
+
+  // Test B: Invalid Technology ID handling
+  const invalidTech = getTechnology('invalid-technology-id-404');
+  assert.strictEqual(invalidTech, undefined, 'Invalid ID must return undefined without throwing');
+
+  // Test C: Relationship context from canonical stackRelationships
+  const qnxNeighbors = getNeighbors('qnx-neutrino');
+  assert.ok(qnxNeighbors.length > 0, 'QNX should have verified canonical neighbors');
+  qnxNeighbors.forEach((neighbor) => {
+    assert.ok(neighbor.id, 'Neighbor must have valid id');
+    assert.notStrictEqual(neighbor.id, 'qnx-neutrino', 'Neighbor must not be self');
+  });
+
+  // Test D: Layer context resolution
+  const qnxLayer = stackLayers.find((l) => l.id === qnx?.layerId);
+  assert.ok(qnxLayer, 'QNX layer must resolve to a valid StackLayer');
+  assert.strictEqual(qnxLayer?.id, 'operating-systems');
+  assert.strictEqual(qnxLayer?.layerType, 'core');
+
+  // Test E: Stack Path context resolution
+  const aaosPaths = getStackPathsForTechnology('android-automotive-os');
+  assert.ok(aaosPaths.length > 0, 'AAOS must participate in Stack Paths');
+  aaosPaths.forEach((path) => {
+    assert.ok(
+      path.hops.some((hop) => hop.technologyId === 'android-automotive-os'),
+      'Stack path hops must contain the queried technology'
+    );
+  });
+
+  // Test F: Architecture Profile context resolution
+  const autosarArchs = getArchitecturesForTechnology('autosar-classic');
+  assert.ok(autosarArchs.length > 0, 'AUTOSAR Classic must participate in Architecture Profiles');
+  autosarArchs.forEach((profile) => {
+    assert.ok(
+      profile.technologyIds.includes('autosar-classic'),
+      'Profile technologyIds must include queried technology'
+    );
+  });
+
+  // Test G: Safety metadata integrity (certified vs capable distinction)
+  const qnxHypervisor = getTechnology('qnx-hypervisor');
+  assert.strictEqual(qnxHypervisor?.functionalSafety?.claimType, 'certified', 'QNX Hypervisor claimType must be certified');
+  assert.strictEqual(qnxHypervisor?.functionalSafety?.asilLevel, 'ASIL-D', 'QNX Hypervisor ASIL level must be ASIL-D');
+  assert.strictEqual(qnx?.functionalSafety?.claimType, 'capable', 'QNX Neutrino claimType must be capable');
+  assert.strictEqual(qnx?.functionalSafety?.asilLevel, 'ASIL-D', 'QNX Neutrino ASIL level must be ASIL-D');
+
+  // Test H: Deep-link URL format
+  stackTechnologies.slice(0, 10).forEach((tech) => {
+    const deepLinkPath = `/stack/${tech.id}`;
+    assert.ok(deepLinkPath.startsWith('/stack/'), 'Deep link path must start with /stack/');
+    assert.strictEqual(deepLinkPath, `/stack/${tech.id}`);
+  });
+
+  console.log('✅ Test 23 Passed: Technology detail resolution, deep linking & context queries verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

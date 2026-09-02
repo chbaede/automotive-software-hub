@@ -1,10 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+import { stackTechnologies } from '../src/data/stackTechnologies';
 
 const SITE_URL = 'https://autohub.yocto.co.kr';
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
-const routes = [
+const staticRoutes = [
   { path: '', priority: '1.0', changefreq: 'weekly' },
   { path: 'stack', priority: '0.95', changefreq: 'weekly' },
   { path: 'tools', priority: '0.90', changefreq: 'monthly' },
@@ -14,6 +15,14 @@ const routes = [
   { path: 'companies', priority: '0.80', changefreq: 'monthly' },
   { path: 'about', priority: '0.70', changefreq: 'monthly' },
 ];
+
+const techRoutes = stackTechnologies.map((tech) => ({
+  path: `stack/${tech.id}`,
+  priority: '0.85',
+  changefreq: 'weekly',
+}));
+
+const routes = [...staticRoutes, ...techRoutes];
 
 function generateSitemap() {
   const currentDate = new Date().toISOString().split('T')[0];
