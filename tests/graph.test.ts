@@ -678,6 +678,123 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 23 Passed: Technology detail resolution, deep linking & context queries verified.');
 }
 
+// Test 24: Architecture Explorer & Technology Neighborhood Graph Resolution
+{
+  const {
+    profileById,
+    technologyById,
+    getTechnology,
+    getNeighbors,
+    getGroupedTechnologyRelationships,
+    getArchitecturesForTechnology,
+    getStackPathsForTechnology,
+  } = await import('../src/lib/graph/index.js');
+
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { ARCHITECTURE_PROFILE_TYPE_METADATA } = await import('../src/types/architecture.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // 1. Verify all 8 architecture profiles resolve from profileById
+  assert.strictEqual(architectureProfiles.length, 8, 'Must have 8 canonical architecture profiles');
+  architectureProfiles.forEach((profile) => {
+    assert.ok(profile.id, 'Architecture profile must have an id');
+    const resolved = profileById.get(profile.id);
+    assert.ok(resolved, `Profile '${profile.id}' must resolve in profileById index`);
+    assert.strictEqual(resolved?.id, profile.id);
+
+    // Verify profile type metadata is valid
+    if (profile.profileType) {
+      assert.ok(
+        ARCHITECTURE_PROFILE_TYPE_METADATA[profile.profileType],
+        `Profile '${profile.id}' has valid profileType '${profile.profileType}'`
+      );
+    }
+
+    // 2. Verify all technology IDs in profile resolve to existing technologies with no duplicates
+    const techIdSet = new Set<string>();
+    profile.technologyIds.forEach((techId) => {
+      assert.ok(!techIdSet.has(techId), `Profile '${profile.id}' contains duplicate technologyId '${techId}'`);
+      techIdSet.add(techId);
+
+      const tech = technologyById.get(techId);
+      assert.ok(tech, `Profile '${profile.id}' references non-existent technology '${techId}'`);
+
+      // Verify layer mapping
+      const layer = stackLayers.find((l) => l.id === tech?.layerId);
+      assert.ok(layer, `Technology '${techId}' in profile '${profile.id}' has valid StackLayer '${tech?.layerId}'`);
+    });
+  });
+
+  // 3. Fallback for invalid architecture ID
+  assert.strictEqual(profileById.get('non-existent-architecture'), undefined);
+
+  // 4. Verify Technology Neighborhood resolution and bidirectional grouped relationships
+  stackTechnologies.forEach((tech) => {
+    const neighbors = getNeighbors(tech.id);
+    const groupedMap = getGroupedTechnologyRelationships(tech.id);
+
+    // Collect all unique tech IDs from grouped relationship items
+    const groupedTechIds = new Set<string>();
+    for (const items of groupedMap.values()) {
+      items.forEach((item) => {
+        assert.ok(item.targetOrSourceTech.id, 'Grouped relationship item must have valid targetOrSourceTech');
+        assert.notStrictEqual(item.targetOrSourceTech.id, tech.id, 'Target/source must not be self');
+        groupedTechIds.add(item.targetOrSourceTech.id);
+      });
+    }
+
+    // Every neighbor from getNeighbors must be present in grouped relationships
+    neighbors.forEach((neighbor) => {
+      assert.ok(
+        groupedTechIds.has(neighbor.id),
+        `Neighbor '${neighbor.id}' of tech '${tech.id}' must be present in grouped relationships`
+      );
+    });
+  });
+
+  // 5. Bilingual i18n completeness for architectures and techDetail v2
+  assert.ok(en.nav.architectures, 'en.nav.architectures must exist');
+  assert.ok(ko.nav.architectures, 'ko.nav.architectures must exist');
+  assert.ok(en.architectures.title, 'en.architectures.title must exist');
+  assert.ok(ko.architectures.title, 'ko.architectures.title must exist');
+  assert.ok(en.techDetail.technologyNeighborhood, 'en.techDetail.technologyNeighborhood must exist');
+  assert.ok(ko.techDetail.technologyNeighborhood, 'ko.techDetail.technologyNeighborhood must exist');
+  assert.ok(en.techDetail.stackPosition, 'en.techDetail.stackPosition must exist');
+  assert.ok(ko.techDetail.stackPosition, 'ko.techDetail.stackPosition must exist');
+
+  // 6. Clean URL routing format verification (no hashes)
+  architectureProfiles.forEach((profile) => {
+    const archPath = `/architectures/${profile.id}`;
+    assert.ok(!archPath.includes('#'), 'Architecture path must not contain hash');
+    assert.strictEqual(archPath, `/architectures/${profile.id}`);
+  });
+
+  // 7. Sitemap includes all architecture profiles
+  const fs = await import('fs');
+  const path = await import('path');
+  const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+    assert.ok(
+      sitemapContent.includes('<loc>https://autohub.yocto.co.kr/architectures</loc>'),
+      'Sitemap must contain /architectures route'
+    );
+
+    architectureProfiles.forEach((profile) => {
+      const expectedUrl = `<loc>https://autohub.yocto.co.kr/architectures/${profile.id}</loc>`;
+      assert.ok(
+        sitemapContent.includes(expectedUrl),
+        `Sitemap must contain architecture URL '${expectedUrl}'`
+      );
+    });
+  }
+
+  console.log('✅ Test 24 Passed: Architecture Explorer & Technology Neighborhood Graph Resolution verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

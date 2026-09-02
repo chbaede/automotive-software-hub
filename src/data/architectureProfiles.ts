@@ -99,7 +99,6 @@ export const architectureProfiles: ArchitectureProfile[] = [
       'eclipse-iceoryx',
       'dds-protocol',
       'nvidia-driveworks-sdk',
-      'nvidia-driveworks-sdk',
       'momenta-flywheel-ad',
       'baidu-apollo-ad',
       'huawei-qiankun-ads',

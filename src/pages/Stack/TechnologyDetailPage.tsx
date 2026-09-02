@@ -22,6 +22,8 @@ import {
   ChevronRight,
   Sparkles,
   AlertCircle,
+  LayoutGrid,
+  Compass,
 } from 'lucide-react';
 import {
   getTechnology,
@@ -37,6 +39,8 @@ import { projects } from '../../data/projects';
 import { companies } from '../../data/companies';
 import { events } from '../../data/events';
 import { TechRelationshipTree } from '../../components/stack/TechRelationshipTree';
+import { StackLadderVisualizer } from '../../components/stack/StackLadderVisualizer';
+import { InteractiveGraphView } from '../../components/stack/InteractiveGraphView';
 import {
   ARCHITECTURE_PROFILE_TYPE_METADATA,
   STACK_PATH_TYPE_METADATA,
@@ -63,6 +67,7 @@ export const TechnologyDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const [copied, setCopied] = useState(false);
+  const [neighborhoodMode, setNeighborhoodMode] = useState<'cards' | 'graph'>('cards');
 
   // Resolve canonical technology
   const technology = useMemo(() => {
@@ -171,66 +176,60 @@ export const TechnologyDetailPage: React.FC = () => {
   const layerName = layer ? getLocalizedText(layer.name, language) : technology.layerId;
   const isCoreLayer = layer?.layerType === 'core';
   const description = getLocalizedText(technology.description, language);
-  const whereDoesItFit = getLocalizedText(technology.whereDoesItFit, language);
+  const whereDoesItFit = technology.whereDoesItFit
+    ? getLocalizedText(technology.whereDoesItFit, language)
+    : null;
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-8 animate-fade-in">
-      {/* Top Bar: Navigation Breadcrumb & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium overflow-x-auto no-scrollbar">
-          <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 transition">
-            {t.nav.home}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 min-w-0">
+          <Link
+            to="/stack"
+            className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 font-medium transition shrink-0"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>{t.techDetail.backToStack}</span>
           </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <Link to="/stack" className="hover:text-brand-600 dark:hover:text-brand-400 transition">
-            {t.nav.stackExplorer}
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span className="text-slate-700 dark:text-slate-300 font-semibold truncate max-w-[150px]">
-            {layerName}
-          </span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span className="text-brand-600 dark:text-brand-400 font-bold truncate">
+          <span>/</span>
+          <span className="truncate text-slate-400">{layerName}</span>
+          <span>/</span>
+          <span className="text-slate-900 dark:text-slate-100 font-bold truncate">
             {technology.name}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => navigate('/stack')}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition flex items-center gap-1.5"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{t.techDetail.backToStack}</span>
-          </button>
-          <button
-            onClick={handleCopyLink}
-            className="px-3 py-1.5 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 border border-brand-500/30 text-xs font-semibold transition flex items-center gap-1.5"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Share2 className="w-3.5 h-3.5" />}
-            <span>{copied ? t.techDetail.linkCopied : t.techDetail.copyLink}</span>
-          </button>
-        </div>
-      </div>
+        {/* Share Button */}
+        <button
+          onClick={handleCopyLink}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition text-xs font-semibold shrink-0 shadow-2xs"
+          title={t.techDetail.copyLink}
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-emerald-500" />
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                {t.techDetail.linkCopied}
+              </span>
+            </>
+          ) : (
+            <>
+              <Share2 className="w-3.5 h-3.5 text-slate-400" />
+              <span>{t.techDetail.copyLink}</span>
+            </>
+          )}
+        </button>
+      </nav>
 
-      {/* Hero Header Section */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      {/* Hero Section */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="space-y-3">
-          {/* Metadata Badges */}
+          {/* Badges Bar */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Layer Badge */}
-            <span
-              className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-md border flex items-center gap-1.5 ${
-                isCoreLayer
-                  ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30'
-                  : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>{layerName}</span>
-              <span className="text-[10px] font-normal opacity-80 font-mono">
-                ({isCoreLayer ? (language === 'ko' ? '코어' : 'Core') : (language === 'ko' ? '공통 영역' : 'Cross-cutting')})
-              </span>
+            <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider rounded-md bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30">
+              {layerName}
             </span>
 
             {/* Functional Safety Badge */}
@@ -239,7 +238,7 @@ export const TechnologyDetailPage: React.FC = () => {
               const asil = fs?.asilLevel || technology.asilLevel;
               const claimType = fs?.claimType;
 
-              let safetyText = asil || t.safety.defaultBadge;
+              let safetyText = asil || 'ISO 26262';
               if (claimType === 'certified' && asil) {
                 safetyText = t.safety.certifiedBadge.replace('{asil}', asil);
               } else if (claimType === 'capable' && asil) {
@@ -400,73 +399,103 @@ export const TechnologyDetailPage: React.FC = () => {
         </div>
       )}
 
-      {/* Where Does It Fit Section */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+      {/* Where Does It Fit Section with Stack Ladder Visualizer */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
             <Layers className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {t.techDetail.whereDoesItFit}
-          </h2>
-        </div>
-
-        <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-700 dark:text-slate-300">
-              {layerName} ({isCoreLayer ? t.techDetail.coreType : t.techDetail.crossCuttingType})
-            </span>
-            {layer && (
-              <span className="font-mono text-slate-500">
-                Layer {layer.order} of {stackLayers.length}
-              </span>
-            )}
-          </div>
-          {layer && (
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              {getLocalizedText(layer.description, language)}
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              {t.techDetail.whereDoesItFit}
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {t.techDetail.stackPositionDesc}
             </p>
-          )}
+          </div>
         </div>
 
-        <div className="pt-2 text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
-          {whereDoesItFit}
-        </div>
+        {/* Narrative Where Does It Fit */}
+        {whereDoesItFit && (
+          <div className="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed">
+            {whereDoesItFit}
+          </div>
+        )}
+
+        {/* Stack Ladder Visualizer */}
+        <StackLadderVisualizer
+          currentLayerId={technology.layerId}
+          techName={technology.name}
+        />
       </div>
 
-      {/* Semantic Knowledge Graph Relationships Tree */}
+      {/* Technology Neighborhood Section (Cards Grid vs Interactive Graph Map) */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
               <Network className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {t.techDetail.relationships}
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span>{t.techDetail.technologyNeighborhood}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30">
+                  {graphContext ? graphContext.connectionCount : 0} {language === 'ko' ? '개 노드' : 'Nodes'}
+                </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {language === 'ko'
-                  ? '연결된 기술을 클릭하면 해당 기술의 상세 지식 그래프 페이지로 즉시 이동합니다.'
-                  : 'Click any connected technology node to navigate directly to its dedicated detail page.'}
+                {t.techDetail.neighborhoodDesc}
               </p>
             </div>
           </div>
+
+          {/* Mode Switcher */}
+          <div className="inline-flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 self-start sm:self-auto">
+            <button
+              onClick={() => setNeighborhoodMode('cards')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                neighborhoodMode === 'cards'
+                  ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-700'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>{t.techDetail.viewCards}</span>
+            </button>
+            <button
+              onClick={() => setNeighborhoodMode('graph')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                neighborhoodMode === 'graph'
+                  ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 shadow-xs border border-slate-200 dark:border-slate-700'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Network className="w-3.5 h-3.5" />
+              <span>{t.techDetail.viewGraph}</span>
+            </button>
+          </div>
         </div>
 
-        {/* Tree Component (Deep linked via navigate) */}
-        <TechRelationshipTree
-          technology={technology}
-          onSelectTech={(selected) => navigate(`/stack/${selected.id}`)}
-        />
+        {/* Neighborhood Content */}
+        {neighborhoodMode === 'cards' ? (
+          <TechRelationshipTree
+            technology={technology}
+            onSelectTech={(selected) => navigate(`/stack/${selected.id}`)}
+          />
+        ) : (
+          <InteractiveGraphView
+            technology={technology}
+            onSelectTech={(selected) => navigate(`/stack/${selected.id}`)}
+          />
+        )}
       </div>
 
-      {/* Architecture Context Section (if any) */}
-      {architectures.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+      {/* Architecture Context Section */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <Sparkles className="w-5 h-5" />
+              <Compass className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -480,6 +509,16 @@ export const TechnologyDetailPage: React.FC = () => {
             </div>
           </div>
 
+          <Link
+            to="/architectures"
+            className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0"
+          >
+            <span>{language === 'ko' ? '전체 아키텍처 보기' : 'All Architectures'}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {architectures.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {architectures.map((profile) => {
               const profileTitle = getLocalizedText(profile.name, language);
@@ -498,7 +537,7 @@ export const TechnologyDetailPage: React.FC = () => {
               return (
                 <div
                   key={profile.id}
-                  className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 flex flex-col justify-between"
+                  className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -514,55 +553,71 @@ export const TechnologyDetailPage: React.FC = () => {
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
                       {profileTitle}
                     </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3">
                       {profileDesc}
                     </p>
                   </div>
 
-                  {companionTechs.length > 0 && (
-                    <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
-                      <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                        {t.techDetail.companionTechs}
+                  <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    {companionTechs.length > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                          {t.techDetail.companionTechs}
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {companionTechs.slice(0, 5).map((comp) => (
+                            <Link
+                              key={comp.id}
+                              to={`/stack/${comp.id}`}
+                              className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-900 hover:bg-brand-500/10 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 rounded border border-slate-200 dark:border-slate-800 transition truncate max-w-[150px]"
+                            >
+                              {comp.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {companionTechs.slice(0, 5).map((comp) => (
-                          <button
-                            key={comp.id}
-                            onClick={() => navigate(`/stack/${comp.id}`)}
-                            className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-900 hover:bg-brand-500/10 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 rounded border border-slate-200 dark:border-slate-800 transition truncate max-w-[150px]"
-                          >
-                            {comp.name}
-                          </button>
-                        ))}
-                      </div>
+                    )}
+
+                    <div className="flex justify-end pt-1">
+                      <Link
+                        to={`/architectures/${profile.id}`}
+                        className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                      >
+                        <span>{t.techDetail.viewFullArchitecture}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
-
-      {/* Representative Stack Paths Section (if any) */}
-      {stackPaths.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-              <Route className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {t.techDetail.stackPaths}
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {language === 'ko'
-                  ? '이 기술이 포함된 엔드-투-엔드 차량 양산 및 참조 소프트웨어 스택 경로입니다.'
-                  : 'End-to-end production software execution journeys containing this technology.'}
-              </p>
-            </div>
+        ) : (
+          <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+            {t.techDetail.noArchitectures}
           </div>
+        )}
+      </div>
 
+      {/* Representative Stack Paths Section */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <Route className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              {t.techDetail.stackPaths}
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              {language === 'ko'
+                ? '이 기술이 포함된 엔드-투-엔드 차량 양산 및 참조 소프트웨어 스택 경로입니다.'
+                : 'End-to-end production software execution journeys containing this technology.'}
+            </p>
+          </div>
+        </div>
+
+        {stackPaths.length > 0 ? (
           <div className="space-y-4">
             {stackPaths.map((path) => {
               const pathTitle = getLocalizedText(path.name, language);
@@ -605,8 +660,8 @@ export const TechnologyDetailPage: React.FC = () => {
 
                       return (
                         <React.Fragment key={`${path.id}-hop-${hIdx}`}>
-                          <button
-                            onClick={() => navigate(`/stack/${hop.technologyId}`)}
+                          <Link
+                            to={`/stack/${hop.technologyId}`}
                             className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
                               isCurrent
                                 ? 'bg-brand-600 text-white border-brand-500 shadow-md ring-2 ring-brand-500/30'
@@ -619,7 +674,7 @@ export const TechnologyDetailPage: React.FC = () => {
                                 Current
                               </span>
                             )}
-                          </button>
+                          </Link>
                           {hIdx < path.hops.length - 1 && (
                             <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           )}
@@ -631,10 +686,14 @@ export const TechnologyDetailPage: React.FC = () => {
               );
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+            {t.techDetail.noStackPaths}
+          </div>
+        )}
+      </div>
 
-      {/* Connected Ecosystem Sections (Conditional Rendering) */}
+      {/* Connected Ecosystem Sections */}
       {(linkedCompanies.length > 0 ||
         linkedProjects.length > 0 ||
         linkedTools.length > 0 ||
