@@ -334,10 +334,10 @@ export const stackRelationships: TechnologyRelationship[] = [
 {
     sourceId: 'perseus-hypervisor',
     targetId: 'kvm-automotive',
-    type: 'implemented-by',
+    type: 'integrates-with',
     confidence: 'vendor',
     description: {
-      en: 'Engineered as a commercial real-time virtualization hypervisor optimized for mixed-criticality SDVs.',
+      en: 'Engineered as a commercial real-time virtualization hypervisor optimized for mixed-criticality SDVs leveraging KVM mechanisms.',
       ko: 'KVM 가상화 기술을 기반으로 이종 안전도 SDV를 위해 자체 개발된 상용 실시간 하이퍼바이저입니다.',
     },
   },

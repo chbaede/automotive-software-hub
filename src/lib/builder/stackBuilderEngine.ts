@@ -77,6 +77,8 @@ export interface StackPathMatchResult {
   totalHopsCount: number;
   matchedTechnologies: StackTechnology[];
   overlapPercentage: number;
+  maxContiguousHops: number;
+  matchScore: number;
   matchStrength: PathMatchStrength;
 }
 
@@ -298,12 +300,13 @@ export function matchArchitectures(selection: StackSelection): ArchitectureMatch
     (a, b) =>
       b.matchScore - a.matchScore ||
       b.matchedTechnologies.length - a.matchedTechnologies.length ||
-      b.overlapPercentage - a.overlapPercentage
+      b.overlapPercentage - a.overlapPercentage ||
+      a.profile.id.localeCompare(b.profile.id)
   );
 }
 
 /**
- * Calculates overlap and similarity against canonical stack paths.
+ * Calculates overlap, contiguous step continuity, and similarity against canonical stack paths.
  */
 export function matchStackPaths(selection: StackSelection): StackPathMatchResult[] {
   const selectedTechIds = Object.values(selection).filter((id): id is string => Boolean(id));
@@ -326,10 +329,30 @@ export function matchStackPaths(selection: StackSelection): StackPathMatchResult
 
     if (matchedTechs.length >= 1) {
       const overlapPercentage = Math.round((matchedTechs.length / path.hops.length) * 100);
+
+      // Calculate longest contiguous sequence of matched hops in path sequence
+      let maxContiguousHops = 0;
+      let currentContiguous = 0;
+      path.hops.forEach((hop) => {
+        if (selectedTechIds.includes(hop.technologyId)) {
+          currentContiguous++;
+          if (currentContiguous > maxContiguousHops) {
+            maxContiguousHops = currentContiguous;
+          }
+        } else {
+          currentContiguous = 0;
+        }
+      });
+
+      // Composite match score considering path coverage and sequence contiguity
+      const matchScore = Math.round(
+        overlapPercentage * 0.5 + matchedTechs.length * 10 + maxContiguousHops * 5
+      );
+
       let matchStrength: PathMatchStrength = 'weak';
-      if (overlapPercentage >= 60 || matchedTechs.length >= 3) {
+      if (overlapPercentage >= 60 || maxContiguousHops >= 3 || (matchedTechs.length >= 3 && overlapPercentage >= 50)) {
         matchStrength = 'strong';
-      } else if (overlapPercentage >= 30 || matchedTechs.length >= 2) {
+      } else if (overlapPercentage >= 30 || maxContiguousHops >= 2 || matchedTechs.length >= 2) {
         matchStrength = 'related';
       }
 
@@ -339,6 +362,8 @@ export function matchStackPaths(selection: StackSelection): StackPathMatchResult
         totalHopsCount: path.hops.length,
         matchedTechnologies: matchedTechs,
         overlapPercentage,
+        maxContiguousHops,
+        matchScore,
         matchStrength,
       });
     }
@@ -346,8 +371,10 @@ export function matchStackPaths(selection: StackSelection): StackPathMatchResult
 
   return results.sort(
     (a, b) =>
+      b.matchScore - a.matchScore ||
       b.matchedHopsCount - a.matchedHopsCount ||
-      b.overlapPercentage - a.overlapPercentage
+      b.overlapPercentage - a.overlapPercentage ||
+      a.path.id.localeCompare(b.path.id)
   );
 }
 
@@ -413,7 +440,11 @@ export function getSuggestedCandidates(selection: StackSelection): TechnologyCan
   });
 
   return Array.from(candidatesMap.values())
-    .sort((a, b) => b.priority - a.priority)
+    .sort(
+      (a, b) =>
+        b.priority - a.priority ||
+        a.technology.name.localeCompare(b.technology.name)
+    )
     .slice(0, 6);
 }
 

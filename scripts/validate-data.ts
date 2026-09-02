@@ -246,10 +246,15 @@ architectureProfiles.forEach((prof) => {
     error(`[Architecture Profile ID: ${prof.id}] Invalid profileType: '${prof.profileType}'`);
   }
 
+  const profTechIds = new Set<string>();
   prof.technologyIds.forEach((tid) => {
     if (!validTechIds.has(tid)) {
       error(`[Architecture Profile ID: ${prof.id}] Unknown technologyId: '${tid}'`);
     }
+    if (profTechIds.has(tid)) {
+      error(`[Architecture Profile ID: ${prof.id}] Duplicate technologyId '${tid}' inside profile.`);
+    }
+    profTechIds.add(tid);
   });
 
   (prof.layerIds || []).forEach((lid) => {

@@ -1171,6 +1171,194 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 27 Passed: Phase 7.3 User Journeys, Partial State UX, Navigation & Safety Invariants verified.');
 }
 
+// Test 28: Knowledge Graph Hardening Pass — Referential Integrity, Index Zero-Drift, Matching Determinism & Journey Regressions
+{
+  const { tools } = await import('../src/data/tools.js');
+  const { resources } = await import('../src/data/resources.js');
+  const { projects } = await import('../src/data/projects.js');
+  const { events } = await import('../src/data/events.js');
+  const { companies } = await import('../src/data/companies.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
+  const { stackPaths } = await import('../src/data/stackPaths.js');
+
+  const {
+    technologyById,
+    technologiesByLayerId,
+    outgoingRelationshipsByTechnologyId,
+    incomingRelationshipsByTechnologyId,
+    graphAdjacencyByTechnologyId,
+    profileById,
+    pathById,
+  } = await import('../src/lib/graph/index.js');
+
+  const {
+    validateStack,
+    matchArchitectures,
+    matchStackPaths,
+    getSuggestedCandidates,
+    encodeStackToSearchParams,
+    decodeStackFromSearchParams,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+
+  // 1. Cross-dataset referential integrity
+  const techIdSet = new Set(stackTechnologies.map((t) => t.id));
+  const layerIdSet = new Set(stackLayers.map((l) => l.id));
+  const toolIdSet = new Set(tools.map((t) => t.id));
+  const resIdSet = new Set(resources.map((r) => r.id));
+  const projIdSet = new Set(projects.map((p) => p.id));
+  const compIdSet = new Set(companies.map((c) => c.id));
+  const eventIdSet = new Set(events.map((e) => e.id));
+
+  tools.forEach((t) => {
+    (t.technologyIds || []).forEach((id) => assert.ok(techIdSet.has(id), `Tool ${t.id} references invalid tech ${id}`));
+  });
+  resources.forEach((r) => {
+    (r.technologyIds || []).forEach((id) => assert.ok(techIdSet.has(id), `Resource ${r.id} references invalid tech ${id}`));
+  });
+  projects.forEach((p) => {
+    (p.technologyIds || []).forEach((id) => assert.ok(techIdSet.has(id), `Project ${p.id} references invalid tech ${id}`));
+  });
+  companies.forEach((c) => {
+    (c.technologyIds || []).forEach((id: string) =>
+      assert.ok(techIdSet.has(id), `Company ${c.id} references invalid tech ${id}`)
+    );
+  });
+  events.forEach((e) => {
+    (e.technologyIds || []).forEach((id) => assert.ok(techIdSet.has(id), `Event ${e.id} references invalid tech ${id}`));
+  });
+
+  // Verify technology-to-ecosystem links
+  stackTechnologies.forEach((st) => {
+    (st.companyIds || []).forEach((cid) => assert.ok(compIdSet.has(cid), `Tech ${st.id} references invalid company ${cid}`));
+    (st.toolIds || []).forEach((tid) => assert.ok(toolIdSet.has(tid), `Tech ${st.id} references invalid tool ${tid}`));
+    (st.resourceIds || []).forEach((rid) => assert.ok(resIdSet.has(rid), `Tech ${st.id} references invalid resource ${rid}`));
+    (st.openSourceProjectIds || []).forEach((pid) => assert.ok(projIdSet.has(pid), `Tech ${st.id} references invalid project ${pid}`));
+    (st.eventIds || []).forEach((eid) => assert.ok(eventIdSet.has(eid), `Tech ${st.id} references invalid event ${eid}`));
+    (st.relatedTechnologyIds || []).forEach((rtid) => assert.ok(techIdSet.has(rtid), `Tech ${st.id} references invalid relatedTech ${rtid}`));
+  });
+
+  // 2. Graph Indexes Zero-Drift Invariant
+  assert.strictEqual(technologyById.size, stackTechnologies.length);
+  stackTechnologies.forEach((tech) => {
+    assert.strictEqual(technologyById.get(tech.id), tech);
+    const layerList = technologiesByLayerId.get(tech.layerId) || [];
+    assert.ok(layerList.some((t) => t.id === tech.id));
+  });
+
+  stackRelationships.forEach((rel) => {
+    const outgoing = outgoingRelationshipsByTechnologyId.get(rel.sourceId) || [];
+    assert.ok(outgoing.some((r) => r.targetId === rel.targetId && r.type === rel.type));
+    const incoming = incomingRelationshipsByTechnologyId.get(rel.targetId) || [];
+    assert.ok(incoming.some((r) => r.sourceId === rel.sourceId && r.type === rel.type));
+  });
+
+  // 3. Architecture Profiles Invariants
+  architectureProfiles.forEach((prof) => {
+    assert.strictEqual(profileById.get(prof.id), prof);
+    const seenTechs = new Set<string>();
+    prof.technologyIds.forEach((tid) => {
+      assert.ok(techIdSet.has(tid), `Profile ${prof.id} references invalid tech ${tid}`);
+      assert.ok(!seenTechs.has(tid), `Profile ${prof.id} has duplicate tech ${tid}`);
+      seenTechs.add(tid);
+    });
+    (prof.layerIds || []).forEach((lid) => {
+      assert.ok(layerIdSet.has(lid), `Profile ${prof.id} references invalid layer ${lid}`);
+    });
+  });
+
+  // 4. Stack Paths Invariants
+  stackPaths.forEach((path) => {
+    assert.strictEqual(pathById.get(path.id), path);
+    assert.ok(path.hops.length >= 2, `Path ${path.id} must have at least 2 hops`);
+    path.hops.forEach((h, idx) => {
+      assert.ok(techIdSet.has(h.technologyId), `Path ${path.id} hop ${idx} references invalid tech ${h.technologyId}`);
+      if (idx > 0) {
+        assert.notStrictEqual(path.hops[idx - 1].technologyId, h.technologyId, `Path ${path.id} has consecutive duplicate hop ${h.technologyId}`);
+      }
+    });
+  });
+
+  // 5. Contiguous Sequence and Deterministic Scoring in Stack Path Matching
+  // Path: android-cockpit-path (qualcomm-snapdragon-cockpit -> qnx-hypervisor -> linux-kernel -> android-automotive-os -> covesa-vss)
+  const fullSelection = {
+    'hardware-compute': 'qualcomm-snapdragon-cockpit',
+    'hypervisor-virtualization': 'qnx-hypervisor',
+    'operating-systems': 'linux-kernel',
+  };
+  const matchedPaths = matchStackPaths(fullSelection);
+  assert.ok(matchedPaths.length > 0);
+  const bestPath = matchedPaths[0];
+  assert.strictEqual(bestPath.path.id, 'android-cockpit-path');
+  assert.strictEqual(bestPath.maxContiguousHops, 3, 'Consecutive hops in stack path must be credited in maxContiguousHops');
+
+  // 6. Deterministic tie breaking in matchArchitectures
+  const archMatchResults = matchArchitectures({ 'hardware-compute': 'nvidia-drive-thor' });
+  assert.ok(archMatchResults.length > 0);
+  for (let i = 1; i < archMatchResults.length; i++) {
+    const prev = archMatchResults[i - 1];
+    const curr = archMatchResults[i];
+    assert.ok(
+      prev.matchScore >= curr.matchScore,
+      'Architecture match list must be deterministically sorted by matchScore descending'
+    );
+  }
+
+  // 7. Verification of all 8 Key User Journeys (A through H)
+  // Journey A: Tech Detail -> Build CTA URL
+  const sampleTech = stackTechnologies[0];
+  const journeyAUrl = `/stack-builder?${sampleTech.layerId}=${sampleTech.id}`;
+  const decodedA = decodeStackFromSearchParams(new URLSearchParams(journeyAUrl.split('?')[1]));
+  assert.strictEqual(decodedA[sampleTech.layerId as any], sampleTech.id);
+
+  // Journey B: Arch Detail -> Build CTA URL
+  const sampleArch = architectureProfiles[0];
+  const archParams = new URLSearchParams();
+  sampleArch.technologyIds.forEach((tid) => {
+    const t = technologyById.get(tid);
+    if (t && !archParams.has(t.layerId)) archParams.set(t.layerId, t.id);
+  });
+  const decodedB = decodeStackFromSearchParams(archParams);
+  assert.ok(Object.keys(decodedB).length > 0);
+
+  // Journey C: Multi-tech selection validation
+  const multiSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'hypervisor-virtualization': 'nvidia-drive-hypervisor',
+    'operating-systems': 'linux-kernel',
+  };
+  const valSummaryC = validateStack(multiSelection);
+  assert.strictEqual(valSummaryC.totalSelected, 3);
+  assert.ok(valSummaryC.verifiedCount >= 1);
+
+  // Journey D: Arch match links to tech detail
+  const archMatchD = matchArchitectures(multiSelection);
+  assert.ok(archMatchD.length > 0);
+  assert.ok(archMatchD[0].matchedTechnologies.every((t) => Boolean(technologyById.get(t.id))));
+
+  // Journey E: Suggested tech candidate -> quick add
+  const candE = getSuggestedCandidates(multiSelection);
+  assert.ok(candE.length > 0);
+  assert.ok(candE[0].technology.id.length > 0);
+
+  // Journey F: URL Serialization Roundtrip
+  const encodedF = encodeStackToSearchParams(multiSelection);
+  const decodedF = decodeStackFromSearchParams(encodedF);
+  assert.deepStrictEqual(multiSelection, decodedF);
+
+  // Journey G: Technology Detail -> Related Architectures
+  const thorArchitectures = architectureProfiles.filter((p) => p.technologyIds.includes('nvidia-drive-thor'));
+  assert.ok(thorArchitectures.length > 0);
+
+  // Journey H: Architecture Profile -> Technology list resolution
+  const resolvedTechs = sampleArch.technologyIds.map((id) => technologyById.get(id)).filter(Boolean);
+  assert.strictEqual(resolvedTechs.length, sampleArch.technologyIds.length);
+
+  console.log('✅ Test 28 Passed: Knowledge Graph Hardening, Referential Integrity, Index Zero-Drift & Journey Regressions verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 
