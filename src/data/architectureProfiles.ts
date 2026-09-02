@@ -98,7 +98,7 @@ export const architectureProfiles: ArchitectureProfile[] = [
       'vxworks-rtos',
       'eclipse-iceoryx',
       'dds-protocol',
-      'nvidia-alpamayo-ad',
+      'nvidia-driveworks-sdk',
       'nvidia-driveworks-sdk',
       'momenta-flywheel-ad',
       'baidu-apollo-ad',
