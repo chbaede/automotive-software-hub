@@ -15,6 +15,8 @@ import {
   CORE_STACK_LAYER_IDS,
   SUPPORTING_STACK_LAYER_IDS,
   StackSelection,
+  getSelectedTechIds,
+  getLayerTechIds,
   validateStack,
   matchArchitectures,
   matchStackPaths,
@@ -40,7 +42,7 @@ export const StackBuilderPage: React.FC = () => {
   const [showSupporting, setShowSupporting] = useState(false);
   const [highlightLayerId, setHighlightLayerId] = useState<string | null>(null);
 
-  // Initialize selection from URL Search Params
+  // Initialize selection from URL Search Params (supports multi-selection per layer)
   const selection: StackSelection = useMemo(() => {
     return decodeStackFromSearchParams(searchParams);
   }, [searchParams]);
@@ -49,12 +51,35 @@ export const StackBuilderPage: React.FC = () => {
     document.title = `${t.stackBuilder.title} | Automotive Software Hub`;
   }, [t.stackBuilder.title]);
 
-  // Update selection & sync with URL Search Params
-  const handleSelectTechnology = useCallback(
-    (layerId: string, techId: string | undefined) => {
+  // Toggle technology in a layer (supports multi-selection)
+  const handleToggleTechnology = useCallback(
+    (layerId: string, techId: string) => {
       const newSelection: StackSelection = { ...selection };
-      if (techId) {
-        newSelection[layerId as keyof StackSelection] = techId;
+      const currentList = newSelection[layerId as keyof StackSelection] || [];
+      if (currentList.includes(techId)) {
+        const nextList = currentList.filter((id) => id !== techId);
+        if (nextList.length > 0) {
+          newSelection[layerId as keyof StackSelection] = nextList;
+        } else {
+          delete newSelection[layerId as keyof StackSelection];
+        }
+      } else {
+        newSelection[layerId as keyof StackSelection] = [...currentList, techId];
+      }
+      const newParams = encodeStackToSearchParams(newSelection);
+      setSearchParams(newParams, { replace: true });
+    },
+    [selection, setSearchParams]
+  );
+
+  // Remove technology from a layer
+  const handleRemoveTechnology = useCallback(
+    (layerId: string, techId: string) => {
+      const newSelection: StackSelection = { ...selection };
+      const currentList = newSelection[layerId as keyof StackSelection] || [];
+      const nextList = currentList.filter((id) => id !== techId);
+      if (nextList.length > 0) {
+        newSelection[layerId as keyof StackSelection] = nextList;
       } else {
         delete newSelection[layerId as keyof StackSelection];
       }
@@ -69,10 +94,10 @@ export const StackBuilderPage: React.FC = () => {
     (techId: string) => {
       const tech = technologyById.get(techId);
       if (tech) {
-        handleSelectTechnology(tech.layerId, tech.id);
+        handleToggleTechnology(tech.layerId, tech.id);
       }
     },
-    [handleSelectTechnology]
+    [handleToggleTechnology]
   );
 
   const handleClearStack = () => {
@@ -91,7 +116,7 @@ export const StackBuilderPage: React.FC = () => {
   const stackPathMatches = useMemo(() => matchStackPaths(selection), [selection]);
   const suggestedCandidates = useMemo(() => getSuggestedCandidates(selection), [selection]);
 
-  const totalSelectedCount = Object.keys(selection).length;
+  const totalSelectedCount = getSelectedTechIds(selection).length;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -167,8 +192,9 @@ export const StackBuilderPage: React.FC = () => {
                   <LayerTechSelector
                     key={layer.id}
                     layer={layer}
-                    selectedTechId={selection[layer.id]}
-                    onSelect={(techId) => handleSelectTechnology(layer.id, techId)}
+                    selectedTechIds={selection[layer.id] || []}
+                    onToggle={(techId) => handleToggleTechnology(layer.id, techId)}
+                    onRemove={(techId) => handleRemoveTechnology(layer.id, techId)}
                     highlight={highlightLayerId === layer.id}
                   />
                 );
@@ -205,8 +231,9 @@ export const StackBuilderPage: React.FC = () => {
                     <LayerTechSelector
                       key={layer.id}
                       layer={layer}
-                      selectedTechId={selection[layer.id]}
-                      onSelect={(techId) => handleSelectTechnology(layer.id, techId)}
+                      selectedTechIds={selection[layer.id] || []}
+                      onToggle={(techId) => handleToggleTechnology(layer.id, techId)}
+                      onRemove={(techId) => handleRemoveTechnology(layer.id, techId)}
                       highlight={highlightLayerId === layer.id}
                     />
                   );
@@ -218,41 +245,31 @@ export const StackBuilderPage: React.FC = () => {
 
         {/* Right Column: Visual Preview, Validation, Matches & Suggestions (5 cols) */}
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
-          {/* Vertical Stack Preview Ladder */}
+          {/* 1. Stack Visual Preview Ladder */}
           <StackPreviewLadder
             selection={selection}
-            onSelectLayer={(layerId) => {
-              setHighlightLayerId(layerId);
-              setTimeout(() => setHighlightLayerId(null), 1500);
-            }}
+            onSelectLayer={(layerId) => setHighlightLayerId(layerId)}
           />
 
-          {/* Knowledge Graph Validation Results */}
+          {/* 2. Knowledge Graph Relationship Validation Card */}
           <StackValidationPanel summary={validationSummary} />
 
-          {/* Graph Next Technology Candidates */}
-          {suggestedCandidates.length > 0 && (
-            <SuggestedTechPanel
-              candidates={suggestedCandidates}
-              onAddTechnology={handleAddTechnology}
-            />
-          )}
+          {/* 3. Reference Architecture Matches */}
+          <ArchitectureMatchPanel
+            matches={architectureMatches}
+            onAddTechnology={handleAddTechnology}
+          />
 
-          {/* Architecture Matches */}
-          {architectureMatches.length > 0 && (
-            <ArchitectureMatchPanel
-              matches={architectureMatches}
-              onAddTechnology={handleAddTechnology}
-            />
-          )}
+          {/* 4. Canonical Automotive Stack Paths */}
+          <RelatedPathsPanel matches={stackPathMatches} />
 
-          {/* Related Stack Paths */}
-          {stackPathMatches.length > 0 && (
-            <RelatedPathsPanel matches={stackPathMatches} />
-          )}
+          {/* 5. Deterministic Technology Suggestions */}
+          <SuggestedTechPanel
+            candidates={suggestedCandidates}
+            onAddTechnology={handleAddTechnology}
+          />
         </div>
       </div>
     </div>
   );
 };
-

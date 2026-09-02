@@ -934,8 +934,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   // Decode valid params
   const decoded = decodeStackFromSearchParams(searchParams);
-  assert.strictEqual(decoded['hardware-compute'], 'nvidia-drive-thor');
-  assert.strictEqual(decoded['operating-systems'], 'qnx-neutrino');
+  assert.deepStrictEqual(decoded['hardware-compute'], ['nvidia-drive-thor']);
+  assert.deepStrictEqual(decoded['operating-systems'], ['qnx-neutrino']);
 
   // Decode params with invalid technology ID and mismatched layer ID
   const invalidParams = new URLSearchParams({
@@ -991,13 +991,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { ko } = await import('../src/i18n/ko.js');
 
   // 1. Canonical Layer Adjacency: Non-adjacent layers do not generate false adjacent warnings
-  // hardware-compute and operating-systems with hypervisor-virtualization skipped
+  // hardware-compute and middleware-communication with OS skipped
   const skippedLayerSelection = {
     'hardware-compute': 'nvidia-drive-thor',
-    'operating-systems': 'qnx-neutrino',
+    'middleware-communication': 'someip-protocol',
   };
   const skippedValidation = validateStack(skippedLayerSelection);
-  // There should NOT be any warning with isAdjacentLayerPair = true because they are separated by Hypervisor
+  // There should NOT be any warning with isAdjacentLayerPair = true because they are non-adjacent layers
   const adjacentWarnings = skippedValidation.items.filter(
     (item) => item.status === 'warning' && item.isAdjacentLayerPair
   );
@@ -1062,7 +1062,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'foo=bar&invalid=123&hardware-compute=nvidia-drive-thor&operating-systems=unknown-os-id&bad=true'
   );
   const decodedClean = decodeStackFromSearchParams(malformedParams);
-  assert.strictEqual(decodedClean['hardware-compute'], 'nvidia-drive-thor');
+  assert.deepStrictEqual(decodedClean['hardware-compute'], ['nvidia-drive-thor']);
   assert.strictEqual(decodedClean['operating-systems'], undefined);
   assert.strictEqual(Object.keys(decodedClean).length, 1);
 
@@ -1127,7 +1127,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // Simulating CTA click
   const ctaParams = new URLSearchParams({ [thorTech!.layerId]: thorTech!.id });
   const restoredSelection = decodeStackFromSearchParams(ctaParams);
-  assert.strictEqual(restoredSelection['hardware-compute'], 'nvidia-drive-thor');
+  assert.deepStrictEqual(restoredSelection['hardware-compute'], ['nvidia-drive-thor']);
 
   // Get candidate suggestions for Thor
   const thorSuggestions = getSuggestedCandidates(restoredSelection);
@@ -1136,7 +1136,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(bestSuggestion.technology.layerId !== 'hardware-compute');
 
   // Add suggested tech to stack
-  restoredSelection[bestSuggestion.technology.layerId] = bestSuggestion.technology.id;
+  restoredSelection[bestSuggestion.technology.layerId] = [bestSuggestion.technology.id];
   const twoTechValidation = validateStack(restoredSelection);
   assert.strictEqual(twoTechValidation.totalSelected, 2);
   assert.ok(twoTechValidation.health === 'validated' || twoTechValidation.health === 'partially-validated');
@@ -1311,7 +1311,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const sampleTech = stackTechnologies[0];
   const journeyAUrl = `/stack-builder?${sampleTech.layerId}=${sampleTech.id}`;
   const decodedA = decodeStackFromSearchParams(new URLSearchParams(journeyAUrl.split('?')[1]));
-  assert.strictEqual(decodedA[sampleTech.layerId as any], sampleTech.id);
+  assert.deepStrictEqual(decodedA[sampleTech.layerId as any], [sampleTech.id]);
 
   // Journey B: Arch Detail -> Build CTA URL
   const sampleArch = architectureProfiles[0];
@@ -1346,7 +1346,14 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // Journey F: URL Serialization Roundtrip
   const encodedF = encodeStackToSearchParams(multiSelection);
   const decodedF = decodeStackFromSearchParams(encodedF);
-  assert.deepStrictEqual(multiSelection, decodedF);
+  assert.deepStrictEqual(
+    decodedF,
+    {
+      'hardware-compute': ['nvidia-drive-thor'],
+      'hypervisor-virtualization': ['nvidia-drive-hypervisor'],
+      'operating-systems': ['linux-kernel'],
+    }
+  );
 
   // Journey G: Technology Detail -> Related Architectures
   const thorArchitectures = architectureProfiles.filter((p) => p.technologyIds.includes('nvidia-drive-thor'));
@@ -1646,6 +1653,231 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D', 'Perseus remains ASIL-D');
 
   console.log('✅ Test 31 Passed: Phase 8.2.5 Refactor & Harden Knowledge Graph Intelligence verified.');
+}
+
+// Test 32: Phase 8.2.6 — Knowledge Graph Intelligence Hardening & Architecture Cleanup
+{
+  const { CORE_STACK_LAYER_IDS, SUPPORTING_STACK_LAYER_IDS, validateStack, matchArchitectures, matchStackPaths } = await import('../src/lib/graph/matching.js');
+  const { calculateArchitectureMatchScore, calculateStackPathMatchScore, calculateBridgeScore } = await import('../src/lib/graph/scoring.js');
+  const rels = await import('../src/lib/graph/intelligence/relationships.js');
+  const bridges = await import('../src/lib/graph/intelligence/bridges.js');
+  const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
+  const { encodeStackToSearchParams, decodeStackFromSearchParams } = await import('../src/lib/builder/stackBuilderEngine.js');
+  const { technologyById, outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
+
+  // 1. Core Stack Layer Categorization
+  assert.strictEqual(CORE_STACK_LAYER_IDS.length, 7, 'Must have exactly 7 core runtime layers');
+  assert.strictEqual(SUPPORTING_STACK_LAYER_IDS.length, 3, 'Must have exactly 3 supporting layers');
+
+  // 2. Pure Matching & Scoring Functions Independence
+  const archMatchScore = calculateArchitectureMatchScore(100, 50, 4);
+  assert.strictEqual(archMatchScore, Math.round(100 * 0.6 + 50 * 0.4 + 4 * 3));
+
+  const pathMatchScore = calculateStackPathMatchScore(80, 4, 3);
+  assert.strictEqual(pathMatchScore, Math.round(80 * 0.5 + 4 * 10 + 3 * 5));
+
+  // 3. Directional Semantics Matrix Verification
+  // (a) depends-on
+  const araDeps = rels.getDependencies('autosar-adaptive');
+  assert.ok(araDeps.some((d) => d.technology.id === 'someip-protocol'), 'autosar-adaptive depends on someip-protocol');
+
+  // (b) runs-on
+  const aaosPlatforms = rels.getPlatforms('android-automotive-os');
+  assert.ok(aaosPlatforms.some((p) => p.technology.id === 'qnx-hypervisor'), 'Android Automotive OS runs on QNX Hypervisor');
+
+  // (c) implemented-by
+  const someipImpls = rels.getImplementations('someip-protocol');
+  assert.ok(someipImpls.some((i) => i.technology.id === 'vsomeip-middleware'), 'someip-protocol is implemented by vsomeip');
+
+  // (d) integrates-with (preserves isOutgoing)
+  const ros2Integrations = rels.getIntegrations('ros2-middleware');
+  assert.ok(ros2Integrations.length > 0, 'ROS 2 has integrations');
+  ros2Integrations.forEach((item) => {
+    assert.strictEqual(typeof item.isOutgoing, 'boolean', 'isOutgoing flag must be boolean');
+  });
+
+  // (e) alternative (perspective-corrected)
+  const qnxAlts = rels.getAlternatives('qnx-neutrino');
+  assert.ok(qnxAlts.some((a) => a.technology.id === 'vxworks-rtos'), 'VxWorks is an alternative to QNX Neutrino');
+  const vxworksAlt = qnxAlts.find((a) => a.technology.id === 'vxworks-rtos');
+  assert.ok(vxworksAlt?.reason.en.includes('is an architectural alternative to QNX Neutrino'));
+
+  // (f) coexists-with
+  const araCoexists = rels.getCoexistingTechnologies('autosar-classic');
+  assert.ok(araCoexists.some((c) => c.technology.id === 'autosar-adaptive'), 'AUTOSAR Classic coexists with AUTOSAR Adaptive');
+
+  // (g) related
+  const aaosOutRels = outgoingRelationshipsByTechnologyId.get('android-automotive-os') || [];
+  assert.ok(aaosOutRels.some((r) => r.type === 'related'), 'Android Automotive OS has related edges');
+
+  // 4. Meaningful Cross-Layer Bridge Filtering
+  const thorBridges = bridges.getBridgeTechnologies('nvidia-drive-thor');
+  thorBridges.forEach((b) => {
+    assert.ok(b.bridgedLayersCount >= 2, 'Bridge must connect to >= 2 layers');
+    assert.notStrictEqual(b.relationship.type, 'alternative', 'Bridge cannot be alternative');
+    assert.notStrictEqual(b.relationship.type, 'related', 'Bridge cannot be generic related');
+  });
+
+  // 5. Overlap vs Coverage Distinction in Architecture Matching
+  const singleTechSelection = { 'hardware-compute': 'nvidia-drive-thor' };
+  const singleMatch = matchArchitectures(singleTechSelection);
+  assert.ok(singleMatch.length > 0, 'Thor matches reference architecture');
+  const firstMatch = singleMatch[0];
+  assert.strictEqual(firstMatch.overlapPercentage, 100, 'Single selected tech has 100% precision overlap');
+  assert.ok(
+    firstMatch.profileCoveragePercentage < 100,
+    '100% overlap on 1 selected tech does NOT mean 100% profile coverage'
+  );
+
+  // 6. Contiguous Path Sequence Matching
+  const pathSelection = {
+    'hardware-compute': 'qualcomm-snapdragon-cockpit',
+    'hypervisor-virtualization': 'qnx-hypervisor',
+    'operating-systems': 'linux-kernel',
+  };
+  const pathMatches = matchStackPaths(pathSelection);
+  assert.ok(pathMatches.length > 0, 'Matched paths exist');
+  assert.ok(pathMatches[0].maxContiguousHops >= 3, 'Contiguous hop sequence correctly detected');
+
+  // 7. Core Runtime Completeness vs Supporting Layer Independence
+  const fullCoreSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'hypervisor-virtualization': 'qnx-hypervisor',
+    'operating-systems': 'qnx-neutrino',
+    'build-platform': 'yocto-project',
+    'middleware-communication': 'autosar-adaptive',
+    'vehicle-services': 'kuksa-val',
+    'application-experience': 'qt-automotive',
+  };
+  const fullCoreInsights = stackInsights.getStackInsights(fullCoreSelection);
+  assert.strictEqual(fullCoreInsights.gapAnalysis.isCompleteCoreStack, true, '7 Core layers complete stack');
+  assert.strictEqual(fullCoreInsights.gapAnalysis.missingCoreLayers.length, 0);
+
+  // Adding supporting layer does not invalidate completeness
+  const corePlusSupporting = {
+    ...fullCoreSelection,
+    'cloud-devops': 'aws-iot-fleetwise',
+  };
+  const plusInsights = stackInsights.getStackInsights(corePlusSupporting);
+  assert.strictEqual(plusInsights.gapAnalysis.isCompleteCoreStack, true, 'Supporting layer does not alter core completeness');
+
+  // 8. URL SearchParams Round-Trip Integrity
+  const searchParams = encodeStackToSearchParams(fullCoreSelection);
+  const decodedSelection = decodeStackFromSearchParams(searchParams);
+  const { normalizeStackSelection } = await import('../src/lib/graph/matching.js');
+  assert.deepStrictEqual(decodedSelection, normalizeStackSelection(fullCoreSelection), 'Stack selection must survive URL encode/decode roundtrip');
+
+  // 9. Perseus Functional Safety Certification Invariant
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.ok(perseus, 'Perseus Pegasus Hypervisor exists');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified', 'Perseus claimType is certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D', 'Perseus ASIL is ASIL-D');
+  assert.ok(perseus?.functionalSafety?.sourceUrl, 'Perseus has verified sourceUrl');
+
+  console.log('✅ Test 32 Passed: Phase 8.2.6 Knowledge Graph Intelligence Hardening & Architecture Cleanup verified.');
+}
+
+// Test 33: Multi-Technology Selection & Bare-Metal (Optional Hypervisor) Support
+{
+  const {
+    MANDATORY_CORE_STACK_LAYER_IDS,
+    OPTIONAL_CORE_STACK_LAYER_IDS,
+    validateStack,
+    matchArchitectures,
+    matchStackPaths,
+    normalizeStackSelection,
+  } = await import('../src/lib/graph/matching.js');
+  const {
+    encodeStackToSearchParams,
+    decodeStackFromSearchParams,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+  const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
+
+  // 1. Mandatory vs Optional Layer Taxonomy
+  assert.strictEqual(MANDATORY_CORE_STACK_LAYER_IDS.length, 6, '6 mandatory core runtime layers');
+  assert.strictEqual(OPTIONAL_CORE_STACK_LAYER_IDS.length, 1, 'Hypervisor is optional core layer');
+  assert.strictEqual(OPTIONAL_CORE_STACK_LAYER_IDS[0], 'hypervisor-virtualization');
+
+  // 2. Multi-OS Selection (e.g., QNX Neutrino for Safety RTOS + Linux Kernel for Rich Compute)
+  const multiOsSelection = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino', 'linux-kernel'],
+    'build-platform': ['yocto-project'],
+    'middleware-communication': ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware'],
+    'vehicle-services': ['kuksa-val'],
+    'application-experience': ['qt-automotive', 'flutter-embedded-automotive'],
+  };
+
+  const validationResult = validateStack(multiOsSelection);
+  assert.strictEqual(validationResult.totalSelected, 10, 'All 10 selected technologies tracked');
+  assert.ok(validationResult.verifiedCount >= 3, 'Multiple inter-layer and intra-layer verified edges detected');
+
+  // 3. Multi-Technology URL Serialization and Deserialization Round-Trip
+  const encodedMulti = encodeStackToSearchParams(multiOsSelection);
+  assert.strictEqual(
+    encodedMulti.get('operating-systems'),
+    'qnx-neutrino,linux-kernel',
+    'Multiple OSes encoded as comma-separated list'
+  );
+  assert.strictEqual(
+    encodedMulti.get('middleware-communication'),
+    'autosar-adaptive,android-automotive-os,vsomeip-middleware',
+    'Multiple middlewares encoded as comma-separated list'
+  );
+
+  const decodedMulti = decodeStackFromSearchParams(encodedMulti);
+  assert.deepStrictEqual(
+    decodedMulti['operating-systems'],
+    ['qnx-neutrino', 'linux-kernel'],
+    'Decoded OSes match original multi-selection'
+  );
+  assert.deepStrictEqual(
+    decodedMulti['middleware-communication'],
+    ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware'],
+    'Decoded middlewares match original multi-selection'
+  );
+
+  // 4. Bare-Metal (No Hypervisor) Completeness & Gap Analysis
+  const bareMetalSelection = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'operating-systems': ['linux-kernel'],
+    'build-platform': ['yocto-project'],
+    'middleware-communication': ['android-automotive-os'],
+    'vehicle-services': ['covesa-vss'],
+    'application-experience': ['qt-automotive'],
+  };
+
+  const bareMetalInsights = stackInsights.getStackInsights(bareMetalSelection);
+  assert.strictEqual(
+    bareMetalInsights.gapAnalysis.isCompleteCoreStack,
+    true,
+    'Bare metal runtime stack (omitting hypervisor) is complete'
+  );
+  assert.strictEqual(
+    bareMetalInsights.gapAnalysis.missingCoreLayers.length,
+    0,
+    'No mandatory core layers are missing in bare-metal stack'
+  );
+
+  // 5. Bare-Metal Direct Hardware <-> OS Adjacency Validation
+  const bareMetalValidation = validateStack(bareMetalSelection);
+  assert.strictEqual(bareMetalValidation.totalSelected, 6);
+  // Validates direct hardware-OS connection without false hypervisor gaps
+  assert.ok(bareMetalValidation.verifiedCount >= 1);
+
+  // 6. Architecture & Path Matching with Multi-Technology Stacks
+  const archMatches = matchArchitectures(multiOsSelection);
+  assert.ok(archMatches.length > 0, 'Multi-tech stack matches architectures');
+  assert.ok(
+    archMatches[0].matchedTechnologies.length >= 2,
+    'Matches multiple technologies from multi-select stack'
+  );
+
+  const pathMatches = matchStackPaths(multiOsSelection);
+  assert.ok(pathMatches.length > 0, 'Multi-tech stack matches stack paths');
+
+  console.log('✅ Test 33 Passed: Multi-Technology Selection & Bare-Metal (Optional Hypervisor) verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
