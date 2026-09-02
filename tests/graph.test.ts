@@ -512,6 +512,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(insights.averageRelationships >= insights.averageConnections, 'Average relationships must be >= average connections');
   assert.ok(insights.topHubs.length > 0, 'Should have top hubs identified');
   assert.ok(insights.crossLayerTechnologies.length > 0, 'Should have cross-layer technologies identified');
+  assert.ok(insights.layerDistribution.length > 0, 'Should report layer distribution');
+
+  // Verify layer distribution items
+  insights.layerDistribution.forEach((item) => {
+    assert.ok(item.layerId, 'Layer item must have valid layerId');
+    assert.ok(item.count > 0, `Layer '${item.layerId}' must have positive technology count`);
+  });
 
   // Verify top hubs are sorted descending by connectionCount
   for (let i = 0; i < insights.topHubs.length - 1; i++) {

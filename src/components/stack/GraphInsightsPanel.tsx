@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Shield,
   Zap,
+  BarChart3,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { getGraphInsights } from '../../lib/graph';
@@ -34,6 +35,19 @@ export const GraphInsightsPanel: React.FC<GraphInsightsPanelProps> = ({
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 
+  const getLayerInfo = (layerId: string) => {
+    return stackLayers.find((l) => l.id === layerId);
+  };
+
+  // Sort layer distribution according to canonical stack layer order
+  const sortedLayerDistribution = useMemo(() => {
+    return [...insights.layerDistribution].sort((a, b) => {
+      const orderA = getLayerInfo(a.layerId)?.order ?? 99;
+      const orderB = getLayerInfo(b.layerId)?.order ?? 99;
+      return orderA - orderB;
+    });
+  }, [insights.layerDistribution]);
+
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
       {/* Header */}
@@ -51,8 +65,8 @@ export const GraphInsightsPanel: React.FC<GraphInsightsPanelProps> = ({
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               {language === 'ko'
-                ? '구조화된 그래프 관계망에서 최다 연결 기술 및 계층 간 크로스 레이어(Cross-Layer) 연결 기술을 분석합니다.'
-                : 'Topological analysis of high-connectivity technologies and cross-layer connectors.'}
+                ? '구조화된 그래프 관계망에서 최다 연결 기술, 크로스 레이어 연결 기술 및 계층별 기술 분포를 분석합니다.'
+                : 'Topological analysis of high-connectivity technologies, cross-layer connectors, and layer density breakdown.'}
             </p>
           </div>
         </div>
@@ -189,6 +203,72 @@ export const GraphInsightsPanel: React.FC<GraphInsightsPanelProps> = ({
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Layer Distribution Breakdown */}
+      <div className="pt-4 border-t border-slate-800/80 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-sky-400" />
+            <h3 className="text-sm font-bold text-white">
+              {language === 'ko' ? '스택 계층별 기술 분포 (Layer Distribution)' : 'Stack Layer Technology Distribution'}
+            </h3>
+          </div>
+          <span className="text-xs text-slate-400 font-mono">
+            {sortedLayerDistribution.length} {language === 'ko' ? '개 계층' : 'Layers'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {sortedLayerDistribution.map((item) => {
+            const layerObj = getLayerInfo(item.layerId);
+            const layerName = layerObj ? getLocalizedText(layerObj.name, language) : item.layerId;
+            const percentage = insights.totalNodes > 0
+              ? Math.round((item.count / insights.totalNodes) * 100)
+              : 0;
+            const isCore = layerObj?.layerType === 'core';
+
+            return (
+              <div
+                key={item.layerId}
+                className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 space-y-2"
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 min-w-0 pr-2">
+                    <span
+                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase shrink-0 ${
+                        isCore
+                          ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}
+                    >
+                      {isCore ? (language === 'ko' ? '코어' : 'Core') : (language === 'ko' ? '크로스' : 'Pillar')}
+                    </span>
+                    <span className="font-semibold text-slate-200 truncate" title={layerName}>
+                      {layerName}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0 font-mono">
+                    <span className="font-bold text-white">{item.count}</span>
+                    <span className="text-slate-500 text-[10px]">({percentage}%)</span>
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      isCore
+                        ? 'bg-gradient-to-r from-cyan-500 to-indigo-500'
+                        : 'bg-gradient-to-r from-amber-500 to-rose-500'
+                    }`}
+                    style={{ width: `${Math.max(percentage, 4)}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
