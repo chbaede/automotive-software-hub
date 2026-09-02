@@ -187,7 +187,7 @@ export const StackPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Phase 4.0 Graph Intelligence Mode Switcher */}
+      {/* Graph Intelligence Mode Switcher */}
       <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
         <button
           onClick={() => setViewMode('layers')}
@@ -222,7 +222,7 @@ export const StackPage: React.FC = () => {
           }`}
         >
           <Network className="w-4 h-4 text-purple-500" />
-          <span>{language === 'ko' ? '그래프 인사이트 (Hubs & Bridges)' : 'Graph Topology Insights'}</span>
+          <span>{language === 'ko' ? '그래프 토폴로지 인사이트' : 'Graph Topology Insights'}</span>
         </button>
       </div>
 

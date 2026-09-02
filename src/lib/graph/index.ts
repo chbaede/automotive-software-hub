@@ -7,7 +7,7 @@ import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { TechnologyRelationship, RelationshipType } from '../../types/relationship';
 
 // ==========================================
-// CORE GRAPH INDEXES
+// CORE GRAPH INDEXES (Authoritative Knowledge Graph)
 // ==========================================
 
 // Index: Technology by ID
@@ -65,6 +65,31 @@ stackRelationships.forEach((rel) => {
   incomingRelationshipsByTechnologyId.set(rel.targetId, inList);
 });
 
+// Index: Unique Neighbor Technologies by Technology ID (Canonical Source: stackRelationships)
+export const neighborsByTechnologyId = new Map<string, StackTechnology[]>();
+
+stackTechnologies.forEach((tech) => {
+  const neighborsMap = new Map<string, StackTechnology>();
+
+  const outgoing = outgoingRelationshipsByTechnologyId.get(tech.id) || [];
+  outgoing.forEach((rel) => {
+    const target = technologyById.get(rel.targetId);
+    if (target && target.id !== tech.id) {
+      neighborsMap.set(target.id, target);
+    }
+  });
+
+  const incoming = incomingRelationshipsByTechnologyId.get(tech.id) || [];
+  incoming.forEach((rel) => {
+    const source = technologyById.get(rel.sourceId);
+    if (source && source.id !== tech.id) {
+      neighborsMap.set(source.id, source);
+    }
+  });
+
+  neighborsByTechnologyId.set(tech.id, Array.from(neighborsMap.values()));
+});
+
 // Index: Technologies by Layer ID
 export const technologiesByLayerId = new Map<string, StackTechnology[]>();
 stackTechnologies.forEach((tech) => {
@@ -118,28 +143,11 @@ export function getRelationshipsForTechnology(id: string): {
 export const getTechnologyRelationships = getRelationshipsForTechnology;
 
 /**
- * Returns all 1-hop neighbor technologies directly connected via relationships.
+ * Returns all 1-hop unique neighbor technologies directly connected via relationships.
+ * Canonical Source: stackRelationships.
  */
 export function getNeighbors(id: string): StackTechnology[] {
-  const neighborsMap = new Map<string, StackTechnology>();
-
-  const outgoing = getOutgoingRelationships(id);
-  outgoing.forEach((rel) => {
-    const target = technologyById.get(rel.targetId);
-    if (target && target.id !== id) {
-      neighborsMap.set(target.id, target);
-    }
-  });
-
-  const incoming = getIncomingRelationships(id);
-  incoming.forEach((rel) => {
-    const source = technologyById.get(rel.sourceId);
-    if (source && source.id !== id) {
-      neighborsMap.set(source.id, source);
-    }
-  });
-
-  return Array.from(neighborsMap.values());
+  return neighborsByTechnologyId.get(id) || [];
 }
 
 /**
@@ -194,35 +202,10 @@ export function getStackPathsForTechnology(id: string): StackPath[] {
 
 /**
  * Fast graph traversal helper returning all directly connected Stack Technologies
- * via semantic relationships or fallback related IDs.
+ * from the canonical relationship dataset (stackRelationships).
  */
 export function getRelatedTechnologies(techId: string): StackTechnology[] {
-  const currentTech = technologyById.get(techId);
-  if (!currentTech) return [];
-
-  const resultSet = new Map<string, StackTechnology>();
-
-  // Outgoing targets
-  const outgoing = outgoingRelationshipsByTechnologyId.get(techId) || [];
-  outgoing.forEach((rel) => {
-    const targetTech = technologyById.get(rel.targetId);
-    if (targetTech) resultSet.set(targetTech.id, targetTech);
-  });
-
-  // Incoming sources
-  const incoming = incomingRelationshipsByTechnologyId.get(techId) || [];
-  incoming.forEach((rel) => {
-    const sourceTech = technologyById.get(rel.sourceId);
-    if (sourceTech) resultSet.set(sourceTech.id, sourceTech);
-  });
-
-  // Fallback explicit related IDs
-  (currentTech.relatedTechnologyIds || []).forEach((relId) => {
-    const relTech = technologyById.get(relId);
-    if (relTech) resultSet.set(relTech.id, relTech);
-  });
-
-  return Array.from(resultSet.values());
+  return getNeighbors(techId);
 }
 
 export interface GroupedRelationshipItem {
@@ -260,49 +243,61 @@ export function getGroupedTechnologyRelationships(techId: string): Map<string, G
   return groups;
 }
 
-/**
- * Returns graph metrics for a specific technology.
- */
-export function getTechnologyDegree(id: string): {
-  totalDegree: number;
-  inDegree: number;
-  outDegree: number;
+// ==========================================
+// GRAPH METRICS & CONTEXT
+// ==========================================
+
+export interface TechnologyDegreeInfo {
+  connectionCount: number; // Unique connected neighbor technologies
+  relationshipCount: number; // Total relationship records (inDegree + outDegree)
+  inDegree: number; // Incoming relationship records
+  outDegree: number; // Outgoing relationship records
   connectedLayers: string[];
-} {
+  connectedLayersCount: number;
+  totalDegree: number; // Alias to connectionCount for backward-compat
+}
+
+/**
+ * Returns accurate graph connection metrics for a specific technology.
+ */
+export function getTechnologyDegree(id: string): TechnologyDegreeInfo {
   const outgoing = getOutgoingRelationships(id);
   const incoming = getIncomingRelationships(id);
+  const uniqueNeighbors = getNeighbors(id);
 
   const connectedLayersSet = new Set<string>();
-
-  outgoing.forEach((rel) => {
-    const tgt = technologyById.get(rel.targetId);
-    if (tgt) connectedLayersSet.add(tgt.layerId);
+  uniqueNeighbors.forEach((neighbor) => {
+    connectedLayersSet.add(neighbor.layerId);
   });
 
-  incoming.forEach((rel) => {
-    const src = technologyById.get(rel.sourceId);
-    if (src) connectedLayersSet.add(src.layerId);
-  });
+  const connectionCount = uniqueNeighbors.length;
+  const relationshipCount = outgoing.length + incoming.length;
 
   return {
-    totalDegree: outgoing.length + incoming.length,
+    connectionCount,
+    relationshipCount,
     inDegree: incoming.length,
     outDegree: outgoing.length,
     connectedLayers: Array.from(connectedLayersSet),
+    connectedLayersCount: connectedLayersSet.size,
+    totalDegree: connectionCount,
   };
 }
 
 export interface TechnologyGraphContext {
   technology: StackTechnology;
-  degree: number;
+  connectionCount: number; // Unique neighboring technologies
+  relationshipCount: number; // Total relationship records
+  degree: number; // Alias to connectionCount
   inDegree: number;
   outDegree: number;
   connectedLayers: string[];
   connectedLayersCount: number;
   architectures: ArchitectureProfile[];
   stackPaths: StackPath[];
-  isHub: boolean;
-  isBridge: boolean;
+  isHub: boolean; // connectionCount >= 5
+  isCrossLayer: boolean; // connectedLayersCount >= 3 (renamed from isBridge)
+  isBridge: boolean; // Backward-compatibility alias
 }
 
 /**
@@ -312,26 +307,29 @@ export function getTechnologyGraphContext(id: string): TechnologyGraphContext | 
   const tech = technologyById.get(id);
   if (!tech) return null;
 
-  const { totalDegree, inDegree, outDegree, connectedLayers } = getTechnologyDegree(id);
+  const degreeInfo = getTechnologyDegree(id);
   const architectures = getArchitecturesForTechnology(id);
   const stackPaths = getStackPathsForTechnology(id);
 
   return {
     technology: tech,
-    degree: totalDegree,
-    inDegree,
-    outDegree,
-    connectedLayers,
-    connectedLayersCount: connectedLayers.length,
+    connectionCount: degreeInfo.connectionCount,
+    relationshipCount: degreeInfo.relationshipCount,
+    degree: degreeInfo.connectionCount,
+    inDegree: degreeInfo.inDegree,
+    outDegree: degreeInfo.outDegree,
+    connectedLayers: degreeInfo.connectedLayers,
+    connectedLayersCount: degreeInfo.connectedLayersCount,
     architectures,
     stackPaths,
-    isHub: totalDegree >= 5,
-    isBridge: connectedLayers.length >= 3,
+    isHub: degreeInfo.connectionCount >= 5,
+    isCrossLayer: degreeInfo.connectedLayersCount >= 3,
+    isBridge: degreeInfo.connectedLayersCount >= 3,
   };
 }
 
 // ==========================================
-// SHORTEST GRAPH PATH FINDER (BFS)
+// SHORTEST GRAPH PATH FINDER (BFS with Relationship Filtering)
 // ==========================================
 
 export interface GraphPathStep {
@@ -350,11 +348,20 @@ export interface ShortestPathResult {
   hopCount: number;
 }
 
+export interface ShortestPathOptions {
+  relationshipTypes?: RelationshipType[];
+}
+
 /**
  * Finds the shortest graph traversal path between sourceId and targetId using Breadth-First Search (BFS).
+ * Supports optional filtering by relationshipTypes.
  * Works across both forward and reverse typed relationships in the undirected graph representation.
  */
-export function findShortestPath(sourceId: string, targetId: string): ShortestPathResult {
+export function findShortestPath(
+  sourceId: string,
+  targetId: string,
+  options?: ShortestPathOptions
+): ShortestPathResult {
   const sourceTech = technologyById.get(sourceId);
   const targetTech = technologyById.get(targetId);
 
@@ -366,7 +373,11 @@ export function findShortestPath(sourceId: string, targetId: string): ShortestPa
     return { sourceId, targetId, found: true, nodes: [sourceTech], steps: [], hopCount: 0 };
   }
 
-  // Build undirected adjacency with edge references
+  const allowedTypes = options?.relationshipTypes && options.relationshipTypes.length > 0
+    ? new Set(options.relationshipTypes)
+    : null;
+
+  // Build undirected adjacency with edge references and type filtering
   interface AdjacencyEdge {
     neighborId: string;
     relationship: TechnologyRelationship;
@@ -375,6 +386,11 @@ export function findShortestPath(sourceId: string, targetId: string): ShortestPa
 
   const adj = new Map<string, AdjacencyEdge[]>();
   stackRelationships.forEach((rel) => {
+    // If filtering is enabled, check relationship type
+    if (allowedTypes && !allowedTypes.has(rel.type)) {
+      return;
+    }
+
     // Forward edge
     const fwdList = adj.get(rel.sourceId) || [];
     fwdList.push({ neighborId: rel.targetId, relationship: rel, isForward: true });
@@ -441,26 +457,35 @@ export function findShortestPath(sourceId: string, targetId: string): ShortestPa
 
 export interface GraphHubInsight {
   technology: StackTechnology;
-  degree: number;
+  connectionCount: number; // Unique neighbor technologies
+  relationshipCount: number; // Total relationship records
+  degree: number; // Alias to connectionCount
   connectedLayersCount: number;
   connectedLayers: string[];
   architecturesCount: number;
   stackPathsCount: number;
 }
 
-export interface BridgeTechnologyInsight {
+export interface CrossLayerTechnologyInsight {
   technology: StackTechnology;
   connectedLayersCount: number;
   connectedLayers: string[];
-  degree: number;
+  connectionCount: number;
+  relationshipCount: number;
+  degree: number; // Alias
 }
+
+export type BridgeTechnologyInsight = CrossLayerTechnologyInsight;
 
 export interface GraphInsightsData {
   totalNodes: number;
   totalEdges: number;
-  averageDegree: number;
+  averageConnections: number; // Average unique connections per node
+  averageDegree: number; // Alias to averageConnections
+  averageRelationships: number; // Average relationship records per node
   topHubs: GraphHubInsight[];
-  bridgeTechnologies: BridgeTechnologyInsight[];
+  crossLayerTechnologies: CrossLayerTechnologyInsight[];
+  bridgeTechnologies: BridgeTechnologyInsight[]; // Alias for backward compatibility
   layerDistribution: Array<{ layerId: string; count: number }>;
 }
 
@@ -472,37 +497,44 @@ export function getGraphInsights(): GraphInsightsData {
   const totalEdges = stackRelationships.length;
 
   const allNodeMetrics = stackTechnologies.map((tech) => {
-    const { totalDegree, connectedLayers } = getTechnologyDegree(tech.id);
+    const degreeInfo = getTechnologyDegree(tech.id);
     const archs = getArchitecturesForTechnology(tech.id);
     const paths = getStackPathsForTechnology(tech.id);
     return {
       technology: tech,
-      degree: totalDegree,
-      connectedLayersCount: connectedLayers.length,
-      connectedLayers,
+      connectionCount: degreeInfo.connectionCount,
+      relationshipCount: degreeInfo.relationshipCount,
+      degree: degreeInfo.connectionCount,
+      connectedLayersCount: degreeInfo.connectedLayersCount,
+      connectedLayers: degreeInfo.connectedLayers,
       architecturesCount: archs.length,
       stackPathsCount: paths.length,
     };
   });
 
-  const totalDegrees = allNodeMetrics.reduce((sum, item) => sum + item.degree, 0);
-  const averageDegree = totalNodes > 0 ? parseFloat((totalDegrees / totalNodes).toFixed(2)) : 0;
+  const totalConnections = allNodeMetrics.reduce((sum, item) => sum + item.connectionCount, 0);
+  const totalRelationships = allNodeMetrics.reduce((sum, item) => sum + item.relationshipCount, 0);
 
-  // Top Hubs: sorted by degree descending
+  const averageConnections = totalNodes > 0 ? parseFloat((totalConnections / totalNodes).toFixed(2)) : 0;
+  const averageRelationships = totalNodes > 0 ? parseFloat((totalRelationships / totalNodes).toFixed(2)) : 0;
+
+  // Top Hubs (Most Connected Technologies): sorted by connectionCount descending, then relationshipCount
   const topHubs = [...allNodeMetrics]
-    .sort((a, b) => b.degree - a.degree)
+    .sort((a, b) => b.connectionCount - a.connectionCount || b.relationshipCount - a.relationshipCount)
     .slice(0, 10);
 
-  // Bridge Technologies: sorted by connectedLayersCount descending
-  const bridgeTechnologies = [...allNodeMetrics]
+  // Cross-Layer Technologies: connected to 3 or more distinct stack layers
+  const crossLayerTechnologies = [...allNodeMetrics]
     .filter((m) => m.connectedLayersCount >= 3)
-    .sort((a, b) => b.connectedLayersCount - a.connectedLayersCount || b.degree - a.degree)
+    .sort((a, b) => b.connectedLayersCount - a.connectedLayersCount || b.connectionCount - a.connectionCount)
     .slice(0, 10)
     .map((m) => ({
       technology: m.technology,
       connectedLayersCount: m.connectedLayersCount,
       connectedLayers: m.connectedLayers,
-      degree: m.degree,
+      connectionCount: m.connectionCount,
+      relationshipCount: m.relationshipCount,
+      degree: m.connectionCount,
     }));
 
   // Layer Distribution
@@ -514,9 +546,12 @@ export function getGraphInsights(): GraphInsightsData {
   return {
     totalNodes,
     totalEdges,
-    averageDegree,
+    averageConnections,
+    averageDegree: averageConnections,
+    averageRelationships,
     topHubs,
-    bridgeTechnologies,
+    crossLayerTechnologies,
+    bridgeTechnologies: crossLayerTechnologies,
     layerDistribution,
   };
 }

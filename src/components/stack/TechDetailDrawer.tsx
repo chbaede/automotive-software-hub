@@ -299,46 +299,50 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
         {/* Drawer Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Phase 4.0 Graph Intelligence Context Bar */}
+          {/* Graph Intelligence Context Bar */}
           {graphContext && (
             <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-white space-y-3 shadow-md">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
                   <Network className="w-4 h-4" />
-                  <span>Graph Intelligence Context</span>
+                  <span>{language === 'ko' ? '지식 그래프 연결 맥락' : 'Knowledge Graph Context'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {graphContext.isHub && (
                     <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded flex items-center gap-1">
                       <Zap className="w-2.5 h-2.5" />
-                      Graph Hub
+                      {language === 'ko' ? '핵심 허브' : 'Hub'}
                     </span>
                   )}
-                  {graphContext.isBridge && (
+                  {graphContext.isCrossLayer && (
                     <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded flex items-center gap-1">
                       <GitFork className="w-2.5 h-2.5" />
-                      Bridge Tech
+                      {language === 'ko' ? '크로스 레이어' : 'Cross-Layer'}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-2 text-center text-xs">
+              <div className="grid grid-cols-5 gap-1.5 text-center text-xs">
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">Connections</div>
-                  <div className="text-base font-bold text-cyan-400 mt-0.5">{graphContext.degree}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '연결 기술' : 'Techs'}</div>
+                  <div className="text-sm font-bold text-cyan-400 mt-0.5">{graphContext.connectionCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">Layers</div>
-                  <div className="text-base font-bold text-emerald-400 mt-0.5">{graphContext.connectedLayersCount}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '관계 링크' : 'Links'}</div>
+                  <div className="text-sm font-bold text-sky-400 mt-0.5">{graphContext.relationshipCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">Architectures</div>
-                  <div className="text-base font-bold text-purple-400 mt-0.5">{graphContext.architectures.length}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '연결 계층' : 'Layers'}</div>
+                  <div className="text-sm font-bold text-emerald-400 mt-0.5">{graphContext.connectedLayersCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">Stack Paths</div>
-                  <div className="text-base font-bold text-indigo-400 mt-0.5">{graphContext.stackPaths.length}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '아키텍처' : 'Archs'}</div>
+                  <div className="text-sm font-bold text-purple-400 mt-0.5">{graphContext.architectures.length}</div>
+                </div>
+                <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '스택 경로' : 'Paths'}</div>
+                  <div className="text-sm font-bold text-indigo-400 mt-0.5">{graphContext.stackPaths.length}</div>
                 </div>
               </div>
 

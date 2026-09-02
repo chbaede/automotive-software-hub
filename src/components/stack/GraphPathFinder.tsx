@@ -10,11 +10,13 @@ import {
   AlertCircle,
   ExternalLink,
   Layers,
+  Filter,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { stackTechnologies } from '../../data/stackTechnologies';
 import { stackLayers } from '../../data/stackLayers';
 import { findShortestPath, GraphPathStep } from '../../lib/graph';
+import { RelationshipType, RELATIONSHIP_METADATA } from '../../types/relationship';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { RelationshipBadge } from './RelationshipBadge';
@@ -26,7 +28,7 @@ interface GraphPathFinderProps {
   onClose?: () => void;
 }
 
-const PRESET_PATHS = [
+const EXAMPLE_PATHS = [
   {
     fromId: 'autosar-adaptive',
     toId: 'covesa-vss',
@@ -49,6 +51,13 @@ const PRESET_PATHS = [
   },
 ];
 
+const CORE_DEPENDENCY_TYPES: RelationshipType[] = [
+  'depends-on',
+  'runs-on',
+  'implemented-by',
+  'integrates-with',
+];
+
 export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
   initialSourceId = 'autosar-adaptive',
   initialTargetId = 'covesa-vss',
@@ -58,6 +67,7 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
   const { language } = useLanguage();
   const [sourceId, setSourceId] = useState<string>(initialSourceId);
   const [targetId, setTargetId] = useState<string>(initialTargetId);
+  const [filterMode, setFilterMode] = useState<'all' | 'core-dependencies'>('all');
 
   // Sorted list of technologies for dropdowns
   const sortedTechs = useMemo(() => {
@@ -66,8 +76,9 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
 
   const pathResult = useMemo(() => {
     if (!sourceId || !targetId) return null;
-    return findShortestPath(sourceId, targetId);
-  }, [sourceId, targetId]);
+    const relationshipTypes = filterMode === 'core-dependencies' ? CORE_DEPENDENCY_TYPES : undefined;
+    return findShortestPath(sourceId, targetId, { relationshipTypes });
+  }, [sourceId, targetId, filterMode]);
 
   const handleSwap = () => {
     setSourceId(targetId);
@@ -91,7 +102,7 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               {language === 'ko' ? '지식 그래프 최단 경로 탐색기' : 'Knowledge Graph Path Finder'}
               <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-normal border border-cyan-500/30">
-                Phase 4.0 Graph Intelligence
+                {language === 'ko' ? '지식 그래프' : 'Knowledge Graph'}
               </span>
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -155,26 +166,60 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
         </div>
       </div>
 
-      {/* Preset Suggestions */}
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-slate-500 font-medium">{language === 'ko' ? '추천 경로:' : 'Presets:'}</span>
-        {PRESET_PATHS.map((preset, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setSourceId(preset.fromId);
-              setTargetId(preset.toId);
-            }}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-colors text-xs"
-          >
-            {getLocalizedText(preset.label, language)}
-          </button>
-        ))}
+      {/* Traversal Options & Filter */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950/40 p-3 rounded-xl border border-slate-800/60 text-xs">
+        {/* Example Paths */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-slate-400 font-semibold">{language === 'ko' ? '탐색 예시:' : 'Example Paths:'}</span>
+          {EXAMPLE_PATHS.map((preset, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setSourceId(preset.fromId);
+                setTargetId(preset.toId);
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-colors text-xs"
+            >
+              {getLocalizedText(preset.label, language)}
+            </button>
+          ))}
+        </div>
+
+        {/* Relationship Filter */}
+        <div className="flex items-center gap-2">
+          <span className="text-slate-400 font-semibold flex items-center gap-1">
+            <Filter className="w-3 h-3" />
+            {language === 'ko' ? '관계 필터:' : 'Edge Filter:'}
+          </span>
+          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+            <button
+              onClick={() => setFilterMode('all')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition ${
+                filterMode === 'all'
+                  ? 'bg-cyan-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              {language === 'ko' ? '모든 관계' : 'All Relationships'}
+            </button>
+            <button
+              onClick={() => setFilterMode('core-dependencies')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition ${
+                filterMode === 'core-dependencies'
+                  ? 'bg-cyan-500 text-slate-950 font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="depends-on, runs-on, implemented-by, integrates-with"
+            >
+              {language === 'ko' ? '기술적 의존성만' : 'Core Dependencies Only'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Path Results */}
       {pathResult && (
-        <div className="space-y-4 pt-2">
+        <div className="space-y-4 pt-1">
           {pathResult.found ? (
             <div>
               {/* Path Summary Metric */}
@@ -268,19 +313,19 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
               <div>
                 <p className="font-semibold">
                   {language === 'ko'
-                    ? '두 기술 간의 직접적인 연결 경로를 찾을 수 없습니다.'
-                    : 'No graph relationship path found between the selected technologies.'}
+                    ? '선택한 조건에서 두 기술 간의 연결 경로를 찾을 수 없습니다.'
+                    : 'No graph relationship path found between the selected technologies with current filters.'}
                 </p>
                 <p className="text-amber-400/80 mt-0.5">
                   {language === 'ko'
-                    ? '다른 기술을 출발점이나 도착점으로 선택해 보세요.'
-                    : 'Try selecting a different starting or destination technology.'}
+                    ? '관계 필터를 "모든 관계"로 변경하거나 다른 기술을 선택해 보세요.'
+                    : 'Try switching the filter to "All Relationships" or selecting a different technology.'}
                 </p>
               </div>
             </div>
           )}
 
-          {/* Strict Architectural Disclaimer (Section 20 & 21) */}
+          {/* Strict Architectural Disclaimer */}
           <div className="flex items-start gap-2 bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 text-[11px] text-slate-400">
             <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
@@ -288,7 +333,7 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
                 {language === 'ko' ? '지식 그래프 탐색 경로 안내: ' : 'Graph Traversal Path Note: '}
               </strong>
               {language === 'ko'
-                ? '이 경로는 기술 간 의미론적 관계 링크(Relationships)를 알고리즘(BFS)으로 탐색한 그래프 연결 경로이며, 공식 검증된 양산 아키텍처 스택 경로(Curated Stack Path)와는 구분됩니다.'
+                ? '이 경로는 기술 간 의미론적 관계 링크(Relationships)를 알고리즘(BFS)으로 탐색한 계산된 연결 경로(Computed Graph Path)이며, 공식 검증된 양산 아키텍처 스택 경로(Curated Stack Path)와는 구분됩니다.'
                 : 'This path is computed from individual graph relationships via graph traversal (BFS) and represents a relational connection, distinct from curated Stack Paths representing validated production architectures.'}
             </p>
           </div>
