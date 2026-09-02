@@ -97,11 +97,7 @@ export const ArchitecturesPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-cyan-400" />
-              <span>10 {language === 'ko' ? '개 스택 계층 매핑' : 'Stack Layers Mapped'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>{language === 'ko' ? '100% 검증된 기술 연결' : '100% Curated Tech Stacks'}</span>
+              <span>{stackLayers.length} {language === 'ko' ? '개 스택 계층' : 'Stack Layers'}</span>
             </div>
           </div>
         </div>

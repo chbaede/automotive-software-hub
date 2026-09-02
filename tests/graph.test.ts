@@ -760,21 +760,42 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(ko.nav.architectures, 'ko.nav.architectures must exist');
   assert.ok(en.architectures.title, 'en.architectures.title must exist');
   assert.ok(ko.architectures.title, 'ko.architectures.title must exist');
+  assert.strictEqual(en.architectures.coreLayer, 'Core', 'en.architectures.coreLayer must be Core');
+  assert.strictEqual(en.architectures.crossCuttingLayer, 'Cross-cutting', 'en.architectures.crossCuttingLayer must be Cross-cutting');
+  assert.strictEqual(ko.architectures.coreLayer, '핵심 영역', 'ko.architectures.coreLayer must be 핵심 영역');
+  assert.strictEqual(ko.architectures.crossCuttingLayer, '공통 영역', 'ko.architectures.crossCuttingLayer must be 공통 영역');
+  assert.strictEqual(en.architectures.stackPathsHeader, 'Related Stack Paths', 'en.architectures.stackPathsHeader must be Related Stack Paths');
+  assert.strictEqual(ko.architectures.stackPathsHeader, '관련 스택 경로', 'ko.architectures.stackPathsHeader must be 관련 스택 경로');
   assert.ok(en.techDetail.technologyNeighborhood, 'en.techDetail.technologyNeighborhood must exist');
   assert.ok(ko.techDetail.technologyNeighborhood, 'ko.techDetail.technologyNeighborhood must exist');
   assert.ok(en.techDetail.stackPosition, 'en.techDetail.stackPosition must exist');
   assert.ok(ko.techDetail.stackPosition, 'ko.techDetail.stackPosition must exist');
 
-  // 6. Clean URL routing format verification (no hashes)
+  // 6. Verify Architecture Explorer hero metrics are data-driven
+  const fs = await import('fs');
+  const path = await import('path');
+  const archIndexFile = fs.readFileSync(path.join(process.cwd(), 'src/pages/Architectures/index.tsx'), 'utf-8');
+  assert.ok(
+    !archIndexFile.includes('100% Curated Tech Stacks'),
+    'Architecture Explorer must not contain 100% Curated Tech Stacks'
+  );
+  assert.ok(
+    !archIndexFile.includes('10 Stack Layers Mapped'),
+    'Architecture Explorer must not contain hardcoded 10 Stack Layers Mapped'
+  );
+  assert.ok(
+    archIndexFile.includes('stackLayers.length'),
+    'Architecture Explorer must use data-driven stackLayers.length'
+  );
+
+  // 7. Clean URL routing format verification (no hashes)
   architectureProfiles.forEach((profile) => {
     const archPath = `/architectures/${profile.id}`;
     assert.ok(!archPath.includes('#'), 'Architecture path must not contain hash');
     assert.strictEqual(archPath, `/architectures/${profile.id}`);
   });
 
-  // 7. Sitemap includes all architecture profiles
-  const fs = await import('fs');
-  const path = await import('path');
+  // 8. Sitemap includes all architecture profiles
   const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
   if (fs.existsSync(sitemapPath)) {
     const sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
