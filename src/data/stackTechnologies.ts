@@ -904,7 +904,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'someip-protocol',
-    licenseType: 'oss',
     name: 'SOME/IP (Scalable Service-Oriented MiddlewarE over IP)',
     layerId: 'middleware-communication',
     description: {
@@ -926,7 +925,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'mqtt-automotive',
-    licenseType: 'commercial',
     name: 'MQTT (Message Queuing Telemetry Transport)',
     layerId: 'middleware-communication',
     description: {
@@ -968,7 +966,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'dds-protocol',
-    licenseType: 'commercial',
     name: 'DDS (Data Distribution Service)',
     layerId: 'middleware-communication',
     description: {
@@ -992,7 +989,6 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'can-protocol',
-    licenseType: 'commercial',
     name: 'CAN / CAN FD Protocol (ISO 11898)',
     layerId: 'vehicle-services',
     description: {
@@ -1014,7 +1010,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'uds-protocol',
-    licenseType: 'commercial',
     name: 'UDS Protocol (Unified Diagnostic Services / ISO 14229)',
     layerId: 'vehicle-services',
     description: {
@@ -1035,7 +1030,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'doip-protocol',
-    licenseType: 'commercial',
     name: 'DoIP (Diagnostic Communication over IP / ISO 13400)',
     layerId: 'vehicle-services',
     description: {
@@ -1056,7 +1050,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'covesa-vss',
-    licenseType: 'oss',
     name: 'COVESA Vehicle Signal Specification (VSS)',
     layerId: 'vehicle-services',
     description: {
@@ -1226,7 +1219,6 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'aspice-process',
-    licenseType: 'commercial',
     name: 'Automotive SPICE (ASPICE v4.0)',
     layerId: 'process-compliance-security',
     description: {
@@ -1246,7 +1238,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'eu-cra-sbom',
-    licenseType: 'commercial',
     name: 'EU Cyber Resilience Act (CRA) & SBOM',
     layerId: 'process-compliance-security',
     description: {
@@ -1266,7 +1257,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'iso-21434-cybersecurity',
-    licenseType: 'commercial',
     name: 'ISO/SAE 21434 Automotive Cybersecurity',
     layerId: 'process-compliance-security',
     description: {
@@ -1295,7 +1285,6 @@ export const stackTechnologies: StackTechnology[] = [
       sourceUrl: 'https://www.iso.org/standard/68383.html',
       lastVerified: '2026-09-02',
     },
-    licenseType: 'commercial',
     name: 'ISO 26262 Functional Safety (ASIL A-D)',
     layerId: 'process-compliance-security',
     description: {
@@ -1316,7 +1305,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'openchain-foss-compliance',
-    licenseType: 'commercial',
     name: 'OpenChain (ISO/IEC 5230) & FOSS Compliance',
     layerId: 'process-compliance-security',
     description: {
@@ -1336,7 +1324,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'unece-r155-r156',
-    licenseType: 'commercial',
     name: 'UN ECE R155 / R156 Regulations (CSMS & SUMS)',
     layerId: 'process-compliance-security',
     description: {
@@ -1571,7 +1558,6 @@ export const stackTechnologies: StackTechnology[] = [
   // ==========================================
   {
     id: 'ota-cloud-fleet',
-    licenseType: 'commercial',
     name: 'Connected Car OTA & Fleet Platform',
     layerId: 'cloud-devops',
     description: {
@@ -1763,7 +1749,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'covesa-viss',
-    licenseType: 'oss',
     name: 'COVESA VISS (Vehicle Information Service Spec)',
     layerId: 'vehicle-services',
     description: {
@@ -1948,7 +1933,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'someip-sd',
-    licenseType: 'oss',
     name: 'SOME/IP-SD (Service Discovery)',
     layerId: 'middleware-communication',
     description: {
@@ -2036,7 +2020,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'ieee-tsn',
-    licenseType: 'oss',
     name: 'IEEE TSN (Time-Sensitive Networking)',
     layerId: 'middleware-communication',
     description: {
@@ -2055,7 +2038,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'lin-bus-protocol',
-    licenseType: 'oss',
     name: 'LIN (Local Interconnect Network)',
     layerId: 'middleware-communication',
     description: {
@@ -2074,7 +2056,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'flexray-protocol',
-    licenseType: 'oss',
     name: 'FlexRay Protocol',
     layerId: 'middleware-communication',
     description: {
@@ -2093,7 +2074,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'xcp-protocol',
-    licenseType: 'oss',
     name: 'XCP (Universal Measurement and Calibration Protocol)',
     layerId: 'middleware-communication',
     description: {
@@ -2428,7 +2408,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'asam-openscenario',
-    licenseType: 'oss',
     name: 'ASAM OpenSCENARIO',
     layerId: 'development-testing',
     description: {
@@ -2447,7 +2426,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'asam-opendrive',
-    licenseType: 'oss',
     name: 'ASAM OpenDRIVE',
     layerId: 'development-testing',
     description: {
@@ -2466,7 +2444,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'asam-xil',
-    licenseType: 'oss',
     name: 'ASAM XIL (HIL/SIL Test Automation API)',
     layerId: 'development-testing',
     description: {
