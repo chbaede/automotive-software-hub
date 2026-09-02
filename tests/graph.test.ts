@@ -351,7 +351,158 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 17 Passed: ASIL Level and Claim Type maintain semantic independence.');
 }
 
+// Test 18: Graph Intelligence Basic Queries (getTechnology, getNeighbors, getOutgoing/Incoming)
+{
+  const {
+    getTechnology,
+    getNeighbors,
+    getOutgoingRelationships,
+    getIncomingRelationships,
+    getRelationshipsForTechnology,
+  } = await import('../src/lib/graph/index.js');
+
+  const autosar = getTechnology('autosar-adaptive');
+  assert.ok(autosar, 'getTechnology should return AUTOSAR Adaptive');
+  assert.strictEqual(autosar?.id, 'autosar-adaptive');
+
+  const unknown = getTechnology('nonexistent-tech-xyz');
+  assert.strictEqual(unknown, undefined, 'getTechnology on unknown ID should return undefined');
+
+  const neighbors = getNeighbors('autosar-adaptive');
+  assert.ok(neighbors.length > 0, 'AUTOSAR Adaptive should have neighbors');
+  assert.ok(!neighbors.some((n) => n.id === 'autosar-adaptive'), 'Neighbors must not contain self');
+
+  const outgoing = getOutgoingRelationships('autosar-adaptive');
+  assert.ok(outgoing.length > 0, 'AUTOSAR Adaptive should have outgoing relationships');
+  outgoing.forEach((rel) => assert.strictEqual(rel.sourceId, 'autosar-adaptive'));
+
+  const incoming = getIncomingRelationships('autosar-adaptive');
+  assert.ok(incoming.length > 0, 'AUTOSAR Adaptive should have incoming relationships');
+  incoming.forEach((rel) => assert.strictEqual(rel.targetId, 'autosar-adaptive'));
+
+  const allRels = getRelationshipsForTechnology('autosar-adaptive');
+  assert.strictEqual(allRels.all.length, outgoing.length + incoming.length);
+
+  console.log('✅ Test 18 Passed: Graph Intelligence basic traversal & neighbor queries verified.');
+}
+
+// Test 19: Filtered Neighbors, Layer Queries & Context Resolvers
+{
+  const {
+    getNeighborsByRelationshipType,
+    getTechnologiesByLayer,
+    getArchitecturesForTechnology,
+    getStackPathsForTechnology,
+  } = await import('../src/lib/graph/index.js');
+
+  const impls = getNeighborsByRelationshipType('dds-protocol', 'implemented-by');
+  assert.ok(impls.outgoing.length > 0, 'DDS Protocol should have outgoing implemented-by neighbors');
+  assert.ok(impls.outgoing.some((t) => t.id === 'eprosima-fastdds' || t.id === 'eclipse-cyclonedds'));
+
+  const mwTechs = getTechnologiesByLayer('middleware-communication');
+  assert.ok(mwTechs.length > 0, 'Should return technologies in middleware-communication layer');
+  mwTechs.forEach((t) => assert.strictEqual(t.layerId, 'middleware-communication'));
+
+  const archs = getArchitecturesForTechnology('android-automotive-os');
+  assert.ok(archs.length > 0, 'AAOS should participate in Architecture Profiles');
+
+  const paths = getStackPathsForTechnology('nvidia-drive-thor');
+  assert.ok(paths.length > 0, 'NVIDIA DRIVE Thor should participate in Stack Paths');
+
+  console.log('✅ Test 19 Passed: Filtered relationship neighbors, layer queries & context resolvers verified.');
+}
+
+// Test 20: Node Degree, Zero-Isolation & Graph Context
+{
+  const {
+    getTechnologyDegree,
+    getTechnologyGraphContext,
+  } = await import('../src/lib/graph/index.js');
+
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  // Verify that EVERY node in the knowledge graph has >= 2 relationships (Zero Isolation)
+  stackTechnologies.forEach((tech) => {
+    const degreeInfo = getTechnologyDegree(tech.id);
+    assert.ok(
+      degreeInfo.totalDegree >= 2,
+      `Technology '${tech.id}' has degree ${degreeInfo.totalDegree} (must be >= 2)`
+    );
+    assert.ok(
+      degreeInfo.connectedLayers.length >= 1,
+      `Technology '${tech.id}' must connect to at least 1 layer`
+    );
+  });
+
+  const ctxSomeip = getTechnologyGraphContext('someip-protocol');
+  assert.ok(ctxSomeip, 'Should resolve TechnologyGraphContext for someip-protocol');
+  assert.strictEqual(ctxSomeip?.technology.id, 'someip-protocol');
+  assert.ok(ctxSomeip!.degree >= 3, 'SOME/IP should have degree >= 3');
+
+  const ctxAutosar = getTechnologyGraphContext('autosar-adaptive');
+  assert.ok(ctxAutosar, 'Should resolve TechnologyGraphContext for autosar-adaptive');
+  assert.ok(ctxAutosar!.connectedLayersCount >= 3, 'AUTOSAR Adaptive should connect across >= 3 layers');
+  assert.strictEqual(ctxAutosar!.isHub, true, 'AUTOSAR Adaptive should be identified as a graph hub');
+
+  console.log('✅ Test 20 Passed: Node degree metrics, zero-isolation & full graph context verified.');
+}
+
+// Test 21: Shortest Path Finder (BFS Traversal)
+{
+  const { findShortestPath } = await import('../src/lib/graph/index.js');
+
+  // Direct / Multi-hop Path
+  const result1 = findShortestPath('autosar-adaptive', 'covesa-vss');
+  assert.ok(result1.found, 'Path from AUTOSAR Adaptive to COVESA VSS should be found');
+  assert.ok(result1.hopCount >= 1, 'Hop count should be >= 1');
+  assert.strictEqual(result1.nodes[0].id, 'autosar-adaptive');
+  assert.strictEqual(result1.nodes[result1.nodes.length - 1].id, 'covesa-vss');
+  assert.strictEqual(result1.steps.length, result1.hopCount);
+
+  // Cross-Domain Multi-hop Path
+  const result2 = findShortestPath('nvidia-drive-thor', 'infineon-aurix');
+  assert.ok(result2.found, 'Path from NVIDIA Thor to Infineon AURIX should be found');
+  assert.ok(result2.hopCount >= 1);
+
+  // Same node path
+  const resultSame = findShortestPath('can-protocol', 'can-protocol');
+  assert.ok(resultSame.found, 'Path to same node should be found');
+  assert.strictEqual(resultSame.hopCount, 0);
+  assert.strictEqual(resultSame.nodes.length, 1);
+
+  // Invalid node path
+  const resultInvalid = findShortestPath('invalid-node-1', 'can-protocol');
+  assert.strictEqual(resultInvalid.found, false);
+  assert.strictEqual(resultInvalid.hopCount, 0);
+
+  console.log('✅ Test 21 Passed: BFS shortest path traversal across direct & multi-hop nodes verified.');
+}
+
+// Test 22: Graph Topology Insights (Top Hubs, Bridges, Average Degree)
+{
+  const { getGraphInsights } = await import('../src/lib/graph/index.js');
+
+  const insights = getGraphInsights();
+  assert.strictEqual(insights.totalNodes, 117);
+  assert.strictEqual(insights.totalEdges, 189);
+  assert.ok(insights.averageDegree >= 3.0, `Average degree should be >= 3.0 (actual: ${insights.averageDegree})`);
+  assert.ok(insights.topHubs.length > 0, 'Should have top hubs identified');
+  assert.ok(insights.bridgeTechnologies.length > 0, 'Should have bridge technologies identified');
+  assert.ok(insights.layerDistribution.length === 10, 'Should report 10 stack layers');
+
+  // Verify top hubs are sorted descending
+  for (let i = 0; i < insights.topHubs.length - 1; i++) {
+    assert.ok(
+      insights.topHubs[i].degree >= insights.topHubs[i + 1].degree,
+      'Top hubs must be sorted in descending degree order'
+    );
+  }
+
+  console.log('✅ Test 22 Passed: Graph topology insights, hub ranking & bridge detection verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   X,
   ExternalLink,
@@ -18,6 +18,8 @@ import {
   Layers,
   Network,
   ShieldCheck,
+  Zap,
+  GitFork,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile, STACK_PATH_TYPE_METADATA } from '../../types/architecture';
@@ -33,7 +35,11 @@ import { architectureProfiles } from '../../data/architectureProfiles';
 import { TechRelationshipTree } from './TechRelationshipTree';
 import { TechArchitectureMicroMap } from './TechArchitectureMicroMap';
 import { Tool } from '../../types/tool';
-import { pathsByTechnologyId, technologyById } from '../../utils/graphIndexes';
+import {
+  pathsByTechnologyId,
+  technologyById,
+  getTechnologyGraphContext,
+} from '../../utils/graphIndexes';
 
 interface TechDetailDrawerProps {
   technology: StackTechnology | null;
@@ -41,6 +47,7 @@ interface TechDetailDrawerProps {
   onSelectTech: (tech: StackTechnology) => void;
   onSelectProfile?: (profile: ArchitectureProfile) => void;
   onOpenTool?: (tool: Tool) => void;
+  onFindPathFromHere?: (techId: string) => void;
 }
 
 const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
@@ -63,6 +70,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   onSelectTech,
   onSelectProfile,
   onOpenTool,
+  onFindPathFromHere,
 }) => {
   const { language, t } = useLanguage();
 
@@ -89,6 +97,11 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     }
   }, [technology]);
 
+  const graphContext = useMemo(() => {
+    if (!technology) return null;
+    return getTechnologyGraphContext(technology.id);
+  }, [technology]);
+
   if (!technology) return null;
 
   const description = getLocalizedText(technology.description, language);
@@ -105,23 +118,23 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   // Resolve Linked Entity Objects
   const linkedTools = (technology.toolIds || [])
     .map((id) => tools.find((t) => t.id === id))
-    .filter((t): t is Tool => Boolean(t));
+    .filter((t): t is (typeof tools)[0] => Boolean(t));
 
   const linkedResources = (technology.resourceIds || [])
     .map((id) => resources.find((r) => r.id === id))
-    .filter(Boolean);
+    .filter((r): r is (typeof resources)[0] => Boolean(r));
 
   const linkedProjects = (technology.openSourceProjectIds || [])
     .map((id) => projects.find((p) => p.id === id))
-    .filter(Boolean);
+    .filter((p): p is (typeof projects)[0] => Boolean(p));
 
   const linkedCompanies = (technology.companyIds || [])
     .map((id) => companies.find((c) => c.id === id))
-    .filter(Boolean);
+    .filter((c): c is (typeof companies)[0] => Boolean(c));
 
   const linkedEvents = (technology.eventIds || [])
     .map((id) => events.find((e) => e.id === id))
-    .filter(Boolean);
+    .filter((e): e is (typeof events)[0] => Boolean(e));
 
   const handleBackHistory = () => {
     if (history.length > 1) {
@@ -286,6 +299,61 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
         {/* Drawer Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Phase 4.0 Graph Intelligence Context Bar */}
+          {graphContext && (
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-white space-y-3 shadow-md">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+                  <Network className="w-4 h-4" />
+                  <span>Graph Intelligence Context</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {graphContext.isHub && (
+                    <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded flex items-center gap-1">
+                      <Zap className="w-2.5 h-2.5" />
+                      Graph Hub
+                    </span>
+                  )}
+                  {graphContext.isBridge && (
+                    <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded flex items-center gap-1">
+                      <GitFork className="w-2.5 h-2.5" />
+                      Bridge Tech
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-semibold">Connections</div>
+                  <div className="text-base font-bold text-cyan-400 mt-0.5">{graphContext.degree}</div>
+                </div>
+                <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-semibold">Layers</div>
+                  <div className="text-base font-bold text-emerald-400 mt-0.5">{graphContext.connectedLayersCount}</div>
+                </div>
+                <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-semibold">Architectures</div>
+                  <div className="text-base font-bold text-purple-400 mt-0.5">{graphContext.architectures.length}</div>
+                </div>
+                <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-semibold">Stack Paths</div>
+                  <div className="text-base font-bold text-indigo-400 mt-0.5">{graphContext.stackPaths.length}</div>
+                </div>
+              </div>
+
+              {onFindPathFromHere && (
+                <button
+                  onClick={() => onFindPathFromHere(technology.id)}
+                  className="w-full py-2 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                >
+                  <Route className="w-3.5 h-3.5" />
+                  <span>{language === 'ko' ? '이 기술에서 다른 기술로 경로 탐색' : 'Find Graph Connection Path from Here'}</span>
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Overview */}
           <div className="space-y-2">
             <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -448,27 +516,25 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                         </p>
                       </div>
 
-                      {/* Hop Progression Flow */}
-                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-1">
-                        {path.hops.map((hop, hopIdx) => {
+                      {/* Interactive Hops */}
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 text-xs">
+                        {path.hops.map((hop, hIdx) => {
                           const hopTech = technologyById.get(hop.technologyId);
-                          if (!hopTech) return null;
-                          const isCurrentNode = hopTech.id === technology.id;
-
+                          const isCurrent = hop.technologyId === technology.id;
                           return (
-                            <React.Fragment key={`${path.id}-${hop.technologyId}-${hopIdx}`}>
+                            <React.Fragment key={`hop-${hop.technologyId}-${hIdx}`}>
                               <button
-                                onClick={() => onSelectTech(hopTech)}
-                                className={`px-2 py-1 rounded text-[11px] font-bold shrink-0 transition flex items-center gap-1 border ${
-                                  isCurrentNode
-                                    ? 'bg-brand-600 text-white border-brand-600 shadow-xs ring-2 ring-brand-500/30'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500'
+                                onClick={() => hopTech && onSelectTech(hopTech)}
+                                className={`px-2 py-1 rounded text-[11px] font-semibold transition shrink-0 ${
+                                  isCurrent
+                                    ? 'bg-indigo-600 text-white font-bold ring-2 ring-indigo-400/50'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                                 }`}
-                                title={hop.note ? getLocalizedText(hop.note, language) : hopTech.name}
+                                title={hopTech?.name}
                               >
-                                <span>{hopTech.name}</span>
+                                {hopTech ? hopTech.name : hop.technologyId}
                               </button>
-                              {hopIdx < path.hops.length - 1 && (
+                              {hIdx < path.hops.length - 1 && (
                                 <ArrowRight className="w-3 h-3 text-slate-400 shrink-0" />
                               )}
                             </React.Fragment>
@@ -482,165 +548,88 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
             );
           })()}
 
-          {/* Connected Developer Tools */}
-          {linkedTools.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                <Wrench className="w-4 h-4 text-brand-500" />
-                <span>{t.stack.linkedToolsHeader} ({linkedTools.length})</span>
-              </div>
-              <div className="grid gap-2">
-                {linkedTools.map((tool) => (
-                  <div
-                    key={tool.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                        {getLocalizedText(tool.name, language)}
-                      </div>
-                      <div className="text-[11px] text-slate-500 line-clamp-1">
-                        {getLocalizedText(tool.description, language)}
-                      </div>
-                    </div>
+          {/* Linked Ecosystem Entities (Tools, Resources, Companies, Projects, Events) */}
+          {(linkedTools.length > 0 ||
+            linkedResources.length > 0 ||
+            linkedProjects.length > 0 ||
+            linkedCompanies.length > 0 ||
+            linkedEvents.length > 0) && (
+            <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-slate-800">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                Ecosystem & Tooling
+              </h3>
 
-                    {tool.status === 'available' && onOpenTool && (
-                      <button
-                        onClick={() => onOpenTool(tool)}
-                        className="px-3 py-1.5 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition flex items-center gap-1 shrink-0 ml-3"
-                      >
-                        <Play className="w-3 h-3 fill-current" />
-                        <span>{t.stack.launchTool}</span>
-                      </button>
-                    )}
+              {linkedTools.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <Wrench className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Interactive Dev Tools ({linkedTools.length})</span>
                   </div>
-                ))}
-              </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {linkedTools.map((tool) => (
+                      <button
+                        key={tool.id}
+                        onClick={() => onOpenTool && onOpenTool(tool)}
+                        className="p-2.5 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg text-left transition flex items-center justify-between group"
+                      >
+                        <div className="min-w-0 pr-2">
+                          <div className="font-bold text-xs text-slate-900 dark:text-slate-100 group-hover:text-brand-600 truncate">
+                            {getLocalizedText(tool.name, language)}
+                          </div>
+                          <div className="text-[10px] text-slate-500 truncate">
+                            {getLocalizedText(tool.description, language)}
+                          </div>
+                        </div>
+                        <Play className="w-3 h-3 text-slate-400 group-hover:text-brand-600 shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {linkedProjects.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <Code2 className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>Open Source Repositories ({linkedProjects.length})</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {linkedProjects.map((p) => (
+                      <a
+                        key={p.id}
+                        href={p.repository}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 rounded text-xs font-medium flex items-center gap-1 transition"
+                      >
+                        <span>{p.name}</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {linkedCompanies.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <Building2 className="w-3.5 h-3.5 text-blue-500" />
+                    <span>Industry Leaders & Vendors ({linkedCompanies.length})</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {linkedCompanies.map((c) => (
+                      <span
+                        key={c.id}
+                        className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded text-xs font-medium"
+                      >
+                        {c.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
-
-          {/* Connected Resources & Standards */}
-          {linkedResources.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                <BookOpen className="w-4 h-4 text-brand-500" />
-                <span>{t.stack.linkedResourcesHeader} ({linkedResources.length})</span>
-              </div>
-              <div className="grid gap-2">
-                {linkedResources.map((res: any) => (
-                  <a
-                    key={res.id}
-                    href={res.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                        {getLocalizedText(res.name, language)}
-                      </div>
-                      <div className="text-[11px] text-slate-500">{res.source}</div>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Connected Open Source Projects */}
-          {linkedProjects.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                <Code2 className="w-4 h-4 text-brand-500" />
-                <span>{t.stack.linkedProjectsHeader} ({linkedProjects.length})</span>
-              </div>
-              <div className="grid gap-2">
-                {linkedProjects.map((p: any) => (
-                  <a
-                    key={p.id}
-                    href={p.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                        {p.name}
-                      </div>
-                      <div className="text-[11px] text-slate-500">{p.organization}</div>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Connected Companies */}
-          {linkedCompanies.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                <Building2 className="w-4 h-4 text-brand-500" />
-                <span>{t.stack.linkedCompaniesHeader} ({linkedCompanies.length})</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {linkedCompanies.map((c: any) => (
-                  <a
-                    key={c.id}
-                    href={typeof c.website === 'string' ? c.website : getLocalizedText(c.website, language)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-3 py-2 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
-                  >
-                    <span>{c.name}</span>
-                    <ExternalLink className="w-3 h-3 text-slate-400" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Connected Technical Events */}
-          {linkedEvents.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                <Calendar className="w-4 h-4 text-brand-500" />
-                <span>Relevant Technical Events ({linkedEvents.length})</span>
-              </div>
-              <div className="grid gap-2">
-                {linkedEvents.map((evt: any) => (
-                  <a
-                    key={evt.id}
-                    href={evt.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg border border-slate-200 dark:border-slate-800 transition flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                        {getLocalizedText(evt.name, language)}
-                      </div>
-                      <div className="text-[11px] text-slate-500 font-mono">
-                        {evt.startDate} · {evt.city || 'Online'}
-                      </div>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Drawer Footer */}
-        <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg transition"
-          >
-            Close Detail View
-          </button>
         </div>
       </div>
     </div>

@@ -13,10 +13,13 @@ import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
 import { ArchitectureSelector } from '../../components/stack/ArchitectureSelector';
 import { ArchitectureProfilePanel } from '../../components/stack/ArchitectureProfilePanel';
+import { GraphPathFinder } from '../../components/stack/GraphPathFinder';
+import { GraphInsightsPanel } from '../../components/stack/GraphInsightsPanel';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
 import { GoogleAdBanner } from '../../components/ads/GoogleAdBanner';
 import { getLocalizedText } from '../../types/i18n';
 import { Tool } from '../../types/tool';
+import { Network, Route } from 'lucide-react';
 
 export const StackPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -25,6 +28,9 @@ export const StackPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [layerFilter, setLayerFilter] = useState<string>(searchParams.get('layer') || 'all');
   const [topicFilter, setTopicFilter] = useState<string>(searchParams.get('topic') || 'all');
+  const [viewMode, setViewMode] = useState<'layers' | 'path-finder' | 'insights'>('layers');
+  const [pathSourceId, setPathSourceId] = useState<string>('autosar-adaptive');
+  const [pathTargetId, setPathTargetId] = useState<string>('covesa-vss');
 
   const [selectedTech, setSelectedTech] = useState<StackTechnology | null>(null);
   const [selectedProfile, setSelectedProfile] = useState<ArchitectureProfile | null>(null);
@@ -181,6 +187,65 @@ export const StackPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Phase 4.0 Graph Intelligence Mode Switcher */}
+      <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
+        <button
+          onClick={() => setViewMode('layers')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+            viewMode === 'layers'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-800'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Layers className="w-4 h-4 text-brand-500" />
+          <span>{language === 'ko' ? '스택 & 레이어 탐색기' : 'Stack & Layer Explorer'}</span>
+        </button>
+
+        <button
+          onClick={() => setViewMode('path-finder')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+            viewMode === 'path-finder'
+              ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-sm border border-slate-200 dark:border-slate-800'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Route className="w-4 h-4 text-cyan-500" />
+          <span>{language === 'ko' ? '최단 경로 탐색기 (Path Finder)' : 'Graph Path Finder'}</span>
+        </button>
+
+        <button
+          onClick={() => setViewMode('insights')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+            viewMode === 'insights'
+              ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm border border-slate-200 dark:border-slate-800'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Network className="w-4 h-4 text-purple-500" />
+          <span>{language === 'ko' ? '그래프 인사이트 (Hubs & Bridges)' : 'Graph Topology Insights'}</span>
+        </button>
+      </div>
+
+      {/* Conditional View Mode Rendering */}
+      {viewMode === 'path-finder' && (
+        <GraphPathFinder
+          initialSourceId={pathSourceId}
+          initialTargetId={pathTargetId}
+          onSelectTech={handleSelectTech}
+        />
+      )}
+
+      {viewMode === 'insights' && (
+        <GraphInsightsPanel
+          onSelectTech={handleSelectTech}
+          onFindPath={(src, tgt) => {
+            setPathSourceId(src);
+            setPathTargetId(tgt);
+            setViewMode('path-finder');
+          }}
+        />
+      )}
+
       {/* Architecture Profile Selector Bar */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <ArchitectureSelector
@@ -334,6 +399,10 @@ export const StackPage: React.FC = () => {
         onSelectTech={handleSelectTech}
         onSelectProfile={handleSelectProfile}
         onOpenTool={(tool) => setActiveTool(tool)}
+        onFindPathFromHere={(techId) => {
+          setPathSourceId(techId);
+          setViewMode('path-finder');
+        }}
       />
 
       {/* Google AdSense Banner (Non-intrusive bottom unit) */}

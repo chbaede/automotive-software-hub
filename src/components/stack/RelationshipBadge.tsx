@@ -1,13 +1,18 @@
 import React from 'react';
-import { RelationshipType } from '../../types/relationship';
+import { RelationshipType, RelationshipConfidence } from '../../types/relationship';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface RelationshipBadgeProps {
   type: RelationshipType;
+  confidence?: RelationshipConfidence;
   className?: string;
 }
 
-export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({ type, className = '' }) => {
+export const RelationshipBadge: React.FC<RelationshipBadgeProps> = ({
+  type,
+  confidence,
+  className = '',
+}) => {
   const { t } = useLanguage();
 
   const getStyle = (relType: RelationshipType) => {

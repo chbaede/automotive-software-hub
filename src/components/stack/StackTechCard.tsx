@@ -2,7 +2,7 @@ import React from 'react';
 import { StackTechnology } from '../../types/stack';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { Layers, Sparkles } from 'lucide-react';
+import { Layers, Sparkles, Network } from 'lucide-react';
 
 interface StackTechCardProps {
   technology: StackTechnology;
@@ -146,7 +146,7 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
       </div>
 
       <div
-        className={`flex flex-wrap gap-1 pt-2 border-t ${
+        className={`flex items-center justify-between gap-1 pt-2 border-t ${
           isSelected
             ? 'border-brand-500/50'
             : isPlatform
@@ -154,20 +154,38 @@ export const StackTechCard: React.FC<StackTechCardProps> = ({
             : 'border-slate-100 dark:border-slate-800/80'
         }`}
       >
-        {technology.categories.slice(0, 2).map((cat) => (
-          <span
-            key={cat}
-            className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${
-              isSelected
-                ? 'bg-brand-700 text-brand-100'
-                : cat === 'Automotive Platform' || cat === 'Linux Platform'
-                ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-            }`}
-          >
-            {cat}
-          </span>
-        ))}
+        <div className="flex flex-wrap gap-1">
+          {technology.categories.slice(0, 2).map((cat) => (
+            <span
+              key={cat}
+              className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${
+                isSelected
+                  ? 'bg-brand-700 text-brand-100'
+                  : cat === 'Automotive Platform' || cat === 'Linux Platform'
+                  ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              {cat}
+            </span>
+          ))}
+        </div>
+
+        {(() => {
+          const totalLinks = (technology.relatedTechnologyIds?.length || 0);
+          return (
+            <span
+              className={`text-[9px] font-mono px-1.5 py-0.5 rounded flex items-center gap-1 ${
+                isSelected
+                  ? 'text-brand-200'
+                  : 'text-slate-400 dark:text-slate-500'
+              }`}
+              title="Graph Link Connections"
+            >
+              <Network className="w-2.5 h-2.5" />
+            </span>
+          );
+        })()}
       </div>
     </button>
   );
