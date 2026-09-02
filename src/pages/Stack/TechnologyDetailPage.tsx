@@ -47,6 +47,10 @@ import {
 } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { getTechnologyDiscoveryResult } from '../../lib/graph';
+import { ExploreNextSection } from '../../components/discovery/ExploreNextSection';
+import { BridgeTechnologiesSection } from '../../components/discovery/BridgeTechnologiesSection';
+import { RelationshipExplorerSection } from '../../components/discovery/RelationshipExplorerSection';
 
 const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
   const [year, month, day] = isoDate.split('-');
@@ -87,6 +91,11 @@ export const TechnologyDetailPage: React.FC = () => {
   // Graph context
   const graphContext = useMemo(() => {
     return technology ? getTechnologyGraphContext(technology.id) : null;
+  }, [technology]);
+
+  // Full Knowledge Graph Discovery Result (Phase 8.1 / 8.2 Engine)
+  const discoveryResult = useMemo(() => {
+    return technology ? getTechnologyDiscoveryResult(technology.id) : null;
   }, [technology]);
 
   const architectures = useMemo(() => {
@@ -440,7 +449,32 @@ export const TechnologyDetailPage: React.FC = () => {
         />
       </div>
 
-      {/* Technology Neighborhood Section (Cards Grid vs Interactive Graph Map) */}
+      {/* 1. Explore Next & Architectural Alternatives Section (Discovery Hub) */}
+      {discoveryResult && (
+        <ExploreNextSection
+          currentTech={technology}
+          recommendations={discoveryResult.recommendations}
+          alternatives={discoveryResult.alternatives}
+        />
+      )}
+
+      {/* 2. Cross-Layer Bridge Technologies Section */}
+      {discoveryResult && (
+        <BridgeTechnologiesSection
+          currentTech={technology}
+          bridgeTechnologies={discoveryResult.bridgeTechnologies}
+        />
+      )}
+
+      {/* 3. Knowledge Graph Relationship Explorer Section (Semantic Grouping & Confidence) */}
+      {discoveryResult && (
+        <RelationshipExplorerSection
+          currentTech={technology}
+          discoveryResult={discoveryResult}
+        />
+      )}
+
+      {/* 4. Interactive Graph Map & Explorer */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">

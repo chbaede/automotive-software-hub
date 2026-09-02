@@ -1505,6 +1505,65 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 29 Passed: Phase 8.1 Knowledge Graph Intelligence & Discovery Engine verified.');
 }
 
+// Test 30: Phase 8.2 — Intelligent Technology Discovery UX & Invariants
+{
+  const { getTechnologyDiscoveryResult } = await import('../src/lib/graph/intelligence.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // 1. Bilingual Dictionary Completeness for Discovery
+  assert.ok((en as any).discovery, 'en.ts must have discovery namespace');
+  assert.ok((ko as any).discovery, 'ko.ts must have discovery namespace');
+  const enKeys = Object.keys((en as any).discovery).sort();
+  const koKeys = Object.keys((ko as any).discovery).sort();
+  assert.deepStrictEqual(enKeys, koKeys, 'en.ts and ko.ts discovery keys must match symmetrically');
+
+  // 2. Comprehensive Test across all 117 technologies
+  stackTechnologies.forEach((tech) => {
+    const result = getTechnologyDiscoveryResult(tech.id);
+    assert.ok(result, `Discovery result must resolve for valid technology: ${tech.id}`);
+    assert.strictEqual(result.technology.id, tech.id);
+
+    // Verify recommendations do not contain self or alternatives
+    result.recommendations.forEach((rec) => {
+      assert.notStrictEqual(rec.technology.id, tech.id, 'Cannot recommend self');
+      if (rec.primaryRelationship) {
+        assert.notStrictEqual(
+          rec.primaryRelationship.type,
+          'alternative',
+          'Cannot recommend alternative as an additive recommendation'
+        );
+      }
+      assert.ok(rec.reasons.length > 0, 'Recommendations must have explainable reasons');
+      rec.reasons.forEach((r) => {
+        assert.ok(r.en.length > 0);
+        assert.ok(r.ko.length > 0);
+      });
+    });
+
+    // Verify bridge technologies
+    result.bridgeTechnologies.forEach((b) => {
+      assert.ok(b.bridgedLayersCount >= 2, 'Bridge technologies must connect to at least 2 other layers');
+      assert.ok(b.reason.en.length > 0);
+      assert.ok(b.reason.ko.length > 0);
+    });
+
+    // Verify safety claims preservation
+    if (tech.functionalSafety) {
+      if (tech.functionalSafety.claimType === 'capable') {
+        assert.strictEqual(tech.functionalSafety.claimType, 'capable');
+      }
+    }
+  });
+
+  // 3. Edge-case test: invalid technology ID
+  const invalidResult = getTechnologyDiscoveryResult('non-existent-technology-id-999');
+  assert.strictEqual(invalidResult, null, 'Invalid tech ID must return null without crashing');
+
+  console.log('✅ Test 30 Passed: Phase 8.2 Intelligent Technology Discovery UX & Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

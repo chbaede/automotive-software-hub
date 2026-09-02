@@ -41,6 +41,9 @@ import {
   technologyById,
   getTechnologyGraphContext,
 } from '../../utils/graphIndexes';
+import { getTechnologyDiscoveryResult } from '../../lib/graph';
+import { ExploreNextSection } from '../discovery/ExploreNextSection';
+import { BridgeTechnologiesSection } from '../discovery/BridgeTechnologiesSection';
 
 interface TechDetailDrawerProps {
   technology: StackTechnology | null;
@@ -101,6 +104,11 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   const graphContext = useMemo(() => {
     if (!technology) return null;
     return getTechnologyGraphContext(technology.id);
+  }, [technology]);
+
+  const discoveryResult = useMemo(() => {
+    if (!technology) return null;
+    return getTechnologyDiscoveryResult(technology.id);
   }, [technology]);
 
   if (!technology) return null;
@@ -491,6 +499,25 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
           {/* Interactive Architecture Micro-Map */}
           <TechArchitectureMicroMap technology={technology} onSelectTech={onSelectTech} />
+
+          {/* Explore Next & Architectural Alternatives Section */}
+          {discoveryResult && (
+            <ExploreNextSection
+              currentTech={technology}
+              recommendations={discoveryResult.recommendations}
+              alternatives={discoveryResult.alternatives}
+              onSelectTech={onSelectTech}
+            />
+          )}
+
+          {/* Cross-Layer Bridge Technologies */}
+          {discoveryResult && (
+            <BridgeTechnologiesSection
+              currentTech={technology}
+              bridgeTechnologies={discoveryResult.bridgeTechnologies}
+              onSelectTech={onSelectTech}
+            />
+          )}
 
           {/* Technology Semantic Relationship Node Tree (Grouped & Directional) */}
           <TechRelationshipTree technology={technology} onSelectTech={onSelectTech} />
