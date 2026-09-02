@@ -79,7 +79,9 @@ export const LayerTechSelector: React.FC<LayerTechSelectorProps> = ({
         </div>
 
         <span className="text-[11px] font-mono text-slate-400">
-          {layerTechs.length} {language === 'ko' ? '개 기술' : 'techs'}
+          {layerTechs.length === 1
+            ? t.stackBuilder.technologiesCountSingular
+            : t.stackBuilder.technologiesCount.replace('{count}', String(layerTechs.length))}
         </span>
       </div>
 
@@ -112,12 +114,13 @@ export const LayerTechSelector: React.FC<LayerTechSelectorProps> = ({
               onClick={() => setIsOpen(!isOpen)}
               className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
             >
-              {language === 'ko' ? '변경' : 'Change'}
+              {t.stackBuilder.change}
             </button>
             <button
               onClick={() => onSelect(undefined)}
               className="p-1 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
               title={t.stackBuilder.removeSelection}
+              aria-label={t.stackBuilder.removeSelection}
             >
               <X className="w-4 h-4" />
             </button>
@@ -188,7 +191,7 @@ export const LayerTechSelector: React.FC<LayerTechSelectorProps> = ({
               })
             ) : (
               <p className="text-xs text-slate-400 text-center py-3">
-                {language === 'ko' ? '일치하는 기술이 없습니다.' : 'No matching technologies found.'}
+                {t.stackBuilder.noTechsFound}
               </p>
             )}
           </div>

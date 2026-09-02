@@ -26,16 +26,28 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
           </h3>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          {matches.length} {language === 'ko' ? '개 경로 연계' : 'Paths Related'}
+          {matches.length === 1
+            ? t.stackBuilder.pathsRelatedSingular
+            : t.stackBuilder.pathsRelated.replace('{count}', String(matches.length))}
         </span>
       </div>
 
       <div className="space-y-3">
-        {matches.slice(0, 3).map(({ path, matchedHopsCount, totalHopsCount, matchedTechnologies }) => {
+        {matches.slice(0, 3).map(({ path, matchedHopsCount, totalHopsCount, matchedTechnologies, matchStrength }) => {
           const pathName = getLocalizedText(path.name, language);
           const pathDesc = getLocalizedText(path.description, language);
           const pathTypeMeta = path.pathType ? STACK_PATH_TYPE_METADATA[path.pathType] : undefined;
           const matchedIdSet = new Set(matchedTechnologies.map((t) => t.id));
+
+          let strengthLabel = t.stackBuilder.weakMatch;
+          let strengthColor = 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20';
+          if (matchStrength === 'strong') {
+            strengthLabel = t.stackBuilder.strongMatch;
+            strengthColor = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20';
+          } else if (matchStrength === 'related') {
+            strengthLabel = t.stackBuilder.relatedMatch;
+            strengthColor = 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20';
+          }
 
           return (
             <div
@@ -50,6 +62,9 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
                         {getLocalizedText(pathTypeMeta.label, language)}
                       </span>
                     )}
+                    <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded-full border font-bold ${strengthColor}`}>
+                      {strengthLabel}
+                    </span>
                     <h4 className="font-bold text-xs text-slate-900 dark:text-white">
                       {pathName}
                     </h4>

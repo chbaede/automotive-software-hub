@@ -289,7 +289,7 @@ export const TechnologyDetailPage: React.FC = () => {
             {graphContext?.isHub && (
               <span className="px-2.5 py-1 text-xs font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-md flex items-center gap-1">
                 <Zap className="w-3.5 h-3.5" />
-                <span>{language === 'ko' ? '핵심 허브' : 'Hub'}</span>
+                <span>{t.stackBuilder.hubBadge}</span>
               </span>
             )}
 
@@ -297,7 +297,7 @@ export const TechnologyDetailPage: React.FC = () => {
             {graphContext?.isCrossLayer && (
               <span className="px-2.5 py-1 text-xs font-bold uppercase bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 rounded-md flex items-center gap-1">
                 <GitFork className="w-3.5 h-3.5" />
-                <span>{language === 'ko' ? '크로스 레이어' : 'Cross-Layer'}</span>
+                <span>{t.stackBuilder.crossLayerBadge}</span>
               </span>
             )}
 
@@ -524,7 +524,7 @@ export const TechnologyDetailPage: React.FC = () => {
             to="/architectures"
             className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0"
           >
-            <span>{language === 'ko' ? '전체 아키텍처 보기' : 'All Architectures'}</span>
+            <span>{t.stackBuilder.allArchitectures}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>

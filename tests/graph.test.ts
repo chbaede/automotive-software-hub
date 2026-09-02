@@ -976,6 +976,114 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 25 Passed: Automotive Stack Builder validation, architecture/path matching & URL state verified.');
 }
 
+// Test 26: Phase 7.2 Product Maturity — Canonical Layer Adjacency, Composite Architecture Scoring, Path Match Strength, and Candidate Reasoning
+{
+  const {
+    validateStack,
+    matchArchitectures,
+    matchStackPaths,
+    getSuggestedCandidates,
+    decodeStackFromSearchParams,
+    CORE_STACK_LAYER_IDS,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // 1. Canonical Layer Adjacency: Non-adjacent layers do not generate false adjacent warnings
+  // hardware-compute and operating-systems with hypervisor-virtualization skipped
+  const skippedLayerSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'operating-systems': 'qnx-neutrino',
+  };
+  const skippedValidation = validateStack(skippedLayerSelection);
+  // There should NOT be any warning with isAdjacentLayerPair = true because they are separated by Hypervisor
+  const adjacentWarnings = skippedValidation.items.filter(
+    (item) => item.status === 'warning' && item.isAdjacentLayerPair
+  );
+  assert.strictEqual(
+    adjacentWarnings.length,
+    0,
+    'Skipped intermediate layers must not trigger false adjacent layer warnings'
+  );
+
+  // 2. Canonical Layer Adjacency: Truly adjacent core layers are properly checked
+  const trulyAdjacentSelection = {
+    'hardware-compute': 'horizon-robotics-journey',
+    'hypervisor-virtualization': 'xen-hypervisor',
+  };
+  const trulyAdjacentValidation = validateStack(trulyAdjacentSelection);
+  // Either verified or warning depending on graph, but if warning, isAdjacentLayerPair must be true
+  trulyAdjacentValidation.items
+    .filter((i) => i.status === 'warning')
+    .forEach((item) => {
+      assert.strictEqual(item.isAdjacentLayerPair, true);
+    });
+
+  // 3. Architecture Matching Composite Scoring
+  const archMatchResults = matchArchitectures({
+    'hardware-compute': 'nvidia-drive-thor',
+    'operating-systems': 'qnx-neutrino',
+  });
+  assert.ok(archMatchResults.length > 0);
+  archMatchResults.forEach((res) => {
+    assert.ok(typeof res.overlapPercentage === 'number');
+    assert.ok(typeof res.profileCoveragePercentage === 'number');
+    assert.ok(typeof res.matchScore === 'number');
+    // Technology overlap must not be falsely conflated with architecture coverage
+    assert.ok(res.overlapPercentage >= 0 && res.overlapPercentage <= 100);
+    assert.ok(res.profileCoveragePercentage >= 0 && res.profileCoveragePercentage <= 100);
+  });
+
+  // 4. Stack Path Match Strength Classifications
+  const pathMatches = matchStackPaths({
+    'hardware-compute': 'qualcomm-snapdragon-ride',
+    'operating-systems': 'android-automotive-os',
+    'application-experience': 'autoware-universe',
+  });
+  assert.ok(pathMatches.length > 0);
+  pathMatches.forEach((pm) => {
+    assert.ok(['strong', 'related', 'weak'].includes(pm.matchStrength));
+  });
+
+  // 5. Candidate Recommendation Reasoning
+  const candidates = getSuggestedCandidates({
+    'operating-systems': 'qnx-neutrino',
+  });
+  assert.ok(candidates.length > 0);
+  candidates.forEach((cand) => {
+    assert.ok(cand.reason.en.length > 0, 'Candidate must have clear English reason');
+    assert.ok(cand.reason.ko.length > 0, 'Candidate must have clear Korean reason');
+    assert.notStrictEqual(cand.relationship.type, 'alternative');
+  });
+
+  // 6. Robust URL Deserialization with malformed and unknown query keys
+  const malformedParams = new URLSearchParams(
+    'foo=bar&invalid=123&hardware-compute=nvidia-drive-thor&operating-systems=unknown-os-id&bad=true'
+  );
+  const decodedClean = decodeStackFromSearchParams(malformedParams);
+  assert.strictEqual(decodedClean['hardware-compute'], 'nvidia-drive-thor');
+  assert.strictEqual(decodedClean['operating-systems'], undefined);
+  assert.strictEqual(Object.keys(decodedClean).length, 1);
+
+  // 7. i18n Dictionary Symmetry
+  const enStackKeys = Object.keys(en.stackBuilder);
+  const koStackKeys = Object.keys(ko.stackBuilder);
+  assert.strictEqual(
+    enStackKeys.length,
+    koStackKeys.length,
+    'en and ko stackBuilder dictionaries must have identical key count'
+  );
+  enStackKeys.forEach((key) => {
+    assert.ok(
+      key in ko.stackBuilder,
+      `Missing Korean translation key for stackBuilder.${key}`
+    );
+  });
+
+  console.log('✅ Test 26 Passed: Phase 7.2 Product Maturity, Canonical Adjacency, Composite Scoring & i18n verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

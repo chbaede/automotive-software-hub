@@ -64,9 +64,12 @@ export interface ArchitectureMatchResult {
   profile: ArchitectureProfile;
   matchedTechnologies: StackTechnology[];
   missingTechnologies: StackTechnology[];
-  overlapPercentage: number; // matched / selected
-  profileCoveragePercentage: number; // matched / profile total
+  overlapPercentage: number; // matched / selected (what % of user's selection matches this architecture)
+  profileCoveragePercentage: number; // matched / profile total (what % of this architecture is covered)
+  matchScore: number; // Explainable composite ranking score
 }
+
+export type PathMatchStrength = 'strong' | 'related' | 'weak';
 
 export interface StackPathMatchResult {
   path: StackPath;
@@ -74,6 +77,7 @@ export interface StackPathMatchResult {
   totalHopsCount: number;
   matchedTechnologies: StackTechnology[];
   overlapPercentage: number;
+  matchStrength: PathMatchStrength;
 }
 
 export interface TechnologyCandidate {
@@ -82,6 +86,7 @@ export interface TechnologyCandidate {
   connectedToTech: StackTechnology;
   relationship: TechnologyRelationship;
   priority: number;
+  reason: LocalizedText;
 }
 
 /**
@@ -180,30 +185,34 @@ export function validateStack(selection: StackSelection): StackValidationSummary
     }
   }
 
-  // 2. Check adjacent selected core layers for missing verified relationships
-  const selectedCoreEntries = CORE_STACK_LAYER_IDS.map((layerId) => {
-    const techId = selection[layerId];
-    return techId ? technologyById.get(techId) : undefined;
-  }).filter((tech): tech is StackTechnology => Boolean(tech));
+  // 2. Check genuinely adjacent canonical core layers where BOTH layers are populated
+  for (let i = 0; i < CORE_STACK_LAYER_IDS.length - 1; i++) {
+    const upperLayerId = CORE_STACK_LAYER_IDS[i];
+    const lowerLayerId = CORE_STACK_LAYER_IDS[i + 1];
+    const upperTechId = selection[upperLayerId];
+    const lowerTechId = selection[lowerLayerId];
 
-  for (let i = 0; i < selectedCoreEntries.length - 1; i++) {
-    const upperTech = selectedCoreEntries[i];
-    const lowerTech = selectedCoreEntries[i + 1];
-    const pairKey = [upperTech.id, lowerTech.id].sort().join('::');
+    if (upperTechId && lowerTechId) {
+      const upperTech = technologyById.get(upperTechId);
+      const lowerTech = technologyById.get(lowerTechId);
 
-    if (!processedPairs.has(pairKey)) {
-      processedPairs.add(pairKey);
-      items.push({
-        id: pairKey,
-        sourceTech: upperTech,
-        targetTech: lowerTech,
-        status: 'warning',
-        isAdjacentLayerPair: true,
-        explanation: {
-          en: `No explicit verified relationship documented between ${upperTech.name} and ${lowerTech.name}. This indicates unverified combination evidence, but does not imply incompatibility.`,
-          ko: `${upperTech.name}와(과) ${lowerTech.name} 사이에 지식 그래프상 명시적으로 등록된 검증 관계가 없습니다. 이는 결합 근거가 미검증되었음을 의미하며, 기술적 비호환을 의미하지 않습니다.`,
-        },
-      });
+      if (upperTech && lowerTech) {
+        const pairKey = [upperTech.id, lowerTech.id].sort().join('::');
+        if (!processedPairs.has(pairKey)) {
+          processedPairs.add(pairKey);
+          items.push({
+            id: pairKey,
+            sourceTech: upperTech,
+            targetTech: lowerTech,
+            status: 'warning',
+            isAdjacentLayerPair: true,
+            explanation: {
+              en: `No explicit verified relationship documented between ${upperTech.name} and ${lowerTech.name} across adjacent layers. This indicates unverified combination evidence, but does not imply incompatibility.`,
+              ko: `인접 계층의 ${upperTech.name}와(과) ${lowerTech.name} 사이에 지식 그래프상 명시적으로 등록된 검증 관계가 없습니다. 이는 결합 근거가 미검증되었음을 의미하며, 기술적 비호환을 의미하지 않습니다.`,
+            },
+          });
+        }
+      }
     }
   }
 
@@ -232,6 +241,8 @@ export function validateStack(selection: StackSelection): StackValidationSummary
 
 /**
  * Calculates overlap and similarity against canonical architecture profiles.
+ * Uses an explainable deterministic composite ranking score considering
+ * both technology overlap (precision) and profile coverage (recall).
  */
 export function matchArchitectures(selection: StackSelection): ArchitectureMatchResult[] {
   const selectedTechIds = Object.values(selection).filter((id): id is string => Boolean(id));
@@ -264,20 +275,30 @@ export function matchArchitectures(selection: StackSelection): ArchitectureMatch
         (matchedTechs.length / Math.max(profile.technologyIds.length, 1)) * 100
       );
 
+      // Composite match score:
+      // - overlapPercentage (60% weight): precision of user's stack matching this profile
+      // - profileCoveragePercentage (40% weight): completeness of the profile
+      // - bonus for absolute matched technology count
+      const matchScore = Math.round(
+        overlapPercentage * 0.6 + profileCoveragePercentage * 0.4 + matchedTechs.length * 3
+      );
+
       results.push({
         profile,
         matchedTechnologies: matchedTechs,
         missingTechnologies: missingTechs,
         overlapPercentage,
         profileCoveragePercentage,
+        matchScore,
       });
     }
   });
 
   return results.sort(
     (a, b) =>
-      b.overlapPercentage - a.overlapPercentage ||
-      b.matchedTechnologies.length - a.matchedTechnologies.length
+      b.matchScore - a.matchScore ||
+      b.matchedTechnologies.length - a.matchedTechnologies.length ||
+      b.overlapPercentage - a.overlapPercentage
   );
 }
 
@@ -305,12 +326,20 @@ export function matchStackPaths(selection: StackSelection): StackPathMatchResult
 
     if (matchedTechs.length >= 1) {
       const overlapPercentage = Math.round((matchedTechs.length / path.hops.length) * 100);
+      let matchStrength: PathMatchStrength = 'weak';
+      if (overlapPercentage >= 60 || matchedTechs.length >= 3) {
+        matchStrength = 'strong';
+      } else if (overlapPercentage >= 30 || matchedTechs.length >= 2) {
+        matchStrength = 'related';
+      }
+
       results.push({
         path,
         matchedHopsCount: matchedTechs.length,
         totalHopsCount: path.hops.length,
         matchedTechnologies: matchedTechs,
         overlapPercentage,
+        matchStrength,
       });
     }
   });
@@ -358,19 +387,26 @@ export function getSuggestedCandidates(selection: StackSelection): TechnologyCan
       const neighborTech = technologyById.get(neighborId);
       if (!neighborTech) return;
 
+      // Do not recommend technologies for layers that are already populated
       if (selection[neighborTech.layerId]) return;
+      // Exclude 'alternative' from additive suggestions
       if (edge.relationship.type === 'alternative') return;
 
       const priority = RELATIONSHIP_PRIORITY[edge.relationship.type] || 0;
       const existing = candidatesMap.get(neighborId);
 
       if (!existing || existing.priority < priority) {
+        const relType = edge.relationship.type;
         candidatesMap.set(neighborId, {
           technology: neighborTech,
           layerId: neighborTech.layerId,
           connectedToTech: currentTech,
           relationship: edge.relationship,
           priority,
+          reason: {
+            en: `Connected via ${relType} with ${currentTech.name}`,
+            ko: `${currentTech.name}와(과) ${relType} 관계로 연계`,
+          },
         });
       }
     });

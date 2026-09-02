@@ -29,12 +29,14 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
           </h3>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          {matches.length} {language === 'ko' ? '개 프로필 일치' : 'Profiles Matched'}
+          {matches.length === 1
+            ? t.stackBuilder.profilesMatchedSingular
+            : t.stackBuilder.profilesMatched.replace('{count}', String(matches.length))}
         </span>
       </div>
 
       <div className="space-y-3">
-        {matches.slice(0, 4).map(({ profile, matchedTechnologies, missingTechnologies, overlapPercentage }) => {
+        {matches.slice(0, 4).map(({ profile, matchedTechnologies, missingTechnologies, overlapPercentage, profileCoveragePercentage }) => {
           const profileName = getLocalizedText(profile.name, language);
           const typeMeta = profile.profileType
             ? ARCHITECTURE_PROFILE_TYPE_METADATA[profile.profileType]
@@ -59,23 +61,45 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
                   </div>
                 </div>
 
-                {/* Overlap Badge */}
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-mono font-extrabold text-indigo-600 dark:text-indigo-400">
-                    {overlapPercentage}%
-                  </span>
-                  <div className="text-[9px] text-slate-400 font-mono">
-                    {t.stackBuilder.techOverlap}
+                {/* Overlap & Coverage Badges */}
+                <div className="flex items-center gap-3 shrink-0 text-right">
+                  <div>
+                    <span className="text-xs font-mono font-extrabold text-indigo-600 dark:text-indigo-400">
+                      {overlapPercentage}%
+                    </span>
+                    <div className="text-[9px] text-slate-400 font-mono">
+                      {t.stackBuilder.techOverlap}
+                    </div>
+                  </div>
+                  <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
+                    <span className="text-xs font-mono font-extrabold text-cyan-600 dark:text-cyan-400">
+                      {profileCoveragePercentage}%
+                    </span>
+                    <div className="text-[9px] text-slate-400 font-mono">
+                      {t.stackBuilder.archCoverage}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Progress Bar */}
-              <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min(overlapPercentage, 100)}%` }}
-                />
+              {/* Dual Progress Bars */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(overlapPercentage, 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full bg-cyan-600 dark:bg-cyan-500 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(profileCoveragePercentage, 100)}%` }}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Matched & Missing Tech Chips */}

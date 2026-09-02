@@ -29,16 +29,19 @@ export const SuggestedTechPanel: React.FC<SuggestedTechPanelProps> = ({
           </h3>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          {candidates.length} {language === 'ko' ? '개 추천' : 'Candidates'}
+          {candidates.length === 1
+            ? t.stackBuilder.candidatesCountSingular
+            : t.stackBuilder.candidatesCount.replace('{count}', String(candidates.length))}
         </span>
       </div>
 
       <div className="space-y-2.5">
-        {candidates.map(({ technology, layerId, connectedToTech, relationship }) => {
+        {candidates.map(({ technology, layerId, connectedToTech, relationship, reason }) => {
           const layer = stackLayers.find((l) => l.id === layerId);
           const layerName = layer ? getLocalizedText(layer.name, language) : layerId;
           const relMeta = RELATIONSHIP_METADATA[relationship.type];
           const relLabel = relMeta ? getLocalizedText(relMeta.label, language) : relationship.type;
+          const reasonText = getLocalizedText(reason, language);
 
           return (
             <div
@@ -55,10 +58,8 @@ export const SuggestedTechPanel: React.FC<SuggestedTechPanelProps> = ({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
-                  <span>{relLabel}</span>
-                  <ArrowRight className="w-2.5 h-2.5 text-slate-400" />
-                  <span className="truncate">{connectedToTech.name}</span>
+                <div className="text-[10px] text-slate-500 line-clamp-1">
+                  {reasonText}
                 </div>
               </div>
 

@@ -31,7 +31,9 @@ export const StackPreviewLadder: React.FC<StackPreviewLadderProps> = ({
           </h3>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          {Object.keys(selection).length} / {CORE_STACK_LAYER_IDS.length} {language === 'ko' ? '계층 선택됨' : 'Layers Selected'}
+          {t.stackBuilder.layersSelected
+            .replace('{selected}', String(Object.keys(selection).length))
+            .replace('{total}', String(CORE_STACK_LAYER_IDS.length))}
         </span>
       </div>
 

@@ -101,7 +101,7 @@ export const StackBuilderPage: React.FC = () => {
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
             <Wrench className="w-3.5 h-3.5" />
-            <span>{language === 'ko' ? '인터랙티브 차량 스택 빌더' : 'Interactive Stack Builder'}</span>
+            <span>{t.stackBuilder.title}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
@@ -134,7 +134,9 @@ export const StackBuilderPage: React.FC = () => {
             )}
 
             <span className="text-xs font-mono text-slate-400 pl-2">
-              {totalSelectedCount} {language === 'ko' ? '개 기술 선택됨' : 'Technologies Selected'}
+              {totalSelectedCount === 1
+                ? t.stackBuilder.technologiesCountSingular
+                : t.stackBuilder.technologiesCount.replace('{count}', String(totalSelectedCount))}
             </span>
           </div>
         </div>
