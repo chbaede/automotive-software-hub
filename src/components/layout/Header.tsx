@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Search, Globe, Github, Menu, X, Cpu } from 'lucide-react';
+import { Search, Globe, Github, Menu, X, Cpu, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useTheme } from '../../theme/ThemeContext';
 import { GlobalSearchModal } from '../search/GlobalSearchModal';
 
 interface HeaderProps {
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
   const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -102,10 +104,24 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
-              title="Switch Language"
+              title={language === 'en' ? 'Switch to Korean' : '영문으로 변경'}
             >
               <Globe className="w-4 h-4 text-brand-500" />
               <span className="font-mono">{language === 'en' ? 'EN' : '한국어'}</span>
+            </button>
+
+            {/* Dark / Light Mode Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
+              title={theme === 'dark' ? (language === 'ko' ? '라이트 모드로 전환' : 'Switch to Light Mode') : (language === 'ko' ? '다크 모드로 전환' : 'Switch to Dark Mode')}
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600" />
+              )}
             </button>
 
             {/* GitHub Repo */}

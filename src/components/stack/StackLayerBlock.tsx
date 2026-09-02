@@ -50,10 +50,10 @@ const themeStyles: Record<string, { block: string; header: string; badge: string
     title: 'text-amber-950 dark:text-amber-100',
   },
   slate: {
-    block: 'bg-slate-900 border-brand-500/60 ring-2 ring-brand-500/30',
-    header: 'bg-slate-950 text-white border-slate-800',
-    badge: 'bg-brand-500 text-white',
-    title: 'text-white',
+    block: 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-300 dark:border-slate-800',
+    header: 'bg-slate-100/80 dark:bg-slate-950/80 border-slate-200 dark:border-slate-800',
+    badge: 'bg-slate-700 dark:bg-slate-600 text-white',
+    title: 'text-slate-900 dark:text-slate-100',
   },
   rose: {
     block: 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60',
