@@ -402,6 +402,8 @@ export const StackPage: React.FC = () => {
         onFindPathFromHere={(techId) => {
           setPathSourceId(techId);
           setViewMode('path-finder');
+          handleCloseTechDrawer();
+          window.scrollTo({ top: 120, behavior: 'smooth' });
         }}
       />
 

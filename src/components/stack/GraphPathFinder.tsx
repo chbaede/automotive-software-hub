@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Route,
   ArrowRight,
@@ -67,6 +67,14 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
   const [sourceId, setSourceId] = useState<string>(initialSourceId);
   const [targetId, setTargetId] = useState<string>(initialTargetId);
   const [filterMode, setFilterMode] = useState<'all' | 'core-dependencies'>('all');
+
+  useEffect(() => {
+    if (initialSourceId) setSourceId(initialSourceId);
+  }, [initialSourceId]);
+
+  useEffect(() => {
+    if (initialTargetId) setTargetId(initialTargetId);
+  }, [initialTargetId]);
 
   // Sorted list for dropdowns
   const sortedTechs = useMemo(() => {
