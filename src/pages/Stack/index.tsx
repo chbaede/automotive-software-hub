@@ -188,41 +188,43 @@ export const StackPage: React.FC = () => {
       </div>
 
       {/* Graph Intelligence Mode Switcher */}
+      <div className="inline-flex flex-wrap items-center gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs">
         <button
           onClick={() => setViewMode('layers')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             viewMode === 'layers'
-              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs border border-slate-200 dark:border-slate-800'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Layers className="w-4 h-4 text-brand-500" />
+          <Layers className="w-3.5 h-3.5 text-brand-500" />
           <span>{language === 'ko' ? '스택 & 레이어 탐색기' : 'Stack & Layer Explorer'}</span>
         </button>
 
         <button
           onClick={() => setViewMode('path-finder')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             viewMode === 'path-finder'
-              ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-sm border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-xs border border-slate-200 dark:border-slate-800'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Route className="w-4 h-4 text-cyan-500" />
+          <Route className="w-3.5 h-3.5 text-cyan-500" />
           <span>{language === 'ko' ? '최단 경로 탐색기 (Path Finder)' : 'Graph Path Finder'}</span>
         </button>
 
         <button
           onClick={() => setViewMode('insights')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
             viewMode === 'insights'
-              ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm border border-slate-200 dark:border-slate-800'
+              ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs border border-slate-200 dark:border-slate-800'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Network className="w-4 h-4 text-purple-500" />
+          <Network className="w-3.5 h-3.5 text-purple-500" />
           <span>{language === 'ko' ? '그래프 토폴로지 인사이트' : 'Graph Topology Insights'}</span>
         </button>
+      </div>
 
       {/* Conditional View Mode Rendering */}
       {viewMode === 'path-finder' && (
