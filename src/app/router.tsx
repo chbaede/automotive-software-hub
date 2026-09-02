@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { HomePage } from '../pages/Home';
 import { StackPage } from '../pages/Stack';
@@ -14,7 +14,7 @@ import { TechnologyDetailPage } from '../pages/Stack/TechnologyDetailPage';
 
 export const AppRouter: React.FC = () => {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <MainLayout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -29,6 +29,6 @@ export const AppRouter: React.FC = () => {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </MainLayout>
-    </HashRouter>
+    </BrowserRouter>
   );
 };

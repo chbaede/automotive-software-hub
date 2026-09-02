@@ -22,14 +22,12 @@ import {
   ChevronRight,
   Sparkles,
   AlertCircle,
-  Cpu,
 } from 'lucide-react';
 import {
   getTechnology,
   getTechnologyGraphContext,
   getArchitecturesForTechnology,
   getStackPathsForTechnology,
-  getNeighbors,
   technologyById,
 } from '../../utils/graphIndexes';
 import { stackLayers } from '../../data/stackLayers';
@@ -81,13 +79,9 @@ export const TechnologyDetailPage: React.FC = () => {
     }
   }, [technology, t.techDetail.notFoundTitle]);
 
-  // Graph context & neighbors
+  // Graph context
   const graphContext = useMemo(() => {
     return technology ? getTechnologyGraphContext(technology.id) : null;
-  }, [technology]);
-
-  const directNeighbors = useMemo(() => {
-    return technology ? getNeighbors(technology.id) : [];
   }, [technology]);
 
   const architectures = useMemo(() => {
@@ -245,17 +239,17 @@ export const TechnologyDetailPage: React.FC = () => {
               const asil = fs?.asilLevel || technology.asilLevel;
               const claimType = fs?.claimType;
 
-              let safetyText = asil || 'ISO 26262';
+              let safetyText = asil || t.safety.defaultBadge;
               if (claimType === 'certified' && asil) {
-                safetyText = `${asil} Certified`;
+                safetyText = t.safety.certifiedBadge.replace('{asil}', asil);
               } else if (claimType === 'capable' && asil) {
-                safetyText = `${asil} Capable`;
+                safetyText = t.safety.capableBadge.replace('{asil}', asil);
               } else if (claimType === 'supports' && asil) {
-                safetyText = `Supports ${asil}`;
+                safetyText = t.safety.supportsBadge.replace('{asil}', asil);
               } else if (claimType === 'compliant') {
-                safetyText = `${asil || 'ISO 26262'} Compliant`;
+                safetyText = t.safety.compliantBadge.replace('{asil}', asil || 'ISO 26262');
               } else if (claimType === 'suitable') {
-                safetyText = `ISO 26262 Standard`;
+                safetyText = t.safety.suitableBadge;
               }
 
               const isAsilD = asil === 'ASIL-D';
@@ -584,9 +578,11 @@ export const TechnologyDetailPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                          {typeName}
-                        </span>
+                        {typeName && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                            {typeName}
+                          </span>
+                        )}
                         <h3 className="text-base font-bold text-slate-900 dark:text-white">
                           {pathTitle}
                         </h3>
@@ -655,8 +651,8 @@ export const TechnologyDetailPage: React.FC = () => {
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {language === 'ko'
-                  ? '이 기술과 관련된 오픈소스 프로젝트, 기업, 개발 도구 및 기술 자료입니다.'
-                  : 'Open-source projects, vendors, tools, and technical resources tied to this technology.'}
+                  ? '이 기술과 관련된 기업, 오픈소스 프로젝트, 개발 도구, 기술 자료 및 행사입니다.'
+                  : 'Vendors, open-source projects, tools, technical resources, and industry events tied to this technology.'}
               </p>
             </div>
           </div>
@@ -802,6 +798,49 @@ export const TechnologyDetailPage: React.FC = () => {
                         {res.url && (
                           <a
                             href={res.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Relevant Industry Events */}
+            {linkedEvents.length > 0 && (
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <Calendar className="w-4 h-4 text-rose-500" />
+                  <span>{t.techDetail.events} ({linkedEvents.length})</span>
+                </div>
+                <div className="space-y-2">
+                  {linkedEvents.map((evt) => {
+                    const evtName = typeof evt.name === 'string'
+                      ? evt.name
+                      : getLocalizedText(evt.name, language);
+                    const location = [evt.city, evt.country].filter(Boolean).join(', ') || evt.region;
+                    return (
+                      <div
+                        key={evt.id}
+                        className="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between"
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                            {evtName}
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            {evt.startDate} • {location}
+                          </div>
+                        </div>
+                        {evt.url && (
+                          <a
+                            href={evt.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"

@@ -200,17 +200,17 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                 const asil = fs?.asilLevel || technology.asilLevel;
                 const claimType = fs?.claimType;
 
-                let safetyText = asil || 'ISO 26262';
+                let safetyText = asil || t.safety.defaultBadge;
                 if (claimType === 'certified' && asil) {
-                  safetyText = `${asil} Certified`;
+                  safetyText = t.safety.certifiedBadge.replace('{asil}', asil);
                 } else if (claimType === 'capable' && asil) {
-                  safetyText = `${asil} Capable`;
+                  safetyText = t.safety.capableBadge.replace('{asil}', asil);
                 } else if (claimType === 'supports' && asil) {
-                  safetyText = `Supports ${asil}`;
+                  safetyText = t.safety.supportsBadge.replace('{asil}', asil);
                 } else if (claimType === 'compliant') {
-                  safetyText = `${asil || 'ISO 26262'} Compliant`;
+                  safetyText = t.safety.compliantBadge.replace('{asil}', asil || 'ISO 26262');
                 } else if (claimType === 'suitable') {
-                  safetyText = `ISO 26262 Standard`;
+                  safetyText = t.safety.suitableBadge;
                 }
 
                 const isAsilD = asil === 'ASIL-D';

@@ -602,12 +602,24 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(qnx?.functionalSafety?.claimType, 'capable', 'QNX Neutrino claimType must be capable');
   assert.strictEqual(qnx?.functionalSafety?.asilLevel, 'ASIL-D', 'QNX Neutrino ASIL level must be ASIL-D');
 
-  // Test H: Deep-link URL format
-  stackTechnologies.slice(0, 10).forEach((tech) => {
-    const deepLinkPath = `/stack/${tech.id}`;
-    assert.ok(deepLinkPath.startsWith('/stack/'), 'Deep link path must start with /stack/');
-    assert.strictEqual(deepLinkPath, `/stack/${tech.id}`);
+  // Test H: Deep-link URL format & sequential graph navigation
+  const seq = ['qnx-neutrino', 'qnx-hypervisor', 'android-automotive-os'];
+  seq.forEach((id) => {
+    const tech = getTechnology(id);
+    assert.ok(tech, `Technology ${id} must resolve`);
+    const deepLinkPath = `/stack/${tech?.id}`;
+    assert.strictEqual(deepLinkPath, `/stack/${id}`);
   });
+
+  // Test I: Safety badge bilingual localization completeness
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  assert.ok(en.safety.certifiedBadge.includes('{asil}'));
+  assert.ok(ko.safety.certifiedBadge.includes('{asil}'));
+  assert.strictEqual(en.safety.certifiedBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D Certified');
+  assert.strictEqual(ko.safety.certifiedBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D 인증');
+  assert.strictEqual(en.safety.capableBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D Capable');
+  assert.strictEqual(ko.safety.capableBadge.replace('{asil}', 'ASIL-D'), 'ASIL-D 대응 가능');
 
   console.log('✅ Test 23 Passed: Technology detail resolution, deep linking & context queries verified.');
 }
