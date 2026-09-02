@@ -120,3 +120,4 @@ export const StackPreviewLadder: React.FC<StackPreviewLadderProps> = ({
     </div>
   );
 };
+

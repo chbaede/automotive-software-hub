@@ -279,7 +279,7 @@ export const stackTechnologies: StackTechnology[] = [
     asilLevel: 'ASIL-D',
     functionalSafety: {
       asilLevel: 'ASIL-D',
-      claimType: 'capable',
+      claimType: 'certified',
       standard: 'ISO 26262',
       sourceUrl: 'https://www.cyberperseus.com/',
       lastVerified: '2026-09-02',
@@ -287,19 +287,19 @@ export const stackTechnologies: StackTechnology[] = [
     name: 'Perseus Pegasus Hypervisor',
     layerId: 'hypervisor-virtualization',
     description: {
-      en: 'Commercial real-time automotive hypervisor engineered to support ISO 26262 ASIL-D mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
-      ko: 'ISO 26262 ASIL-D 이종 안전도(Mixed-Criticality) SDV 차량 아키텍처 지원을 위해 (주)페르세우스가 개발한 상용 실시간 오토모티브 하이퍼바이저.',
+      en: 'Commercial real-time automotive hypervisor certified to ISO 26262 ASIL-D for mixed-criticality Software-Defined Vehicles by Perseus Co., Ltd.',
+      ko: 'ISO 26262 ASIL-D 기능 안전 인증을 획득하여 이종 안전도(Mixed-Criticality) SDV 차량 아키텍처를 지원하는 (주)페르세우스의 상용 실시간 오토모티브 하이퍼바이저.',
     },
     whereDoesItFit: {
       en: 'Real-time automotive virtualization layer running on mixed-criticality zonal controllers.',
       ko: '이종 안전도가 요구되는 영역 제어기(Zonal ECU)에서 구동되는 실시간 차량용 가상화 레이어.',
     },
-    categories: ['Hypervisor', 'Virtualization', 'Commercial'],
+    categories: ['Hypervisor', 'Virtualization', 'Commercial', 'ASIL-D Certified'],
     topics: ['embedded-linux', 'sdv', 'functional-safety'],
     website: 'https://www.cyberperseus.com/',
     companyIds: ['perseus-automotive'],
     relatedTechnologyIds: ['kvm-automotive', 'linux-kernel'],
-    tags: ['perseus', 'pegasus', 'hypervisor', 'koreantech', 'asil-d', 'Commercial'],
+    tags: ['perseus', 'pegasus', 'hypervisor', 'koreantech', 'asil-d', 'certified', 'Commercial'],
   },
   {
     id: 'qualcomm-hypervisor',

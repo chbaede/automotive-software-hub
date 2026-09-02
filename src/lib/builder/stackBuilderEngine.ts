@@ -410,3 +410,4 @@ export function decodeStackFromSearchParams(searchParams: URLSearchParams): Stac
 
   return selection;
 }
+

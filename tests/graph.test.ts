@@ -337,7 +337,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   );
   assert.ok(
     capableAsilD.length > 0,
-    'Must have valid ASIL-D Capable technologies (e.g. NVIDIA Thor, QNX Neutrino, Perseus)'
+    'Must have valid ASIL-D Capable technologies (e.g. NVIDIA Thor, QNX Neutrino)'
   );
 
   const certifiedAsilD = stackTechnologies.filter(
@@ -345,8 +345,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   );
   assert.ok(
     certifiedAsilD.length > 0,
-    'Must have valid ASIL-D Certified technologies with evidence (e.g. QNX Hypervisor, INTEGRITY, VxWorks)'
+    'Must have valid ASIL-D Certified technologies with evidence (e.g. QNX Hypervisor, INTEGRITY, VxWorks, Perseus)'
   );
+
+  const perseus = stackTechnologies.find((t) => t.id === 'perseus-hypervisor');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified', 'Perseus must be ASIL-D certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D', 'Perseus must have ASIL-D level');
 
   console.log('✅ Test 17 Passed: ASIL Level and Claim Type maintain semantic independence.');
 }

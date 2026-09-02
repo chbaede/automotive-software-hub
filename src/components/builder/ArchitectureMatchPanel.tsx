@@ -137,3 +137,4 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
     </div>
   );
 };
+
