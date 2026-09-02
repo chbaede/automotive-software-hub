@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Sparkles, Plus, ArrowRight } from 'lucide-react';
 import { TechnologyCandidate } from '../../lib/builder/stackBuilderEngine';
 import { stackLayers } from '../../data/stackLayers';
@@ -50,9 +51,12 @@ export const SuggestedTechPanel: React.FC<SuggestedTechPanelProps> = ({
             >
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                  <Link
+                    to={`/stack/${technology.id}`}
+                    className="font-bold text-xs text-slate-900 dark:text-white hover:underline hover:text-indigo-600 dark:hover:text-indigo-400 truncate"
+                  >
                     {technology.name}
-                  </span>
+                  </Link>
                   <span className="text-[9px] font-mono text-slate-400">
                     ({layerName})
                   </span>

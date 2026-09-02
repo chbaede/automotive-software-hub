@@ -337,9 +337,16 @@ export const en = {
     candidatesCountSingular: '1 Suggestion',
     change: 'Change',
     noTechsFound: 'No matching technologies found.',
+    allArchitectures: 'All Architectures',
+    onboardingTitle: 'Welcome to Automotive Stack Builder',
+    onboardingDesc: 'Select technologies across the 7 vertical runtime layers and 3 supporting layers on the left. The builder automatically analyzes inter-layer relationships, calculates similarity against curated architecture profiles, and discovers relevant execution paths.',
+    singleTechStateTitle: 'Stack Initialized',
+    singleTechStateDesc: 'You have selected {techName}. Select at least one more technology in another layer to unlock inter-layer relationship validation, compute architecture coverage, and match execution paths.',
+    viewTechDetail: 'View Technology Details',
+    exploreAlternatives: 'Architectural Alternatives',
+    unverifiedNote: 'Unverified Combination: Lack of documented relationship does not imply technical incompatibility.',
     hubBadge: 'Hub',
     crossLayerBadge: 'Cross-Layer',
-    allArchitectures: 'All Architectures',
   },
 };
 

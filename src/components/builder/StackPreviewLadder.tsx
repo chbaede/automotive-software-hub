@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layers, ArrowDown, CheckCircle2, AlertCircle, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Layers, ArrowDown, CheckCircle2, AlertCircle, HelpCircle, ExternalLink } from 'lucide-react';
 import { StackSelection, CORE_STACK_LAYER_IDS, findRelationshipBetween } from '../../lib/builder/stackBuilderEngine';
 import { stackLayers } from '../../data/stackLayers';
 import { technologyById } from '../../lib/graph';
@@ -83,7 +84,19 @@ export const StackPreviewLadder: React.FC<StackPreviewLadderProps> = ({
                         {layerName}
                       </div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                        {tech ? tech.name : t.stackBuilder.notSelected}
+                        {tech ? (
+                          <Link
+                            to={`/stack/${tech.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="hover:underline hover:text-indigo-600 dark:hover:text-indigo-400 inline-flex items-center gap-1"
+                            title={t.stackBuilder.viewTechDetail}
+                          >
+                            <span>{tech.name}</span>
+                            <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                          </Link>
+                        ) : (
+                          t.stackBuilder.notSelected
+                        )}
                       </div>
                     </div>
                   </div>

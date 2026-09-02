@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Share2,
+  Wrench,
 } from 'lucide-react';
 import { profileById, technologyById } from '../../utils/graphIndexes';
 import { stackLayers } from '../../data/stackLayers';
@@ -161,9 +162,30 @@ export const ArchitectureDetailPage: React.FC = () => {
             {profileDesc}
           </p>
 
+          {/* Action Bar */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            {(() => {
+              const params = new URLSearchParams();
+              technologies.forEach((tech) => {
+                if (!params.has(tech.layerId)) {
+                  params.set(tech.layerId, tech.id);
+                }
+              });
+              return (
+                <Link
+                  to={`/stack-builder?${params.toString()}`}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition"
+                >
+                  <Wrench className="w-3.5 h-3.5" />
+                  <span>{t.techDetail.buildWithThisTech}</span>
+                </Link>
+              );
+            })()}
+          </div>
+
           {/* Tags */}
           {profile.tags && profile.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-2">
+            <div className="flex flex-wrap gap-1.5 pt-1">
               {profile.tags.map((tag) => (
                 <span
                   key={tag}

@@ -1084,6 +1084,93 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 26 Passed: Phase 7.2 Product Maturity, Canonical Adjacency, Composite Scoring & i18n verified.');
 }
 
+// Test 27: Phase 7.3 Completion Pass — Complete User Journeys, Initial & Partial States, Navigation & Safety Invariants
+{
+  const {
+    validateStack,
+    matchArchitectures,
+    matchStackPaths,
+    getSuggestedCandidates,
+    encodeStackToSearchParams,
+    decodeStackFromSearchParams,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+
+  const { technologyById, profileById } = await import('../src/lib/graph/index.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+
+  // 1. Initial State (0 selected technologies)
+  const initialValidation = validateStack({});
+  assert.strictEqual(initialValidation.health, 'incomplete');
+  assert.strictEqual(initialValidation.totalSelected, 0);
+  assert.strictEqual(initialValidation.items.length, 0);
+  assert.strictEqual(matchArchitectures({}).length, 0);
+  assert.strictEqual(matchStackPaths({}).length, 0);
+  assert.strictEqual(getSuggestedCandidates({}).length, 0);
+
+  // 2. Partial State (1 selected technology)
+  const singleTechSelection = { 'operating-systems': 'qnx-neutrino' };
+  const singleValidation = validateStack(singleTechSelection);
+  assert.strictEqual(singleValidation.health, 'incomplete');
+  assert.strictEqual(singleValidation.totalSelected, 1);
+  assert.strictEqual(singleValidation.warningCount, 0);
+
+  // Even with 1 technology, Architecture matching and Next candidate suggestions are active and useful!
+  const singleArchMatches = matchArchitectures(singleTechSelection);
+  assert.ok(singleArchMatches.length > 0, '1 selected tech should match related architecture profiles');
+  const singleSuggestions = getSuggestedCandidates(singleTechSelection);
+  assert.ok(singleSuggestions.length > 0, '1 selected tech should provide next technology candidate suggestions');
+
+  // 3. User Journey 1: Tech Detail CTA -> Stack Builder -> Add suggested tech -> Architecture match
+  const thorTech = technologyById.get('nvidia-drive-thor');
+  assert.ok(thorTech);
+  // Simulating CTA click
+  const ctaParams = new URLSearchParams({ [thorTech!.layerId]: thorTech!.id });
+  const restoredSelection = decodeStackFromSearchParams(ctaParams);
+  assert.strictEqual(restoredSelection['hardware-compute'], 'nvidia-drive-thor');
+
+  // Get candidate suggestions for Thor
+  const thorSuggestions = getSuggestedCandidates(restoredSelection);
+  assert.ok(thorSuggestions.length > 0);
+  const bestSuggestion = thorSuggestions[0];
+  assert.ok(bestSuggestion.technology.layerId !== 'hardware-compute');
+
+  // Add suggested tech to stack
+  restoredSelection[bestSuggestion.technology.layerId] = bestSuggestion.technology.id;
+  const twoTechValidation = validateStack(restoredSelection);
+  assert.strictEqual(twoTechValidation.totalSelected, 2);
+  assert.ok(twoTechValidation.health === 'validated' || twoTechValidation.health === 'partially-validated');
+
+  // 4. User Journey 2: Architecture Profile -> Stack Builder URL mapping
+  architectureProfiles.forEach((profile) => {
+    const archParams = new URLSearchParams();
+    profile.technologyIds.forEach((techId) => {
+      const tech = technologyById.get(techId);
+      if (tech && !archParams.has(tech.layerId)) {
+        archParams.set(tech.layerId, tech.id);
+      }
+    });
+    const archSelection = decodeStackFromSearchParams(archParams);
+    assert.ok(Object.keys(archSelection).length > 0);
+    const archValidation = validateStack(archSelection);
+    assert.ok(archValidation.totalSelected > 0);
+  });
+
+  // 5. Functional Safety Invariants Verification
+  const perseus = stackTechnologies.find((t) => t.id === 'perseus-hypervisor');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified', 'Perseus must remain ASIL-D Certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
+  assert.ok(perseus?.functionalSafety?.sourceUrl, 'Perseus must have official source evidence URL');
+
+  const thor = stackTechnologies.find((t) => t.id === 'nvidia-drive-thor');
+  assert.strictEqual(thor?.functionalSafety?.claimType, 'capable', 'NVIDIA Thor must remain ASIL-D Capable');
+
+  const qnx = stackTechnologies.find((t) => t.id === 'qnx-neutrino');
+  assert.strictEqual(qnx?.functionalSafety?.claimType, 'capable', 'QNX Neutrino must remain ASIL-D Capable');
+
+  console.log('✅ Test 27 Passed: Phase 7.3 User Journeys, Partial State UX, Navigation & Safety Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

@@ -292,6 +292,16 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
           <div className="flex items-center gap-2">
             <Link
+              to={`/stack-builder?${technology.layerId}=${technology.id}`}
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 transition shadow-xs shrink-0"
+              title={t.techDetail.buildWithThisTech}
+            >
+              <Wrench className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t.techDetail.buildWithThisTech}</span>
+            </Link>
+
+            <Link
               to={`/stack/${technology.id}`}
               onClick={onClose}
               className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition shadow-xs shrink-0"

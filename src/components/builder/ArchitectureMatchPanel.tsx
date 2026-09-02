@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Compass, Check, Plus, ExternalLink, ArrowRight } from 'lucide-react';
+import { Compass, Check, Plus, ArrowRight } from 'lucide-react';
 import { ArchitectureMatchResult } from '../../lib/builder/stackBuilderEngine';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -109,13 +109,14 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
                     {t.stackBuilder.matchedTechs} ({matchedTechnologies.length}):
                   </span>
                   {matchedTechnologies.map((tech) => (
-                    <span
+                    <Link
                       key={tech.id}
-                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-medium"
+                      to={`/stack/${tech.id}`}
+                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-medium hover:underline hover:border-emerald-500/40"
                     >
                       <Check className="w-2.5 h-2.5" />
                       <span>{tech.name}</span>
-                    </span>
+                    </Link>
                   ))}
                 </div>
 
@@ -125,15 +126,27 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
                       {t.stackBuilder.missingTechs} ({missingTechnologies.length}):
                     </span>
                     {missingTechnologies.slice(0, 4).map((tech) => (
-                      <button
+                      <div
                         key={tech.id}
-                        onClick={() => onAddTechnology && onAddTechnology(tech.id)}
-                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 hover:text-indigo-600 transition text-[9px]"
-                        title={t.stackBuilder.addCandidate}
+                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 transition text-[9px]"
                       >
-                        <Plus className="w-2.5 h-2.5" />
-                        <span>{tech.name}</span>
-                      </button>
+                        <Link
+                          to={`/stack/${tech.id}`}
+                          className="hover:underline hover:text-indigo-600 dark:hover:text-indigo-400"
+                        >
+                          {tech.name}
+                        </Link>
+                        {onAddTechnology && (
+                          <button
+                            onClick={() => onAddTechnology(tech.id)}
+                            className="p-0.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400"
+                            title={t.stackBuilder.addCandidate}
+                            aria-label={`${t.stackBuilder.addCandidate}: ${tech.name}`}
+                          >
+                            <Plus className="w-2.5 h-2.5" />
+                          </button>
+                        )}
+                      </div>
                     ))}
                     {missingTechnologies.length > 4 && (
                       <span className="text-slate-400 font-mono text-[9px]">
@@ -161,4 +174,3 @@ export const ArchitectureMatchPanel: React.FC<ArchitectureMatchPanelProps> = ({
     </div>
   );
 };
-

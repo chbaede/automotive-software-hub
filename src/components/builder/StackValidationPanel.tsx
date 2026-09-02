@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -60,17 +61,49 @@ export const StackValidationPanel: React.FC<StackValidationPanelProps> = ({
   const healthBadge = getHealthBadge();
   const HealthIcon = healthBadge.icon;
 
-  if (summary.totalSelected <= 1) {
+  if (summary.totalSelected === 0) {
     return (
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <ShieldCheck className="w-4 h-4 text-indigo-500" />
+          <ShieldCheck className="w-5 h-5 text-indigo-500" />
           <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-            {t.stackBuilder.validationTitle}
+            {t.stackBuilder.onboardingTitle}
           </h3>
         </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          {t.stackBuilder.emptyStatePrompt}
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          {t.stackBuilder.onboardingDesc}
+        </p>
+        <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-500">
+          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1">
+            <span className="font-bold text-slate-700 dark:text-slate-300">① 7 Core Runtime Layers</span>
+            <p className="text-[10px] text-slate-400">Compute, Hypervisor, OS, Build, Middleware, Services, Apps</p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1">
+            <span className="font-bold text-slate-700 dark:text-slate-300">② Real-time Intelligence</span>
+            <p className="text-[10px] text-slate-400">Pairwise verification, Architecture matching, Path discovery</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (summary.totalSelected === 1) {
+    const singleTechEntry = summary.items[0]?.sourceTech;
+    return (
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 space-y-4 shadow-xs">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-indigo-500" />
+            <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+              {t.stackBuilder.singleTechStateTitle}
+            </h3>
+          </div>
+          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+            {t.stackBuilder.healthIncomplete}
+          </span>
+        </div>
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          {t.stackBuilder.singleTechStateDesc.replace('{techName}', singleTechEntry?.name || '1')}
         </p>
       </div>
     );
@@ -159,9 +192,21 @@ export const StackValidationPanel: React.FC<StackValidationPanelProps> = ({
                   )}
 
                   <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                    <span>{item.sourceTech.name}</span>
+                    <Link
+                      to={`/stack/${item.sourceTech.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="hover:underline hover:text-indigo-600 dark:hover:text-indigo-400"
+                    >
+                      {item.sourceTech.name}
+                    </Link>
                     <span className="text-slate-400 mx-1.5">↔</span>
-                    <span>{item.targetTech.name}</span>
+                    <Link
+                      to={`/stack/${item.targetTech.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="hover:underline hover:text-indigo-600 dark:hover:text-indigo-400"
+                    >
+                      {item.targetTech.name}
+                    </Link>
                   </div>
                 </div>
 
