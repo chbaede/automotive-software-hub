@@ -188,7 +188,6 @@ export const StackPage: React.FC = () => {
       </div>
 
       {/* Graph Intelligence Mode Switcher */}
-      <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
         <button
           onClick={() => setViewMode('layers')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition ${
@@ -224,7 +223,6 @@ export const StackPage: React.FC = () => {
           <Network className="w-4 h-4 text-purple-500" />
           <span>{language === 'ko' ? '그래프 토폴로지 인사이트' : 'Graph Topology Insights'}</span>
         </button>
-      </div>
 
       {/* Conditional View Mode Rendering */}
       {viewMode === 'path-finder' && (

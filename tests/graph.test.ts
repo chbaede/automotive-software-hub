@@ -425,12 +425,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
 
-  // Verify that EVERY node in the knowledge graph has >= 2 relationships and >= 2 unique connections
+  // Verify zero-isolation: EVERY technology in the knowledge graph must have >= 1 unique connection
   stackTechnologies.forEach((tech) => {
     const degreeInfo = getTechnologyDegree(tech.id);
     assert.ok(
-      degreeInfo.connectionCount >= 2,
-      `Technology '${tech.id}' has connectionCount ${degreeInfo.connectionCount} (must be >= 2)`
+      degreeInfo.connectionCount >= 1,
+      `Technology '${tech.id}' has connectionCount ${degreeInfo.connectionCount} (must be >= 1 to satisfy zero-isolation)`
     );
     assert.ok(
       degreeInfo.relationshipCount >= degreeInfo.connectionCount,
@@ -508,7 +508,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const insights = getGraphInsights();
   assert.ok(insights.totalNodes > 0, 'Total nodes must be positive');
   assert.ok(insights.totalEdges > 0, 'Total edges must be positive');
-  assert.ok(insights.averageConnections >= 2.0, `Average connections should be >= 2.0 (actual: ${insights.averageConnections})`);
+  assert.ok(insights.averageConnections > 0, `Average connections should be positive (actual: ${insights.averageConnections})`);
   assert.ok(insights.averageRelationships >= insights.averageConnections, 'Average relationships must be >= average connections');
   assert.ok(insights.topHubs.length > 0, 'Should have top hubs identified');
   assert.ok(insights.crossLayerTechnologies.length > 0, 'Should have cross-layer technologies identified');

@@ -47,12 +47,23 @@ stackPaths.forEach((path) => {
   });
 });
 
+// Adjacency Edge Definition for Graph Traversal
+export interface AdjacencyEdge {
+  neighborId: string;
+  relationship: TechnologyRelationship;
+  isForward: boolean;
+}
+
+// Index: Canonical Undirected Adjacency by Technology ID
+export const graphAdjacencyByTechnologyId = new Map<string, AdjacencyEdge[]>();
+
 // Index: Outgoing Relationships by Source Technology ID
 export const outgoingRelationshipsByTechnologyId = new Map<string, TechnologyRelationship[]>();
 
 // Index: Incoming Relationships by Target Technology ID
 export const incomingRelationshipsByTechnologyId = new Map<string, TechnologyRelationship[]>();
 
+// Build canonical relationship & adjacency indexes in a single optimized pass
 stackRelationships.forEach((rel) => {
   // Outgoing
   const outList = outgoingRelationshipsByTechnologyId.get(rel.sourceId) || [];
@@ -63,31 +74,34 @@ stackRelationships.forEach((rel) => {
   const inList = incomingRelationshipsByTechnologyId.get(rel.targetId) || [];
   inList.push(rel);
   incomingRelationshipsByTechnologyId.set(rel.targetId, inList);
+
+  // Undirected Adjacency (Forward & Reverse edges)
+  const fwdList = graphAdjacencyByTechnologyId.get(rel.sourceId) || [];
+  fwdList.push({ neighborId: rel.targetId, relationship: rel, isForward: true });
+  graphAdjacencyByTechnologyId.set(rel.sourceId, fwdList);
+
+  const revList = graphAdjacencyByTechnologyId.get(rel.targetId) || [];
+  revList.push({ neighborId: rel.sourceId, relationship: rel, isForward: false });
+  graphAdjacencyByTechnologyId.set(rel.targetId, revList);
 });
 
 // Index: Unique Neighbor Technologies by Technology ID (Canonical Source: stackRelationships)
 export const neighborsByTechnologyId = new Map<string, StackTechnology[]>();
 
 stackTechnologies.forEach((tech) => {
-  const neighborsMap = new Map<string, StackTechnology>();
+  const edges = graphAdjacencyByTechnologyId.get(tech.id) || [];
+  const uniqueNeighborsMap = new Map<string, StackTechnology>();
 
-  const outgoing = outgoingRelationshipsByTechnologyId.get(tech.id) || [];
-  outgoing.forEach((rel) => {
-    const target = technologyById.get(rel.targetId);
-    if (target && target.id !== tech.id) {
-      neighborsMap.set(target.id, target);
+  edges.forEach((edge) => {
+    if (edge.neighborId !== tech.id) {
+      const neighbor = technologyById.get(edge.neighborId);
+      if (neighbor) {
+        uniqueNeighborsMap.set(edge.neighborId, neighbor);
+      }
     }
   });
 
-  const incoming = incomingRelationshipsByTechnologyId.get(tech.id) || [];
-  incoming.forEach((rel) => {
-    const source = technologyById.get(rel.sourceId);
-    if (source && source.id !== tech.id) {
-      neighborsMap.set(source.id, source);
-    }
-  });
-
-  neighborsByTechnologyId.set(tech.id, Array.from(neighborsMap.values()));
+  neighborsByTechnologyId.set(tech.id, Array.from(uniqueNeighborsMap.values()));
 });
 
 // Index: Technologies by Layer ID
@@ -254,7 +268,7 @@ export interface TechnologyDegreeInfo {
   outDegree: number; // Outgoing relationship records
   connectedLayers: string[];
   connectedLayersCount: number;
-  totalDegree: number; // Alias to connectionCount for backward-compat
+  totalDegree: number; // Compatibility alias to connectionCount
 }
 
 /**
@@ -288,7 +302,7 @@ export interface TechnologyGraphContext {
   technology: StackTechnology;
   connectionCount: number; // Unique neighboring technologies
   relationshipCount: number; // Total relationship records
-  degree: number; // Alias to connectionCount
+  degree: number; // Compatibility alias to connectionCount
   inDegree: number;
   outDegree: number;
   connectedLayers: string[];
@@ -296,8 +310,8 @@ export interface TechnologyGraphContext {
   architectures: ArchitectureProfile[];
   stackPaths: StackPath[];
   isHub: boolean; // connectionCount >= 5
-  isCrossLayer: boolean; // connectedLayersCount >= 3 (renamed from isBridge)
-  isBridge: boolean; // Backward-compatibility alias
+  isCrossLayer: boolean; // connectedLayersCount >= 3
+  isBridge: boolean; // Compatibility alias for isCrossLayer
 }
 
 /**
@@ -355,7 +369,8 @@ export interface ShortestPathOptions {
 /**
  * Finds the shortest graph traversal path between sourceId and targetId using Breadth-First Search (BFS).
  * Supports optional filtering by relationshipTypes.
- * Works across both forward and reverse typed relationships in the undirected graph representation.
+ * Works across both forward and reverse typed relationships using precomputed undirected adjacency.
+ * Implements an indexed queue pointer for O(1) dequeue performance.
  */
 export function findShortestPath(
   sourceId: string,
@@ -377,31 +392,6 @@ export function findShortestPath(
     ? new Set(options.relationshipTypes)
     : null;
 
-  // Build undirected adjacency with edge references and type filtering
-  interface AdjacencyEdge {
-    neighborId: string;
-    relationship: TechnologyRelationship;
-    isForward: boolean;
-  }
-
-  const adj = new Map<string, AdjacencyEdge[]>();
-  stackRelationships.forEach((rel) => {
-    // If filtering is enabled, check relationship type
-    if (allowedTypes && !allowedTypes.has(rel.type)) {
-      return;
-    }
-
-    // Forward edge
-    const fwdList = adj.get(rel.sourceId) || [];
-    fwdList.push({ neighborId: rel.targetId, relationship: rel, isForward: true });
-    adj.set(rel.sourceId, fwdList);
-
-    // Reverse edge
-    const revList = adj.get(rel.targetId) || [];
-    revList.push({ neighborId: rel.sourceId, relationship: rel, isForward: false });
-    adj.set(rel.targetId, revList);
-  });
-
   // BFS Queue: [currentId, pathSoFar, stepsSoFar]
   const queue: Array<{
     currentId: string;
@@ -409,10 +399,12 @@ export function findShortestPath(
     steps: GraphPathStep[];
   }> = [{ currentId: sourceId, path: [sourceId], steps: [] }];
 
+  let queueIndex = 0;
   const visited = new Set<string>([sourceId]);
 
-  while (queue.length > 0) {
-    const current = queue.shift()!;
+  while (queueIndex < queue.length) {
+    const current = queue[queueIndex++];
+
     if (current.currentId === targetId) {
       const nodes = current.path
         .map((id) => technologyById.get(id))
@@ -427,23 +419,31 @@ export function findShortestPath(
       };
     }
 
-    const edges = adj.get(current.currentId) || [];
+    const edges = graphAdjacencyByTechnologyId.get(current.currentId) || [];
     for (const edge of edges) {
+      // Filter by relationship type if specified
+      if (allowedTypes && !allowedTypes.has(edge.relationship.type)) {
+        continue;
+      }
+
       if (!visited.has(edge.neighborId)) {
         visited.add(edge.neighborId);
-        const fromTech = technologyById.get(current.currentId)!;
-        const toTech = technologyById.get(edge.neighborId)!;
-        const newStep: GraphPathStep = {
-          fromTechnology: fromTech,
-          toTechnology: toTech,
-          relationship: edge.relationship,
-          isForward: edge.isForward,
-        };
-        queue.push({
-          currentId: edge.neighborId,
-          path: [...current.path, edge.neighborId],
-          steps: [...current.steps, newStep],
-        });
+        const fromTech = technologyById.get(current.currentId);
+        const toTech = technologyById.get(edge.neighborId);
+
+        if (fromTech && toTech) {
+          const newStep: GraphPathStep = {
+            fromTechnology: fromTech,
+            toTechnology: toTech,
+            relationship: edge.relationship,
+            isForward: edge.isForward,
+          };
+          queue.push({
+            currentId: edge.neighborId,
+            path: [...current.path, edge.neighborId],
+            steps: [...current.steps, newStep],
+          });
+        }
       }
     }
   }
@@ -459,7 +459,7 @@ export interface GraphHubInsight {
   technology: StackTechnology;
   connectionCount: number; // Unique neighbor technologies
   relationshipCount: number; // Total relationship records
-  degree: number; // Alias to connectionCount
+  degree: number; // Compatibility alias to connectionCount
   connectedLayersCount: number;
   connectedLayers: string[];
   architecturesCount: number;
@@ -472,7 +472,7 @@ export interface CrossLayerTechnologyInsight {
   connectedLayers: string[];
   connectionCount: number;
   relationshipCount: number;
-  degree: number; // Alias
+  degree: number; // Compatibility alias
 }
 
 export type BridgeTechnologyInsight = CrossLayerTechnologyInsight;
@@ -481,11 +481,11 @@ export interface GraphInsightsData {
   totalNodes: number;
   totalEdges: number;
   averageConnections: number; // Average unique connections per node
-  averageDegree: number; // Alias to averageConnections
+  averageDegree: number; // Compatibility alias to averageConnections
   averageRelationships: number; // Average relationship records per node
   topHubs: GraphHubInsight[];
   crossLayerTechnologies: CrossLayerTechnologyInsight[];
-  bridgeTechnologies: BridgeTechnologyInsight[]; // Alias for backward compatibility
+  bridgeTechnologies: BridgeTechnologyInsight[]; // Compatibility alias
   layerDistribution: Array<{ layerId: string; count: number }>;
 }
 
