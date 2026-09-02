@@ -1359,6 +1359,152 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 28 Passed: Knowledge Graph Hardening, Referential Integrity, Index Zero-Drift & Journey Regressions verified.');
 }
 
+// Test 29: Phase 8.1 — Knowledge Graph Intelligence & Discovery Engine
+{
+  const {
+    getDependencies,
+    getDependents,
+    getPlatforms,
+    getHostedTechnologies,
+    getIntegrations,
+    getImplementations,
+    getAlternatives,
+    getCompatibleTechnologies,
+    getCoexistingTechnologies,
+    getUsedWithTechnologies,
+    getBridgeTechnologies,
+    getRelatedArchitectures,
+    getRelatedStackPaths,
+    getNextTechnologiesToExplore,
+    getStackInsights,
+    getTechnologyDiscoveryResult,
+  } = await import('../src/lib/graph/intelligence.js');
+
+  const { technologyById, profileById, pathById } = await import('../src/lib/graph/index.js');
+
+  // 1. Directed Semantics Invariants
+  // AUTOSAR Adaptive (ARA) depends on POSIX PSE51 OS (e.g. QNX Neutrino)
+  const araDependencies = getDependencies('autosar-adaptive');
+  assert.ok(araDependencies.length > 0, 'AUTOSAR Adaptive must have dependencies');
+  araDependencies.forEach((dep) => {
+    assert.strictEqual(dep.relationship.type, 'depends-on');
+    assert.strictEqual(dep.relationship.sourceId, 'autosar-adaptive');
+    assert.ok(dep.score > 0);
+    assert.ok(dep.reason.en.length > 0);
+    assert.ok(dep.reason.ko.length > 0);
+  });
+
+  // Check incoming dependents of QNX Neutrino
+  const qnxDependents = getDependents('qnx-neutrino');
+  assert.ok(qnxDependents.length > 0, 'QNX Neutrino must have incoming dependents');
+  qnxDependents.forEach((dep) => {
+    assert.strictEqual(dep.relationship.type, 'depends-on');
+    assert.strictEqual(dep.relationship.targetId, 'qnx-neutrino');
+  });
+
+  // Platforms vs Hosted Software (runs-on)
+  // NVIDIA DRIVE Hypervisor runs on NVIDIA DRIVE Thor
+  const hypervisorPlatforms = getPlatforms('nvidia-drive-hypervisor');
+  assert.ok(
+    hypervisorPlatforms.some((p) => p.technology.id === 'nvidia-drive-thor'),
+    'NVIDIA DRIVE Hypervisor runs on Thor'
+  );
+
+  const thorHosted = getHostedTechnologies('nvidia-drive-thor');
+  assert.ok(
+    thorHosted.some((h) => h.technology.id === 'nvidia-drive-hypervisor'),
+    'Thor hosts NVIDIA DRIVE Hypervisor'
+  );
+
+  // 2. Alternatives Separation Invariant
+  // QNX Hypervisor and OpenSynergy COQOS are alternatives
+  const qnxHypAlts = getAlternatives('qnx-hypervisor');
+  assert.ok(qnxHypAlts.length > 0, 'QNX Hypervisor must have alternatives');
+  qnxHypAlts.forEach((alt) => {
+    assert.strictEqual(alt.relationship.type, 'alternative');
+    assert.notStrictEqual(alt.technology.id, 'qnx-hypervisor');
+  });
+
+  // 3. Cross-Layer Bridge Detection
+  // Baidu Apollo Cyber RT or vSomeIP or ROS 2 acts as multi-layer bridge
+  const ros2Bridges = getBridgeTechnologies('ros2-middleware');
+  assert.ok(ros2Bridges.length > 0, 'ROS 2 must detect bridge technologies');
+  ros2Bridges.forEach((bridge) => {
+    assert.ok(bridge.bridgedLayersCount >= 2, 'Bridge technology must connect to at least 2 other layers');
+    assert.notStrictEqual(bridge.relationship.type, 'alternative', 'Alternatives must not be treated as bridges');
+    assert.ok(bridge.reason.en.length > 0);
+    assert.ok(bridge.reason.ko.length > 0);
+  });
+
+  // 4. Architecture Relevance & Ranking
+  const thorArchs = getRelatedArchitectures('nvidia-drive-thor');
+  assert.ok(thorArchs.length > 0, 'NVIDIA Thor must have related architectures');
+  assert.ok(thorArchs[0].isExplicitMember, 'First related architecture should be an explicit member profile');
+  for (let i = 1; i < thorArchs.length; i++) {
+    assert.ok(
+      thorArchs[i - 1].relevanceScore >= thorArchs[i].relevanceScore,
+      'Architectures must be sorted by relevanceScore descending'
+    );
+  }
+
+  // 5. Stack Path Relevance & Ranking
+  const thorPaths = getRelatedStackPaths('nvidia-drive-thor');
+  assert.ok(thorPaths.length > 0, 'NVIDIA Thor must have related stack paths');
+  thorPaths.forEach((p) => {
+    assert.ok(p.path.hops.some((h) => h.technologyId === 'nvidia-drive-thor'));
+    assert.ok(pathById.has(p.path.id));
+  });
+
+  // 6. "What Should I Explore Next?" Recommendations
+  const exploreThor = getNextTechnologiesToExplore('nvidia-drive-thor');
+  assert.ok(exploreThor.length > 0, 'NVIDIA Thor must have next exploration recommendations');
+  exploreThor.forEach((rec) => {
+    assert.notStrictEqual(rec.technology.id, 'nvidia-drive-thor', 'Cannot recommend self');
+    if (rec.primaryRelationship) {
+      assert.notStrictEqual(rec.primaryRelationship.type, 'alternative', 'Cannot recommend alternatives as next steps');
+    }
+    assert.ok(rec.reasons.length > 0, 'Every recommendation must have explainable reasons');
+    rec.reasons.forEach((r) => {
+      assert.ok(r.en.length > 0);
+      assert.ok(r.ko.length > 0);
+    });
+  });
+
+  // 7. Partial Stack Intelligence & Gap Analysis
+  const partialSelection = {
+    'hardware-compute': 'nvidia-drive-thor',
+    'hypervisor-virtualization': 'nvidia-drive-hypervisor',
+    'operating-systems': 'linux-kernel',
+  };
+  const stackReport = getStackInsights(partialSelection);
+  assert.strictEqual(stackReport.gapAnalysis.isCompleteCoreStack, false);
+  assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('middleware-communication'));
+  assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('application-experience'));
+  assert.strictEqual(stackReport.gapAnalysis.populatedCoreLayers.length, 3);
+  assert.ok(stackReport.candidateRecommendations.length > 0);
+  // Recommendations must only target missing layers
+  stackReport.candidateRecommendations.forEach((cand) => {
+    assert.ok(
+      !partialSelection[cand.layerId as any],
+      'Partial stack recommendations must only fill unpopulated layers'
+    );
+  });
+
+  // 8. 360-Degree Discovery Result Aggregator
+  const discovery360 = getTechnologyDiscoveryResult('qnx-neutrino');
+  assert.ok(discovery360);
+  assert.strictEqual(discovery360!.technology.id, 'qnx-neutrino');
+  assert.ok(discovery360!.dependencies.length >= 0);
+  assert.ok(discovery360!.platforms.length >= 0);
+  assert.ok(discovery360!.architectures.length > 0);
+  assert.ok(discovery360!.stackPaths.length > 0);
+  assert.ok(discovery360!.recommendations.length > 0);
+  assert.ok(discovery360!.hubScore > 0);
+  assert.ok(discovery360!.crossLayerScore > 0);
+
+  console.log('✅ Test 29 Passed: Phase 8.1 Knowledge Graph Intelligence & Discovery Engine verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

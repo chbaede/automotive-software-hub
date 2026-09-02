@@ -555,3 +555,6 @@ export function getGraphInsights(): GraphInsightsData {
     layerDistribution,
   };
 }
+
+// Re-export Knowledge Graph Intelligence Engine
+export * from './intelligence';
