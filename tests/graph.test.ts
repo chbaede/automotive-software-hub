@@ -1010,7 +1010,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // 2. Canonical Layer Adjacency: Truly adjacent core layers are properly checked
   const trulyAdjacentSelection = {
     'hardware-compute': 'horizon-robotics-journey',
-    'hypervisor-virtualization': 'xen-hypervisor',
+    'hypervisor-virtualization': 'xen-automotive',
   };
   const trulyAdjacentValidation = validateStack(trulyAdjacentSelection);
   // Either verified or warning depending on graph, but if warning, isAdjacentLayerPair must be true
@@ -1878,6 +1878,293 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(pathMatches.length > 0, 'Multi-tech stack matches stack paths');
 
   console.log('✅ Test 33 Passed: Multi-Technology Selection & Bare-Metal (Optional Hypervisor) verified.');
+}
+
+// Test 34: Architecture Discovery Aggregates Existing Engines Correctly
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+
+  const testStack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino'],
+  };
+
+  const discovery = discoverArchitecture(testStack);
+  assert.strictEqual(discovery.totalSelectedCount, 3);
+  assert.ok(discovery.architectureMatches.length > 0, 'Must return matched architecture profiles');
+  assert.ok(discovery.stackPathMatches.length > 0, 'Must return matched stack paths');
+  assert.strictEqual(discovery.isCompleteCoreStack, false, '3-layer stack must be incomplete');
+  assert.ok(discovery.missingCoreLayers.includes('middleware-communication'));
+  assert.ok(discovery.missingCoreLayers.includes('application-experience'));
+  assert.ok(discovery.recommendedTechnologies.length > 0, 'Must return explainable recommendations');
+  assert.ok(discovery.validation.totalSelected === 3, 'Must return valid validation summary');
+
+  console.log('✅ Test 34 Passed: Architecture Discovery aggregates existing engines correctly.');
+}
+
+// Test 35: Partial Stack Correctly Identifies Missing Core Runtime Layers
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+
+  const partialStack = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const discovery = discoverArchitecture(partialStack);
+  assert.strictEqual(discovery.isCompleteCoreStack, false);
+  // Missing mandatory layers
+  assert.ok(discovery.missingCoreLayers.includes('build-platform'));
+  assert.ok(discovery.missingCoreLayers.includes('middleware-communication'));
+  assert.ok(discovery.missingCoreLayers.includes('vehicle-services'));
+  assert.ok(discovery.missingCoreLayers.includes('application-experience'));
+  // Populated layers
+  assert.ok(discovery.populatedCoreLayers.includes('hardware-compute'));
+  assert.ok(discovery.populatedCoreLayers.includes('operating-systems'));
+  // Hypervisor is optional, not in missingCoreLayers
+  assert.ok(!discovery.missingCoreLayers.includes('hypervisor-virtualization'));
+
+  console.log('✅ Test 35 Passed: Partial stack correctly identifies missing Core Runtime Layers.');
+}
+
+// Test 36: Multiple Technologies in the Same Layer are Supported
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+
+  const multiTechStack = {
+    'operating-systems': ['qnx-neutrino', 'linux-kernel'],
+    'middleware-communication': ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware'],
+  };
+
+  const discovery = discoverArchitecture(multiTechStack);
+  assert.strictEqual(discovery.totalSelectedCount, 5);
+  assert.ok(discovery.architectureMatches.length > 0);
+  assert.ok(discovery.validation.totalSelected === 5);
+
+  console.log('✅ Test 36 Passed: Multiple technologies in the same layer are supported.');
+}
+
+// Test 37: Same-Layer Technologies are NOT Automatically Treated as Alternatives
+{
+  const { validateStack } = await import('../src/lib/graph/matching.js');
+
+  // Linux Kernel and FreeRTOS coexisting in OS layer
+  const coexistingStack = {
+    'operating-systems': ['linux-kernel', 'freertos'],
+  };
+
+  const validation = validateStack(coexistingStack);
+  // Should NOT generate an alternative warning unless explicit alternative relationship exists
+  const altWarnings = validation.items.filter((i) => i.status === 'alternative');
+  assert.strictEqual(
+    altWarnings.length,
+    0,
+    'Same-layer technologies without explicit alternative edge must NOT be classified as alternatives'
+  );
+
+  console.log('✅ Test 37 Passed: Same-layer technologies are NOT automatically treated as alternatives.');
+}
+
+// Test 38: Explicit Alternative Relationship Produces an Architectural Alternative
+{
+  const { getAlternatives } = await import('../src/lib/graph/intelligence/relationships.js');
+  const { validateStack } = await import('../src/lib/graph/matching.js');
+
+  // QNX Neutrino vs VxWorks have explicit alternative edge
+  const qnxAlts = getAlternatives('qnx-neutrino');
+  assert.ok(
+    qnxAlts.some((a) => a.technology.id === 'vxworks-rtos'),
+    'Explicit alternative relationship must yield VxWorks as alternative to QNX Neutrino'
+  );
+
+  const altStack = {
+    'operating-systems': ['qnx-neutrino', 'vxworks-rtos'],
+  };
+  const val = validateStack(altStack);
+  assert.ok(
+    val.items.some((i) => i.status === 'alternative'),
+    'Explicit alternative technologies in same stack must be recognized as alternatives'
+  );
+
+  console.log('✅ Test 38 Passed: Explicit alternative relationship produces architectural alternatives.');
+}
+
+// Test 39: What-If Replacement Does NOT Mutate the Original Selection
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const originalStack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino'],
+  };
+
+  const originalStackCopy = JSON.parse(JSON.stringify(originalStack));
+
+  const comparison = compareWhatIfStack(originalStack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+
+  assert.deepStrictEqual(
+    originalStack,
+    originalStackCopy,
+    'Original stack selection MUST remain strictly unmutated after What-if comparison'
+  );
+  assert.deepStrictEqual(comparison.originalSelection['hypervisor-virtualization'], ['qnx-hypervisor']);
+  assert.deepStrictEqual(comparison.hypotheticalSelection['hypervisor-virtualization'], ['nvidia-drive-hypervisor']);
+
+  console.log('✅ Test 39 Passed: What-if replacement does NOT mutate original selection.');
+}
+
+// Test 40: What-If Correctly Identifies Removed Relationships
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  // In original stack: QNX Hypervisor runs on ARM Cortex-A78AE (or QNX Neutrino depends on QNX Hypervisor)
+  const stack = {
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino'],
+  };
+
+  const comparison = compareWhatIfStack(stack, 'qnx-hypervisor', 'xen-automotive');
+  const removedRels = comparison.relationshipChanges.filter((r) => r.impactType === 'removed');
+
+  assert.ok(removedRels.length >= 1, 'Must detect removed relationship when QNX Hypervisor is replaced');
+  assert.ok(
+    removedRels.some((r) => r.sourceTech.id === 'qnx-hypervisor' || r.targetTech.id === 'qnx-hypervisor'),
+    'Removed relationship must reference replaced target technology'
+  );
+
+  console.log('✅ Test 40 Passed: What-if correctly identifies removed relationships.');
+}
+
+// Test 41: What-If Correctly Identifies Added Relationships
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+  };
+
+  // Replace QNX Hypervisor with NVIDIA DRIVE Hypervisor (which natively runs-on Thor)
+  const comparison = compareWhatIfStack(stack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+  const addedRels = comparison.relationshipChanges.filter((r) => r.impactType === 'added');
+
+  assert.ok(addedRels.length >= 1, 'Must detect added relationship for NVIDIA DRIVE Hypervisor on Thor');
+  assert.ok(
+    addedRels.some(
+      (r) =>
+        r.sourceTech.id === 'nvidia-drive-hypervisor' &&
+        r.targetTech.id === 'nvidia-drive-thor' &&
+        r.relationship.type === 'runs-on'
+    ),
+    'Added relationship must preserve exact runs-on edge from NVIDIA DRIVE Hypervisor to Thor'
+  );
+
+  console.log('✅ Test 41 Passed: What-if correctly identifies added relationships.');
+}
+
+// Test 42: Architecture Relevance Changes are Deterministic
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'operating-systems': ['qnx-neutrino'],
+  };
+
+  const run1 = compareWhatIfStack(stack, 'qnx-neutrino', 'linux-kernel');
+  const run2 = compareWhatIfStack(stack, 'qnx-neutrino', 'linux-kernel');
+
+  assert.deepStrictEqual(
+    run1.architectureImpacts,
+    run2.architectureImpacts,
+    'What-if architecture impacts must be 100% deterministic'
+  );
+
+  console.log('✅ Test 42 Passed: Architecture relevance changes are deterministic.');
+}
+
+// Test 43: Stack Path Relevance Changes are Deterministic
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const run1 = compareWhatIfStack(stack, 'linux-kernel', 'qnx-neutrino');
+  const run2 = compareWhatIfStack(stack, 'linux-kernel', 'qnx-neutrino');
+
+  assert.deepStrictEqual(
+    run1.pathImpacts,
+    run2.pathImpacts,
+    'What-if path impacts must be 100% deterministic'
+  );
+
+  console.log('✅ Test 43 Passed: Stack Path relevance changes are deterministic.');
+}
+
+// Test 44: Relationship Direction Remains Correct in What-If Comparison
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+  };
+
+  const comparison = compareWhatIfStack(stack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+  const addedThorRel = comparison.relationshipChanges.find(
+    (r) => r.impactType === 'added' && r.sourceTech.id === 'nvidia-drive-hypervisor'
+  );
+
+  assert.ok(addedThorRel, 'Found added relationship');
+  assert.strictEqual(addedThorRel.sourceTech.id, 'nvidia-drive-hypervisor');
+  assert.strictEqual(addedThorRel.targetTech.id, 'nvidia-drive-thor');
+  assert.strictEqual(addedThorRel.relationship.type, 'runs-on');
+  assert.notStrictEqual(
+    addedThorRel.sourceTech.id,
+    'nvidia-drive-thor',
+    'Direction must not be inverted (Hypervisor runs on Thor, not Thor on Hypervisor)'
+  );
+
+  console.log('✅ Test 44 Passed: Relationship direction remains correct in What-if comparison.');
+}
+
+// Test 45: Safety Claims Remain Unchanged Through Architecture Discovery and What-If
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  const stackWithPerseus = {
+    'hardware-compute': ['arm-cortex-a78ae'],
+    'hypervisor-virtualization': ['perseus-hypervisor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  // 1. Through Architecture Discovery
+  const discovery = discoverArchitecture(stackWithPerseus);
+  const perseusInGraph = technologyById.get('perseus-hypervisor');
+  assert.strictEqual(perseusInGraph?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(perseusInGraph?.functionalSafety?.asilLevel, 'ASIL-D');
+
+  // 2. Through What-if Comparison
+  const comparison = compareWhatIfStack(stackWithPerseus, 'perseus-hypervisor', 'xen-automotive');
+  assert.strictEqual(
+    comparison.safetyImpact.targetSafety?.claimType,
+    'certified',
+    'Perseus claimType must remain certified in safety comparison'
+  );
+  assert.strictEqual(
+    comparison.safetyImpact.targetSafety?.asilLevel,
+    'ASIL-D',
+    'Perseus asilLevel must remain ASIL-D in safety comparison'
+  );
+
+  console.log('✅ Test 45 Passed: Safety claims remain unchanged through Architecture Discovery and What-if.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

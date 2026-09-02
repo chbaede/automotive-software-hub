@@ -21,6 +21,7 @@ interface LayerTechSelectorProps {
   selectedTechIds?: string[];
   onToggle: (techId: string) => void;
   onRemove: (techId: string) => void;
+  onOpenWhatIf?: (techId: string) => void;
   highlight?: boolean;
 }
 
@@ -29,6 +30,7 @@ export const LayerTechSelector: React.FC<LayerTechSelectorProps> = ({
   selectedTechIds = [],
   onToggle,
   onRemove,
+  onOpenWhatIf,
   highlight,
 }) => {
   const { language, t } = useLanguage();
@@ -143,14 +145,27 @@ export const LayerTechSelector: React.FC<LayerTechSelectorProps> = ({
                 </p>
               </div>
 
-              <button
-                onClick={() => onRemove(tech.id)}
-                className="p-1 self-end sm:self-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shrink-0"
-                title={t.stackBuilder.removeSelection}
-                aria-label={t.stackBuilder.removeSelection}
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+                {onOpenWhatIf && (
+                  <button
+                    onClick={() => onOpenWhatIf(tech.id)}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition"
+                    title={t.whatIf.simulateDesc}
+                  >
+                    <Sparkles className="w-3 h-3 text-indigo-500" />
+                    <span>{t.whatIf.simulateButton}</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => onRemove(tech.id)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shrink-0"
+                  title={t.stackBuilder.removeSelection}
+                  aria-label={t.stackBuilder.removeSelection}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

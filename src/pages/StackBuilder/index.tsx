@@ -10,6 +10,8 @@ import {
   ShieldCheck,
   ChevronDown,
   Info,
+  Compass,
+  ArrowRightLeft,
 } from 'lucide-react';
 import {
   CORE_STACK_LAYER_IDS,
@@ -17,13 +19,10 @@ import {
   StackSelection,
   getSelectedTechIds,
   getLayerTechIds,
-  validateStack,
-  matchArchitectures,
-  matchStackPaths,
-  getSuggestedCandidates,
   encodeStackToSearchParams,
   decodeStackFromSearchParams,
 } from '../../lib/builder/stackBuilderEngine';
+import { discoverArchitecture } from '../../lib/architecture/discovery';
 import { stackLayers } from '../../data/stackLayers';
 import { technologyById } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -34,6 +33,7 @@ import { StackValidationPanel } from '../../components/builder/StackValidationPa
 import { ArchitectureMatchPanel } from '../../components/builder/ArchitectureMatchPanel';
 import { SuggestedTechPanel } from '../../components/builder/SuggestedTechPanel';
 import { RelatedPathsPanel } from '../../components/builder/RelatedPathsPanel';
+import { WhatIfModal } from '../../components/builder/WhatIfModal';
 
 export const StackBuilderPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -41,6 +41,10 @@ export const StackBuilderPage: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [showSupporting, setShowSupporting] = useState(false);
   const [highlightLayerId, setHighlightLayerId] = useState<string | null>(null);
+
+  // What-if Simulation Modal State
+  const [isWhatIfOpen, setIsWhatIfOpen] = useState(false);
+  const [whatIfTargetId, setWhatIfTargetId] = useState<string | undefined>(undefined);
 
   // Initialize selection from URL Search Params (supports multi-selection per layer)
   const selection: StackSelection = useMemo(() => {
@@ -100,6 +104,42 @@ export const StackBuilderPage: React.FC = () => {
     [handleToggleTechnology]
   );
 
+  // What-if Open Handler
+  const handleOpenWhatIf = useCallback((techId?: string) => {
+    setWhatIfTargetId(techId);
+    setIsWhatIfOpen(true);
+  }, []);
+
+  // What-if Apply Replacement Handler
+  const handleApplyReplacement = useCallback(
+    (targetTechId: string, replacementTechId: string) => {
+      const targetTech = technologyById.get(targetTechId);
+      const replTech = technologyById.get(replacementTechId);
+      if (!targetTech || !replTech) return;
+
+      const newSelection: StackSelection = { ...selection };
+
+      // Remove target tech from its layer
+      const currentTargetList = newSelection[targetTech.layerId as keyof StackSelection] || [];
+      const updatedTargetList = currentTargetList.filter((id) => id !== targetTechId);
+      if (updatedTargetList.length > 0) {
+        newSelection[targetTech.layerId as keyof StackSelection] = updatedTargetList;
+      } else {
+        delete newSelection[targetTech.layerId as keyof StackSelection];
+      }
+
+      // Add replacement tech to its layer
+      const currentReplList = newSelection[replTech.layerId as keyof StackSelection] || [];
+      if (!currentReplList.includes(replacementTechId)) {
+        newSelection[replTech.layerId as keyof StackSelection] = [...currentReplList, replacementTechId];
+      }
+
+      const newParams = encodeStackToSearchParams(newSelection);
+      setSearchParams(newParams, { replace: true });
+    },
+    [selection, setSearchParams]
+  );
+
   const handleClearStack = () => {
     setSearchParams(new URLSearchParams(), { replace: true });
   };
@@ -110,13 +150,10 @@ export const StackBuilderPage: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Perform Knowledge Graph Validation & Match Computations
-  const validationSummary = useMemo(() => validateStack(selection), [selection]);
-  const architectureMatches = useMemo(() => matchArchitectures(selection), [selection]);
-  const stackPathMatches = useMemo(() => matchStackPaths(selection), [selection]);
-  const suggestedCandidates = useMemo(() => getSuggestedCandidates(selection), [selection]);
+  // Perform Architecture Discovery & Knowledge Graph Insights
+  const discoveryResult = useMemo(() => discoverArchitecture(selection), [selection]);
 
-  const totalSelectedCount = getSelectedTechIds(selection).length;
+  const totalSelectedCount = discoveryResult.totalSelectedCount;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -149,13 +186,23 @@ export const StackBuilderPage: React.FC = () => {
             </button>
 
             {totalSelectedCount > 0 && (
-              <button
-                onClick={handleClearStack}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-rose-400 hover:bg-slate-800 border border-slate-700 transition text-xs font-bold"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>{t.stackBuilder.clearStack}</span>
-              </button>
+              <>
+                <button
+                  onClick={() => handleOpenWhatIf()}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600/80 hover:bg-indigo-500 text-white border border-indigo-400/30 transition text-xs font-bold shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{t.whatIf.simulateButton}</span>
+                </button>
+
+                <button
+                  onClick={handleClearStack}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-rose-400 hover:bg-slate-800 border border-slate-700 transition text-xs font-bold"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>{t.stackBuilder.clearStack}</span>
+                </button>
+              </>
             )}
 
             <span className="text-xs font-mono text-slate-400 pl-2">
@@ -195,6 +242,7 @@ export const StackBuilderPage: React.FC = () => {
                     selectedTechIds={selection[layer.id] || []}
                     onToggle={(techId) => handleToggleTechnology(layer.id, techId)}
                     onRemove={(techId) => handleRemoveTechnology(layer.id, techId)}
+                    onOpenWhatIf={handleOpenWhatIf}
                     highlight={highlightLayerId === layer.id}
                   />
                 );
@@ -234,6 +282,7 @@ export const StackBuilderPage: React.FC = () => {
                       selectedTechIds={selection[layer.id] || []}
                       onToggle={(techId) => handleToggleTechnology(layer.id, techId)}
                       onRemove={(techId) => handleRemoveTechnology(layer.id, techId)}
+                      onOpenWhatIf={handleOpenWhatIf}
                       highlight={highlightLayerId === layer.id}
                     />
                   );
@@ -252,24 +301,45 @@ export const StackBuilderPage: React.FC = () => {
           />
 
           {/* 2. Knowledge Graph Relationship Validation Card */}
-          <StackValidationPanel summary={validationSummary} />
+          <StackValidationPanel summary={discoveryResult.validation} />
 
           {/* 3. Reference Architecture Matches */}
           <ArchitectureMatchPanel
-            matches={architectureMatches}
+            matches={discoveryResult.architectureMatches}
             onAddTechnology={handleAddTechnology}
           />
 
           {/* 4. Canonical Automotive Stack Paths */}
-          <RelatedPathsPanel matches={stackPathMatches} />
+          <RelatedPathsPanel matches={discoveryResult.stackPathMatches} />
 
           {/* 5. Deterministic Technology Suggestions */}
           <SuggestedTechPanel
-            candidates={suggestedCandidates}
+            candidates={discoveryResult.recommendedTechnologies.map((r) => ({
+              technology: r.technology,
+              layerId: r.layerId as any,
+              connectedToTech: r.technology, // contextual reference
+              relationship: r.primaryRelationship || {
+                sourceId: r.technology.id,
+                targetId: r.technology.id,
+                type: 'related',
+                confidence: 'community',
+              },
+              priority: r.score,
+              reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },
+            }))}
             onAddTechnology={handleAddTechnology}
           />
         </div>
       </div>
+
+      {/* What-if Replacement Simulation Modal */}
+      <WhatIfModal
+        isOpen={isWhatIfOpen}
+        onClose={() => setIsWhatIfOpen(false)}
+        selection={selection}
+        initialTargetTechId={whatIfTargetId}
+        onApplyReplacement={handleApplyReplacement}
+      />
     </div>
   );
 };
