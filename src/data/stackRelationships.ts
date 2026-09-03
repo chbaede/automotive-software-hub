@@ -1891,4 +1891,84 @@ export const stackRelationships: TechnologyRelationship[] = [
       ko: 'Renode 프레임워크는 멀티코어 FreeRTOS 차량용 펌웨어를 위한 가상 하드웨어 에뮬레이션을 제공합니다.',
     },
   },
+{
+    sourceId: 'android-automotive-os',
+    targetId: 'renesas-rcar',
+    type: 'runs-on',
+    confidence: 'vendor',
+    description: {
+      en: 'Renesas R-Car automotive system-on-chips provide certified Android Automotive OS reference BSPs.',
+      ko: '르네사스 R-Car 자동차용 SoC는 Android Automotive OS 전용 레퍼런스 BSP 및 가속 드라이버를 제공합니다.',
+    },
+  },
+{
+    sourceId: 'android-automotive-os',
+    targetId: 'ti-jacinto',
+    type: 'runs-on',
+    confidence: 'vendor',
+    description: {
+      en: 'TI Jacinto 7 processors support Android Automotive OS for centralized digital cockpit systems.',
+      ko: 'TI Jacinto 7 프로세서는 중앙 집중식 디지털 콕핏 시스템을 위해 Android Automotive OS를 지원합니다.',
+    },
+  },
+{
+    sourceId: 'android-automotive-os',
+    targetId: 'someip-protocol',
+    type: 'used-with',
+    confidence: 'vendor',
+    description: {
+      en: 'Android Automotive OS connects to vehicle ECUs via SOME/IP service-oriented communication through Vehicle HAL.',
+      ko: 'Android Automotive OS는 Vehicle HAL을 통해 차량 ECU들과 SOME/IP 서비스 지향 통신으로 연동됩니다.',
+    },
+  },
+{
+    sourceId: 'android-automotive-os',
+    targetId: 'covesa-vss',
+    type: 'used-with',
+    confidence: 'official',
+    description: {
+      en: 'AAOS vehicle properties and SDV telemetry align with COVESA Vehicle Signal Specification (VSS).',
+      ko: 'AAOS 차량 속성(Vehicle Property) 및 텔레메트리는 COVESA VSS 표준 데이터 모델과 상호 매핑됩니다.',
+    },
+  },
+{
+    sourceId: 'agl-unified-codebase',
+    targetId: 'someip-protocol',
+    type: 'used-with',
+    confidence: 'official',
+    description: {
+      en: 'AGL Unified Codebase integrates SOME/IP communication bindings via vsomeip for vehicle data exchange.',
+      ko: 'AGL UCB는 vsomeip를 통한 SOME/IP 서비스 지향 통신 바인딩을 기본 지원합니다.',
+    },
+  },
+{
+    sourceId: 'agl-unified-codebase',
+    targetId: 'covesa-vss',
+    type: 'used-with',
+    confidence: 'official',
+    description: {
+      en: 'Automotive Grade Linux incorporates COVESA VSS data models for connected vehicle telemetry and KUKSA.val.',
+      ko: 'AGL은 KUKSA.val 및 커넥티드 텔레매틱스 서비스를 위해 COVESA VSS 차량 데이터 모델을 채택합니다.',
+    },
+  },
+{
+    sourceId: 'qt-automotive',
+    targetId: 'linux-kernel',
+    type: 'runs-on',
+    confidence: 'official',
+    description: {
+      en: 'Qt for Automotive runs on the Linux kernel leveraging Wayland display server and DRM/KMS graphics drivers.',
+      ko: 'Qt for Automotive는 Wayland 디스플레이 서버 및 DRM/KMS 드라이버를 통해 리눅스 커널 위에서 동작합니다.',
+    },
+  },
+{
+    sourceId: 'qt-automotive',
+    targetId: 'android-automotive-os',
+    type: 'runs-on',
+    confidence: 'vendor',
+    description: {
+      en: 'Qt for Android Automotive allows building native 2D/3D digital cockpit and IVI apps running directly on AAOS.',
+      ko: 'Qt for Android Automotive는 AAOS 상에서 직접 구동되는 고성능 2D/3D 콕핏 및 IVI 애플리케이션 개발을 지원합니다.',
+    },
+  },
 ];

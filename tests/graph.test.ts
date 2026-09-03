@@ -2614,6 +2614,70 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 61 Passed: Functional safety invariant preservation verified.');
 }
 
+// Test 62: Cockpit Domain Commonality & Embedded Linux Architecture Alignment
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { outgoingRelationshipsByTechnologyId, incomingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
+
+  const aaosProfile = architectureProfiles.find((p) => p.id === 'android-automotive');
+  const customLinuxProfile = architectureProfiles.find((p) => p.id === 'modern-ivi');
+
+  assert.ok(aaosProfile, 'AAOS profile must exist');
+  assert.ok(customLinuxProfile, 'Custom Embedded Linux profile must exist');
+
+  // 1. Embedded Linux Kernel present in both AAOS and Custom Embedded Linux Cockpit
+  assert.ok(aaosProfile.technologyIds.includes('linux-kernel'), 'AAOS profile must include linux-kernel');
+  assert.ok(customLinuxProfile.technologyIds.includes('linux-kernel'), 'Custom Linux Cockpit profile must include linux-kernel');
+
+  // 2. Renamed profile verification: Custom Embedded Linux Cockpit & IVI
+  assert.strictEqual(customLinuxProfile.name.en, 'Custom Embedded Linux Cockpit & IVI');
+  assert.strictEqual(customLinuxProfile.name.ko, '커스텀 임베디드 리눅스 콕핏 & IVI');
+
+  // 3. SOME/IP & COVESA VSS as common tools across both
+  assert.ok(aaosProfile.technologyIds.includes('someip-protocol'), 'AAOS must include SOME/IP');
+  assert.ok(aaosProfile.technologyIds.includes('covesa-vss'), 'AAOS must include COVESA VSS');
+  assert.ok(customLinuxProfile.technologyIds.includes('someip-protocol'), 'Custom Linux Cockpit must include SOME/IP');
+  assert.ok(customLinuxProfile.technologyIds.includes('covesa-vss'), 'Custom Linux Cockpit must include COVESA VSS');
+
+  // 4. Qt Automotive supports Android
+  const qtOutgoing = outgoingRelationshipsByTechnologyId.get('qt-automotive') || [];
+  const qtRunsOnAndroid = qtOutgoing.find((r) => r.targetId === 'android-automotive-os');
+  assert.ok(qtRunsOnAndroid, 'Qt Automotive must have relationship with Android Automotive OS');
+
+  // 5. Qualcomm, Renesas, TI support Android
+  const aaosIncoming = incomingRelationshipsByTechnologyId.get('android-automotive-os') || [];
+  const aaosOutgoing = outgoingRelationshipsByTechnologyId.get('android-automotive-os') || [];
+  const aaosConnectedTechIds = new Set([
+    ...aaosIncoming.map((r) => r.sourceId),
+    ...aaosOutgoing.map((r) => r.targetId),
+  ]);
+
+  assert.ok(aaosConnectedTechIds.has('qualcomm-snapdragon-cockpit'), 'Qualcomm Cockpit must support Android');
+  assert.ok(aaosConnectedTechIds.has('renesas-rcar'), 'Renesas R-Car must support Android');
+  assert.ok(aaosConnectedTechIds.has('ti-jacinto'), 'TI Jacinto must support Android');
+
+  console.log('✅ Test 62 Passed: Cockpit domain commonality & Embedded Linux architecture alignment verified.');
+}
+
+// Test 63: Cockpit Domain Safety Invariant (QM Standard)
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  const customLinuxProfile = architectureProfiles.find((p) => p.id === 'modern-ivi')!;
+  
+  // Cockpit profiles should not mandate ISO 26262 ASIL A-D compliance for the IVI domain
+  assert.ok(
+    !customLinuxProfile.technologyIds.includes('iso-26262-functional-safety'),
+    'Cockpit/IVI profile must not include ISO 26262 ASIL requirement as IVI is QM'
+  );
+
+  const qualcommCockpit = technologyById.get('qualcomm-snapdragon-cockpit');
+  assert.strictEqual(qualcommCockpit?.asilLevel, undefined, 'Cockpit SoC is treated as QM standard');
+
+  console.log('✅ Test 63 Passed: Cockpit domain safety invariant (QM standard) verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

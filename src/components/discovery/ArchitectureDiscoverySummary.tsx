@@ -189,3 +189,4 @@ export const ArchitectureDiscoverySummary: React.FC<ArchitectureDiscoverySummary
     </div>
   );
 };
+

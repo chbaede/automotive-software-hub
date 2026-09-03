@@ -62,14 +62,6 @@ export const stackTechnologies: StackTechnology[] = [
   },
   {
     id: 'qualcomm-snapdragon-cockpit',
-    asilLevel: 'ASIL-B',
-    functionalSafety: {
-      asilLevel: 'ASIL-B',
-      claimType: 'capable',
-      standard: 'ISO 26262',
-      sourceUrl: 'https://www.qualcomm.com/products/automotive/snapdragon-cockpit-platform',
-      lastVerified: '2026-09-02',
-    },
     licenseType: 'commercial',
     name: 'Qualcomm Snapdragon Digital Cockpit',
     layerId: 'hardware-compute',

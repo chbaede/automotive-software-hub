@@ -93,3 +93,4 @@ export const ArchitectureComparisonTable: React.FC<ArchitectureComparisonTablePr
     </div>
   );
 };
+

@@ -116,3 +116,4 @@ export const ArchitectureGapPanel: React.FC<ArchitectureGapPanelProps> = ({
     </div>
   );
 };
+

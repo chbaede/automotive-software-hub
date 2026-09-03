@@ -54,3 +54,4 @@ export const DiscoveryEmptyState: React.FC<DiscoveryEmptyStateProps> = ({ type }
     </div>
   );
 };
+
