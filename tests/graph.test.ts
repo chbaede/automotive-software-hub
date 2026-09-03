@@ -2140,7 +2140,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { technologyById } = await import('../src/lib/graph/index.js');
 
   const stackWithPerseus = {
-    'hardware-compute': ['arm-cortex-a78ae'],
+    'hardware-compute': ['nvidia-drive-thor'],
     'hypervisor-virtualization': ['perseus-hypervisor'],
     'operating-systems': ['linux-kernel'],
   };
@@ -2290,7 +2290,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
 
   const stack = {
-    'hardware-compute': ['arm-cortex-a78ae'],
+    'hardware-compute': ['nvidia-drive-thor'],
     'hypervisor-virtualization': ['perseus-hypervisor'],
     'operating-systems': ['linux-kernel'],
   };
@@ -2404,7 +2404,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   // Incomplete stack missing middleware, application, etc.
   const stack = {
-    'hardware-compute': ['arm-cortex-a78ae'],
+    'hardware-compute': ['nvidia-drive-thor'],
   };
 
   const discovery = discoverArchitecture(stack);
@@ -2599,7 +2599,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
 
   const stack = {
-    'hardware-compute': ['arm-cortex-a78ae'],
+    'hardware-compute': ['nvidia-drive-thor'],
     'hypervisor-virtualization': ['perseus-hypervisor'],
     'operating-systems': ['linux-kernel'],
   };
