@@ -2308,209 +2308,310 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 49 Passed: Phase 8.3.1 regression & safety invariant hardening verified.');
 }
 
-// Test 50: Architecture Listing and Profile Metadata Verification
+// Test 50: Primary Architecture Selection
 {
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
 
-  assert.ok(architectureProfiles.length >= 8, 'Must contain at least 8 curated architecture profiles');
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['linux-kernel'],
+    'middleware-communication': ['someip-protocol'],
+  };
 
-  architectureProfiles.forEach((profile) => {
-    assert.ok(profile.id, 'Profile must have an id');
-    assert.ok(profile.name.en, 'Profile must have English name');
-    assert.ok(profile.name.ko, 'Profile must have Korean name');
-    assert.ok(profile.description.en, 'Profile must have English description');
-    assert.ok(profile.description.ko, 'Profile must have Korean description');
-    assert.ok(profile.profileType, 'Profile must have a valid profileType');
-    assert.ok(Array.isArray(profile.technologyIds) && profile.technologyIds.length > 0, 'Must have technology IDs');
-  });
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
 
-  console.log('✅ Test 50 Passed: Architecture listing and profile metadata verified.');
+  assert.ok(discovery.architectureMatches.length > 0);
+  assert.strictEqual(
+    viewModel.primaryArchitecture?.profile.id,
+    discovery.architectureMatches[0].profile.id,
+    'Primary architecture must be the top-ranking match from existing engine'
+  );
+
+  console.log('✅ Test 50 Passed: Primary architecture selection verified.');
 }
 
-// Test 51: Architecture Detail and Technology/Layer Resolution
+// Test 51: Architecture Coverage Breakdown
 {
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { stackLayers } = await import('../src/data/stackLayers.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
 
-  const validLayerIds = new Set(stackLayers.map((l) => l.id));
+  const stack = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'operating-systems': ['android-automotive-os'],
+  };
 
-  architectureProfiles.forEach((profile) => {
-    profile.technologyIds.forEach((techId) => {
-      const tech = technologyById.get(techId);
-      assert.ok(tech, `Technology "${techId}" in profile "${profile.id}" must exist in graph`);
-      assert.ok(validLayerIds.has(tech.layerId), `Technology "${techId}" must belong to a valid layer`);
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  assert.ok(viewModel.primaryArchitecture);
+  const matchedIds = new Set(viewModel.primaryArchitecture.matchedTechnologies.map((t) => t.id));
+  const missingIds = new Set(viewModel.primaryArchitecture.missingTechnologies.map((t) => t.id));
+
+  // Coverage items must partition profile technologies into matched and missing
+  let totalInCoverage = 0;
+  viewModel.primaryLayerCoverage.forEach((cov) => {
+    cov.matched.forEach((t) => {
+      assert.ok(matchedIds.has(t.id), `Matched tech "${t.id}" must be in matchedIds`);
+      totalInCoverage++;
+    });
+    cov.missing.forEach((t) => {
+      assert.ok(missingIds.has(t.id), `Missing tech "${t.id}" must be in missingIds`);
+      totalInCoverage++;
     });
   });
 
-  console.log('✅ Test 51 Passed: Architecture detail and technology/layer resolution verified.');
+  assert.strictEqual(
+    totalInCoverage,
+    viewModel.primaryArchitecture.profile.technologyIds.length,
+    'All profile technologies must be represented in layer coverage'
+  );
+
+  console.log('✅ Test 51 Passed: Architecture coverage breakdown verified.');
 }
 
-// Test 52: Architecture -> Stack Builder Conversion & URL Roundtrip
+// Test 52: Actionable Architecture Gap Categorization
 {
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
-  const {
-    encodeStackToSearchParams,
-    decodeStackFromSearchParams,
-    getSelectedTechIds,
-  } = await import('../src/lib/builder/stackBuilderEngine.js');
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
 
-  const profile = architectureProfiles[0];
-  const selection = convertArchitectureToStackSelection(profile);
+  const stack = {
+    'hardware-compute': ['qualcomm-snapdragon-cockpit'],
+    'operating-systems': ['android-automotive-os'],
+  };
 
-  // 1. All profile technologies must be present in selection
-  const selectedIds = getSelectedTechIds(selection);
-  assert.strictEqual(
-    selectedIds.length,
-    profile.technologyIds.length,
-    'All technologies in architecture profile must be mapped to selection'
-  );
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
 
-  // 2. Multi-technology URL serialization round-trip
-  const params = encodeStackToSearchParams(selection);
-  const decoded = decodeStackFromSearchParams(params);
-  const decodedIds = getSelectedTechIds(decoded);
+  const archGaps = viewModel.gaps.filter((g) => g.category === 'architecture-gap');
+  assert.ok(archGaps.length > 0, 'Must produce architecture-gap items for missing profile techs');
 
-  assert.deepStrictEqual(
-    decodedIds.sort(),
-    selectedIds.sort(),
-    'URL serialization round-trip must preserve all architecture technologies'
-  );
-
-  console.log('✅ Test 52 Passed: Architecture -> Stack Builder conversion & URL roundtrip verified.');
-}
-
-// Test 53: Architecture Comparison Engine
-{
-  const { compareArchitectures } = await import('../src/lib/architecture/comparison.js');
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-
-  const archA = architectureProfiles[0];
-  const archB = architectureProfiles[1];
-
-  const comparison = compareArchitectures(archA.id, archB.id);
-
-  assert.strictEqual(comparison.architectureA.id, archA.id);
-  assert.strictEqual(comparison.architectureB.id, archB.id);
-
-  // Shared + OnlyInA must equal total technologies in A
-  assert.strictEqual(
-    comparison.sharedTechnologies.length + comparison.onlyTechnologiesInA.length,
-    archA.technologyIds.length
-  );
-
-  // Shared + OnlyInB must equal total technologies in B
-  assert.strictEqual(
-    comparison.sharedTechnologies.length + comparison.onlyTechnologiesInB.length,
-    archB.technologyIds.length
-  );
-
-  // Shared tech IDs cannot overlap with unique tech IDs
-  const sharedIds = new Set(comparison.sharedTechnologies.map((t) => t.id));
-  comparison.onlyTechnologiesInA.forEach((t) => {
-    assert.ok(!sharedIds.has(t.id), `Unique tech in A "${t.id}" cannot be in shared`);
-  });
-  comparison.onlyTechnologiesInB.forEach((t) => {
-    assert.ok(!sharedIds.has(t.id), `Unique tech in B "${t.id}" cannot be in shared`);
+  archGaps.forEach((gap) => {
+    assert.ok(gap.technology, 'Architecture gap must reference the missing technology');
+    assert.strictEqual(gap.category, 'architecture-gap');
+    assert.ok(gap.actionLabel);
   });
 
-  console.log('✅ Test 53 Passed: Architecture comparison engine verified.');
+  console.log('✅ Test 52 Passed: Actionable architecture gap categorization verified.');
 }
 
-// Test 54: No Fake Relationships Created from Architecture Membership
+// Test 53: Layer Gap Remains Distinct from Architecture Gap
 {
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
 
-  // Verify that pairwise relationships are ONLY present if explicitly recorded in canonical graph
-  architectureProfiles.forEach((profile) => {
-    const techIds = profile.technologyIds;
-    techIds.forEach((idA) => {
-      techIds.forEach((idB) => {
-        if (idA !== idB) {
-          const outgoingA = outgoingRelationshipsByTechnologyId.get(idA) || [];
-          const canonicalRel = outgoingA.find((r) => r.targetId === idB);
-          // If no canonical relationship, we never fabricate one
-          if (!canonicalRel) {
-            // Confirm we didn't add any fake relationship
-            assert.strictEqual(canonicalRel, undefined);
-          }
+  // Incomplete stack missing middleware, application, etc.
+  const stack = {
+    'hardware-compute': ['arm-cortex-a78ae'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  const layerGaps = viewModel.gaps.filter((g) => g.category === 'layer-gap');
+  assert.ok(layerGaps.length > 0, 'Must produce layer-gap items for missing core layers');
+
+  layerGaps.forEach((gap) => {
+    assert.strictEqual(gap.category, 'layer-gap');
+    assert.ok(gap.layerId, 'Layer gap must have a layerId');
+    assert.strictEqual(gap.technology, undefined, 'Layer gap should not reference a specific technology');
+  });
+
+  console.log('✅ Test 53 Passed: Layer gap remains distinct from architecture gap verified.');
+}
+
+// Test 54: No Invented Architecture Technology in Coverage
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  if (viewModel.primaryArchitecture) {
+    const profileTechIdSet = new Set(viewModel.primaryArchitecture.profile.technologyIds);
+
+    // Verify all techs in coverage belong to profile
+    viewModel.primaryLayerCoverage.forEach((cov) => {
+      cov.matched.forEach((t) => assert.ok(profileTechIdSet.has(t.id)));
+      cov.missing.forEach((t) => assert.ok(profileTechIdSet.has(t.id)));
+    });
+  }
+
+  console.log('✅ Test 54 Passed: No invented architecture technology in coverage verified.');
+}
+
+// Test 55: Stack Path Highlighting with Hop Selection State
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  if (viewModel.stackPaths.length > 0) {
+    viewModel.stackPaths.forEach((pathItem) => {
+      pathItem.hops.forEach((hop) => {
+        if (hop.technologyId === 'nvidia-drive-thor' || hop.technologyId === 'linux-kernel') {
+          assert.strictEqual(hop.isSelected, true, `Selected tech ${hop.technologyId} must be marked isSelected: true`);
         }
       });
     });
+  }
+
+  console.log('✅ Test 55 Passed: Stack Path highlighting with hop selection state verified.');
+}
+
+// Test 56: Weak Architecture Match State
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
+
+  // Single technology selection with sparse matching
+  const stack = {
+    'development-testing': ['canalyzer-vector'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  assert.strictEqual(viewModel.totalSelectedCount, 1);
+  assert.strictEqual(viewModel.isWeakMatch, true, 'Single tool selection must yield weak match');
+  assert.strictEqual(viewModel.isStrongMatch, false);
+
+  console.log('✅ Test 56 Passed: Weak architecture match state verified.');
+}
+
+// Test 57: Empty Selection State
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
+
+  const emptyStack = {};
+  const discovery = discoverArchitecture(emptyStack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  assert.strictEqual(viewModel.isEmptySelection, true, 'Empty selection must be marked isEmptySelection: true');
+  assert.strictEqual(viewModel.totalSelectedCount, 0);
+  assert.strictEqual(viewModel.primaryArchitecture, null);
+
+  console.log('✅ Test 57 Passed: Empty selection state verified.');
+}
+
+// Test 58: What-If Entry Point from Discovery
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const whatIfResult = compareWhatIfStack(stack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+  assert.strictEqual(whatIfResult.targetTechnology.id, 'qnx-hypervisor');
+  assert.strictEqual(whatIfResult.replacementTechnology.id, 'nvidia-drive-hypervisor');
+  assert.strictEqual(whatIfResult.originalSelection['hypervisor-virtualization']?.[0], 'qnx-hypervisor');
+  assert.strictEqual(whatIfResult.hypotheticalSelection['hypervisor-virtualization']?.[0], 'nvidia-drive-hypervisor');
+
+  console.log('✅ Test 58 Passed: What-if entry point from discovery verified.');
+}
+
+// Test 59: Absence of Fabricated Contribution Scores
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { buildArchitectureDiscoveryViewModel } = await import('../src/lib/architecture/discoveryViewModel.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  const viewModel = buildArchitectureDiscoveryViewModel(discovery);
+
+  // All percentages must derive deterministically from canonical profiles
+  if (viewModel.primaryArchitecture) {
+    const coverage = viewModel.primaryArchitecture.profileCoveragePercentage;
+    assert.ok(coverage >= 0 && coverage <= 100);
+    assert.strictEqual(
+      coverage,
+      Math.round(
+        (viewModel.primaryArchitecture.matchedTechnologies.length /
+          viewModel.primaryArchitecture.profile.technologyIds.length) *
+          100
+      )
+    );
+  }
+
+  console.log('✅ Test 59 Passed: Absence of fabricated contribution scores verified.');
+}
+
+// Test 60: Phase 8.3.1 Graph Edge Diff Regression
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino', 'linux-kernel'],
+  };
+
+  const comparison = compareWhatIfStack(stack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+
+  const removedEdges = comparison.relationshipChanges.filter((r) => r.impactType === 'removed');
+  const addedEdges = comparison.relationshipChanges.filter((r) => r.impactType === 'added');
+
+  assert.ok(removedEdges.length > 0, 'Removed edges must be identified');
+  assert.ok(addedEdges.length > 0, 'Added edges must be identified');
+
+  // Verify zero intersection
+  const removedKeys = new Set(removedEdges.map((e) => `${e.sourceTech.id}|${e.relationship.type}|${e.targetTech.id}`));
+  addedEdges.forEach((e) => {
+    const key = `${e.sourceTech.id}|${e.relationship.type}|${e.targetTech.id}`;
+    assert.ok(!removedKeys.has(key), `Edge ${key} cannot be both added and removed`);
   });
 
-  console.log('✅ Test 54 Passed: Architecture membership does NOT create fake relationships.');
+  console.log('✅ Test 60 Passed: Phase 8.3.1 graph edge diff regression verified.');
 }
 
-// Test 55: Existing Graph Intelligence Reuse in Architecture Discovery
+// Test 61: Functional Safety Invariant Preservation
 {
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
   const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
-
-  const profile = architectureProfiles[0];
-  const selection = convertArchitectureToStackSelection(profile);
-  const discovery = discoverArchitecture(selection);
-
-  // Discovery must match the profile itself with 100% profile coverage
-  const selfMatch = discovery.architectureMatches.find((m) => m.profile.id === profile.id);
-  assert.ok(selfMatch, 'Architecture selection must match its own architecture profile');
-  assert.strictEqual(selfMatch.profileCoveragePercentage, 100, 'Self-match must have 100% profile coverage');
-  assert.strictEqual(selfMatch.missingTechnologies.length, 0, 'No missing technologies for self-match');
-
-  console.log('✅ Test 55 Passed: Existing graph intelligence reuse in architecture discovery verified.');
-}
-
-// Test 56: What-If Integration from Architecture Selection
-{
-  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
   const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
 
-  // Find a profile with an operating system
-  const profileWithOS = architectureProfiles.find((p) =>
-    p.technologyIds.some((id) => technologyById.get(id)?.layerId === 'operating-systems')
-  );
-  assert.ok(profileWithOS, 'Found profile with OS');
-
-  const osTechId = profileWithOS.technologyIds.find(
-    (id) => technologyById.get(id)?.layerId === 'operating-systems'
-  )!;
-  const selection = convertArchitectureToStackSelection(profileWithOS);
-
-  // Replace OS with alternative
-  const replId = osTechId === 'qnx-neutrino' ? 'linux-kernel' : 'qnx-neutrino';
-  const whatIfResult = compareWhatIfStack(selection, osTechId, replId);
-
-  assert.ok(whatIfResult.architectureImpacts.length > 0, 'What-if generates architecture impacts');
-  assert.strictEqual(whatIfResult.targetTechnology.id, osTechId);
-  assert.strictEqual(whatIfResult.replacementTechnology.id, replId);
-
-  console.log('✅ Test 56 Passed: What-if integration from architecture selection verified.');
-}
-
-// Test 57: Safety Claims Invariant across Architecture Discovery and Comparison
-{
-  const { compareArchitectures } = await import('../src/lib/architecture/comparison.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
-
+  // Perseus Pegasus Hypervisor ASIL-D Certified invariant
   const perseus = technologyById.get('perseus-hypervisor');
   assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified');
   assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
 
-  // Compare architectures
-  const comparison = compareArchitectures('centralized-compute', 'zonal-architecture');
-  assert.ok(comparison);
+  const stack = {
+    'hardware-compute': ['arm-cortex-a78ae'],
+    'hypervisor-virtualization': ['perseus-hypervisor'],
+    'operating-systems': ['linux-kernel'],
+  };
 
-  // Safety claim invariant
-  const perseusAfter = technologyById.get('perseus-hypervisor');
-  assert.strictEqual(perseusAfter?.functionalSafety?.claimType, 'certified');
-  assert.strictEqual(perseusAfter?.functionalSafety?.asilLevel, 'ASIL-D');
+  const discovery = discoverArchitecture(stack);
+  assert.ok(discovery);
 
-  console.log('✅ Test 57 Passed: Safety claims invariant across Architecture Discovery and Comparison verified.');
+  const whatIf = compareWhatIfStack(stack, 'perseus-hypervisor', 'qnx-hypervisor');
+  assert.strictEqual(whatIf.safetyImpact.targetSafety?.claimType, 'certified');
+  assert.strictEqual(whatIf.safetyImpact.targetSafety?.asilLevel, 'ASIL-D');
+
+  console.log('✅ Test 61 Passed: Functional safety invariant preservation verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

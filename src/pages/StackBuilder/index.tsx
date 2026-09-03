@@ -18,11 +18,11 @@ import {
   SUPPORTING_STACK_LAYER_IDS,
   StackSelection,
   getSelectedTechIds,
-  getLayerTechIds,
   encodeStackToSearchParams,
   decodeStackFromSearchParams,
 } from '../../lib/builder/stackBuilderEngine';
 import { discoverArchitecture } from '../../lib/architecture/discovery';
+import { buildArchitectureDiscoveryViewModel } from '../../lib/architecture/discoveryViewModel';
 import { stackLayers } from '../../data/stackLayers';
 import { technologyById } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -30,10 +30,13 @@ import { getLocalizedText } from '../../types/i18n';
 import { LayerTechSelector } from '../../components/builder/LayerTechSelector';
 import { StackPreviewLadder } from '../../components/builder/StackPreviewLadder';
 import { StackValidationPanel } from '../../components/builder/StackValidationPanel';
-import { ArchitectureMatchPanel } from '../../components/builder/ArchitectureMatchPanel';
 import { SuggestedTechPanel } from '../../components/builder/SuggestedTechPanel';
 import { RelatedPathsPanel } from '../../components/builder/RelatedPathsPanel';
 import { WhatIfModal } from '../../components/builder/WhatIfModal';
+import { DiscoveryEmptyState } from '../../components/discovery/DiscoveryEmptyState';
+import { ArchitectureDiscoverySummary } from '../../components/discovery/ArchitectureDiscoverySummary';
+import { ArchitectureComparisonTable } from '../../components/discovery/ArchitectureComparisonTable';
+import { ArchitectureGapPanel } from '../../components/discovery/ArchitectureGapPanel';
 
 export const StackBuilderPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -150,8 +153,12 @@ export const StackBuilderPage: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Perform Architecture Discovery & Knowledge Graph Insights
+  // Perform Architecture Discovery & build display view model
   const discoveryResult = useMemo(() => discoverArchitecture(selection), [selection]);
+  const discoveryViewModel = useMemo(
+    () => buildArchitectureDiscoveryViewModel(discoveryResult),
+    [discoveryResult]
+  );
 
   const totalSelectedCount = discoveryResult.totalSelectedCount;
 
@@ -292,7 +299,7 @@ export const StackBuilderPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Visual Preview, Validation, Matches & Suggestions (5 cols) */}
+        {/* Right Column: Visual Preview, Architecture Discovery, Gap Analysis & Paths (5 cols) */}
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
           {/* 1. Stack Visual Preview Ladder */}
           <StackPreviewLadder
@@ -300,29 +307,63 @@ export const StackBuilderPage: React.FC = () => {
             onSelectLayer={(layerId) => setHighlightLayerId(layerId)}
           />
 
-          {/* 2. Knowledge Graph Relationship Validation Card */}
-          <StackValidationPanel summary={discoveryResult.validation} />
+          {/* 2. Architecture Discovery Summary & Decision Support */}
+          {discoveryViewModel.isEmptySelection ? (
+            <DiscoveryEmptyState type="empty" />
+          ) : discoveryViewModel.isWeakMatch ? (
+            <>
+              <DiscoveryEmptyState type="weak" />
+              <StackValidationPanel summary={discoveryResult.validation} />
+              <SuggestedTechPanel
+                candidates={discoveryResult.recommendedTechnologies.map((r) => ({
+                  technology: r.technology,
+                  layerId: r.layerId as any,
+                  relationship: r.primaryRelationship,
+                  priority: r.score,
+                  reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },
+                }))}
+                onAddTechnology={handleAddTechnology}
+              />
+            </>
+          ) : (
+            <>
+              {/* Primary Architecture Summary & Layer Coverage */}
+              <ArchitectureDiscoverySummary
+                viewModel={discoveryViewModel}
+                onAddTechnology={handleAddTechnology}
+                onOpenWhatIf={handleOpenWhatIf}
+              />
 
-          {/* 3. Reference Architecture Matches */}
-          <ArchitectureMatchPanel
-            matches={discoveryResult.architectureMatches}
-            onAddTechnology={handleAddTechnology}
-          />
+              {/* Actionable Gap Analysis */}
+              <ArchitectureGapPanel
+                gaps={discoveryViewModel.gaps}
+                onAddTechnology={handleAddTechnology}
+              />
 
-          {/* 4. Canonical Automotive Stack Paths */}
-          <RelatedPathsPanel matches={discoveryResult.stackPathMatches} />
+              {/* Side-by-Side Top Matches Comparison */}
+              {discoveryViewModel.topMatches.length > 1 && (
+                <ArchitectureComparisonTable matches={discoveryViewModel.topMatches} />
+              )}
 
-          {/* 5. Deterministic Technology Suggestions */}
-          <SuggestedTechPanel
-            candidates={discoveryResult.recommendedTechnologies.map((r) => ({
-              technology: r.technology,
-              layerId: r.layerId as any,
-              relationship: r.primaryRelationship,
-              priority: r.score,
-              reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },
-            }))}
-            onAddTechnology={handleAddTechnology}
-          />
+              {/* Knowledge Graph Relationship Validation */}
+              <StackValidationPanel summary={discoveryResult.validation} />
+
+              {/* Execution Journeys (Stack Paths) */}
+              <RelatedPathsPanel matches={discoveryResult.stackPathMatches} />
+
+              {/* Suggested Next Technologies */}
+              <SuggestedTechPanel
+                candidates={discoveryResult.recommendedTechnologies.map((r) => ({
+                  technology: r.technology,
+                  layerId: r.layerId as any,
+                  relationship: r.primaryRelationship,
+                  priority: r.score,
+                  reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },
+                }))}
+                onAddTechnology={handleAddTechnology}
+              />
+            </>
+          )}
         </div>
       </div>
 

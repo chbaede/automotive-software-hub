@@ -30,7 +30,6 @@ import {
 import { discoverArchitecture } from './discovery';
 
 interface CanonicalGraphEdge {
-  key: string;
   sourceTech: StackTechnology;
   targetTech: StackTechnology;
   relationship: TechnologyRelationship;
@@ -57,7 +56,6 @@ function collectCanonicalSelectedEdges(selection: StackSelection): Map<string, C
           const key = `${rel.sourceId}|${rel.type}|${rel.targetId}`;
           if (!edgeMap.has(key)) {
             edgeMap.set(key, {
-              key,
               sourceTech,
               targetTech,
               relationship: rel,

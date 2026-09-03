@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Route, ArrowRight, Check } from 'lucide-react';
+import { Route, ArrowRight, Check, Circle, Info } from 'lucide-react';
 import { StackPathMatchResult } from '../../lib/builder/stackBuilderEngine';
 import { technologyById } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -21,9 +21,14 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <Route className="w-4 h-4 text-indigo-500" />
-          <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-            {t.stackBuilder.relatedPathsTitle}
-          </h3>
+          <div>
+            <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+              {t.stackBuilder.relatedPathsTitle}
+            </h3>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              {language === 'ko' ? '소프트웨어 실행 여정 (탐색 경로)' : 'Representative execution journeys across the stack'}
+            </p>
+          </div>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
           {matches.length === 1
@@ -56,7 +61,7 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {pathTypeMeta && (
                       <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 font-bold">
                         {getLocalizedText(pathTypeMeta.label, language)}
@@ -77,7 +82,7 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
                 </span>
               </div>
 
-              {/* Hop Sequence */}
+              {/* Hop Sequence with Checked/Missing indicators */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {path.hops.map((hop, idx) => {
                   const hopTech = technologyById.get(hop.technologyId);
@@ -91,16 +96,21 @@ export const RelatedPathsPanel: React.FC<RelatedPathsPanelProps> = ({ matches })
                       {hopTech ? (
                         <Link
                           to={`/stack/${hopTech.id}`}
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition ${
+                          className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border transition ${
                             isMatched
                               ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
                               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400'
                           }`}
                         >
-                          {hopTech.name}
+                          {isMatched ? (
+                            <Check className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                          ) : (
+                            <Circle className="w-2 h-2 text-slate-400" />
+                          )}
+                          <span>{hopTech.name}</span>
                         </Link>
                       ) : (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 font-mono">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-mono">
                           {hop.technologyId}
                         </span>
                       )}
