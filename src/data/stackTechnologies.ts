@@ -1069,7 +1069,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'nvidia-driveworks-sdk',
     licenseType: 'commercial',
     name: 'NVIDIA DriveWorks SDK & DRIVE OS',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'NVIDIA AV middleware & SDK providing Sensor Abstraction Layer (SAL), Compute Graph Framework (CGF), and TensorRT AI inference.',
       ko: '센서 추상화 레이어(SAL), 컴퓨팅 그래프 프레임워크(CGF) 및 TensorRT AI 추론을 제공하는 NVIDIA 자율주행 SDK.',
@@ -1089,7 +1089,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'momenta-flywheel-ad',
     licenseType: 'commercial',
     name: 'Momenta Flywheel AD & Urban NOA Stack',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Momenta data-driven end-to-end foundation model autonomous driving stack enabling Urban NOA and Robotaxi fleets.',
       ko: '도심 NOA 및 로보택시를 위해 데이터 드라이브 엔드투엔드 파운데이션 모델을 결합한 Momenta 자율주행 스택.',
@@ -1109,7 +1109,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'baidu-apollo-ad',
     licenseType: 'oss',
     name: 'Baidu Apollo Open Autonomous Platform',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Open-source full-stack autonomous driving software architecture integrating Cyber RT IPC, HD mapping, and planning.',
       ko: 'Cyber RT IPC, 고정밀 지도(HD Map) 및 제어 알고리즘을 결합한 오픈 소스 풀스택 자율주행 플랫폼.',
@@ -1129,7 +1129,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'ros2-autoware',
     licenseType: 'oss',
     name: 'Autoware (ROS 2 Autonomous Driving Platform)',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'World-leading open-source autonomous driving software stack built on ROS 2, covering localization, perception, planning, and control.',
       ko: 'ROS 2를 기반으로 위치 추정, 인지, 경로 계획 및 차량 제어를 수행하는 세계 선도 자율주행 오픈소스 플랫폼.',
@@ -1150,7 +1150,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'kanzi-ui-engine',
     licenseType: 'commercial',
     name: 'Rightware Kanzi Studio & UI Engine',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Industry-standard 3D automotive UI design framework & realtime graphics engine powering digital instrument clusters.',
       ko: '디지털 계기판 및 콕핏 3D 그래픽 UI를 구동하는 글로벌 오토모티브 표준 UI 그래픽 엔진 & Kanzi Studio.',
@@ -1170,7 +1170,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'flutter-automotive',
     licenseType: 'oss',
     name: 'Flutter for Automotive (Flutter Embedded UI)',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Google\'s open-source UI software development kit optimized for multi-display automotive IVI, digital clusters, and fluid cockpit user interfaces.',
       ko: '다중 디스플레이 차량용 IVI, 디지털 계기판 및 반응형 콕핏 사용자 인터페이스에 최적화된 구글 오픈소스 UI 프레임워크.',
@@ -1190,7 +1190,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'qt-automotive',
     licenseType: 'commercial',
     name: 'Qt for Automotive Framework',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Cross-platform C++ and QML UI toolkit powering 3D digital instrument clusters and IVI user interfaces.',
       ko: '3D 디지털 계기판 및 IVI 사용자 인터페이스를 구동하는 크로스 플랫폼 C++ & QML UI 툴킷.',
@@ -2168,7 +2168,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'apollo-cyber-rt',
     licenseType: 'oss',
     name: 'Apollo Cyber RT',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Open-source, deterministic real-time runtime and scheduling framework designed specifically for autonomous driving software in Baidu Apollo.',
       ko: '자율주행 알고리즘 파이프라인의 확정적 실시간 스케줄링과 고속 데이터 전송을 위해 바이두 아폴로가 개발한 오픈소스 자율주행 런타임 프레임워크.',
@@ -2197,7 +2197,7 @@ export const stackTechnologies: StackTechnology[] = [
     },
     licenseType: 'commercial',
     name: 'Apex.OS',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'TÜV Nord ISO 26262 ASIL-D certified real-time mobility operating system framework built on ROS 2 APIs for production autonomous driving systems.',
       ko: 'ROS 2 API 호환성을 갖추고 상용 자율주행 양산 차량을 위해 TÜV Nord ISO 26262 ASIL-D 기능 안전 인증을 획득한 실시간 모빌리티 소프트웨어 프레임워크.',
@@ -2217,7 +2217,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'nvidia-cuda',
     licenseType: 'commercial',
     name: 'NVIDIA CUDA',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Parallel computing platform and programming model enabling direct GPU acceleration for autonomous driving perception, deep learning, and simulation.',
       ko: '자율주행 딥러닝 신경망, 컴퓨터 비전 및 대규모 센서 연산을 가속하기 위한 엔비디아의 GPU 병렬 컴퓨팅 플랫폼 및 프로그래밍 모델.',
@@ -2237,7 +2237,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'nvidia-tensorrt',
     licenseType: 'commercial',
     name: 'NVIDIA TensorRT',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'High-performance deep learning inference optimizer and runtime library delivering low-latency, high-throughput neural network execution on automotive GPUs.',
       ko: '차량용 GPU 및 자율주행 SoC에서 딥러닝 모델을 최적화하고 저지연 고성능 추론을 실행하는 엔비디아의 AI 추론 최적화 엔진.',
@@ -2257,7 +2257,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'opencv-automotive',
     licenseType: 'oss',
     name: 'OpenCV (Open Source Computer Vision Library)',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Open-source computer vision and image processing library providing optimized algorithms for lane detection, optical flow, camera calibration, and ADAS perception.',
       ko: '차선 인식, 광학 흐름(Optical Flow), 카메라 캘리브레이션 및 ADAS 전처리 비전 알고리즘을 지원하는 오픈소스 컴퓨터 비전 라이브러리.',
@@ -2277,7 +2277,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'gstreamer-automotive',
     licenseType: 'oss',
     name: 'GStreamer Multimedia Framework',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Pipeline-based multimedia framework supporting hardware-accelerated video decoding, camera streaming, and display rendering in IVI and multi-camera ADAS.',
       ko: '차량 인포테인먼트(IVI) 멀티미디어 및 서라운드 뷰/서브 카메라 비디오 파이프라인을 하드웨어 가속으로 디코딩/스트리밍하는 파이프라인 프레임워크.',
@@ -2297,7 +2297,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'point-cloud-library',
     licenseType: 'oss',
     name: 'Point Cloud Library (PCL)',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Comprehensive open-source library for 2D/3D image and point cloud processing, surface reconstruction, feature estimation, and 3D segmentation for LiDAR ADAS.',
       ko: '자율주행 라이다(LiDAR) 센서의 3차원 포인트 클라우드 필터링, 정합(Registration), 객체 분할 및 특징 추출을 위한 오픈소스 3D 데이터 처리 라이브러리.',
@@ -2317,7 +2317,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'open3d-library',
     licenseType: 'oss',
     name: 'Open3D',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Modern open-source library supporting 3D data structure manipulation, spatial computing, LiDAR point cloud registration, and real-time 3D sensor fusion.',
       ko: '현대적인 C++ 및 파이썬 기반으로 3D 포인트 클라우드 조작, 공간 컴퓨팅 및 라이다 센서 융합을 가속하는 오픈소스 3D 데이터 라이브러리.',
@@ -2337,7 +2337,7 @@ export const stackTechnologies: StackTechnology[] = [
     id: 'autoware-universe',
     licenseType: 'oss',
     name: 'Autoware Universe',
-    layerId: 'application-experience',
+    layerId: 'middleware-communication',
     description: {
       en: 'Extended algorithmic repository of Autoware containing advanced perception, localization (NDT), planning, and control modules for autonomous vehicles.',
       ko: 'Autoware 자율주행 스택의 핵심 알고리즘 모듈군으로서 라이다 NDT 측위, 센서 융합 인지, 경로 계획 및 차량 모션 제어를 구현한 오픈소스 프레임워크.',

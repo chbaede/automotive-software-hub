@@ -31,15 +31,14 @@ import {
 // ==========================================
 
 /**
- * The 6 mandatory core runtime layers required for a complete vehicle software stack.
+ * The 5 mandatory core runtime layers required for a complete vehicle software stack.
  */
 export const MANDATORY_CORE_STACK_LAYER_IDS: StackLayerId[] = [
   'hardware-compute',
   'operating-systems',
   'build-platform',
-  'middleware-communication',
   'vehicle-services',
-  'application-experience',
+  'middleware-communication',
 ];
 
 /**
@@ -50,16 +49,15 @@ export const OPTIONAL_CORE_STACK_LAYER_IDS: StackLayerId[] = [
 ];
 
 /**
- * All 7 vertical core runtime layers in hierarchical order.
+ * All 6 vertical core runtime layers in hierarchical order.
  */
 export const CORE_STACK_LAYER_IDS: StackLayerId[] = [
   'hardware-compute',
   'hypervisor-virtualization',
   'operating-systems',
   'build-platform',
-  'middleware-communication',
   'vehicle-services',
-  'application-experience',
+  'middleware-communication',
 ];
 
 export const SUPPORTING_STACK_LAYER_IDS: StackLayerId[] = [
@@ -313,9 +311,9 @@ export function validateStack(rawSelection: FlexibleStackSelection): StackValida
         ]
       : [['hardware-compute', 'operating-systems'] as [StackLayerId, StackLayerId]]),
     ['operating-systems', 'build-platform'],
+    ['operating-systems', 'vehicle-services'],
     ['operating-systems', 'middleware-communication'],
-    ['middleware-communication', 'vehicle-services'],
-    ['vehicle-services', 'application-experience'],
+    ['vehicle-services', 'middleware-communication'],
   ];
 
   adjacentLayerPairsToCheck.forEach(([upperLayerId, lowerLayerId]) => {

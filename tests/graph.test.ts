@@ -867,7 +867,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // 3. Unverified warning detection across adjacent layers with no explicit relationship
   const unverifiedSelection = {
     'hardware-compute': 'horizon-robotics-journey',
-    'application-experience': 'autoware-universe',
+    'middleware-communication': 'autoware-universe',
   };
   const unverifiedResult = validateStack(unverifiedSelection);
   assert.ok(unverifiedResult.totalSelected === 2);
@@ -1486,7 +1486,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const stackReport = getStackInsights(partialSelection);
   assert.strictEqual(stackReport.gapAnalysis.isCompleteCoreStack, false);
   assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('middleware-communication'));
-  assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('application-experience'));
+  assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('vehicle-services'));
+  assert.ok(stackReport.gapAnalysis.missingCoreLayers.includes('build-platform'));
   assert.strictEqual(stackReport.gapAnalysis.populatedCoreLayers.length, 3);
   assert.ok(stackReport.candidateRecommendations.length > 0);
   // Recommendations must only target missing layers
@@ -1666,7 +1667,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { technologyById, outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
 
   // 1. Core Stack Layer Categorization
-  assert.strictEqual(CORE_STACK_LAYER_IDS.length, 7, 'Must have exactly 7 core runtime layers');
+  assert.strictEqual(CORE_STACK_LAYER_IDS.length, 6, 'Must have exactly 6 core runtime layers');
   assert.strictEqual(SUPPORTING_STACK_LAYER_IDS.length, 3, 'Must have exactly 3 supporting layers');
 
   // 2. Pure Matching & Scoring Functions Independence
@@ -1745,12 +1746,11 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'hypervisor-virtualization': 'qnx-hypervisor',
     'operating-systems': 'qnx-neutrino',
     'build-platform': 'yocto-project',
-    'middleware-communication': 'autosar-adaptive',
     'vehicle-services': 'kuksa-val',
-    'application-experience': 'qt-automotive',
+    'middleware-communication': 'autosar-adaptive',
   };
   const fullCoreInsights = stackInsights.getStackInsights(fullCoreSelection);
-  assert.strictEqual(fullCoreInsights.gapAnalysis.isCompleteCoreStack, true, '7 Core layers complete stack');
+  assert.strictEqual(fullCoreInsights.gapAnalysis.isCompleteCoreStack, true, '6 Core layers complete stack');
   assert.strictEqual(fullCoreInsights.gapAnalysis.missingCoreLayers.length, 0);
 
   // Adding supporting layer does not invalidate completeness
@@ -1794,7 +1794,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
 
   // 1. Mandatory vs Optional Layer Taxonomy
-  assert.strictEqual(MANDATORY_CORE_STACK_LAYER_IDS.length, 6, '6 mandatory core runtime layers');
+  assert.strictEqual(MANDATORY_CORE_STACK_LAYER_IDS.length, 5, '5 mandatory core runtime layers');
   assert.strictEqual(OPTIONAL_CORE_STACK_LAYER_IDS.length, 1, 'Hypervisor is optional core layer');
   assert.strictEqual(OPTIONAL_CORE_STACK_LAYER_IDS[0], 'hypervisor-virtualization');
 
@@ -1804,9 +1804,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'hypervisor-virtualization': ['qnx-hypervisor'],
     'operating-systems': ['qnx-neutrino', 'linux-kernel'],
     'build-platform': ['yocto-project'],
-    'middleware-communication': ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware'],
     'vehicle-services': ['kuksa-val'],
-    'application-experience': ['qt-automotive', 'flutter-embedded-automotive'],
+    'middleware-communication': ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware', 'qt-automotive'],
   };
 
   const validationResult = validateStack(multiOsSelection);
@@ -1822,7 +1821,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   );
   assert.strictEqual(
     encodedMulti.get('middleware-communication'),
-    'autosar-adaptive,android-automotive-os,vsomeip-middleware',
+    'autosar-adaptive,android-automotive-os,vsomeip-middleware,qt-automotive',
     'Multiple middlewares encoded as comma-separated list'
   );
 
@@ -1834,7 +1833,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   );
   assert.deepStrictEqual(
     decodedMulti['middleware-communication'],
-    ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware'],
+    ['autosar-adaptive', 'android-automotive-os', 'vsomeip-middleware', 'qt-automotive'],
     'Decoded middlewares match original multi-selection'
   );
 
@@ -1843,9 +1842,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'hardware-compute': ['qualcomm-snapdragon-cockpit'],
     'operating-systems': ['linux-kernel'],
     'build-platform': ['yocto-project'],
-    'middleware-communication': ['android-automotive-os'],
     'vehicle-services': ['covesa-vss'],
-    'application-experience': ['qt-automotive'],
+    'middleware-communication': ['android-automotive-os', 'qt-automotive'],
   };
 
   const bareMetalInsights = stackInsights.getStackInsights(bareMetalSelection);
@@ -1896,7 +1894,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(discovery.stackPathMatches.length > 0, 'Must return matched stack paths');
   assert.strictEqual(discovery.isCompleteCoreStack, false, '3-layer stack must be incomplete');
   assert.ok(discovery.missingCoreLayers.includes('middleware-communication'));
-  assert.ok(discovery.missingCoreLayers.includes('application-experience'));
+  assert.ok(discovery.missingCoreLayers.includes('vehicle-services'));
+  assert.ok(discovery.missingCoreLayers.includes('build-platform'));
   assert.ok(discovery.recommendedTechnologies.length > 0, 'Must return explainable recommendations');
   assert.ok(discovery.validation.totalSelected === 3, 'Must return valid validation summary');
 
@@ -1918,7 +1917,6 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(discovery.missingCoreLayers.includes('build-platform'));
   assert.ok(discovery.missingCoreLayers.includes('middleware-communication'));
   assert.ok(discovery.missingCoreLayers.includes('vehicle-services'));
-  assert.ok(discovery.missingCoreLayers.includes('application-experience'));
   // Populated layers
   assert.ok(discovery.populatedCoreLayers.includes('hardware-compute'));
   assert.ok(discovery.populatedCoreLayers.includes('operating-systems'));

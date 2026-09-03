@@ -6,9 +6,8 @@ export type StackLayerId =
   | 'hypervisor-virtualization'
   | 'operating-systems'
   | 'build-platform'
-  | 'middleware-communication'
   | 'vehicle-services'
-  | 'application-experience'
+  | 'middleware-communication'
   | 'cloud-devops'
   | 'development-testing'
   | 'process-compliance-security';
@@ -70,19 +69,20 @@ export interface StackTechnology {
   website?: string;
   documentationUrl?: string;
   repositoryUrl?: string;
+  specificationUrl?: string;
   sourceUrl?: string;
   lastVerified?: string;
   confidence?: 'official' | 'vendor' | 'community';
   status?: 'active' | 'deprecated' | 'emerging';
-  evidence?: TechnologyEvidence;
   openSourceProjectIds?: string[];
   companyIds?: string[];
   toolIds?: string[];
   resourceIds?: string[];
   eventIds?: string[];
   relatedTechnologyIds?: string[];
-  licenseType?: 'oss' | 'commercial';
+  tags?: string[];
   asilLevel?: SafetyAsilLevel;
   functionalSafety?: FunctionalSafetyInfo;
-  tags?: string[];
+  evidence?: TechnologyEvidence;
+  licenseType?: 'oss' | 'commercial' | 'hybrid' | 'standard';
 }
