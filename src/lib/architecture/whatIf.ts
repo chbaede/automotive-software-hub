@@ -3,21 +3,20 @@
  *
  * Simulates technology replacements in an automotive software stack without mutating
  * original user state, providing explainable differential analysis across architecture profiles,
- * directional graph relationships, execution paths, and functional safety claims.
+ * true before/after directional graph edges, execution paths, and functional safety claims.
  */
 
 import { StackLayerId, StackTechnology } from '../../types/stack';
+import { TechnologyRelationship } from '../../types/relationship';
 import {
   technologyById,
   outgoingRelationshipsByTechnologyId,
-  incomingRelationshipsByTechnologyId,
 } from '../graph';
 import {
   StackSelection,
   FlexibleStackSelection,
   normalizeStackSelection,
   getSelectedTechIds,
-  findRelationshipBetween,
 } from '../graph/matching';
 import {
   WhatIfComparisonResult,
@@ -30,11 +29,53 @@ import {
 } from './types';
 import { discoverArchitecture } from './discovery';
 
+interface CanonicalGraphEdge {
+  key: string;
+  sourceTech: StackTechnology;
+  targetTech: StackTechnology;
+  relationship: TechnologyRelationship;
+}
+
+/**
+ * Collects all canonical directed relationship edges between technologies present in the selection.
+ */
+function collectCanonicalSelectedEdges(selection: StackSelection): Map<string, CanonicalGraphEdge> {
+  const selectedTechIds = getSelectedTechIds(selection);
+  const selectedSet = new Set(selectedTechIds);
+  const edgeMap = new Map<string, CanonicalGraphEdge>();
+
+  selectedTechIds.forEach((sourceId) => {
+    const sourceTech = technologyById.get(sourceId);
+    if (!sourceTech) return;
+
+    const outgoing = outgoingRelationshipsByTechnologyId.get(sourceId) || [];
+    outgoing.forEach((rel) => {
+      // Must connect two distinct selected technologies in the graph
+      if (rel.sourceId !== rel.targetId && selectedSet.has(rel.targetId)) {
+        const targetTech = technologyById.get(rel.targetId);
+        if (targetTech) {
+          const key = `${rel.sourceId}|${rel.type}|${rel.targetId}`;
+          if (!edgeMap.has(key)) {
+            edgeMap.set(key, {
+              key,
+              sourceTech,
+              targetTech,
+              relationship: rel,
+            });
+          }
+        }
+      }
+    });
+  });
+
+  return edgeMap;
+}
+
 /**
  * Compares the current automotive software stack against a hypothetical stack
  * where targetTechnology is replaced by replacementTechnology.
  *
- * Strictly pure and non-mutating.
+ * Strictly pure, non-mutating, and computes true before/after graph edge-set diffs.
  */
 export function compareWhatIfStack(
   rawCurrentSelection: FlexibleStackSelection,
@@ -156,52 +197,49 @@ export function compareWhatIfStack(
     return rank[a.impactType] - rank[b.impactType] || b.afterScore - a.afterScore;
   });
 
-  // 4. Directional Graph Relationship Changes
+  // 4. True Before/After Edge-Set Relationship Diff
+  const beforeEdges = collectCanonicalSelectedEdges(originalSelection);
+  const afterEdges = collectCanonicalSelectedEdges(hypotheticalSelection);
+
   const relationshipChanges: WhatIfRelationshipChange[] = [];
-  const otherOriginalTechIds = getSelectedTechIds(originalSelection).filter((id) => id !== targetTechnology.id);
 
-  // Check removed relationships (connected to targetTechnology)
-  otherOriginalTechIds.forEach((otherId) => {
-    const otherTech = technologyById.get(otherId);
-    if (!otherTech) return;
+  // Removed relationships (present in beforeEdges, but absent in afterEdges)
+  beforeEdges.forEach((edge, key) => {
+    if (!afterEdges.has(key)) {
+      const isDirectTargetLink =
+        edge.sourceTech.id === targetTechnology.id ||
+        edge.targetTech.id === targetTechnology.id;
 
-    const relResult = findRelationshipBetween(targetTechnology.id, otherTech.id);
-    if (relResult) {
-      const sourceTech = relResult.isForward ? targetTechnology : otherTech;
-      const targetTech = relResult.isForward ? otherTech : targetTechnology;
       relationshipChanges.push({
-        sourceTech,
-        targetTech,
-        relationship: relResult.relationship,
+        sourceTech: edge.sourceTech,
+        targetTech: edge.targetTech,
+        relationship: edge.relationship,
         impactType: 'removed',
-        isDirectTargetLink: true,
+        isDirectTargetLink,
         explanation: {
-          en: `Removed ${relResult.relationship.type} relationship between ${sourceTech.name} and ${targetTech.name}.`,
-          ko: `${sourceTech.name}와(과) ${targetTech.name} 사이의 ${relResult.relationship.type} 연계 관계가 해제됩니다.`,
+          en: `Removed ${edge.relationship.type} relationship: ${edge.sourceTech.name} -> ${edge.targetTech.name}.`,
+          ko: `${edge.sourceTech.name}와(과) ${edge.targetTech.name} 사이의 ${edge.relationship.type} 연계 관계가 해제됩니다.`,
         },
       });
     }
   });
 
-  // Check added relationships (connected to replacementTechnology)
-  const otherHypotheticalTechIds = getSelectedTechIds(hypotheticalSelection).filter((id) => id !== replacementTechnology.id);
-  otherHypotheticalTechIds.forEach((otherId) => {
-    const otherTech = technologyById.get(otherId);
-    if (!otherTech) return;
+  // Added relationships (present in afterEdges, but absent in beforeEdges)
+  afterEdges.forEach((edge, key) => {
+    if (!beforeEdges.has(key)) {
+      const isDirectTargetLink =
+        edge.sourceTech.id === replacementTechnology.id ||
+        edge.targetTech.id === replacementTechnology.id;
 
-    const relResult = findRelationshipBetween(replacementTechnology.id, otherTech.id);
-    if (relResult) {
-      const sourceTech = relResult.isForward ? replacementTechnology : otherTech;
-      const targetTech = relResult.isForward ? otherTech : replacementTechnology;
       relationshipChanges.push({
-        sourceTech,
-        targetTech,
-        relationship: relResult.relationship,
+        sourceTech: edge.sourceTech,
+        targetTech: edge.targetTech,
+        relationship: edge.relationship,
         impactType: 'added',
-        isDirectTargetLink: true,
+        isDirectTargetLink,
         explanation: {
-          en: `Added ${relResult.relationship.type} relationship between ${sourceTech.name} and ${targetTech.name}.`,
-          ko: `${sourceTech.name}와(과) ${targetTech.name} 사이의 ${relResult.relationship.type} 연계 관계가 새롭게 형성됩니다.`,
+          en: `Added ${edge.relationship.type} relationship: ${edge.sourceTech.name} -> ${edge.targetTech.name}.`,
+          ko: `${edge.sourceTech.name}와(과) ${edge.targetTech.name} 사이의 ${edge.relationship.type} 연계 관계가 새롭게 형성됩니다.`,
         },
       });
     }
@@ -332,4 +370,3 @@ export function compareWhatIfStack(
     safetyImpact,
   };
 }
-

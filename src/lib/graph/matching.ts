@@ -185,8 +185,8 @@ export interface StackPathMatchResult {
 export interface TechnologyCandidate {
   technology: StackTechnology;
   layerId: StackLayerId;
-  connectedToTech: StackTechnology;
-  relationship: TechnologyRelationship;
+  connectedToTech?: StackTechnology;
+  relationship?: TechnologyRelationship;
   priority: number;
   reason: LocalizedText;
 }

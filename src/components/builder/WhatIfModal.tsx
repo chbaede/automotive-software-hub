@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   X,
   Sparkles,
@@ -71,6 +71,37 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
 
   // Search filter for replacement dropdown
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Synchronize target and replacement whenever modal opens or initialTarget changes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const nextTarget =
+      initialTargetTechId && selectedTechIds.includes(initialTargetTechId)
+        ? initialTargetTechId
+        : selectedTechIds[0] || '';
+
+    setTargetTechId(nextTarget);
+
+    if (nextTarget) {
+      const newAlts = getAlternatives(nextTarget).map((a) => a.technology);
+      const newTech = technologyById.get(nextTarget);
+      const newSameLayer = newTech
+        ? (technologiesByLayerId.get(newTech.layerId) || []).filter((t) => t.id !== nextTarget)
+        : [];
+
+      if (newAlts.length > 0) {
+        setReplacementTechId(newAlts[0].id);
+      } else if (newSameLayer.length > 0) {
+        setReplacementTechId(newSameLayer[0].id);
+      } else {
+        setReplacementTechId('');
+      }
+    } else {
+      setReplacementTechId('');
+    }
+    setSearchQuery('');
+  }, [isOpen, initialTargetTechId, selectedTechIds]);
 
   // Update target technology
   const handleSelectTarget = (id: string) => {
@@ -244,4 +275,3 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
     </div>
   );
 };
-

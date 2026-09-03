@@ -40,8 +40,8 @@ export const SuggestedTechPanel: React.FC<SuggestedTechPanelProps> = ({
         {candidates.map(({ technology, layerId, connectedToTech, relationship, reason }) => {
           const layer = stackLayers.find((l) => l.id === layerId);
           const layerName = layer ? getLocalizedText(layer.name, language) : layerId;
-          const relMeta = RELATIONSHIP_METADATA[relationship.type];
-          const relLabel = relMeta ? getLocalizedText(relMeta.label, language) : relationship.type;
+          const relMeta = relationship ? RELATIONSHIP_METADATA[relationship.type] : undefined;
+          const relLabel = relMeta ? getLocalizedText(relMeta.label, language) : relationship?.type;
           const reasonText = getLocalizedText(reason, language);
 
           return (

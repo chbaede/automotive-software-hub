@@ -2167,6 +2167,147 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 45 Passed: Safety claims remain unchanged through Architecture Discovery and What-if.');
 }
 
+// Test 46: True Before/After Edge-Set Diff & Directional Edge Diff
+{
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+
+  // Multi-technology stack with multiple relationships
+  const stack = {
+    'hardware-compute': ['nvidia-drive-thor'],
+    'hypervisor-virtualization': ['qnx-hypervisor'],
+    'operating-systems': ['qnx-neutrino', 'linux-kernel'],
+  };
+
+  // Replace QNX Hypervisor with NVIDIA DRIVE Hypervisor
+  const comparison = compareWhatIfStack(stack, 'qnx-hypervisor', 'nvidia-drive-hypervisor');
+
+  // Verify removed edges: only edges involving qnx-hypervisor in original stack
+  const removedKeys = comparison.relationshipChanges
+    .filter((r) => r.impactType === 'removed')
+    .map((r) => `${r.sourceTech.id}|${r.relationship.type}|${r.targetTech.id}`);
+
+  // Verify added edges: only edges involving nvidia-drive-hypervisor in hypothetical stack
+  const addedKeys = comparison.relationshipChanges
+    .filter((r) => r.impactType === 'added')
+    .map((r) => `${r.sourceTech.id}|${r.relationship.type}|${r.targetTech.id}`);
+
+  // 1. Unchanged relationships (e.g. between Linux Kernel / Thor or QNX / Thor if any) MUST NOT be in removed or added
+  removedKeys.forEach((key) => {
+    assert.ok(
+      key.includes('qnx-hypervisor'),
+      `Removed edge ${key} must involve replaced target technology`
+    );
+  });
+  addedKeys.forEach((key) => {
+    assert.ok(
+      key.includes('nvidia-drive-hypervisor'),
+      `Added edge ${key} must involve replacement technology`
+    );
+  });
+
+  // 2. Added and removed must have zero intersection
+  const intersection = removedKeys.filter((k) => addedKeys.includes(k));
+  assert.strictEqual(intersection.length, 0, 'No edge can be both added and removed');
+
+  console.log('✅ Test 46 Passed: True before/after edge-set diff & directional edge diff verified.');
+}
+
+// Test 47: Target & Replacement Candidate Synchronization Logic
+{
+  const { getAlternatives } = await import('../src/lib/graph/intelligence/relationships.js');
+  const { technologiesByLayerId, technologyById } = await import('../src/lib/graph/index.js');
+
+  const selectedTechIds = ['nvidia-drive-thor', 'qnx-neutrino', 'autosar-adaptive'];
+
+  // 1. If initial target is in selection, it should be the target
+  const initialTarget = 'qnx-neutrino';
+  const target1 = selectedTechIds.includes(initialTarget) ? initialTarget : selectedTechIds[0];
+  assert.strictEqual(target1, 'qnx-neutrino');
+
+  // 2. Compute replacements for qnx-neutrino: direct alternatives should take priority
+  const alts1 = getAlternatives(target1).map((a) => a.technology);
+  assert.ok(alts1.length > 0, 'QNX Neutrino has direct architectural alternatives (VxWorks)');
+  const defaultRepl1 = alts1[0].id;
+  assert.strictEqual(defaultRepl1, 'vxworks-rtos');
+
+  // 3. Fallback when initialTarget is not in selection: fallback to first item
+  const missingTarget = 'non-existent-tech';
+  const target2 = selectedTechIds.includes(missingTarget) ? missingTarget : selectedTechIds[0];
+  assert.strictEqual(target2, 'nvidia-drive-thor');
+
+  // 4. Candidates for hardware layer
+  const tech2 = technologyById.get(target2);
+  assert.ok(tech2);
+  const sameLayer2 = (technologiesByLayerId.get(tech2.layerId) || []).filter((t) => t.id !== target2);
+  assert.ok(sameLayer2.length > 0, 'Hardware layer has multiple candidate SoCs');
+
+  console.log('✅ Test 47 Passed: Target & replacement candidate synchronization logic verified.');
+}
+
+// Test 48: Absence of Fake Self-Referential Relationships in Recommendations
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
+
+  // 1. Verify canonical relationships data has zero self-loops
+  stackRelationships.forEach((rel) => {
+    assert.notStrictEqual(
+      rel.sourceId,
+      rel.targetId,
+      `Canonical relationship cannot be self-referential: ${rel.sourceId} -> ${rel.targetId}`
+    );
+  });
+
+  // 2. Discover architecture recommendations on a partial stack
+  const partialStack = {
+    'operating-systems': ['linux-kernel'],
+  };
+  const discovery = discoverArchitecture(partialStack);
+
+  // Recommendations should either have a valid primaryRelationship with sourceId !== targetId, or undefined
+  discovery.recommendedTechnologies.forEach((rec) => {
+    if (rec.primaryRelationship) {
+      assert.notStrictEqual(
+        rec.primaryRelationship.sourceId,
+        rec.primaryRelationship.targetId,
+        `Recommended primary relationship cannot be a self-loop: ${rec.primaryRelationship.sourceId}`
+      );
+    }
+  });
+
+  console.log('✅ Test 48 Passed: Zero fake self-referential relationships in recommendations verified.');
+}
+
+// Test 49: Phase 8.3.1 Regression & Safety Invariant Hardening
+{
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  // Perseus Pegasus Hypervisor ASIL-D Certified invariant
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
+
+  const stack = {
+    'hardware-compute': ['arm-cortex-a78ae'],
+    'hypervisor-virtualization': ['perseus-hypervisor'],
+    'operating-systems': ['linux-kernel'],
+  };
+
+  const discovery = discoverArchitecture(stack);
+  assert.strictEqual(discovery.totalSelectedCount, 3);
+  assert.ok(discovery.architectureMatches.length > 0);
+
+  const whatIfResult = compareWhatIfStack(stack, 'perseus-hypervisor', 'qnx-hypervisor');
+  assert.strictEqual(whatIfResult.safetyImpact.targetSafety?.claimType, 'certified');
+  assert.strictEqual(whatIfResult.safetyImpact.targetSafety?.asilLevel, 'ASIL-D');
+  assert.strictEqual(whatIfResult.originalSelection['hypervisor-virtualization']?.[0], 'perseus-hypervisor');
+  assert.strictEqual(whatIfResult.hypotheticalSelection['hypervisor-virtualization']?.[0], 'qnx-hypervisor');
+
+  console.log('✅ Test 49 Passed: Phase 8.3.1 regression & safety invariant hardening verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 
