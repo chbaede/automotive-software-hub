@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -13,22 +13,37 @@ import {
   CheckCircle2,
   Share2,
   Wrench,
+  ArrowRightLeft,
+  Network,
+  Plus,
 } from 'lucide-react';
-import { profileById, technologyById } from '../../utils/graphIndexes';
+import { profileById, technologyById, outgoingRelationshipsByTechnologyId } from '../../lib/graph';
+import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackLayers } from '../../data/stackLayers';
 import { stackPaths } from '../../data/stackPaths';
 import { StackTechnology, StackLayer } from '../../types/stack';
 import {
   ARCHITECTURE_PROFILE_TYPE_METADATA,
   STACK_PATH_TYPE_METADATA,
+  ArchitectureProfile,
 } from '../../types/architecture';
+import { RELATIONSHIP_METADATA, TechnologyRelationship } from '../../types/relationship';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { convertArchitectureToStackSelection } from '../../lib/architecture/comparison';
+import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
+import { discoverArchitecture } from '../../lib/architecture/discovery';
+import { WhatIfModal } from '../../components/builder/WhatIfModal';
+import { ArchitectureComparisonModal } from '../../components/stack/ArchitectureComparisonModal';
 
 export const ArchitectureDetailPage: React.FC = () => {
   const { architectureId } = useParams<{ architectureId: string }>();
   const navigate = useNavigate();
   const { language, t } = useLanguage();
+
+  const [isWhatIfOpen, setIsWhatIfOpen] = useState(false);
+  const [whatIfTargetId, setWhatIfTargetId] = useState<string | undefined>(undefined);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
 
   const profile = useMemo(() => {
     return architectureId ? profileById.get(architectureId) : undefined;
@@ -55,6 +70,18 @@ export const ArchitectureDetailPage: React.FC = () => {
       .filter((tech): tech is StackTechnology => Boolean(tech));
   }, [profile]);
 
+  // Convert profile to canonical StackSelection
+  const architectureSelection = useMemo(() => {
+    if (!profile) return {};
+    return convertArchitectureToStackSelection(profile);
+  }, [profile]);
+
+  // Run Knowledge Graph Discovery on this architecture selection
+  const discoveryResult = useMemo(() => {
+    if (!profile) return null;
+    return discoverArchitecture(architectureSelection);
+  }, [profile, architectureSelection]);
+
   // Group technologies by Stack Layer in canonical stack layer order
   const layerGroups = useMemo(() => {
     if (!profile) return [];
@@ -72,16 +99,50 @@ export const ArchitectureDetailPage: React.FC = () => {
         technologies: techByLayer.get(layer.id) || [],
       }))
       .filter((group) => group.technologies.length > 0)
-      .sort((a, b) => (b.layer.order ?? 0) - (a.layer.order ?? 0)); // Top layer to bottom layer
+      .sort((a, b) => (b.layer.order ?? 0) - (a.layer.order ?? 0));
   }, [profile, technologies]);
 
-  // Find relevant Stack Paths associated with this architecture's technologies
+  // Internal Knowledge Graph relationships between components in this architecture
+  const internalRelationships = useMemo(() => {
+    if (!profile) return [];
+    const techSet = new Set(profile.technologyIds);
+    const results: {
+      sourceTech: StackTechnology;
+      targetTech: StackTechnology;
+      relationship: TechnologyRelationship;
+    }[] = [];
+
+    profile.technologyIds.forEach((sourceId) => {
+      const sourceTech = technologyById.get(sourceId);
+      if (!sourceTech) return;
+
+      const outgoing = outgoingRelationshipsByTechnologyId.get(sourceId) || [];
+      outgoing.forEach((rel) => {
+        if (rel.sourceId !== rel.targetId && techSet.has(rel.targetId)) {
+          const targetTech = technologyById.get(rel.targetId);
+          if (targetTech) {
+            results.push({ sourceTech, targetTech, relationship: rel });
+          }
+        }
+      });
+    });
+
+    return results;
+  }, [profile]);
+
+  // Relevant Stack Paths associated with this architecture's technologies
   const relevantPaths = useMemo(() => {
     if (!profile) return [];
     const techSet = new Set(profile.technologyIds);
     return stackPaths.filter((path) =>
       path.hops.some((hop) => techSet.has(hop.technologyId))
     );
+  }, [profile]);
+
+  // Alternative architectures
+  const alternativeArchitectures = useMemo(() => {
+    if (!profile) return [];
+    return architectureProfiles.filter((p) => p.id !== profile.id).slice(0, 3);
   }, [profile]);
 
   // 1. Not Found State
@@ -120,6 +181,16 @@ export const ArchitectureDetailPage: React.FC = () => {
   const profileName = getLocalizedText(profile.name, language);
   const profileDesc = getLocalizedText(profile.description, language);
 
+  const handleBuildStack = () => {
+    const searchParams = encodeStackToSearchParams(architectureSelection);
+    navigate(`/stack-builder?${searchParams.toString()}`);
+  };
+
+  const handleOpenWhatIf = (techId?: string) => {
+    setWhatIfTargetId(techId);
+    setIsWhatIfOpen(true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
       {/* Breadcrumb Navigation */}
@@ -152,6 +223,9 @@ export const ArchitectureDetailPage: React.FC = () => {
             <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700">
               {technologies.length} {language === 'ko' ? '개 통합 기술' : 'Integrated Technologies'}
             </span>
+            <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700">
+              {layerGroups.length} {t.architectures.layersRepresented}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
@@ -162,25 +236,23 @@ export const ArchitectureDetailPage: React.FC = () => {
             {profileDesc}
           </p>
 
-          {/* Action Bar */}
+          {/* Action Bar: Build Architecture & Compare */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            {(() => {
-              const params = new URLSearchParams();
-              technologies.forEach((tech) => {
-                if (!params.has(tech.layerId)) {
-                  params.set(tech.layerId, tech.id);
-                }
-              });
-              return (
-                <Link
-                  to={`/stack-builder?${params.toString()}`}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition"
-                >
-                  <Wrench className="w-3.5 h-3.5" />
-                  <span>{t.techDetail.buildWithThisTech}</span>
-                </Link>
-              );
-            })()}
+            <button
+              onClick={handleBuildStack}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition"
+            >
+              <Wrench className="w-4 h-4" />
+              <span>{t.architectures.buildThisArchitecture}</span>
+            </button>
+
+            <button
+              onClick={() => setIsCompareOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs shadow-xs transition"
+            >
+              <ArrowRightLeft className="w-4 h-4 text-indigo-400" />
+              <span>{t.architectures.compareArchitectures}</span>
+            </button>
           </div>
 
           {/* Tags */}
@@ -258,32 +330,50 @@ export const ArchitectureDetailPage: React.FC = () => {
                   {layerTechs.map((tech) => {
                     const techDesc = getLocalizedText(tech.description, language);
                     return (
-                      <Link
+                      <div
                         key={tech.id}
-                        to={`/stack/${tech.id}`}
-                        className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 bg-slate-50/60 dark:bg-slate-950/60 hover:bg-white dark:hover:bg-slate-900 transition-all group flex flex-col justify-between space-y-2 shadow-2xs hover:shadow-xs"
+                        className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 hover:bg-white dark:hover:bg-slate-900 transition-all group flex flex-col justify-between space-y-2.5 shadow-2xs hover:shadow-xs"
                       >
-                        <div>
+                        <div className="space-y-1">
                           <div className="flex items-start justify-between gap-1">
-                            <span className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            <Link
+                              to={`/stack/${tech.id}`}
+                              className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
+                            >
                               {tech.name}
-                            </span>
+                            </Link>
                             <ExternalLink className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                           </div>
-                          <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                          <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                             {techDesc}
                           </p>
                         </div>
 
-                        {/* Safety / Platform Tag */}
-                        {tech.functionalSafety && (
-                          <div className="pt-1">
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20 font-bold">
-                              {tech.functionalSafety.asilLevel || 'ISO 26262'}
-                            </span>
+                        {/* Badges & What-if Simulation Action */}
+                        <div className="pt-2 border-t border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5">
+                            {tech.functionalSafety && (
+                              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20 font-bold">
+                                {tech.functionalSafety.asilLevel || 'ISO 26262'}
+                              </span>
+                            )}
+                            {tech.licenseType && (
+                              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                {tech.licenseType.toUpperCase()}
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </Link>
+
+                          <button
+                            onClick={() => handleOpenWhatIf(tech.id)}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition"
+                            title={t.whatIf.simulateDesc}
+                          >
+                            <Sparkles className="w-3 h-3 text-indigo-500" />
+                            <span>{t.whatIf.simulateButton}</span>
+                          </button>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
@@ -292,6 +382,58 @@ export const ArchitectureDetailPage: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Internal Architecture Relationships */}
+      {internalRelationships.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-2xs">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Network className="w-5 h-5 text-indigo-500" />
+              <div>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  {t.architectures.internalRelationships}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.architectures.internalRelationshipsDesc}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-mono text-slate-500">
+              {internalRelationships.length} {language === 'ko' ? '개 직접 연계 관계' : 'Direct Relationships'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {internalRelationships.map((item, idx) => {
+              const meta = RELATIONSHIP_METADATA[item.relationship.type];
+              return (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5"
+                >
+                  <div className="flex items-center gap-1 font-bold text-slate-900 dark:text-white flex-wrap">
+                    <Link to={`/stack/${item.sourceTech.id}`} className="hover:text-indigo-600 transition">
+                      {item.sourceTech.name}
+                    </Link>
+                    <span className="px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-mono text-[9px] border border-indigo-500/20">
+                      {getLocalizedText(meta?.label, language) || item.relationship.type}
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-slate-400" />
+                    <Link to={`/stack/${item.targetTech.id}`} className="hover:text-indigo-600 transition">
+                      {item.targetTech.name}
+                    </Link>
+                  </div>
+                  {item.relationship.description && (
+                    <p className="text-[11px] text-slate-500 line-clamp-2">
+                      {getLocalizedText(item.relationship.description, language)}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Relevant Representative Stack Paths */}
       {relevantPaths.length > 0 && (
@@ -371,6 +513,140 @@ export const ArchitectureDetailPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Recommended Technologies (Knowledge Graph Recommendations) */}
+      {discoveryResult && discoveryResult.recommendedTechnologies.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-2xs">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <div>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  {t.architectures.recommendedTechs}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.architectures.recommendedTechsDesc}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-mono text-slate-500">
+              {discoveryResult.recommendedTechnologies.length} {language === 'ko' ? '개 추천' : 'Recommendations'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {discoveryResult.recommendedTechnologies.slice(0, 6).map((rec) => {
+              const reasonText = getLocalizedText(rec.reasons[0], language);
+              return (
+                <div
+                  key={rec.technology.id}
+                  className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-2"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1">
+                      <Link
+                        to={`/stack/${rec.technology.id}`}
+                        className="font-bold text-xs text-slate-900 dark:text-white hover:text-indigo-600 transition"
+                      >
+                        {rec.technology.name}
+                      </Link>
+                      <span className="text-[9px] font-mono text-slate-400">
+                        {rec.layerId}
+                      </span>
+                    </div>
+                    {reasonText && (
+                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
+                        {reasonText}
+                      </p>
+                    )}
+                  </div>
+
+                  <Link
+                    to={`/stack/${rec.technology.id}`}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline pt-1 self-start"
+                  >
+                    <span>{t.architectures.exploreThisTech}</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Explore Next: Alternative Architecture Profiles */}
+      {alternativeArchitectures.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-2xs">
+          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <Compass className="w-5 h-5 text-indigo-500" />
+            <div>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                {t.architectures.exploreNext}
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {t.architectures.exploreNextDesc}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {alternativeArchitectures.map((alt) => (
+              <Link
+                key={alt.id}
+                to={`/architectures/${alt.id}`}
+                className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition group space-y-2 flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-[9px] font-mono uppercase font-bold text-indigo-600 dark:text-indigo-400">
+                    {alt.profileType}
+                  </span>
+                  <h4 className="font-bold text-xs text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors mt-0.5">
+                    {getLocalizedText(alt.name, language)}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">
+                    {getLocalizedText(alt.description, language)}
+                  </p>
+                </div>
+                <div className="text-[10px] font-mono text-slate-400 pt-1">
+                  {alt.technologyIds.length} Technologies
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* What-if Replacement Modal */}
+      <WhatIfModal
+        isOpen={isWhatIfOpen}
+        onClose={() => setIsWhatIfOpen(false)}
+        selection={architectureSelection}
+        initialTargetTechId={whatIfTargetId}
+        onApplyReplacement={(targetId, replacementId) => {
+          // Open Stack Builder with modified stack
+          const modifiedSelection = { ...architectureSelection };
+          const targetTech = technologyById.get(targetId);
+          const replTech = technologyById.get(replacementId);
+          if (targetTech && replTech) {
+            const list = modifiedSelection[targetTech.layerId] || [];
+            modifiedSelection[targetTech.layerId] = list.filter((id) => id !== targetId);
+            const rList = modifiedSelection[replTech.layerId] || [];
+            if (!rList.includes(replacementId)) {
+              modifiedSelection[replTech.layerId] = [...rList, replacementId];
+            }
+            const searchParams = encodeStackToSearchParams(modifiedSelection);
+            navigate(`/stack-builder?${searchParams.toString()}`);
+          }
+        }}
+      />
+
+      {/* Architecture Comparison Modal */}
+      <ArchitectureComparisonModal
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        initialArchAId={profile.id}
+      />
     </div>
   );
 };

@@ -1,110 +1,82 @@
-# Architecture Discovery & What-if Stack
+# Architecture Discovery & Exploration Experience
 
-## 1. Overview & Mental Model
+## 1. Overview & Dual Exploration Mental Model
 
-The **Architecture Discovery & What-if Stack** system turns the Automotive Software Hub from a static catalog into an interactive, deterministic architecture exploration and simulation platform.
-
-```text
-                    My Stack
-                       │
-          ┌────────────┼────────────┐
-          ↓            ↓            ↓
-   Architecture     Gaps        Next Steps
-    Discovery                   Recommendations
-          │            │            │
-          └────────────┼────────────┘
-                       ↓
-                  Stack Paths
-                       │
-                       ↓
-                  What-if Stack
-```
-
-Given any combination of automotive software components, the system answers:
-1. *"What automotive reference architecture am I building?"*
-2. *"What essential runtime layers or components are missing?"*
-3. *"What technologies naturally fit next based on verified graph relationships?"*
-4. *"Which vehicle execution journeys (Stack Paths) are relevant?"*
-5. *"If I replace technology A with technology B, what changes across architectures, connections, and safety claims?"*
-
----
-
-## 2. Architecture & Engine Reuse
-
-Architecture Discovery is a high-level domain orchestrator that reuses pure canonical graph modules with **zero duplicate algorithms**:
+The **Automotive Software Hub** provides two complementary, first-class discovery journeys:
 
 ```text
-types / data (stackLayers, stackTechnologies, stackRelationships, architectureProfiles, stackPaths)
+Architecture-First Journey:
+Architecture Explorer (/architectures)
       ↓
-src/lib/graph/index.ts (indexes, adjacency maps, traversal primitives)
+Architecture Detail (/architecture/:id)
       ↓
-src/lib/graph/scoring.ts (centralized scoring constants and formulas)
+Layers & Component Hierarchy
       ↓
-src/lib/graph/matching.ts (pure domain validation, architecture & path matching)
+Canonical Inter-Layer Relationships
       ↓
-src/lib/graph/intelligence/ (directional selectors, bridges, recommendations, gap analysis)
+Representative Stack Paths
       ↓
-src/lib/architecture/ (discovery.ts, whatIf.ts, types.ts)
+Build in Stack Builder (/stack-builder)
       ↓
-UI Components / Pages (StackBuilderPage, TechnologyDetailPage, WhatIfModal)
+What-if Impact Analysis
+
+Technology-First Journey:
+Technology Detail (/stack/:id)
+      ↓
+Direct Knowledge Graph Connections & Bridges
+      ↓
+Matched Reference Architecture Profiles
+      ↓
+Stack Builder Exploration
 ```
 
----
-
-## 3. Multi-Technology & Bare-Metal Semantics
-
-### A. Multi-Technology per Layer
-* A single layer may legitimately contain multiple technologies (e.g. `QNX Neutrino` for safety cluster alongside `Linux Kernel` for digital cockpit).
-* Technologies in the same layer are **NOT automatically considered conflicting or alternative**.
-* Only explicit `alternative` relationships in the knowledge graph classify components as architectural alternatives.
-
-### B. Bare-Metal & Optional Hypervisor
-* Core Runtime Layers are categorized into:
-  * **6 Mandatory Core Layers**: `hardware-compute`, `operating-systems`, `build-platform`, `middleware-communication`, `vehicle-services`, `application-experience`.
-  * **1 Optional Core Layer**: `hypervisor-virtualization` (omitted in Bare Metal / Direct OS architectures).
-* If a hypervisor is omitted, the stack validation engine directly connects `hardware-compute` to `operating-systems` without false gap warnings, and gap analysis marks the stack as complete.
+Given any perspective, users can seamlessly transition between high-level vehicle E/E architectures and concrete software implementations.
 
 ---
 
-## 4. What-if Stack Simulation Semantics
+## 2. Core Architecture Discovery Components
 
-### A. Non-Mutating Hypothetical State
-* What-if comparison creates an isolated clone of the user selection (`hypotheticalSelection`), substituting the target technology with the replacement technology.
-* The original user stack is never mutated until the user explicitly clicks "Apply Replacement to Stack".
+### A. Architecture Explorer (`/architectures`)
+* Interactive catalog of curated automotive architecture profiles (Vehicle Architectures, Domain Controllers, OS Platforms, Reference Stacks).
+* Direct metadata inspection: Technology counts, represented stack layers, topics, and tags.
+* Direct action: **"Build Stack"** (prepopulates Stack Builder with the complete architecture).
+* **Architecture Comparison**: Side-by-side comparative analysis of two selected architectures.
 
-### B. Impact Categories
-Impact is categorized using neutral, objective signals:
-* `added`: New architecture match or newly formed direct relationship.
-* `removed`: Lost architecture match or severed direct relationship.
-* `improved`: Architecture coverage or path match score increased.
-* `reduced`: Architecture coverage or path match score decreased.
-* `unchanged`: Relationship or relevance unchanged.
+### B. Architecture Comparison Engine (`src/lib/architecture/comparison.ts`)
+* Pure domain function `compareArchitectures(archAId, archBId)`:
+  * `sharedTechnologies`: Technologies present in both architectures.
+  * `onlyTechnologiesInA` / `onlyTechnologiesInB`: Technologies unique to each architecture.
+  * `sharedLayers` / `onlyLayersInA` / `onlyLayersInB`: Stack layer coverage comparison.
+  * `sharedPaths` / `onlyPathsInA` / `onlyPathsInB`: Relevant execution journeys.
+  * `sharedTopics`: Common focus areas and tags.
+* **Strict Semantic Guard**: Architecture membership does **NOT** equal a technology dependency. Pairwise relationships are only established if an explicit canonical edge exists in `stackRelationships`.
 
-### C. Directional Relationship Preservation
-* When $A$ is replaced with $C$:
-  * If $A \xrightarrow{\text{runs-on}} B$ existed, it is recorded as `removed: A -> runs-on -> B`.
-  * If $C \xrightarrow{\text{runs-on}} B$ exists, it is recorded as `added: C -> runs-on -> B`.
-  * Directionality ($A \rightarrow B \neq B \rightarrow A$) is strictly preserved.
+### C. Architecture Detail Page (`/architecture/:architectureId`)
+* **Layer View**: Sequential vertical decomposition from hardware compute to application experience and supporting layers.
+* **Internal Canonical Relationships**: Displays verified directed relationships documented in the Knowledge Graph between components within this architecture.
+* **Relevant Stack Paths**: Visual execution journeys with clickable technology hops.
+* **Recommendations (Explore Next)**: High-priority additive technologies discovered via graph intelligence (`candidateRecommendations`).
+* **What-if Analysis Entry Point**: Contextual "What-if" triggers on component cards to simulate technology substitutions.
 
-### D. Functional Safety Invariant
-* Safety certifications are evidence-based data fields (`claimType: 'certified' | 'capable' | 'compliant' | ...`).
-* What-if simulation preserves exact safety claims (e.g., Perseus Pegasus Hypervisor ASIL-D Certified remains Certified, and capable remains capable).
+### D. Architecture $\rightarrow$ Stack Builder Conversion
+* `convertArchitectureToStackSelection(profile)`: Maps all `technologyIds` to their canonical `StackLayerId` arrays.
+* Serializes to standard URL query params (`/stack-builder?hardware-compute=...&operating-systems=...`), preserving multi-technology selection and bare-metal support.
 
 ---
 
-## 5. Verification & Testing
+## 3. What-if Analysis Semantics & True Edge Diff
 
-Every invariant is protected by automated tests in `tests/graph.test.ts`:
-* `Test 34`: Architecture Discovery engine aggregation.
-* `Test 35`: Partial stack missing layer detection.
-* `Test 36`: Multi-technology selection per layer support.
-* `Test 37`: Same-layer coexistence independence from alternatives.
-* `Test 38`: Explicit alternative relationship verification.
-* `Test 39`: What-if non-mutating clone guarantee.
-* `Test 40`: What-if removed relationship detection with directionality.
-* `Test 41`: What-if added relationship detection with directionality.
-* `Test 42`: Deterministic architecture ranking changes.
-* `Test 43`: Deterministic stack path ranking changes.
-* `Test 44`: Strict relationship directionality preservation in comparison.
-* `Test 45`: Functional safety evidence invariant across What-if simulation.
+* **True Before/After Edge Diff**:
+  $$Removed = BeforeEdges - AfterEdges$$
+  $$Added = AfterEdges - BeforeEdges$$
+  Unchanged relationships are omitted from change lists.
+* **Directional Preservation**: $A \xrightarrow{runs-on} B \neq B \xrightarrow{runs-on} A$.
+* **Functional Safety Invariant**: Evidence-based safety claims (`Perseus Pegasus Hypervisor ASIL-D Certified`) remain unaltered across all discovery and comparison operations.
 
+---
+
+## 4. Test Suite Coverage (Tests 1–57)
+
+* `Tests 1–45`: Knowledge Graph indexes, matching, gap analysis, and Phase 8.3 baseline.
+* `Tests 46–49`: Phase 8.3.1 True relationship diff, modal synchronization, and zero fake self-relationships.
+* `Tests 50–57`: Phase 8.4 Architecture-first Discovery, Comparison, Stack Builder conversion, and Safety invariants.

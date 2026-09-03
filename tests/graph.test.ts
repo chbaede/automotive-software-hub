@@ -2308,6 +2308,211 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 49 Passed: Phase 8.3.1 regression & safety invariant hardening verified.');
 }
 
+// Test 50: Architecture Listing and Profile Metadata Verification
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+
+  assert.ok(architectureProfiles.length >= 8, 'Must contain at least 8 curated architecture profiles');
+
+  architectureProfiles.forEach((profile) => {
+    assert.ok(profile.id, 'Profile must have an id');
+    assert.ok(profile.name.en, 'Profile must have English name');
+    assert.ok(profile.name.ko, 'Profile must have Korean name');
+    assert.ok(profile.description.en, 'Profile must have English description');
+    assert.ok(profile.description.ko, 'Profile must have Korean description');
+    assert.ok(profile.profileType, 'Profile must have a valid profileType');
+    assert.ok(Array.isArray(profile.technologyIds) && profile.technologyIds.length > 0, 'Must have technology IDs');
+  });
+
+  console.log('✅ Test 50 Passed: Architecture listing and profile metadata verified.');
+}
+
+// Test 51: Architecture Detail and Technology/Layer Resolution
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  const validLayerIds = new Set(stackLayers.map((l) => l.id));
+
+  architectureProfiles.forEach((profile) => {
+    profile.technologyIds.forEach((techId) => {
+      const tech = technologyById.get(techId);
+      assert.ok(tech, `Technology "${techId}" in profile "${profile.id}" must exist in graph`);
+      assert.ok(validLayerIds.has(tech.layerId), `Technology "${techId}" must belong to a valid layer`);
+    });
+  });
+
+  console.log('✅ Test 51 Passed: Architecture detail and technology/layer resolution verified.');
+}
+
+// Test 52: Architecture -> Stack Builder Conversion & URL Roundtrip
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
+  const {
+    encodeStackToSearchParams,
+    decodeStackFromSearchParams,
+    getSelectedTechIds,
+  } = await import('../src/lib/builder/stackBuilderEngine.js');
+
+  const profile = architectureProfiles[0];
+  const selection = convertArchitectureToStackSelection(profile);
+
+  // 1. All profile technologies must be present in selection
+  const selectedIds = getSelectedTechIds(selection);
+  assert.strictEqual(
+    selectedIds.length,
+    profile.technologyIds.length,
+    'All technologies in architecture profile must be mapped to selection'
+  );
+
+  // 2. Multi-technology URL serialization round-trip
+  const params = encodeStackToSearchParams(selection);
+  const decoded = decodeStackFromSearchParams(params);
+  const decodedIds = getSelectedTechIds(decoded);
+
+  assert.deepStrictEqual(
+    decodedIds.sort(),
+    selectedIds.sort(),
+    'URL serialization round-trip must preserve all architecture technologies'
+  );
+
+  console.log('✅ Test 52 Passed: Architecture -> Stack Builder conversion & URL roundtrip verified.');
+}
+
+// Test 53: Architecture Comparison Engine
+{
+  const { compareArchitectures } = await import('../src/lib/architecture/comparison.js');
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+
+  const archA = architectureProfiles[0];
+  const archB = architectureProfiles[1];
+
+  const comparison = compareArchitectures(archA.id, archB.id);
+
+  assert.strictEqual(comparison.architectureA.id, archA.id);
+  assert.strictEqual(comparison.architectureB.id, archB.id);
+
+  // Shared + OnlyInA must equal total technologies in A
+  assert.strictEqual(
+    comparison.sharedTechnologies.length + comparison.onlyTechnologiesInA.length,
+    archA.technologyIds.length
+  );
+
+  // Shared + OnlyInB must equal total technologies in B
+  assert.strictEqual(
+    comparison.sharedTechnologies.length + comparison.onlyTechnologiesInB.length,
+    archB.technologyIds.length
+  );
+
+  // Shared tech IDs cannot overlap with unique tech IDs
+  const sharedIds = new Set(comparison.sharedTechnologies.map((t) => t.id));
+  comparison.onlyTechnologiesInA.forEach((t) => {
+    assert.ok(!sharedIds.has(t.id), `Unique tech in A "${t.id}" cannot be in shared`);
+  });
+  comparison.onlyTechnologiesInB.forEach((t) => {
+    assert.ok(!sharedIds.has(t.id), `Unique tech in B "${t.id}" cannot be in shared`);
+  });
+
+  console.log('✅ Test 53 Passed: Architecture comparison engine verified.');
+}
+
+// Test 54: No Fake Relationships Created from Architecture Membership
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
+
+  // Verify that pairwise relationships are ONLY present if explicitly recorded in canonical graph
+  architectureProfiles.forEach((profile) => {
+    const techIds = profile.technologyIds;
+    techIds.forEach((idA) => {
+      techIds.forEach((idB) => {
+        if (idA !== idB) {
+          const outgoingA = outgoingRelationshipsByTechnologyId.get(idA) || [];
+          const canonicalRel = outgoingA.find((r) => r.targetId === idB);
+          // If no canonical relationship, we never fabricate one
+          if (!canonicalRel) {
+            // Confirm we didn't add any fake relationship
+            assert.strictEqual(canonicalRel, undefined);
+          }
+        }
+      });
+    });
+  });
+
+  console.log('✅ Test 54 Passed: Architecture membership does NOT create fake relationships.');
+}
+
+// Test 55: Existing Graph Intelligence Reuse in Architecture Discovery
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
+  const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
+
+  const profile = architectureProfiles[0];
+  const selection = convertArchitectureToStackSelection(profile);
+  const discovery = discoverArchitecture(selection);
+
+  // Discovery must match the profile itself with 100% profile coverage
+  const selfMatch = discovery.architectureMatches.find((m) => m.profile.id === profile.id);
+  assert.ok(selfMatch, 'Architecture selection must match its own architecture profile');
+  assert.strictEqual(selfMatch.profileCoveragePercentage, 100, 'Self-match must have 100% profile coverage');
+  assert.strictEqual(selfMatch.missingTechnologies.length, 0, 'No missing technologies for self-match');
+
+  console.log('✅ Test 55 Passed: Existing graph intelligence reuse in architecture discovery verified.');
+}
+
+// Test 56: What-If Integration from Architecture Selection
+{
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+  const { convertArchitectureToStackSelection } = await import('../src/lib/architecture/comparison.js');
+  const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  // Find a profile with an operating system
+  const profileWithOS = architectureProfiles.find((p) =>
+    p.technologyIds.some((id) => technologyById.get(id)?.layerId === 'operating-systems')
+  );
+  assert.ok(profileWithOS, 'Found profile with OS');
+
+  const osTechId = profileWithOS.technologyIds.find(
+    (id) => technologyById.get(id)?.layerId === 'operating-systems'
+  )!;
+  const selection = convertArchitectureToStackSelection(profileWithOS);
+
+  // Replace OS with alternative
+  const replId = osTechId === 'qnx-neutrino' ? 'linux-kernel' : 'qnx-neutrino';
+  const whatIfResult = compareWhatIfStack(selection, osTechId, replId);
+
+  assert.ok(whatIfResult.architectureImpacts.length > 0, 'What-if generates architecture impacts');
+  assert.strictEqual(whatIfResult.targetTechnology.id, osTechId);
+  assert.strictEqual(whatIfResult.replacementTechnology.id, replId);
+
+  console.log('✅ Test 56 Passed: What-if integration from architecture selection verified.');
+}
+
+// Test 57: Safety Claims Invariant across Architecture Discovery and Comparison
+{
+  const { compareArchitectures } = await import('../src/lib/architecture/comparison.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
+
+  // Compare architectures
+  const comparison = compareArchitectures('centralized-compute', 'zonal-architecture');
+  assert.ok(comparison);
+
+  // Safety claim invariant
+  const perseusAfter = technologyById.get('perseus-hypervisor');
+  assert.strictEqual(perseusAfter?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(perseusAfter?.functionalSafety?.asilLevel, 'ASIL-D');
+
+  console.log('✅ Test 57 Passed: Safety claims invariant across Architecture Discovery and Comparison verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

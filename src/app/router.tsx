@@ -25,6 +25,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/stack/:technologyId" element={<TechnologyDetailPage />} />
           <Route path="/architectures" element={<ArchitecturesPage />} />
           <Route path="/architectures/:architectureId" element={<ArchitectureDetailPage />} />
+          <Route path="/architecture/:architectureId" element={<ArchitectureDetailPage />} />
           <Route path="/stack-builder" element={<StackBuilderPage />} />
           <Route path="/tools" element={<ToolsPage />} />
           <Route path="/resources" element={<ResourcesPage />} />

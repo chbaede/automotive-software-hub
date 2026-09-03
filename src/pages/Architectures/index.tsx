@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Layers,
   Cpu,
@@ -11,6 +11,8 @@ import {
   Compass,
   CheckCircle2,
   GitFork,
+  ArrowRightLeft,
+  Wrench,
 } from 'lucide-react';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackLayers } from '../../data/stackLayers';
@@ -23,6 +25,9 @@ import { StackLayerId } from '../../types/stack';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { technologyById } from '../../utils/graphIndexes';
+import { convertArchitectureToStackSelection } from '../../lib/architecture/comparison';
+import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
+import { ArchitectureComparisonModal } from '../../components/stack/ArchitectureComparisonModal';
 
 const PROFILE_TYPES: ArchitectureProfileType[] = [
   'vehicle-architecture',
@@ -34,8 +39,11 @@ const PROFILE_TYPES: ArchitectureProfileType[] = [
 
 export const ArchitecturesPage: React.FC = () => {
   const { language, t } = useLanguage();
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<ArchitectureProfileType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [compareArchAId, setCompareArchAId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     document.title = `${t.architectures.title} | Automotive Software Hub`;
@@ -71,6 +79,17 @@ export const ArchitecturesPage: React.FC = () => {
     });
   }, [selectedType, searchQuery, language]);
 
+  const handleBuildStack = (profile: ArchitectureProfile) => {
+    const selection = convertArchitectureToStackSelection(profile);
+    const searchParams = encodeStackToSearchParams(selection);
+    navigate(`/stack-builder?${searchParams.toString()}`);
+  };
+
+  const handleOpenCompare = (profileId?: string) => {
+    setCompareArchAId(profileId);
+    setIsCompareOpen(true);
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Hero Header */}
@@ -79,7 +98,7 @@ export const ArchitecturesPage: React.FC = () => {
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
             <Compass className="w-3.5 h-3.5" />
-            <span>{language === 'ko' ? '차량용 소프트웨어 아키텍처 탐색기' : 'Automotive Architecture Explorer'}</span>
+            <span>{t.architectures.title}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
@@ -90,14 +109,24 @@ export const ArchitecturesPage: React.FC = () => {
             {t.architectures.subtitle}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-400 font-mono">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-indigo-400" />
-              <span>{architectureProfiles.length} {language === 'ko' ? '개 아키텍처 프로필' : 'Architecture Profiles'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-cyan-400" />
-              <span>{stackLayers.length} {language === 'ko' ? '개 스택 계층' : 'Stack Layers'}</span>
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <button
+              onClick={() => handleOpenCompare()}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 dark:bg-indigo-600 dark:text-white hover:bg-slate-100 dark:hover:bg-indigo-500 transition text-xs font-bold shadow-md"
+            >
+              <ArrowRightLeft className="w-3.5 h-3.5" />
+              <span>{t.architectures.compareArchitectures}</span>
+            </button>
+
+            <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                <span>{architectureProfiles.length} {t.architectures.technologiesCount.replace('{count}', '').trim()} Profiles</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span>{stackLayers.length} {t.architectures.layersRepresented}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -145,7 +174,7 @@ export const ArchitecturesPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'ko' ? '아키텍처 검색 (예: AAOS, ADAS, SDV)...' : 'Search architectures...'}
-            className="w-full pl-9 pr-4 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 text-slate-900 dark:text-white shadow-2xs"
+            className="w-full pl-9 pr-4 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-hidden focus:border-indigo-500 text-slate-900 dark:text-white shadow-2xs"
           />
         </div>
       </div>
@@ -225,11 +254,28 @@ export const ArchitecturesPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Action Button */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500">
-                  {language === 'ko' ? '스택 계층별 구성 확인' : 'Explore Stack Composition'}
-                </span>
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleOpenCompare(profile.id)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                    title={t.architectures.compareArchitectures}
+                  >
+                    <ArrowRightLeft className="w-3 h-3" />
+                    <span>Compare</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleBuildStack(profile)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-500/20 transition"
+                    title={t.architectures.buildThisArchitecture}
+                  >
+                    <Wrench className="w-3 h-3 text-indigo-500" />
+                    <span>Build Stack</span>
+                  </button>
+                </div>
+
                 <Link
                   to={`/architectures/${profile.id}`}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition"
@@ -242,6 +288,13 @@ export const ArchitecturesPage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Architecture Comparison Modal */}
+      <ArchitectureComparisonModal
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        initialArchAId={compareArchAId}
+      />
     </div>
   );
 };
