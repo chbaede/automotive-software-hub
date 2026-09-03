@@ -403,8 +403,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getStackPathsForTechnology,
   } = await import('../src/lib/graph/index.js');
 
-  const impls = getNeighborsByRelationshipType('dds-protocol', 'implemented-by');
-  assert.ok(impls.outgoing.length > 0, 'DDS Protocol should have outgoing implemented-by neighbors');
+  const impls = getNeighborsByRelationshipType('ros2-middleware', 'implemented-by');
+  assert.ok(impls.outgoing.length > 0, 'ROS 2 Middleware should have outgoing implemented-by neighbors');
   assert.ok(impls.outgoing.some((t) => t.id === 'eprosima-fastdds' || t.id === 'eclipse-cyclonedds'));
 
   const mwTechs = getTechnologiesByLayer('middleware-communication');
@@ -451,11 +451,11 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     );
   });
 
-  const ctxSomeip = getTechnologyGraphContext('someip-protocol');
-  assert.ok(ctxSomeip, 'Should resolve TechnologyGraphContext for someip-protocol');
-  assert.strictEqual(ctxSomeip?.technology.id, 'someip-protocol');
-  assert.ok(ctxSomeip!.connectionCount >= 3, 'SOME/IP should have connectionCount >= 3');
-  assert.ok(ctxSomeip!.relationshipCount >= ctxSomeip!.connectionCount);
+  const ctxVsomeip = getTechnologyGraphContext('vsomeip-middleware');
+  assert.ok(ctxVsomeip, 'Should resolve TechnologyGraphContext for vsomeip-middleware');
+  assert.strictEqual(ctxVsomeip?.technology.id, 'vsomeip-middleware');
+  assert.ok(ctxVsomeip!.connectionCount >= 2, 'vsomeip should have connectionCount >= 2');
+  assert.ok(ctxVsomeip!.relationshipCount >= ctxVsomeip!.connectionCount);
 
   const ctxAutosar = getTechnologyGraphContext('autosar-adaptive');
   assert.ok(ctxAutosar, 'Should resolve TechnologyGraphContext for autosar-adaptive');
@@ -492,13 +492,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   // 3. Same node path
-  const resultSame = findShortestPath('can-protocol', 'can-protocol');
+  const resultSame = findShortestPath('socketcan', 'socketcan');
   assert.ok(resultSame.found, 'Path to same node should be found');
   assert.strictEqual(resultSame.hopCount, 0);
   assert.strictEqual(resultSame.nodes.length, 1);
 
   // 4. Invalid node path
-  const resultInvalid = findShortestPath('invalid-node-xyz', 'can-protocol');
+  const resultInvalid = findShortestPath('invalid-node-xyz', 'socketcan');
   assert.strictEqual(resultInvalid.found, false);
   assert.strictEqual(resultInvalid.hopCount, 0);
 
@@ -994,7 +994,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // hardware-compute and middleware-communication with OS skipped
   const skippedLayerSelection = {
     'hardware-compute': 'nvidia-drive-thor',
-    'middleware-communication': 'someip-protocol',
+    'middleware-communication': 'vsomeip-middleware',
   };
   const skippedValidation = validateStack(skippedLayerSelection);
   // There should NOT be any warning with isAdjacentLayerPair = true because they are non-adjacent layers
@@ -1282,16 +1282,16 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   });
 
   // 5. Contiguous Sequence and Deterministic Scoring in Stack Path Matching
-  // Path: android-cockpit-path (qualcomm-snapdragon-cockpit -> qnx-hypervisor -> linux-kernel -> android-automotive-os -> covesa-vss)
+  // Path: aaos-ivi-cockpit-path (qualcomm-snapdragon-cockpit -> qnx-hypervisor -> android-automotive-os -> aaos-sdv-platform -> covesa-vss)
   const fullSelection = {
     'hardware-compute': 'qualcomm-snapdragon-cockpit',
     'hypervisor-virtualization': 'qnx-hypervisor',
-    'operating-systems': 'linux-kernel',
+    'operating-systems': 'android-automotive-os',
   };
   const matchedPaths = matchStackPaths(fullSelection);
   assert.ok(matchedPaths.length > 0);
   const bestPath = matchedPaths[0];
-  assert.strictEqual(bestPath.path.id, 'android-cockpit-path');
+  assert.strictEqual(bestPath.path.id, 'aaos-ivi-cockpit-path');
   assert.strictEqual(bestPath.maxContiguousHops, 3, 'Consecutive hops in stack path must be credited in maxContiguousHops');
 
   // 6. Deterministic tie breaking in matchArchitectures
@@ -1390,23 +1390,23 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { technologyById, profileById, pathById } = await import('../src/lib/graph/index.js');
 
   // 1. Directed Semantics Invariants
-  // AUTOSAR Adaptive (ARA) depends on POSIX PSE51 OS (e.g. QNX Neutrino)
-  const araDependencies = getDependencies('autosar-adaptive');
-  assert.ok(araDependencies.length > 0, 'AUTOSAR Adaptive must have dependencies');
-  araDependencies.forEach((dep) => {
+  // ros2-autoware depends on ros2-middleware
+  const ros2Dependencies = getDependencies('ros2-autoware');
+  assert.ok(ros2Dependencies.length > 0, 'ROS 2 Autoware must have dependencies');
+  ros2Dependencies.forEach((dep) => {
     assert.strictEqual(dep.relationship.type, 'depends-on');
-    assert.strictEqual(dep.relationship.sourceId, 'autosar-adaptive');
+    assert.strictEqual(dep.relationship.sourceId, 'ros2-autoware');
     assert.ok(dep.score > 0);
     assert.ok(dep.reason.en.length > 0);
     assert.ok(dep.reason.ko.length > 0);
   });
 
-  // Check incoming dependents of QNX Neutrino
-  const qnxDependents = getDependents('qnx-neutrino');
-  assert.ok(qnxDependents.length > 0, 'QNX Neutrino must have incoming dependents');
-  qnxDependents.forEach((dep) => {
+  // Check incoming dependents of ros2-middleware
+  const mwDependents = getDependents('ros2-middleware');
+  assert.ok(mwDependents.length > 0, 'ROS 2 Middleware must have incoming dependents');
+  mwDependents.forEach((dep) => {
     assert.strictEqual(dep.relationship.type, 'depends-on');
-    assert.strictEqual(dep.relationship.targetId, 'qnx-neutrino');
+    assert.strictEqual(dep.relationship.targetId, 'ros2-middleware');
   });
 
   // Platforms vs Hosted Software (runs-on)
@@ -1601,16 +1601,9 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(strongBridgeScore > weakBridgeScore, 'Strong bridge must outscore weak bridge');
 
   // 2. Strict Dependency & Platform Directional Invariants
-  // AUTOSAR Adaptive (ARA) depends on SOME/IP Protocol
-  const araDeps = rels.getDependencies('autosar-adaptive');
-  const someipDependents = rels.getDependents('someip-protocol');
-  const someipDeps = rels.getDependencies('someip-protocol');
-  const araDependents = rels.getDependents('autosar-adaptive');
-
-  assert.ok(araDeps.some((d) => d.technology.id === 'someip-protocol'), 'ARA depends on SOME/IP Protocol');
-  assert.ok(someipDependents.some((d) => d.technology.id === 'autosar-adaptive'), 'SOME/IP is depended on by ARA');
-  assert.ok(!someipDeps.some((d) => d.technology.id === 'autosar-adaptive'), 'SOME/IP does NOT depend on ARA');
-  assert.ok(!araDependents.some((d) => d.technology.id === 'someip-protocol'), 'ARA is NOT depended on by SOME/IP');
+  // AUTOSAR Adaptive (ARA) is implemented by vsomeip
+  const araImpls = rels.getImplementations('autosar-adaptive');
+  assert.ok(araImpls.some((i) => i.technology.id === 'vsomeip-middleware'), 'ARA is implemented by vsomeip');
 
   // AUTOSAR Adaptive (ARA) runs on QNX Neutrino
   const araPlatforms = rels.getPlatforms('autosar-adaptive');
@@ -1679,16 +1672,16 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   // 3. Directional Semantics Matrix Verification
   // (a) depends-on
-  const araDeps = rels.getDependencies('autosar-adaptive');
-  assert.ok(araDeps.some((d) => d.technology.id === 'someip-protocol'), 'autosar-adaptive depends on someip-protocol');
+  const ros2Deps = rels.getDependencies('ros2-autoware');
+  assert.ok(ros2Deps.some((d) => d.technology.id === 'ros2-middleware'), 'ros2-autoware depends on ros2-middleware');
 
   // (b) runs-on
   const aaosPlatforms = rels.getPlatforms('android-automotive-os');
   assert.ok(aaosPlatforms.some((p) => p.technology.id === 'qnx-hypervisor'), 'Android Automotive OS runs on QNX Hypervisor');
 
   // (c) implemented-by
-  const someipImpls = rels.getImplementations('someip-protocol');
-  assert.ok(someipImpls.some((i) => i.technology.id === 'vsomeip-middleware'), 'someip-protocol is implemented by vsomeip');
+  const araImpls2 = rels.getImplementations('autosar-adaptive');
+  assert.ok(araImpls2.some((i) => i.technology.id === 'vsomeip-middleware'), 'autosar-adaptive is implemented by vsomeip');
 
   // (d) integrates-with (preserves isOutgoing)
   const ros2Integrations = rels.getIntegrations('ros2-middleware');
@@ -1734,7 +1727,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const pathSelection = {
     'hardware-compute': 'qualcomm-snapdragon-cockpit',
     'hypervisor-virtualization': 'qnx-hypervisor',
-    'operating-systems': 'linux-kernel',
+    'operating-systems': 'android-automotive-os',
   };
   const pathMatches = matchStackPaths(pathSelection);
   assert.ok(pathMatches.length > 0, 'Matched paths exist');
@@ -2315,7 +2308,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'hardware-compute': ['nvidia-drive-thor'],
     'hypervisor-virtualization': ['qnx-hypervisor'],
     'operating-systems': ['linux-kernel'],
-    'middleware-communication': ['someip-protocol'],
+    'middleware-communication': ['vsomeip-middleware'],
   };
 
   const discovery = discoverArchitecture(stack);
@@ -2632,9 +2625,9 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(customLinuxProfile.name.ko, '커스텀 임베디드 리눅스 콕핏 & IVI');
 
   // 3. SOME/IP & COVESA VSS as common tools across both
-  assert.ok(aaosProfile.technologyIds.includes('someip-protocol'), 'AAOS must include SOME/IP');
+  assert.ok(aaosProfile.technologyIds.includes('vsomeip-middleware'), 'AAOS must include SOME/IP (vsomeip)');
   assert.ok(aaosProfile.technologyIds.includes('covesa-vss'), 'AAOS must include COVESA VSS');
-  assert.ok(customLinuxProfile.technologyIds.includes('someip-protocol'), 'Custom Linux Cockpit must include SOME/IP');
+  assert.ok(customLinuxProfile.technologyIds.includes('vsomeip-middleware'), 'Custom Linux Cockpit must include SOME/IP (vsomeip)');
   assert.ok(customLinuxProfile.technologyIds.includes('covesa-vss'), 'Custom Linux Cockpit must include COVESA VSS');
 
   // 4. Qt Automotive supports Android
@@ -2674,6 +2667,52 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(qualcommCockpit?.asilLevel, undefined, 'Cockpit SoC is treated as QM standard');
 
   console.log('✅ Test 63 Passed: Cockpit domain safety invariant (QM standard) verified.');
+}
+
+// Test 64: Concrete OSS Software Stacks & Pruned Abstract Protocols
+{
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { projects } = await import('../src/data/projects.js');
+
+  // 1. Abstract protocols must be completely pruned
+  const prunedProtocols = [
+    'someip-protocol',
+    'dds-protocol',
+    'can-protocol',
+    'uds-protocol',
+    'doip-protocol',
+    'lin-bus-protocol',
+    'flexray-protocol',
+    'xcp-protocol',
+  ];
+  prunedProtocols.forEach((id) => {
+    assert.strictEqual(technologyById.get(id), undefined, `Abstract protocol "${id}" must not exist in stack technologies`);
+  });
+
+  // 2. vsomeip is open source
+  const vsomeip = technologyById.get('vsomeip-middleware');
+  assert.ok(vsomeip, 'vsomeip-middleware must exist in stack technologies');
+  assert.strictEqual(vsomeip?.licenseType, 'oss', 'vsomeip must have licenseType: oss');
+
+  // 3. dlt-daemon is open source
+  const dltDaemon = technologyById.get('dlt-daemon');
+  assert.ok(dltDaemon, 'dlt-daemon must exist in stack technologies');
+  assert.strictEqual(dltDaemon?.licenseType, 'oss', 'dlt-daemon must have licenseType: oss');
+
+  // 4. Open-source projects list includes vsomeip and dlt-daemon
+  assert.ok(projects.some((p) => p.id === 'vsomeip'), 'vsomeip must exist in projects');
+  assert.ok(projects.some((p) => p.id === 'dlt-daemon'), 'dlt-daemon must exist in projects');
+
+  // 5. Concrete communication stacks present and OSS
+  const concreteTechs = ['socketcan', 'can-utils', 'libdoip', 'eclipse-cyclonedds', 'eprosima-fastdds'];
+  concreteTechs.forEach((id) => {
+    const tech = technologyById.get(id);
+    assert.ok(tech, `Concrete software "${id}" must exist in stack technologies`);
+    assert.strictEqual(tech?.licenseType, 'oss', `"${id}" must have licenseType: oss`);
+  });
+
+  console.log('✅ Test 64 Passed: Concrete OSS software stacks & pruned abstract protocols verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

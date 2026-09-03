@@ -46,8 +46,8 @@ const EXAMPLE_PATHS = [
   },
   {
     fromId: 'android-automotive-os',
-    toId: 'can-protocol',
-    label: { en: 'Android Automotive OS → CAN Protocol', ko: '안드로이드 오토모티브 → CAN 프로토콜' },
+    toId: 'vsomeip-middleware',
+    label: { en: 'Android Automotive OS → vsomeip', ko: '안드로이드 오토모티브 → vsomeip' },
   },
 ];
 

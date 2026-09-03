@@ -66,6 +66,38 @@ export const projects: OpenSourceProject[] = [
     tags: ['agl', 'ivi', 'cluster', 'telematics', 'linux'],
   },
   {
+    id: 'vsomeip',
+    name: 'COVESA vsomeip (C++ SOME/IP Stack)',
+    description: {
+      en: 'BMW open-source C++ implementation of the SOME/IP and SOME/IP-SD (Service Discovery) protocol maintained by COVESA.',
+      ko: 'BMW 및 COVESA가 관리하는 오픈소스 C++ 기반 SOME/IP 및 SOME/IP-SD(서비스 디스커버리) 통신 스택.',
+    },
+    category: 'covesa',
+    topics: ['someip', 'autosar', 'open-source', 'automotive-ethernet'],
+    website: 'https://github.com/COVESA/vsomeip',
+    repository: 'https://github.com/COVESA/vsomeip',
+    organization: 'COVESA / BMW',
+    languages: ['C++'],
+    license: 'MPL-2.0',
+    tags: ['vsomeip', 'someip', 'covesa', 'bmw', 'middleware'],
+  },
+  {
+    id: 'dlt-daemon',
+    name: 'COVESA DLT Daemon (Diagnostic Log and Trace)',
+    description: {
+      en: 'Open-source implementation of AUTOSAR Diagnostic Log and Trace (DLT) protocol providing high-performance ECU logging and tracing.',
+      ko: 'AUTOSAR DLT 표준을 구현하여 차량 ECU 실시간 로그/트레이스를 캡처 및 전송하는 글로벌 오픈소스 로깅 데몬.',
+    },
+    category: 'covesa',
+    topics: ['embedded-linux', 'open-source', 'sdv', 'android-automotive'],
+    website: 'https://github.com/COVESA/dlt-daemon',
+    repository: 'https://github.com/COVESA/dlt-daemon',
+    organization: 'COVESA / BMW',
+    languages: ['C'],
+    license: 'MPL-2.0',
+    tags: ['dlt', 'dlt-daemon', 'covesa', 'logging', 'tracing', 'autosar-dlt'],
+  },
+  {
     id: 'eclipse-uprotocol',
     name: 'Eclipse uProtocol',
     description: {

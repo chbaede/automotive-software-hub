@@ -2,77 +2,83 @@ import { StackPath } from '../types/architecture';
 
 export const stackPaths: StackPath[] = [
   {
-    id: 'android-cockpit-path',
+    id: 'aaos-ivi-cockpit-path',
     pathType: 'runtime-stack',
     name: {
-      en: 'Representative Android Automotive Cockpit Architecture Journey',
-      ko: '대표 안드로이드 오토모티브 디지털 콕핏 탐색 경로',
+      en: 'Representative Android Automotive OS (AAOS) Cockpit Journey',
+      ko: '대표 Android Automotive OS (AAOS) 콕핏 경로',
     },
     description: {
-      en: 'Representative cockpit journey from SoC hardware -> Type-1 Hypervisor -> Guest Linux kernel -> Android Automotive OS platform framework & userspace VHAL -> COVESA VSS vehicle signal model.',
-      ko: '콕핏 SoC 하드웨어 -> Type-1 하이퍼바이저 -> 게스트 리눅스 커널 -> 안드로이드 오토모티브 OS & 유저스페이스 VHAL -> 차량 신호 명세 데이터 트리로 이어지는 콕핏 아키텍처 탐색 경로.',
+      en: 'Representative digital cockpit path: Qualcomm 8295 SoC -> QNX Hypervisor -> AAOS (Android OS) -> Vehicle HAL (VHAL) -> COVESA VSS telemetry data flow.',
+      ko: 'Qualcomm 8295 SoC -> QNX 하이퍼바이저 -> AAOS (안드로이드 OS) -> Vehicle HAL (VHAL) -> COVESA VSS 차량 신호 데이터로 이어지는 대표적 콕핏 탐색 경로.',
     },
-    architectureProfileId: 'android-automotive',
-    topics: ['android-automotive', 'qnx', 'embedded-linux', 'someip'],
+    topics: ['android-automotive', 'sdv', 'qnx', 'covesa'],
     lastVerified: '2026-09-02',
     hops: [
       {
         technologyId: 'qualcomm-snapdragon-cockpit',
         note: {
-          en: 'Representative Snapdragon 8295 Cockpit SoC platform powering hardware partitions.',
-          ko: '하드웨어 분할을 구동하는 Snapdragon 8295 콕핏 SoC 실리콘 플랫폼.',
+          en: 'Representative multi-display automotive digital cockpit SoC silicon platform.',
+          ko: '다중 디스플레이 콕핏을 구동하는 대표적인 오토모티브 SoC 실리콘 플랫폼.',
         },
       },
       {
         technologyId: 'qnx-hypervisor',
         note: {
-          en: 'Type-1 hypervisor partitioning safety cluster RTOS and guest Android OS VM.',
-          ko: '계기판 RTOS와 게스트 안드로이드 OS 가상머신을 물리 분할 격리하는 Type-1 하이퍼바이저.',
-        },
-      },
-      {
-        technologyId: 'linux-kernel',
-        note: {
-          en: 'Guest OS Linux kernel providing Binder IPC and display drivers.',
-          ko: '바인더 IPC 및 디스플레이 드라이버를 구동하는 게스트 리눅스 커널.',
+          en: 'Type-1 safety hypervisor partitioning hardware resources for mixed-criticality isolation.',
+          ko: '이종 안전도 분리 격리를 위해 SoC 자원을 분할하는 Type-1 안전 하이퍼바이저.',
         },
       },
       {
         technologyId: 'android-automotive-os',
         note: {
-          en: 'Android Automotive OS framework, CarService, and userspace VHAL layer (userspace HAL, not a kernel driver).',
-          ko: '안드로이드 오토모티브 OS 프레임워크, CarService 및 유저스페이스 VHAL 계층.',
+          en: 'Native Android OS guest partition running the In-Vehicle Infotainment user experience.',
+          ko: '차량 인포테인먼트 UX를 구동하는 네이티브 안드로이드 OS 게스트 파티션.',
+        },
+      },
+      {
+        technologyId: 'aaos-sdv-platform',
+        note: {
+          en: 'Vehicle HAL (VHAL) & cloud-native SDV extension framework connecting Android to vehicle buses.',
+          ko: '안드로이드를 차량 버스에 연결하는 Vehicle HAL(VHAL) 및 SDV 프레임워크.',
         },
       },
       {
         technologyId: 'covesa-vss',
         note: {
-          en: 'Standardized COVESA Vehicle Signal Specification data tree defining vehicle telemetry (signal model concern).',
-          ko: '콕핏 텔레매틱스 연동을 위한 COVESA 표준 차량 신호 데이터 모델.',
+          en: 'Standardized COVESA Vehicle Signal Specification data tree for vehicle property mapping.',
+          ko: '차량 속성 매핑을 위한 COVESA 표준 차량 신호 데이터 모델.',
         },
       },
     ],
   },
   {
-    id: 'autosar-adaptive-path',
-    pathType: 'communication-flow',
+    id: 'autosar-adaptive-hpc-path',
+    pathType: 'runtime-stack',
     name: {
-      en: 'Representative AUTOSAR Adaptive SOA & Diagnostic Journey',
-      ko: '대표 AUTOSAR Adaptive 서비스 지향 및 진단 탐색 경로',
+      en: 'Representative AUTOSAR Adaptive SOA Gateway Journey',
+      ko: '대표 AUTOSAR Adaptive 서비스 지향 게이트웨이 경로',
     },
     description: {
-      en: 'High-performance MPU middleware journey illustrating service-oriented communication (POSIX RTOS -> ARA -> SOME/IP -> vsomeip) and diagnostic transport (DoIP -> UDS).',
-      ko: 'POSIX RTOS (QNX) -> ARA 런타임 -> SOME/IP 프로토콜 명세 -> vsomeip 구현체 연동 및 DoIP -> UDS 진단 전송 흐름을 나타내는 미들웨어 탐색 경로.',
+      en: 'Representative service-oriented gateway path: Renesas R-Car SoC -> QNX Neutrino RTOS -> AUTOSAR Adaptive Platform -> vsomeip communication -> libdoip & dlt-daemon diagnostics.',
+      ko: 'Renesas R-Car SoC -> QNX Neutrino RTOS -> AUTOSAR Adaptive 플랫폼 -> vsomeip 통신 -> libdoip 및 dlt-daemon 진단/로깅으로 연결되는 SOA 통신 탐색 경로.',
     },
     architectureProfileId: 'autosar-adaptive',
-    topics: ['autosar', 'someip', 'functional-safety', 'sdv'],
+    topics: ['autosar', 'someip', 'functional-safety', 'qnx'],
     lastVerified: '2026-09-02',
     hops: [
       {
+        technologyId: 'renesas-rcar',
+        note: {
+          en: 'Representative automotive high-compute gateway & domain controller SoC silicon.',
+          ko: '고성능 게이트웨이 및 도메인 제어기용 대표 오토모티브 SoC 실리콘.',
+        },
+      },
+      {
         technologyId: 'qnx-neutrino',
         note: {
-          en: 'ASIL-D safety certified POSIX PSE51 microkernel operating system runtime.',
-          ko: 'ASIL-D 기능 안전 인증 POSIX PSE51 마이크로커널 운영체제 런타임.',
+          en: 'ISO 26262 ASIL-D certified POSIX PSE51 compliant microkernel real-time OS.',
+          ko: 'ISO 26262 ASIL-D 기능안전 인증을 획득한 POSIX 규격 실시간 마이크로커널 OS.',
         },
       },
       {
@@ -83,31 +89,24 @@ export const stackPaths: StackPath[] = [
         },
       },
       {
-        technologyId: 'someip-protocol',
-        note: {
-          en: 'Scalable service-Oriented IP (SOME/IP) communication protocol specification.',
-          ko: '확장 가능한 서비스 지향 IP 통신 프로토콜 명세.',
-        },
-      },
-      {
         technologyId: 'vsomeip-middleware',
         note: {
-          en: 'COVESA open-source C++ reference implementation of SOME/IP protocol (implements SOME/IP spec, not full ARA).',
+          en: 'COVESA open-source C++ reference implementation of SOME/IP protocol.',
           ko: 'COVESA SOME/IP 통신 프로토콜의 C++ 오픈소스 래퍼런스 구현체.',
         },
       },
       {
-        technologyId: 'doip-protocol',
+        technologyId: 'libdoip',
         note: {
-          en: 'Diagnostic over IP (ISO 13400) high-speed Ethernet transport layer for diagnostic services.',
-          ko: '차량 이더넷 기반 고속 DoIP (ISO 13400) 진단 전송 계층.',
+          en: 'Open-source C++ ISO 13400-2 Diagnostic over IP (DoIP) transport stack for high-speed vehicle flashing.',
+          ko: '고속 차량 플래싱 및 원격 진단을 위한 오픈소스 C++ ISO 13400-2 DoIP 전송 스택.',
         },
       },
       {
-        technologyId: 'uds-protocol',
+        technologyId: 'dlt-daemon',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services protocol for ECU flashing and diagnostics.',
-          ko: 'ECU 펌웨어 프로그래밍 및 진단을 위한 ISO 14229 UDS 규격.',
+          en: 'COVESA Diagnostic Log and Trace (DLT) daemon for structured ECU logging and telemetry.',
+          ko: '구조화된 ECU 진단 로깅 및 텔레메트리 캡처를 위한 COVESA DLT 데몬.',
         },
       },
     ],
@@ -120,8 +119,8 @@ export const stackPaths: StackPath[] = [
       ko: '대표 AUTOSAR Classic 마이크로컨트롤러(MCU) 섀시 제어 경로',
     },
     description: {
-      en: 'Representative real-time safety ECU platform path: NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN bus communication -> UDS diagnostic services.',
-      ko: 'NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> CAN 버스 통신 드라이버 -> UDS 진단 서비스로 연결되는 실시간 안전 제어기 탐색 경로.',
+      en: 'Representative real-time safety ECU platform path: NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> SocketCAN communication -> dlt-daemon logging.',
+      ko: 'NXP S32 MCU -> AUTOSAR Classic BSW & OSEK OS -> SocketCAN 통신 드라이버 -> dlt-daemon 로깅으로 연결되는 실시간 안전 제어기 탐색 경로.',
     },
     topics: ['can', 'autosar', 'functional-safety'],
     lastVerified: '2026-09-02',
@@ -141,17 +140,17 @@ export const stackPaths: StackPath[] = [
         },
       },
       {
-        technologyId: 'can-protocol',
+        technologyId: 'socketcan',
         note: {
-          en: 'Representative CAN / CAN-FD bus network communication drivers and physical layer.',
-          ko: '대표적인 CAN / CAN-FD 버스 네트워크 통신 드라이버 계층.',
+          en: 'Representative Linux SocketCAN driver subsystem interfacing vehicle buses.',
+          ko: '차량 CAN/CAN-FD 버스 제어를 위한 리눅스 SocketCAN 서브시스템.',
         },
       },
       {
-        technologyId: 'uds-protocol',
+        technologyId: 'dlt-daemon',
         note: {
-          en: 'ISO 14229 Unified Diagnostic Services manager protocol module for ECU maintenance.',
-          ko: 'ISO 14229 UDS 진단 통신 관리자 모듈.',
+          en: 'AUTOSAR DLT logging daemon collecting real-time traces from ECUs.',
+          ko: 'ECU 런타임 로그와 트레이스를 실시간 수집하는 AUTOSAR DLT 데몬.',
         },
       },
     ],
@@ -261,8 +260,8 @@ export const stackPaths: StackPath[] = [
       ko: '대표 ADAS 인지 및 SIL 시뮬레이션 검증 경로',
     },
     description: {
-      en: 'Representative perception and simulation journey: NVIDIA Thor -> Real-Time Linux (PREEMPT_RT) -> ROS 2 / Autoware -> DDS -> iceoryx zero-copy IPC -> CARLA Simulator.',
-      ko: 'NVIDIA Thor -> 실시간 리눅스 -> ROS 2 / Autoware -> DDS -> iceoryx 제로카피 IPC -> CARLA 시뮬레이터로 연계되는 자율주행 데이터 경로.',
+      en: 'Representative perception and simulation journey: NVIDIA Thor -> Real-Time Linux (PREEMPT_RT) -> ROS 2 / Autoware -> Eclipse Cyclone DDS -> iceoryx zero-copy IPC -> CARLA Simulator.',
+      ko: 'NVIDIA Thor -> 실시간 리눅스 -> ROS 2 / Autoware -> Eclipse Cyclone DDS -> iceoryx 제로카피 IPC -> CARLA 시뮬레이터로 연계되는 자율주행 데이터 경로.',
     },
     architectureProfileId: 'adas-autonomous',
     topics: ['adas', 'ros2', 'functional-safety', 'open-source'],
@@ -290,10 +289,10 @@ export const stackPaths: StackPath[] = [
         },
       },
       {
-        technologyId: 'dds-protocol',
+        technologyId: 'eclipse-cyclonedds',
         note: {
-          en: 'Data Distribution Service pub/sub middleware specification.',
-          ko: 'DDS 게시/구독 분산 미들웨어 통신 프로토콜 명세.',
+          en: 'Eclipse Cyclone DDS high-performance pub/sub middleware implementation.',
+          ko: 'Eclipse Cyclone DDS 고성능 Pub/Sub 데이터 분산 미들웨어 구현체.',
         },
       },
       {

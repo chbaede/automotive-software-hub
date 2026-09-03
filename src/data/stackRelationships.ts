@@ -153,12 +153,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'autosar-adaptive',
-    targetId: 'someip-protocol',
-    type: 'depends-on',
+    targetId: 'dlt-daemon',
+    type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Uses SOME/IP as the standard inter-ECU service-oriented communication mechanism (ara::com).',
-      ko: 'ECU 간 서비스 지향 통신(ara::com)의 기본 프로토콜로 SOME/IP를 활용합니다.',
+      en: 'Integrates AUTOSAR Diagnostic Log and Trace (DLT) daemon for structured runtime ECU logging and tracing.',
+      ko: '구조화된 런타임 ECU 로깅 및 트레이스 수집을 위해 AUTOSAR DLT 데몬과 통합됩니다.',
     },
   },
 {
@@ -173,12 +173,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'autosar-adaptive',
-    targetId: 'doip-protocol',
+    targetId: 'libdoip',
     type: 'integrates-with',
     confidence: 'official',
     description: {
       en: 'Integrates Diagnostic over IP (DoIP) for high-speed firmware flashing and remote diagnostics.',
-      ko: '고속 펌웨어 프로그래밍 및 원격 진단을 위해 DoIP 프로토콜과 결합됩니다.',
+      ko: '고속 펌웨어 프로그래밍 및 원격 진단을 위해 DoIP 프로토콜 라이브러리와 결합됩니다.',
     },
   },
 {
@@ -193,22 +193,22 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'autosar-classic',
-    targetId: 'can-protocol',
-    type: 'depends-on',
+    targetId: 'socketcan',
+    type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Relies on CAN/CAN-FD communication drivers in the CAN Stack (CanIf, CanTp, PduR).',
-      ko: 'AUTOSAR BSW의 CAN 통신 스택(CanIf, CanTp, PduR)을 통해 CAN 프레임을 송수신합니다.',
+      en: 'Bridges Classic AUTOSAR CAN signals to Linux SocketCAN interfaces across vehicle gateways.',
+      ko: '차량 게이트웨이를 통해 Classic AUTOSAR CAN 신호를 리눅스 SocketCAN 인터페이스로 중계합니다.',
     },
   },
 {
     sourceId: 'autosar-classic',
-    targetId: 'uds-protocol',
+    targetId: 'dlt-daemon',
     type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Implements ISO 14229 Unified Diagnostic Services via Diagnostic Communication Manager (DCM).',
-      ko: 'DCM(Diagnostic Communication Manager) 모듈을 통해 UDS 진단 표준을 처리합니다.',
+      en: 'Streams AUTOSAR Classic DLT log messages and traces to gateway DLT daemons.',
+      ko: 'AUTOSAR Classic DLT 로깅 메시지와 트레이스를 게이트웨이 DLT 데몬으로 스트리밍합니다.',
     },
   },
 {
@@ -223,22 +223,22 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'eclipse-uprotocol',
-    targetId: 'someip-protocol',
+    targetId: 'vsomeip-middleware',
     type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Transports uProtocol Cloud-to-Car packets over SOME/IP Ethernet transport in vehicles.',
-      ko: '차량 내 이더넷 구간에서 SOME/IP 전송 계층을 통해 uProtocol 패킷을 중계합니다.',
+      en: 'Transports uProtocol Cloud-to-Car packets over vsomeip Ethernet transport in vehicles.',
+      ko: '차량 내 이더넷 구간에서 vsomeip 전송 계층을 통해 uProtocol 패킷을 중계합니다.',
     },
   },
 {
     sourceId: 'eclipse-uprotocol',
-    targetId: 'dds-protocol',
+    targetId: 'eclipse-cyclonedds',
     type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Binds with Data Distribution Service (DDS) for high-rate sensor streaming and pub/sub.',
-      ko: '고속 센서 데이터 스트리밍 및 Pub/Sub 메시징을 위해 DDS 트랜스포트와 결합합니다.',
+      en: 'Binds with Eclipse Cyclone DDS for high-rate sensor streaming and pub/sub.',
+      ko: '고속 센서 데이터 스트리밍 및 Pub/Sub 메시징을 위해 Eclipse Cyclone DDS 트랜스포트와 결합합니다.',
     },
   },
 {
@@ -263,12 +263,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'eclipse-iceoryx',
-    targetId: 'dds-protocol',
+    targetId: 'eclipse-cyclonedds',
     type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Provides ultra-fast zero-copy shared memory acceleration for Cyclone DDS and Fast DDS.',
-      ko: 'Cyclone DDS 및 Fast DDS에 초고속 제로카피 공유 메모리 IPC 가속을 제공합니다.',
+      en: 'Provides ultra-fast zero-copy shared memory acceleration for Eclipse Cyclone DDS and Fast DDS.',
+      ko: 'Eclipse Cyclone DDS 및 Fast DDS에 초고속 제로카피 공유 메모리 IPC 가속을 제공합니다.',
     },
   },
 {
@@ -283,12 +283,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'ros2-autoware',
-    targetId: 'dds-protocol',
+    targetId: 'eclipse-cyclonedds',
     type: 'depends-on',
     confidence: 'official',
     description: {
-      en: 'Core ROS 2 Middleware (RMW) abstraction layer uses DDS for node publish-subscribe communication.',
-      ko: 'ROS 2 미들웨어 계층(RMW)의 핵심 분산 통신 인프라로 DDS를 사용합니다.',
+      en: 'Core ROS 2 Middleware (RMW) abstraction layer uses Eclipse Cyclone DDS for node publish-subscribe communication.',
+      ko: 'ROS 2 미들웨어 계층(RMW)의 핵심 분산 통신 인프라로 Eclipse Cyclone DDS를 사용합니다.',
     },
   },
 {
@@ -373,22 +373,22 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'socketcan',
-    targetId: 'can-protocol',
-    type: 'depends-on',
+    targetId: 'can-utils',
+    type: 'used-with',
     confidence: 'official',
     description: {
-      en: 'Kernel network device driver abstraction for standard and extended CAN 2.0 / CAN-FD frames.',
-      ko: 'CAN 2.0 및 CAN-FD 프레임을 리눅스 네트워크 소켓으로 다루는 표준 커널 드라이버 계층입니다.',
+      en: 'Operated and debugged using standard Linux can-utils (candump, cansend, canplayer).',
+      ko: '표준 리눅스 can-utils(candump, cansend, canplayer) 도구를 통해 분석 및 조작됩니다.',
     },
   },
 {
     sourceId: 'dspace-scalexio-hil',
-    targetId: 'can-protocol',
+    targetId: 'socketcan',
     type: 'used-with',
     confidence: 'vendor',
     description: {
-      en: 'Simulates physical and electrical CAN bus loads for Hardware-in-the-Loop test validation.',
-      ko: 'HIL 시험 환경에서 실제 CAN 버스 신호 및 전기적 부하를 실시간으로 모사합니다.',
+      en: 'Interfaces with Linux SocketCAN for Hardware-in-the-Loop CAN bus test validation.',
+      ko: 'HIL 시험 환경에서 Linux SocketCAN과 연동하여 CAN 버스 트래픽을 실시간 검증합니다.',
     },
   },
 {
@@ -412,23 +412,23 @@ export const stackRelationships: TechnologyRelationship[] = [
     },
   },
 {
-    sourceId: 'someip-protocol',
-    targetId: 'vsomeip-middleware',
-    type: 'implemented-by',
+    sourceId: 'vsomeip-middleware',
+    targetId: 'dlt-daemon',
+    type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'COVESA vsomeip is an open-source C++ implementation of the SOME/IP communication protocol specification.',
-      ko: 'COVESA vsomeip는 SOME/IP 통신 프로토콜 명세의 C++ 오픈소스 래퍼런스 구현체입니다.',
+      en: 'vsomeip logs internal message traces and service discovery events to COVESA DLT Daemon.',
+      ko: 'vsomeip는 내부 메시지 추적 및 서비스 디스커버리 이벤트를 COVESA DLT 데몬으로 전달합니다.',
     },
   },
 {
-    sourceId: 'doip-protocol',
-    targetId: 'uds-protocol',
-    type: 'depends-on',
+    sourceId: 'libdoip',
+    targetId: 'dlt-daemon',
+    type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'Diagnostic over IP (ISO 13400) encapsulates ISO 14229 Unified Diagnostic Services (UDS) over Ethernet/TCP.',
-      ko: 'DoIP(ISO 13400)는 차량 이더넷 TCP/IP 네트워크를 통해 ISO 14229 UDS 진단 메시지를 캡슐화 전송합니다.',
+      en: 'libdoip interfaces with DLT daemon for diagnostic message session logging and debugging.',
+      ko: 'libdoip는 진단 세션 메시지 로깅 및 디버깅을 위해 DLT 데몬과 연동됩니다.',
     },
   },
 {
@@ -583,22 +583,22 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'eclipse-opensovd',
-    targetId: 'uds-protocol',
-    type: 'alternative',
+    targetId: 'dlt-daemon',
+    type: 'integrates-with',
     confidence: 'official',
     description: {
-      en: 'ASAM SOVD (Eclipse OpenSOVD) provides a modern REST/JSON service-oriented alternative to classic UDS diagnostics.',
-      ko: 'ASAM SOVD(OpenSOVD)는 기존 UDS 진단을 현대적인 REST/JSON 기반 서비스 지향 진단으로 보완 및 대체합니다.',
+      en: 'ASAM SOVD (Eclipse OpenSOVD) streams diagnostic event logs via the DLT daemon.',
+      ko: 'ASAM SOVD(OpenSOVD)는 DLT 데몬을 통해 진단 이벤트 로그를 스트리밍합니다.',
     },
   },
 {
     sourceId: 'eclipse-opensovd',
-    targetId: 'doip-protocol',
+    targetId: 'libdoip',
     type: 'compatible-with',
     confidence: 'official',
     description: {
-      en: 'OpenSOVD can interface with Ethernet-based DoIP diagnostic gateways for vehicle access.',
-      ko: 'OpenSOVD는 차량 접근을 위해 이더넷 기반 DoIP 진단 게이트웨이와 연동될 수 있습니다.',
+      en: 'OpenSOVD can interface with Ethernet-based libdoip diagnostic gateways for vehicle access.',
+      ko: 'OpenSOVD는 차량 접근을 위해 이더넷 기반 libdoip 진단 게이트웨이와 연동될 수 있습니다.',
     },
   },
 {
@@ -642,43 +642,33 @@ export const stackRelationships: TechnologyRelationship[] = [
     },
   },
 {
-    sourceId: 'dds-protocol',
-    targetId: 'eprosima-fastdds',
-    type: 'implemented-by',
-    confidence: 'official',
-    description: {
-      en: 'eProsima Fast DDS is a widely used C++ implementation of the OMG DDS standard specification.',
-      ko: 'eProsima Fast DDS는 OMG DDS 표준 규격을 C++로 충실히 구현한 대표적 미들웨어입니다.',
-    },
-  },
-{
-    sourceId: 'dds-protocol',
+    sourceId: 'eprosima-fastdds',
     targetId: 'eclipse-cyclonedds',
-    type: 'implemented-by',
+    type: 'alternative',
     confidence: 'official',
     description: {
-      en: 'Eclipse Cyclone DDS is an open-source high-performance C implementation of the OMG DDS specification.',
-      ko: 'Eclipse Cyclone DDS는 OMG DDS 규격을 구현한 고성능 오픈소스 C 기반 미들웨어입니다.',
+      en: 'eProsima Fast DDS and Eclipse Cyclone DDS serve as leading open-source OMG DDS implementations for ROS 2 and ADAS.',
+      ko: 'eProsima Fast DDS와 Eclipse Cyclone DDS는 ROS 2 및 ADAS를 위한 대표적인 오픈소스 OMG DDS 구현체입니다.',
     },
   },
 {
-    sourceId: 'dds-protocol',
+    sourceId: 'eprosima-fastdds',
     targetId: 'rti-connext-dds',
-    type: 'implemented-by',
+    type: 'alternative',
     confidence: 'official',
     description: {
-      en: 'RTI Connext DDS provides an ISO 26262 ASIL-D certified commercial implementation of the OMG DDS standard.',
-      ko: 'RTI Connext DDS는 OMG DDS 표준을 지원하는 ISO 26262 ASIL-D 기능안전 인증 상용 구현체입니다.',
+      en: 'eProsima Fast DDS provides an open-source alternative to safety-certified RTI Connext Drive.',
+      ko: 'eProsima Fast DDS는 기능안전 인증 상용 미들웨어 RTI Connext Drive의 오픈소스 대안입니다.',
     },
   },
 {
-    sourceId: 'ros2-middleware',
-    targetId: 'dds-protocol',
-    type: 'depends-on',
+    sourceId: 'eclipse-cyclonedds',
+    targetId: 'rti-connext-dds',
+    type: 'alternative',
     confidence: 'official',
     description: {
-      en: 'ROS 2 relies on DDS (Data Distribution Service) as its standard underlying communication backbone.',
-      ko: 'ROS 2는 표준 데이터 통신 백본으로 DDS(Data Distribution Service) 미들웨어 계층에 의존합니다.',
+      en: 'Eclipse Cyclone DDS provides an open-source alternative to safety-certified RTI Connext Drive.',
+      ko: 'Eclipse Cyclone DDS는 기능안전 인증 상용 미들웨어 RTI Connext Drive의 오픈소스 대안입니다.',
     },
   },
 {
@@ -712,16 +702,6 @@ export const stackRelationships: TechnologyRelationship[] = [
     },
   },
 {
-    sourceId: 'someip-protocol',
-    targetId: 'someip-sd',
-    type: 'implemented-by',
-    confidence: 'official',
-    description: {
-      en: 'SOME/IP-SD provides the standardized dynamic service discovery extension for SOME/IP networks.',
-      ko: 'SOME/IP-SD는 SOME/IP 네트워크를 위한 표준화된 동적 서비스 디스커버리 확장 규격입니다.',
-    },
-  },
-{
     sourceId: 'vsomeip-middleware',
     targetId: 'someip-sd',
     type: 'integrates-with',
@@ -733,62 +713,42 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'ieee-tsn',
-    targetId: 'someip-protocol',
+    targetId: 'vsomeip-middleware',
     type: 'used-with',
     confidence: 'official',
     description: {
-      en: 'Automotive SOME/IP messages are transported over deterministic IEEE TSN Ethernet backbones.',
-      ko: '차량용 SOME/IP 서비스 메시지는 확정적 IEEE TSN 이더넷 백본을 통해 전송됩니다.',
+      en: 'Automotive vsomeip messages are transported over deterministic IEEE TSN Ethernet backbones.',
+      ko: '차량용 vsomeip 서비스 메시지는 확정적 IEEE TSN 이더넷 백본을 통해 전송됩니다.',
     },
   },
 {
-    sourceId: 'lin-bus-protocol',
-    targetId: 'can-protocol',
-    type: 'coexists-with',
-    confidence: 'official',
-    description: {
-      en: 'LIN sub-buses coexist with CAN networks via body domain control gateways.',
-      ko: 'LIN 서브버스는 바디 도메인 게이트웨이를 통해 메인 CAN 네트워크와 공존하며 연동됩니다.',
-    },
-  },
-{
-    sourceId: 'flexray-protocol',
-    targetId: 'can-protocol',
-    type: 'coexists-with',
-    confidence: 'official',
-    description: {
-      en: 'FlexRay deterministic networks coexist with CAN buses in chassis and active safety architectures.',
-      ko: 'FlexRay 네트워크는 섀시 및 액티브 세이프티 아키텍처에서 CAN 버스와 상호 연동되어 공존합니다.',
-    },
-  },
-{
-    sourceId: 'xcp-protocol',
-    targetId: 'can-protocol',
-    type: 'runs-on',
-    confidence: 'official',
-    description: {
-      en: 'XCP on CAN (CAN FD) is the standard physical transport for ECU calibration access.',
-      ko: 'XCP on CAN은 ECU 내부 파라미터 캘리브레이션을 위한 표준 전송 계층입니다.',
-    },
-  },
-{
-    sourceId: 'xcp-protocol',
-    targetId: 'vector-canape',
+    sourceId: 'vector-canalyzer',
+    targetId: 'socketcan',
     type: 'used-with',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
-      en: 'XCP is the primary protocol utilized by Vector CANape for ECU measurement and calibration.',
-      ko: 'XCP는 Vector CANape 도구에서 ECU 실시간 계측 및 캘리브레이션을 위해 사용하는 핵심 프로토콜입니다.',
+      en: 'Vector CANalyzer monitors and decodes CAN bus traffic in conjunction with Linux SocketCAN tools.',
+      ko: 'Vector CANalyzer는 Linux SocketCAN 도구와 함께 차량 CAN 버스 트래픽을 모니터링하고 디코딩합니다.',
     },
   },
 {
-    sourceId: 'xcp-protocol',
-    targetId: 'etas-inca',
+    sourceId: 'vector-canape',
+    targetId: 'socketcan',
     type: 'used-with',
-    confidence: 'official',
+    confidence: 'vendor',
     description: {
-      en: 'XCP is natively supported by ETAS INCA for powertrain and chassis controller calibration.',
-      ko: 'XCP는 ETAS INCA 도구에서 파워트레인 및 섀시 제어기 파라미터 보정을 위해 네이티브로 사용됩니다.',
+      en: 'Vector CANape connects to vehicle CAN/Ethernet networks for ECU measurement and calibration.',
+      ko: 'Vector CANape는 ECU 파라미터 계측 및 캘리브레이션을 위해 차량 네트워크에 연결됩니다.',
+    },
+  },
+{
+    sourceId: 'etas-inca',
+    targetId: 'socketcan',
+    type: 'used-with',
+    confidence: 'vendor',
+    description: {
+      en: 'ETAS INCA communicates with vehicle control ECUs over CAN and Automotive Ethernet for calibration.',
+      ko: 'ETAS INCA는 캘리브레이션을 위해 CAN 및 차량용 이더넷을 통해 제어기 ECU와 통신합니다.',
     },
   },
 {
@@ -1023,12 +983,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'vector-canoe',
-    targetId: 'can-protocol',
+    targetId: 'socketcan',
     type: 'used-with',
     confidence: 'vendor',
     description: {
-      en: 'Vector CANoe is the automotive industry standard simulation and testing environment for CAN networks.',
-      ko: 'Vector CANoe는 CAN 네트워크의 잔여 버스 시뮬레이션 및 적합성 테스트를 위한 업계 표준 도구입니다.',
+      en: 'Vector CANoe connects with Linux SocketCAN for automotive network simulation and test validation.',
+      ko: 'Vector CANoe는 차량 네트워크 시뮬레이션 및 적합성 테스트를 위해 Linux SocketCAN과 연동됩니다.',
     },
   },
 {
@@ -1623,12 +1583,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'kuksa-val',
-    targetId: 'can-protocol',
+    targetId: 'socketcan',
     type: 'used-with',
     confidence: 'official',
     description: {
-      en: 'KUKSA.val CAN feeder translates raw CAN frames into COVESA VSS vehicle signal paths.',
-      ko: 'KUKSA.val CAN 피더는 로우(Raw) CAN 프레임을 COVESA VSS 차량 신호 경로로 변환합니다.',
+      en: 'KUKSA.val CAN feeder translates raw SocketCAN frames into COVESA VSS vehicle signal paths.',
+      ko: 'KUKSA.val CAN 피더는 로우(Raw) SocketCAN 프레임을 COVESA VSS 차량 신호 경로로 변환합니다.',
     },
   },
 {
@@ -1692,23 +1652,23 @@ export const stackRelationships: TechnologyRelationship[] = [
     },
   },
 {
-    sourceId: 'lin-bus-protocol',
+    sourceId: 'dlt-daemon',
     targetId: 'autosar-classic',
     type: 'used-with',
     confidence: 'official',
     description: {
-      en: 'AUTOSAR Classic defines standardized LIN Interface (LinIf) and LIN Driver (Lin) BSW modules.',
-      ko: 'AUTOSAR Classic은 표준화된 LIN 인터페이스(LinIf) 및 LIN 드라이버 BSW 모듈을 규정합니다.',
+      en: 'DLT daemon collects and formats diagnostic log traces received from AUTOSAR Classic ECUs.',
+      ko: 'DLT 데몬은 AUTOSAR Classic ECU로부터 수신된 진단 로그 트레이스를 수집하고 가공합니다.',
     },
   },
 {
-    sourceId: 'flexray-protocol',
-    targetId: 'autosar-classic',
+    sourceId: 'dlt-daemon',
+    targetId: 'autosar-adaptive',
     type: 'used-with',
     confidence: 'official',
     description: {
-      en: 'AUTOSAR Classic provides standardized FlexRay Interface (FrIf) and State Manager (FrSM) modules.',
-      ko: 'AUTOSAR Classic은 표준화된 FlexRay 인터페이스(FrIf) 및 상태 관리자(FrSM) 모듈을 제공합니다.',
+      en: 'DLT daemon acts as the standard logging backend for AUTOSAR Adaptive applications.',
+      ko: 'DLT 데몬은 AUTOSAR Adaptive 애플리케이션의 표준 로깅 백엔드로 동작합니다.',
     },
   },
 {
@@ -1823,22 +1783,22 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'vector-canalyzer',
-    targetId: 'lin-bus-protocol',
+    targetId: 'can-utils',
     type: 'used-with',
     confidence: 'vendor',
     description: {
-      en: 'Vector CANalyzer monitors and decodes LIN bus frames and schedule tables.',
-      ko: 'Vector CANalyzer는 LIN 버스 프레임 및 스케줄 테이블의 트래픽을 모니터링하고 디코딩합니다.',
+      en: 'Vector CANalyzer and Linux can-utils are used together for end-to-end CAN bus debugging.',
+      ko: 'Vector CANalyzer와 Linux can-utils는 종합적인 CAN 버스 디버깅 및 분석을 위해 함께 사용됩니다.',
     },
   },
 {
     sourceId: 'etas-inca',
-    targetId: 'can-protocol',
+    targetId: 'can-utils',
     type: 'used-with',
     confidence: 'vendor',
     description: {
-      en: 'ETAS INCA connects to vehicle CAN buses via ES58x interfaces for ECU calibration.',
-      ko: 'ETAS INCA는 ECU 캘리브레이션을 위해 ES58x 하드웨어 인터페이스를 통해 차량 CAN 버스에 연결됩니다.',
+      en: 'ETAS INCA and Linux can-utils are used for CAN message monitoring and calibration analysis.',
+      ko: 'ETAS INCA와 Linux can-utils는 CAN 메시지 모니터링 및 캘리브레이션 데이터 분석에 함께 활용됩니다.',
     },
   },
 {
@@ -1913,12 +1873,12 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'android-automotive-os',
-    targetId: 'someip-protocol',
+    targetId: 'vsomeip-middleware',
     type: 'used-with',
     confidence: 'vendor',
     description: {
-      en: 'Android Automotive OS connects to vehicle ECUs via SOME/IP service-oriented communication through Vehicle HAL.',
-      ko: 'Android Automotive OS는 Vehicle HAL을 통해 차량 ECU들과 SOME/IP 서비스 지향 통신으로 연동됩니다.',
+      en: 'Android Automotive OS connects to vehicle ECUs via vsomeip service-oriented communication through Vehicle HAL.',
+      ko: 'Android Automotive OS는 Vehicle HAL을 통해 차량 ECU들과 vsomeip 서비스 지향 통신으로 연동됩니다.',
     },
   },
 {
@@ -1933,7 +1893,7 @@ export const stackRelationships: TechnologyRelationship[] = [
   },
 {
     sourceId: 'agl-unified-codebase',
-    targetId: 'someip-protocol',
+    targetId: 'vsomeip-middleware',
     type: 'used-with',
     confidence: 'official',
     description: {

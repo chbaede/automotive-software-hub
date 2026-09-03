@@ -316,13 +316,13 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://autohub.yocto.co.kr/stack/eclipse-iceoryx</loc>
+    <loc>https://autohub.yocto.co.kr/stack/dlt-daemon</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://autohub.yocto.co.kr/stack/someip-protocol</loc>
+    <loc>https://autohub.yocto.co.kr/stack/eclipse-iceoryx</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -340,25 +340,13 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://autohub.yocto.co.kr/stack/dds-protocol</loc>
+    <loc>https://autohub.yocto.co.kr/stack/libdoip</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://autohub.yocto.co.kr/stack/can-protocol</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://autohub.yocto.co.kr/stack/uds-protocol</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://autohub.yocto.co.kr/stack/doip-protocol</loc>
+    <loc>https://autohub.yocto.co.kr/stack/can-utils</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -635,24 +623,6 @@
   </url>
   <url>
     <loc>https://autohub.yocto.co.kr/stack/ieee-tsn</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://autohub.yocto.co.kr/stack/lin-bus-protocol</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://autohub.yocto.co.kr/stack/flexray-protocol</loc>
-    <lastmod>2026-09-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://autohub.yocto.co.kr/stack/xcp-protocol</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
