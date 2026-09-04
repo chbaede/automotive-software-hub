@@ -62,6 +62,12 @@ export interface TechnologyRecommendation {
   score: number;
   primaryRelationship?: TechnologyRelationship;
   reasons: LocalizedText[];
+  isCrossLayer?: boolean;
+}
+
+export interface ExploreNextOptions extends DiscoveryOptions {
+  alreadyDisplayedTechnologyIds?: string[];
+  maxResults?: number;
 }
 
 export interface TechnologyDiscoveryResult {

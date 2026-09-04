@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowRight, Layers, ShieldCheck, Zap, GitFork, ArrowLeftRight } from 'lucide-react';
+import { Sparkles, ArrowRight, GitFork, ArrowLeftRight } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { TechnologyRecommendation, TechnologyInsightItem } from '../../lib/graph/intelligence';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -11,14 +11,14 @@ import { RelationshipBadge } from '../stack/RelationshipBadge';
 interface ExploreNextSectionProps {
   currentTech: StackTechnology;
   recommendations: TechnologyRecommendation[];
-  alternatives: TechnologyInsightItem[];
+  alternatives?: TechnologyInsightItem[];
   onSelectTech?: (tech: StackTechnology) => void;
 }
 
 export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
   currentTech,
   recommendations,
-  alternatives,
+  alternatives = [],
   onSelectTech,
 }) => {
   const { language, t } = useLanguage();
@@ -26,12 +26,6 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
   const getLayerName = (layerId: string) => {
     const layer = stackLayers.find((l) => l.id === layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
-  };
-
-  const getConfidenceLabel = (conf?: string) => {
-    if (conf === 'official') return t.discovery.confidenceOfficial;
-    if (conf === 'vendor') return t.discovery.confidenceVendor;
-    return t.discovery.confidenceCommunity;
   };
 
   return (
@@ -61,7 +55,6 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {recommendations.map((rec) => {
               const layerTitle = getLayerName(rec.technology.layerId);
-              const isDifferentLayer = rec.technology.layerId !== currentTech.layerId;
 
               const content = (
                 <div className="h-full bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-cyan-500/50 p-4 rounded-xl transition flex flex-col justify-between space-y-3 group shadow-xs">
@@ -70,9 +63,17 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
                       <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/30">
                         {layerTitle}
                       </span>
-                      {rec.primaryRelationship && (
-                        <RelationshipBadge type={rec.primaryRelationship.type} />
-                      )}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {rec.isCrossLayer && (
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                            <GitFork className="w-3 h-3" />
+                            <span>{t.discovery.crossLayerConnection}</span>
+                          </span>
+                        )}
+                        {rec.primaryRelationship && (
+                          <RelationshipBadge type={rec.primaryRelationship.type} />
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -110,7 +111,7 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
                 <button
                   key={rec.technology.id}
                   onClick={() => onSelectTech(rec.technology)}
-                  className="text-left cursor-pointer"
+                  className="text-left cursor-pointer w-full"
                 >
                   {content}
                 </button>
@@ -127,14 +128,14 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
           </div>
         ) : (
           <div className="p-6 bg-slate-900/60 rounded-xl border border-slate-800 text-center text-xs text-slate-400">
-            {t.discovery.noDirectRelationships}
+            {t.techDetail.noRecommendations}
           </div>
         )}
       </div>
 
-      {/* Architectural Alternatives Sub-Section (Strictly Separated from Additive Suggestions) */}
+      {/* Architectural Alternatives Sub-Section (Only if explicitly passed) */}
       {alternatives.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xs">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
               <ArrowLeftRight className="w-5 h-5" />
@@ -162,9 +163,6 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
                       <span className="text-[10px] font-mono text-slate-500">
                         {layerTitle}
                       </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">
-                        {getConfidenceLabel(alt.confidence)}
-                      </span>
                     </div>
                     <div className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center justify-between">
                       <span>{alt.technology.name}</span>
@@ -181,7 +179,7 @@ export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
                 <button
                   key={alt.technology.id}
                   onClick={() => onSelectTech(alt.technology)}
-                  className="text-left cursor-pointer"
+                  className="text-left cursor-pointer w-full"
                 >
                   {content}
                 </button>

@@ -2715,6 +2715,156 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 64 Passed: Concrete OSS software stacks & pruned abstract protocols verified.');
 }
 
+// Test 65: Phase 8.5 Technology Detail Deduplication & Candidate Filtering Engine
+{
+  const { getExploreNextTechnologies, getTechnologyDiscoveryResult } = await import(
+    '../src/lib/graph/index.js'
+  );
+
+  const sampleTechIds = [
+    'qnx-neutrino',
+    'autosar-adaptive',
+    'vsomeip-middleware',
+    'perseus-hypervisor',
+    'nvidia-drive-thor',
+    'covesa-vss',
+  ];
+
+  sampleTechIds.forEach((techId) => {
+    // 1. Current technology is NEVER recommended to itself
+    const recs = getExploreNextTechnologies(techId);
+    assert.strictEqual(
+      recs.some((r) => r.technology.id === techId),
+      false,
+      `Technology "${techId}" must never recommend itself`
+    );
+
+    // 2. Duplicate technologies are strictly eliminated
+    const seenIds = new Set<string>();
+    recs.forEach((r) => {
+      assert.strictEqual(
+        seenIds.has(r.technology.id),
+        false,
+        `Duplicate recommendation "${r.technology.id}" for tech "${techId}"`
+      );
+      seenIds.add(r.technology.id);
+    });
+
+    // 3. Technologies in alreadyDisplayedTechnologyIds are excluded
+    const discovery = getTechnologyDiscoveryResult(techId);
+    if (discovery) {
+      const directRelIds = new Set<string>();
+      const addIds = (items: Array<{ technology: { id: string } }>) =>
+        items.forEach((i) => directRelIds.add(i.technology.id));
+
+      addIds(discovery.dependencies);
+      addIds(discovery.dependents);
+      addIds(discovery.platforms);
+      addIds(discovery.hostedTechnologies);
+      addIds(discovery.integrations);
+      addIds(discovery.implementations);
+      addIds(discovery.alternatives);
+      addIds(discovery.compatibleWith);
+      addIds(discovery.usedWith);
+      addIds(discovery.coexistsWith);
+      addIds(discovery.related);
+
+      const deduplicatedRecs = getExploreNextTechnologies({
+        technologyId: techId,
+        alreadyDisplayedTechnologyIds: Array.from(directRelIds),
+        maxResults: 6,
+      });
+
+      deduplicatedRecs.forEach((r) => {
+        assert.strictEqual(
+          directRelIds.has(r.technology.id),
+          false,
+          `Explore Next recommendation "${r.technology.id}" must not duplicate direct relationship of "${techId}"`
+        );
+      });
+    }
+
+    // 4. Recommendation ordering is strictly deterministic
+    const runA = getExploreNextTechnologies(techId);
+    const runB = getExploreNextTechnologies(techId);
+    assert.strictEqual(runA.length, runB.length, 'Deterministic length across runs');
+    runA.forEach((rA, idx) => {
+      const rB = runB[idx];
+      assert.strictEqual(rA.technology.id, rB.technology.id, 'Deterministic tech ordering');
+      assert.strictEqual(rA.score, rB.score, 'Deterministic recommendation scores');
+    });
+  });
+
+  // 5. Cross-layer candidates can surface with isCrossLayer flag when bridging
+  const qnxRecs = getExploreNextTechnologies('qnx-neutrino', { maxResults: 10 });
+  const hasCrossLayer = qnxRecs.some((r) => r.isCrossLayer || r.reasons.some((re) => re.en.includes('Cross-layer') || re.en.includes('cross-layer')));
+  assert.ok(hasCrossLayer, 'Cross-layer bridge candidate recognized in discovery');
+
+  // 6. Functional safety invariant: Perseus Pegasus Hypervisor is ASIL-D Certified
+  const pegasus = technologyById.get('perseus-hypervisor');
+  assert.ok(pegasus, 'Perseus Pegasus Hypervisor must exist');
+  assert.strictEqual(
+    pegasus?.functionalSafety?.claimType,
+    'certified',
+    'Perseus Pegasus Hypervisor must maintain claimType: certified'
+  );
+  assert.strictEqual(
+    pegasus?.functionalSafety?.asilLevel,
+    'ASIL-D',
+    'Perseus Pegasus Hypervisor must maintain asilLevel: ASIL-D'
+  );
+
+  console.log('✅ Test 65 Passed: Phase 8.5 Technology Detail Deduplication & Candidate Filtering Engine verified.');
+}
+
+// Test 66: Phase 8.5 UX Hierarchy, Relationships, Architecture/Paths & i18n Invariants
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // 1. i18n Completeness for newly introduced UX keys
+  const requiredTechDetailKeys = [
+    'relationships',
+    'relationshipsSubtitle',
+    'architecturesAndPaths',
+    'viewAllCount',
+    'showLess',
+    'moreCount',
+    'noRecommendations',
+  ] as const;
+
+  requiredTechDetailKeys.forEach((key) => {
+    assert.ok(en.techDetail[key], `en.techDetail.${key} must exist and be non-empty`);
+    assert.ok(ko.techDetail[key], `ko.techDetail.${key} must exist and be non-empty`);
+  });
+
+  const requiredDiscoveryKeys = [
+    'crossLayerConnection',
+    'viewAll',
+    'showLess',
+  ] as const;
+
+  requiredDiscoveryKeys.forEach((key) => {
+    assert.ok(en.discovery[key], `en.discovery.${key} must exist and be non-empty`);
+    assert.ok(ko.discovery[key], `ko.discovery.${key} must exist and be non-empty`);
+  });
+
+  // 2. Canonical Relationships remain valid and non-mutated
+  assert.strictEqual(stackRelationships.length, 193, 'Semantic relationships count remains 193');
+  stackRelationships.forEach((r) => {
+    assert.ok(technologyById.has(r.sourceId), `Source ${r.sourceId} must exist`);
+    assert.ok(technologyById.has(r.targetId), `Target ${r.targetId} must exist`);
+  });
+
+  // 3. Reference Architectures remain valid
+  assert.strictEqual(architectureProfiles.length, 8, 'Reference architecture profiles count remains 8');
+  architectureProfiles.forEach((p) => {
+    assert.ok(p.technologyIds.length > 0, `Profile ${p.id} must have member technologies`);
+  });
+
+  console.log('✅ Test 66 Passed: Phase 8.5 UX Hierarchy, Relationships, Architecture/Paths & i18n Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

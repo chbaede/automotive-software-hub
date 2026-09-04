@@ -8,9 +8,6 @@ import {
   FileCode,
   Calendar,
   Layers,
-  Network,
-  Zap,
-  GitFork,
   ShieldCheck,
   Building2,
   Code2,
@@ -18,16 +15,13 @@ import {
   BookOpen,
   Route,
   ArrowRight,
-  ExternalLink,
-  ChevronRight,
-  Sparkles,
+  ChevronDown,
+  ChevronUp,
   AlertCircle,
-  LayoutGrid,
   Compass,
 } from 'lucide-react';
 import {
   getTechnology,
-  getTechnologyGraphContext,
   getArchitecturesForTechnology,
   getStackPathsForTechnology,
   technologyById,
@@ -38,19 +32,23 @@ import { resources } from '../../data/resources';
 import { projects } from '../../data/projects';
 import { companies } from '../../data/companies';
 import { events } from '../../data/events';
-import { TechRelationshipTree } from '../../components/stack/TechRelationshipTree';
 import { StackLadderVisualizer } from '../../components/stack/StackLadderVisualizer';
-import { InteractiveGraphView } from '../../components/stack/InteractiveGraphView';
 import {
   ARCHITECTURE_PROFILE_TYPE_METADATA,
   STACK_PATH_TYPE_METADATA,
 } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { getTechnologyDiscoveryResult } from '../../lib/graph';
+import {
+  getTechnologyDiscoveryResult,
+  getExploreNextTechnologies,
+  TechnologyInsightItem,
+} from '../../lib/graph';
 import { ExploreNextSection } from '../../components/discovery/ExploreNextSection';
-import { BridgeTechnologiesSection } from '../../components/discovery/BridgeTechnologiesSection';
 import { RelationshipExplorerSection } from '../../components/discovery/RelationshipExplorerSection';
+
+const DEFAULT_ARCH_LIMIT = 3;
+const DEFAULT_PATH_LIMIT = 3;
 
 const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
   const [year, month, day] = isoDate.split('-');
@@ -71,7 +69,8 @@ export const TechnologyDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const [copied, setCopied] = useState(false);
-  const [neighborhoodMode, setNeighborhoodMode] = useState<'cards' | 'graph'>('cards');
+  const [showAllArchs, setShowAllArchs] = useState(false);
+  const [showAllPaths, setShowAllPaths] = useState(false);
 
   // Resolve canonical technology
   const technology = useMemo(() => {
@@ -88,15 +87,41 @@ export const TechnologyDetailPage: React.FC = () => {
     }
   }, [technology, t.techDetail.notFoundTitle]);
 
-  // Graph context
-  const graphContext = useMemo(() => {
-    return technology ? getTechnologyGraphContext(technology.id) : null;
-  }, [technology]);
-
-  // Full Knowledge Graph Discovery Result (Phase 8.1 / 8.2 Engine)
+  // Authoritative Discovery Result (Directed Semantic Groups)
   const discoveryResult = useMemo(() => {
     return technology ? getTechnologyDiscoveryResult(technology.id) : null;
   }, [technology]);
+
+  // Collect all technology IDs already visible in Direct Relationships for Deduplication
+  const displayedRelationshipTechIds = useMemo(() => {
+    if (!discoveryResult) return [];
+    const set = new Set<string>();
+    const addItems = (items: TechnologyInsightItem[]) => {
+      items.forEach((item) => set.add(item.technology.id));
+    };
+    addItems(discoveryResult.dependencies);
+    addItems(discoveryResult.dependents);
+    addItems(discoveryResult.platforms);
+    addItems(discoveryResult.hostedTechnologies);
+    addItems(discoveryResult.integrations);
+    addItems(discoveryResult.implementations);
+    addItems(discoveryResult.alternatives);
+    addItems(discoveryResult.compatibleWith);
+    addItems(discoveryResult.usedWith);
+    addItems(discoveryResult.coexistsWith);
+    addItems(discoveryResult.related);
+    return Array.from(set);
+  }, [discoveryResult]);
+
+  // Deduplicated Explore Next candidates (Primary Discovery Surface)
+  const exploreNextRecommendations = useMemo(() => {
+    if (!technology) return [];
+    return getExploreNextTechnologies({
+      technologyId: technology.id,
+      alreadyDisplayedTechnologyIds: displayedRelationshipTechIds,
+      maxResults: 6,
+    });
+  }, [technology, displayedRelationshipTechIds]);
 
   const architectures = useMemo(() => {
     return technology ? getArchitecturesForTechnology(technology.id) : [];
@@ -148,7 +173,7 @@ export const TechnologyDetailPage: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 1. Not Found State
+  // Not Found State
   if (!technology) {
     return (
       <div className="max-w-4xl mx-auto py-16 px-4 text-center space-y-6">
@@ -183,15 +208,21 @@ export const TechnologyDetailPage: React.FC = () => {
 
   const layer = stackLayers.find((l) => l.id === technology.layerId);
   const layerName = layer ? getLocalizedText(layer.name, language) : technology.layerId;
-  const isCoreLayer = layer?.layerType === 'core';
   const description = getLocalizedText(technology.description, language);
   const whereDoesItFit = technology.whereDoesItFit
     ? getLocalizedText(technology.whereDoesItFit, language)
     : null;
 
+  const visibleArchitectures = showAllArchs
+    ? architectures
+    : architectures.slice(0, DEFAULT_ARCH_LIMIT);
+  const visibleStackPaths = showAllPaths
+    ? stackPaths
+    : stackPaths.slice(0, DEFAULT_PATH_LIMIT);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
-      {/* Breadcrumb Navigation */}
+      {/* 1. Breadcrumb Navigation & Action Buttons */}
       <nav className="flex items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-2 min-w-0">
           <Link
@@ -242,7 +273,7 @@ export const TechnologyDetailPage: React.FC = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* 2. Overview Hero Section */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="space-y-3">
           {/* Badges Bar */}
@@ -287,26 +318,23 @@ export const TechnologyDetailPage: React.FC = () => {
               );
             })()}
 
+            {/* License Type Badge */}
+            {technology.licenseType && (
+              <span
+                className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-md border ${
+                  technology.licenseType === 'oss'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                    : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                }`}
+              >
+                {technology.licenseType === 'oss' ? 'OSS' : 'Commercial'}
+              </span>
+            )}
+
             {/* Status Badge */}
             {technology.status && (
               <span className="px-2.5 py-1 text-xs font-mono uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-md font-semibold">
                 {technology.status}
-              </span>
-            )}
-
-            {/* Hub Badge */}
-            {graphContext?.isHub && (
-              <span className="px-2.5 py-1 text-xs font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-md flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5" />
-                <span>{t.stackBuilder.hubBadge}</span>
-              </span>
-            )}
-
-            {/* Cross Layer Badge */}
-            {graphContext?.isCrossLayer && (
-              <span className="px-2.5 py-1 text-xs font-bold uppercase bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30 rounded-md flex items-center gap-1">
-                <GitFork className="w-3.5 h-3.5" />
-                <span>{t.stackBuilder.crossLayerBadge}</span>
               </span>
             )}
 
@@ -333,9 +361,8 @@ export const TechnologyDetailPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Tags and Quick Links */}
+        {/* Tags and Links */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          {/* Tags */}
           <div className="flex flex-wrap items-center gap-1.5">
             {technology.tags?.map((tag) => (
               <span
@@ -347,7 +374,6 @@ export const TechnologyDetailPage: React.FC = () => {
             ))}
           </div>
 
-          {/* External Links */}
           <div className="flex flex-wrap items-center gap-3">
             {technology.website && (
               <a
@@ -358,7 +384,6 @@ export const TechnologyDetailPage: React.FC = () => {
               >
                 <Globe className="w-4 h-4" />
                 <span>{t.techDetail.officialWebsite}</span>
-                <ExternalLink className="w-3 h-3" />
               </a>
             )}
             {technology.repositoryUrl && (
@@ -370,56 +395,13 @@ export const TechnologyDetailPage: React.FC = () => {
               >
                 <FileCode className="w-4 h-4" />
                 <span>{t.techDetail.sourceRepository}</span>
-                <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* Graph Intelligence Context Bar */}
-      {graphContext && (
-        <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 text-white space-y-4 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-cyan-400">
-              <Network className="w-5 h-5" />
-              <span>{t.techDetail.knowledgeGraphContext}</span>
-            </div>
-            <div className="text-xs text-slate-400 font-mono">
-              Canonical Source: <span className="text-slate-200 font-bold">stackRelationships</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 font-semibold">{t.techDetail.connectedTechs}</div>
-              <div className="text-2xl font-bold text-cyan-400 mt-1">{graphContext.connectionCount}</div>
-            </div>
-
-            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 font-semibold">{t.techDetail.relationshipRecords}</div>
-              <div className="text-2xl font-bold text-indigo-400 mt-1">{graphContext.relationshipCount}</div>
-            </div>
-
-            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 font-semibold">{t.techDetail.connectedLayers}</div>
-              <div className="text-2xl font-bold text-purple-400 mt-1">{graphContext.connectedLayersCount}</div>
-            </div>
-
-            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 font-semibold">{t.stack.architectureProfilesBelongsTo}</div>
-              <div className="text-2xl font-bold text-emerald-400 mt-1">{architectures.length}</div>
-            </div>
-
-            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
-              <div className="text-xs text-slate-400 font-semibold">{t.techDetail.stackPaths}</div>
-              <div className="text-2xl font-bold text-amber-400 mt-1">{stackPaths.length}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Where Does It Fit Section with Stack Ladder Visualizer */}
+      {/* 3. Where Does It Fit? Section */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
@@ -435,38 +417,19 @@ export const TechnologyDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Narrative Where Does It Fit */}
         {whereDoesItFit && (
           <div className="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed">
             {whereDoesItFit}
           </div>
         )}
 
-        {/* Stack Ladder Visualizer */}
         <StackLadderVisualizer
           currentLayerId={technology.layerId}
           techName={technology.name}
         />
       </div>
 
-      {/* 1. Explore Next & Architectural Alternatives Section (Discovery Hub) */}
-      {discoveryResult && (
-        <ExploreNextSection
-          currentTech={technology}
-          recommendations={discoveryResult.recommendations}
-          alternatives={discoveryResult.alternatives}
-        />
-      )}
-
-      {/* 2. Cross-Layer Bridge Technologies Section */}
-      {discoveryResult && (
-        <BridgeTechnologiesSection
-          currentTech={technology}
-          bridgeTechnologies={discoveryResult.bridgeTechnologies}
-        />
-      )}
-
-      {/* 3. Knowledge Graph Relationship Explorer Section (Semantic Grouping & Confidence) */}
+      {/* 4. Authoritative Direct Relationships Section (Compact & Scannable) */}
       {discoveryResult && (
         <RelationshipExplorerSection
           currentTech={technology}
@@ -474,271 +437,229 @@ export const TechnologyDetailPage: React.FC = () => {
         />
       )}
 
-      {/* 4. Interactive Graph Map & Explorer */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              <Network className="w-5 h-5" />
+      {/* 5. Architectures & Representative Stack Paths Section */}
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+          {/* Section Heading */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  {t.techDetail.architecturesAndPaths}
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {language === 'ko'
+                    ? '이 기술이 통합 활용되는 참조 아키텍처 패턴 및 대표 실행 경로입니다.'
+                    : 'Reference vehicle architecture patterns and representative software stack execution journeys.'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span>{t.techDetail.technologyNeighborhood}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30">
-                  {graphContext ? graphContext.connectionCount : 0} {language === 'ko' ? '개 노드' : 'Nodes'}
-                </span>
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {t.techDetail.neighborhoodDesc}
-              </p>
-            </div>
-          </div>
 
-          {/* Mode Switcher */}
-          <div className="inline-flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 self-start sm:self-auto">
-            <button
-              onClick={() => setNeighborhoodMode('cards')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                neighborhoodMode === 'cards'
-                  ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-700'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+            <Link
+              to="/architectures"
+              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0"
             >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span>{t.techDetail.viewCards}</span>
-            </button>
-            <button
-              onClick={() => setNeighborhoodMode('graph')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                neighborhoodMode === 'graph'
-                  ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 shadow-xs border border-slate-200 dark:border-slate-700'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Network className="w-3.5 h-3.5" />
-              <span>{t.techDetail.viewGraph}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Neighborhood Content */}
-        {neighborhoodMode === 'cards' ? (
-          <TechRelationshipTree
-            technology={technology}
-            onSelectTech={(selected) => navigate(`/stack/${selected.id}`)}
-          />
-        ) : (
-          <InteractiveGraphView
-            technology={technology}
-            onSelectTech={(selected) => navigate(`/stack/${selected.id}`)}
-          />
-        )}
-      </div>
-
-      {/* Architecture Context Section */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <Compass className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {t.techDetail.architectureContext}
-              </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {language === 'ko'
-                  ? '이 기술이 핵심 컴포넌트로 활용되는 참조 오토모티브 아키텍처 패턴입니다.'
-                  : 'Reference vehicle architecture patterns where this technology is a core component.'}
-              </p>
-            </div>
+              <span>{t.stackBuilder.allArchitectures}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
-          <Link
-            to="/architectures"
-            className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0"
-          >
-            <span>{t.stackBuilder.allArchitectures}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+            {/* Column A: Reference Architectures */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>{t.techDetail.architectureContext}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">
+                    {architectures.length}
+                  </span>
+                </h3>
 
-        {architectures.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {architectures.map((profile) => {
-              const profileTitle = getLocalizedText(profile.name, language);
-              const profileDesc = getLocalizedText(profile.description, language);
-              const typeMeta = profile.profileType
-                ? ARCHITECTURE_PROFILE_TYPE_METADATA[profile.profileType]
-                : undefined;
-              const typeName = typeMeta ? getLocalizedText(typeMeta.label, language) : profile.profileType;
-
-              // Companion technologies in this profile
-              const companionTechs = profile.technologyIds
-                .filter((id) => id !== technology.id)
-                .map((id) => technologyById.get(id))
-                .filter((t): t is typeof technology => Boolean(t));
-
-              return (
-                <div
-                  key={profile.id}
-                  className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4 flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      {typeName && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                          {typeName}
-                        </span>
-                      )}
-                      <span className="text-xs font-mono text-slate-500">
-                        {profile.technologyIds.length} Techs
-                      </span>
-                    </div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                      {profileTitle}
-                    </h3>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3">
-                      {profileDesc}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-slate-800">
-                    {companionTechs.length > 0 && (
-                      <div className="space-y-1.5">
-                        <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                          {t.techDetail.companionTechs}
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          {companionTechs.slice(0, 5).map((comp) => (
-                            <Link
-                              key={comp.id}
-                              to={`/stack/${comp.id}`}
-                              className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-900 hover:bg-brand-500/10 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 rounded border border-slate-200 dark:border-slate-800 transition truncate max-w-[150px]"
-                            >
-                              {comp.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex justify-end pt-1">
-                      <Link
-                        to={`/architectures/${profile.id}`}
-                        className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
-                      >
-                        <span>{t.techDetail.viewFullArchitecture}</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
-            {t.techDetail.noArchitectures}
-          </div>
-        )}
-      </div>
-
-      {/* Representative Stack Paths Section */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-            <Route className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {t.techDetail.stackPaths}
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              {language === 'ko'
-                ? '이 기술이 포함된 엔드-투-엔드 차량 양산 및 참조 소프트웨어 스택 경로입니다.'
-                : 'End-to-end production software execution journeys containing this technology.'}
-            </p>
-          </div>
-        </div>
-
-        {stackPaths.length > 0 ? (
-          <div className="space-y-4">
-            {stackPaths.map((path) => {
-              const pathTitle = getLocalizedText(path.name, language);
-              const pathDesc = getLocalizedText(path.description, language);
-              const typeMeta = path.pathType ? STACK_PATH_TYPE_METADATA[path.pathType] : undefined;
-              const typeName = typeMeta ? getLocalizedText(typeMeta.label, language) : path.pathType;
-
-              return (
-                <div
-                  key={path.id}
-                  className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        {typeName && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                            {typeName}
-                          </span>
-                        )}
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                          {pathTitle}
-                        </h3>
-                      </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                        {pathDesc}
-                      </p>
-                    </div>
-                    <span className="text-xs font-mono text-slate-500 shrink-0">
-                      {path.hops.length} Hops
+                {architectures.length > DEFAULT_ARCH_LIMIT && (
+                  <button
+                    onClick={() => setShowAllArchs((prev) => !prev)}
+                    className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                  >
+                    <span>
+                      {showAllArchs
+                        ? t.techDetail.showLess
+                        : t.techDetail.viewAllCount.replace('{count}', String(architectures.length))}
                     </span>
-                  </div>
+                    {showAllArchs ? (
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                )}
+              </div>
 
-                  {/* Flow Steps */}
-                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
-                    {path.hops.map((hop, hIdx) => {
-                      const hopTech = technologyById.get(hop.technologyId);
-                      const isCurrent = hop.technologyId === technology.id;
-                      const hopName = hopTech ? hopTech.name : hop.technologyId;
+              {visibleArchitectures.length > 0 ? (
+                <div className="space-y-3">
+                  {visibleArchitectures.map((profile) => {
+                    const profileTitle = getLocalizedText(profile.name, language);
+                    const profileDesc = getLocalizedText(profile.description, language);
+                    const typeMeta = profile.profileType
+                      ? ARCHITECTURE_PROFILE_TYPE_METADATA[profile.profileType]
+                      : undefined;
+                    const typeName = typeMeta ? getLocalizedText(typeMeta.label, language) : profile.profileType;
 
-                      return (
-                        <React.Fragment key={`${path.id}-hop-${hIdx}`}>
-                          <Link
-                            to={`/stack/${hop.technologyId}`}
-                            className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 border ${
-                              isCurrent
-                                ? 'bg-brand-600 text-white border-brand-500 shadow-md ring-2 ring-brand-500/30'
-                                : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
-                            }`}
-                          >
-                            <span>{hopName}</span>
-                            {isCurrent && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/20 text-white font-mono">
-                                Current
+                    return (
+                      <div
+                        key={profile.id}
+                        className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5 flex flex-col justify-between"
+                      >
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            {typeName && (
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                {typeName}
                               </span>
                             )}
+                            <span className="text-xs font-mono text-slate-500">
+                              {profile.technologyIds.length} Techs
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                            {profileTitle}
+                          </h4>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                            {profileDesc}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-end pt-1">
+                          <Link
+                            to={`/architectures/${profile.id}`}
+                            className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                          >
+                            <span>{t.techDetail.viewFullArchitecture}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
-                          {hIdx < path.hops.length - 1 && (
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              ) : (
+                <div className="p-5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+                  {t.techDetail.noArchitectures}
+                </div>
+              )}
+            </div>
+
+            {/* Column B: Representative Stack Paths */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>{t.techDetail.stackPaths}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">
+                    {stackPaths.length}
+                  </span>
+                </h3>
+
+                {stackPaths.length > DEFAULT_PATH_LIMIT && (
+                  <button
+                    onClick={() => setShowAllPaths((prev) => !prev)}
+                    className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
+                  >
+                    <span>
+                      {showAllPaths
+                        ? t.techDetail.showLess
+                        : t.techDetail.viewAllCount.replace('{count}', String(stackPaths.length))}
+                    </span>
+                    {showAllPaths ? (
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {visibleStackPaths.length > 0 ? (
+                <div className="space-y-3">
+                  {visibleStackPaths.map((path) => {
+                    const pathTitle = getLocalizedText(path.name, language);
+                    const typeMeta = path.pathType ? STACK_PATH_TYPE_METADATA[path.pathType] : undefined;
+                    const typeName = typeMeta ? getLocalizedText(typeMeta.label, language) : path.pathType;
+
+                    return (
+                      <div
+                        key={path.id}
+                        className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2.5"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5">
+                            {typeName && (
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                                {typeName}
+                              </span>
+                            )}
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                              {pathTitle}
+                            </h4>
+                          </div>
+                          <span className="text-xs font-mono text-slate-500 shrink-0">
+                            {path.hops.length} Hops
+                          </span>
+                        </div>
+
+                        {/* Flow Steps / Hops */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs">
+                          {path.hops.map((hop, hIdx) => {
+                            const hopTech = technologyById.get(hop.technologyId);
+                            const isCurrent = hop.technologyId === technology.id;
+                            const hopName = hopTech ? hopTech.name : hop.technologyId;
+
+                            return (
+                              <React.Fragment key={`${path.id}-hop-${hIdx}`}>
+                                <Link
+                                  to={`/stack/${hop.technologyId}`}
+                                  className={`shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 border ${
+                                    isCurrent
+                                      ? 'bg-brand-600 text-white border-brand-500 shadow-xs font-bold'
+                                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-brand-500/50'
+                                  }`}
+                                >
+                                  <span>{hopName}</span>
+                                  {isCurrent && (
+                                    <span className="text-[8px] px-1 py-0.2 rounded bg-white/25 text-white font-mono uppercase font-bold">
+                                      Current
+                                    </span>
+                                  )}
+                                </Link>
+                                {hIdx < path.hops.length - 1 && (
+                                  <ArrowRight className="w-3 h-3 text-slate-400 shrink-0" />
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+                  {t.techDetail.noStackPaths}
+                </div>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
-            {t.techDetail.noStackPaths}
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* Connected Ecosystem Sections */}
+      {/* 6. Explore Next (Main Discovery Surface — Deduplicated) */}
+      <ExploreNextSection
+        currentTech={technology}
+        recommendations={exploreNextRecommendations}
+      />
+
+      {/* 7. Connected Ecosystem (Tools, Resources, Companies, Projects, Events) */}
       {(linkedCompanies.length > 0 ||
         linkedProjects.length > 0 ||
         linkedTools.length > 0 ||
@@ -794,7 +715,7 @@ export const TechnologyDetailPage: React.FC = () => {
                             rel="noopener noreferrer"
                             className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <Globe className="w-3.5 h-3.5" />
                           </a>
                         )}
                       </div>
@@ -832,7 +753,7 @@ export const TechnologyDetailPage: React.FC = () => {
                           rel="noopener noreferrer"
                           className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <FileCode className="w-3.5 h-3.5" />
                         </a>
                       )}
                     </div>
@@ -906,7 +827,7 @@ export const TechnologyDetailPage: React.FC = () => {
                             rel="noopener noreferrer"
                             className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <Globe className="w-3.5 h-3.5" />
                           </a>
                         )}
                       </div>
@@ -949,7 +870,7 @@ export const TechnologyDetailPage: React.FC = () => {
                             rel="noopener noreferrer"
                             className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <Globe className="w-3.5 h-3.5" />
                           </a>
                         )}
                       </div>

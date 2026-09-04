@@ -33,7 +33,6 @@ import { companies } from '../../data/companies';
 import { events } from '../../data/events';
 import { stackLayers } from '../../data/stackLayers';
 import { architectureProfiles } from '../../data/architectureProfiles';
-import { TechRelationshipTree } from './TechRelationshipTree';
 import { TechArchitectureMicroMap } from './TechArchitectureMicroMap';
 import { Tool } from '../../types/tool';
 import {
@@ -41,9 +40,13 @@ import {
   technologyById,
   getTechnologyGraphContext,
 } from '../../utils/graphIndexes';
-import { getTechnologyDiscoveryResult } from '../../lib/graph';
+import {
+  getTechnologyDiscoveryResult,
+  getExploreNextTechnologies,
+  TechnologyInsightItem,
+} from '../../lib/graph';
 import { ExploreNextSection } from '../discovery/ExploreNextSection';
-import { BridgeTechnologiesSection } from '../discovery/BridgeTechnologiesSection';
+import { RelationshipExplorerSection } from '../discovery/RelationshipExplorerSection';
 
 interface TechDetailDrawerProps {
   technology: StackTechnology | null;
@@ -110,6 +113,37 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
     if (!technology) return null;
     return getTechnologyDiscoveryResult(technology.id);
   }, [technology]);
+
+  // Collect all technology IDs already visible in Direct Relationships for Deduplication
+  const displayedRelationshipTechIds = useMemo(() => {
+    if (!discoveryResult) return [];
+    const set = new Set<string>();
+    const addItems = (items: TechnologyInsightItem[]) => {
+      items.forEach((item) => set.add(item.technology.id));
+    };
+    addItems(discoveryResult.dependencies);
+    addItems(discoveryResult.dependents);
+    addItems(discoveryResult.platforms);
+    addItems(discoveryResult.hostedTechnologies);
+    addItems(discoveryResult.integrations);
+    addItems(discoveryResult.implementations);
+    addItems(discoveryResult.alternatives);
+    addItems(discoveryResult.compatibleWith);
+    addItems(discoveryResult.usedWith);
+    addItems(discoveryResult.coexistsWith);
+    addItems(discoveryResult.related);
+    return Array.from(set);
+  }, [discoveryResult]);
+
+  // Deduplicated Explore Next candidates (Primary Discovery Surface)
+  const exploreNextRecommendations = useMemo(() => {
+    if (!technology) return [];
+    return getExploreNextTechnologies({
+      technologyId: technology.id,
+      alreadyDisplayedTechnologyIds: displayedRelationshipTechIds,
+      maxResults: 6,
+    });
+  }, [technology, displayedRelationshipTechIds]);
 
   if (!technology) return null;
 
@@ -500,27 +534,14 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
           {/* Interactive Architecture Micro-Map */}
           <TechArchitectureMicroMap technology={technology} onSelectTech={onSelectTech} />
 
-          {/* Explore Next & Architectural Alternatives Section */}
+          {/* Direct Relationships Section (Compact & Scannable) */}
           {discoveryResult && (
-            <ExploreNextSection
+            <RelationshipExplorerSection
               currentTech={technology}
-              recommendations={discoveryResult.recommendations}
-              alternatives={discoveryResult.alternatives}
+              discoveryResult={discoveryResult}
               onSelectTech={onSelectTech}
             />
           )}
-
-          {/* Cross-Layer Bridge Technologies */}
-          {discoveryResult && (
-            <BridgeTechnologiesSection
-              currentTech={technology}
-              bridgeTechnologies={discoveryResult.bridgeTechnologies}
-              onSelectTech={onSelectTech}
-            />
-          )}
-
-          {/* Technology Semantic Relationship Node Tree (Grouped & Directional) */}
-          <TechRelationshipTree technology={technology} onSelectTech={onSelectTech} />
 
           {/* Canonical Automotive Stack Paths */}
           {(() => {
@@ -602,6 +623,13 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
               </div>
             );
           })()}
+
+          {/* Explore Next (Primary Discovery Surface — Deduplicated) */}
+          <ExploreNextSection
+            currentTech={technology}
+            recommendations={exploreNextRecommendations}
+            onSelectTech={onSelectTech}
+          />
 
           {/* Linked Ecosystem Entities (Tools, Resources, Companies, Projects, Events) */}
           {(linkedTools.length > 0 ||
