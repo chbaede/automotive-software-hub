@@ -2865,6 +2865,193 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 66 Passed: Phase 8.5 UX Hierarchy, Relationships, Architecture/Paths & i18n Invariants verified.');
 }
 
+// Test 67: Phase 8.5.1 — Technology Detail Deduplication Invariants (Stack Paths & Relationships)
+{
+  const { getExploreNextTechnologies } = await import('../src/lib/graph/intelligence/recommendations.js');
+  const { getTechnologyDiscoveryResult } = await import('../src/lib/graph/intelligence/index.js');
+  const { pathsByTechnologyId } = await import('../src/lib/graph/index.js');
+
+  // Test A: Stack path hop deduplication
+  const techsWithPaths = ['qnx-neutrino', 'autosar-classic', 'android-automotive-os', 'nvidia-drive-thor', 'vsomeip-middleware', 'qnx-hypervisor'];
+  techsWithPaths.forEach((techId) => {
+    const paths = pathsByTechnologyId.get(techId) || [];
+    assert.ok(paths.length > 0, `${techId} must have associated stack paths`);
+
+    const pathHopIds = paths.flatMap((p) => p.hops.map((h) => h.technologyId));
+    assert.ok(pathHopIds.length > 0, `${techId} stack paths must have hops`);
+
+    const recs = getExploreNextTechnologies({
+      technologyId: techId,
+      alreadyDisplayedTechnologyIds: pathHopIds,
+      maxResults: 10,
+    });
+
+    recs.forEach((rec) => {
+      assert.ok(
+        !pathHopIds.includes(rec.technology.id),
+        `Explore Next must never return a technology (${rec.technology.id}) that is already displayed as a Stack Path hop for ${techId}`
+      );
+    });
+  });
+
+  // Test B: Combined direct relationship + stack path exclusion set
+  stackTechnologies.forEach((tech) => {
+    const discoveryResult = getTechnologyDiscoveryResult(tech.id);
+    if (!discoveryResult) return;
+
+    const excludedIds = new Set<string>();
+    const addItems = (items: { technology: { id: string } }[]) => {
+      items.forEach((item) => excludedIds.add(item.technology.id));
+    };
+
+    addItems(discoveryResult.dependencies);
+    addItems(discoveryResult.dependents);
+    addItems(discoveryResult.platforms);
+    addItems(discoveryResult.hostedTechnologies);
+    addItems(discoveryResult.integrations);
+    addItems(discoveryResult.implementations);
+    addItems(discoveryResult.alternatives);
+    addItems(discoveryResult.compatibleWith);
+    addItems(discoveryResult.usedWith);
+    addItems(discoveryResult.coexistsWith);
+    addItems(discoveryResult.related);
+
+    const paths = pathsByTechnologyId.get(tech.id) || [];
+    paths.forEach((path) => {
+      path.hops.forEach((hop) => excludedIds.add(hop.technologyId));
+    });
+    excludedIds.delete(tech.id);
+
+    const recs = getExploreNextTechnologies({
+      technologyId: tech.id,
+      alreadyDisplayedTechnologyIds: Array.from(excludedIds),
+      maxResults: 6,
+    });
+
+    recs.forEach((rec) => {
+      assert.ok(
+        !excludedIds.has(rec.technology.id),
+        `Technology ${rec.technology.id} was returned in Explore Next for ${tech.id} despite being in the combined exclusion set`
+      );
+    });
+  });
+
+  // Test C: Current technology exclusion across all technologies
+  stackTechnologies.forEach((tech) => {
+    const recs = getExploreNextTechnologies({
+      technologyId: tech.id,
+      alreadyDisplayedTechnologyIds: [],
+      maxResults: 10,
+    });
+
+    recs.forEach((rec) => {
+      assert.notStrictEqual(
+        rec.technology.id,
+        tech.id,
+        `Current technology (${tech.id}) must never be recommended to itself in Explore Next`
+      );
+    });
+  });
+
+  console.log('✅ Test 67 Passed: Phase 8.5.1 Technology Detail Deduplication Invariants (Stack Paths & Relationships) verified.');
+}
+
+// Test 68: Phase 8.5.1 — Strict Sparse Recommendations, i18n Completeness & Safety Invariant
+{
+  const { getExploreNextTechnologies } = await import('../src/lib/graph/intelligence/recommendations.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // Test D & E: Sparse recommendation set verification & genuine graph connections
+  // When all genuine connections are excluded, result must be sparse (empty) rather than padded with random same-layer techs
+  stackTechnologies.slice(0, 20).forEach((tech) => {
+    // Exclude all technologies except current one
+    const allOtherIds = stackTechnologies.map((t) => t.id).filter((id) => id !== tech.id);
+    const recsWithAllExcluded = getExploreNextTechnologies({
+      technologyId: tech.id,
+      alreadyDisplayedTechnologyIds: allOtherIds,
+      maxResults: 6,
+    });
+    assert.strictEqual(
+      recsWithAllExcluded.length,
+      0,
+      `When all other technologies are excluded, Explore Next must return an empty list without fallback padding for ${tech.id}`
+    );
+
+    // Normal invocation: all candidates must have valid explainable graph reasons
+    const normalRecs = getExploreNextTechnologies({
+      technologyId: tech.id,
+      alreadyDisplayedTechnologyIds: [],
+      maxResults: 6,
+    });
+    normalRecs.forEach((rec) => {
+      assert.ok(rec.reasons.length > 0, `Candidate ${rec.technology.id} for ${tech.id} must have at least one reason`);
+      rec.reasons.forEach((r) => {
+        assert.ok(r.en.trim().length > 0, `Reason EN must not be empty for ${rec.technology.id}`);
+        assert.ok(r.ko.trim().length > 0, `Reason KO must not be empty for ${rec.technology.id}`);
+      });
+    });
+  });
+
+  // Test F: Deterministic recommendation ordering
+  const testIds = ['qnx-neutrino', 'yocto-project', 'nvidia-drive-thor', 'autosar-adaptive', 'android-automotive-os'];
+  testIds.forEach((techId) => {
+    const run1 = getExploreNextTechnologies({ technologyId: techId, maxResults: 6 });
+    const run2 = getExploreNextTechnologies({ technologyId: techId, maxResults: 6 });
+    assert.deepStrictEqual(
+      run1.map((r) => r.technology.id),
+      run2.map((r) => r.technology.id),
+      `Recommendation ordering must be 100% deterministic for ${techId}`
+    );
+  });
+
+  // Test G: i18n completeness for Phase 8.5.1 keys in techDetail
+  const phase851Keys = [
+    'hopsCount',
+    'currentHop',
+    'launchTool',
+    'back',
+    'overviewDesc',
+    'standardLabel',
+    'evidenceLabel',
+    'datasheetSpec',
+    'documented',
+    'architectureJourney',
+  ] as const;
+
+  phase851Keys.forEach((key) => {
+    assert.ok(en.techDetail[key], `en.techDetail.${key} must exist and be non-empty`);
+    assert.ok(ko.techDetail[key], `ko.techDetail.${key} must exist and be non-empty`);
+    if (en.techDetail[key].includes('{count}')) {
+      assert.ok(
+        ko.techDetail[key].includes('{count}'),
+        `ko.techDetail.${key} must preserve the {count} template parameter`
+      );
+    }
+  });
+
+  // Test H: Functional safety invariant: Perseus Pegasus Hypervisor remains ASIL-D Certified
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.ok(perseus, 'perseus-hypervisor must exist in stackTechnologies');
+  assert.strictEqual(
+    perseus?.functionalSafety?.claimType,
+    'certified',
+    'perseus-hypervisor must have claimType: "certified"'
+  );
+  assert.strictEqual(
+    perseus?.functionalSafety?.asilLevel,
+    'ASIL-D',
+    'perseus-hypervisor must have asilLevel: "ASIL-D"'
+  );
+  assert.strictEqual(
+    perseus?.functionalSafety?.standard,
+    'ISO 26262',
+    'perseus-hypervisor must have standard: "ISO 26262"'
+  );
+
+  console.log('✅ Test 68 Passed: Phase 8.5.1 Strict Sparse Recommendations, i18n Completeness & Safety Invariant verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

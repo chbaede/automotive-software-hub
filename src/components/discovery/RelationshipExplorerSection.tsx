@@ -14,7 +14,6 @@ import { stackLayers } from '../../data/stackLayers';
 import { RelationshipBadge } from '../stack/RelationshipBadge';
 
 interface RelationshipExplorerSectionProps {
-  currentTech: StackTechnology;
   discoveryResult: TechnologyDiscoveryResult;
   onSelectTech?: (tech: StackTechnology) => void;
 }
@@ -29,7 +28,6 @@ interface RelationshipCategoryGroup {
 const DEFAULT_GROUP_LIMIT = 4;
 
 export const RelationshipExplorerSection: React.FC<RelationshipExplorerSectionProps> = ({
-  currentTech,
   discoveryResult,
   onSelectTech,
 }) => {
@@ -46,12 +44,6 @@ export const RelationshipExplorerSection: React.FC<RelationshipExplorerSectionPr
   const getLayerName = (layerId: string) => {
     const layer = stackLayers.find((l) => l.id === layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
-  };
-
-  const getConfidenceLabel = (conf?: string) => {
-    if (conf === 'official') return t.discovery.confidenceOfficial;
-    if (conf === 'vendor') return t.discovery.confidenceVendor;
-    return t.discovery.confidenceCommunity;
   };
 
   // Canonical Direct Semantic Relationship Groups

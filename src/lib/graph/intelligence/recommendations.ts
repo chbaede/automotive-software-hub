@@ -307,27 +307,6 @@ export function getExploreNextTechnologies(
     }
   });
 
-  // 5. If still fewer than maxResults, supply same-layer complementary candidates
-  if (candidateScores.size < maxResults) {
-    const allTechs = Array.from(technologyById.values());
-    for (const t of allTechs) {
-      if (candidateScores.size >= maxResults) break;
-      if (excludeIds.has(t.id) || candidateScores.has(t.id)) continue;
-      if (t.layerId === currentTech.layerId) {
-        candidateScores.set(t.id, {
-          technology: t,
-          score: 15,
-          reasons: [
-            {
-              en: `Complementary technology in the ${currentTech.layerId} layer`,
-              ko: `${currentTech.layerId} 계층의 상호 보완 기술`,
-            },
-          ],
-        });
-      }
-    }
-  }
-
   return Array.from(candidateScores.values())
     .sort(
       (a, b) =>

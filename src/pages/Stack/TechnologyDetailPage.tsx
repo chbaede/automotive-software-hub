@@ -92,37 +92,6 @@ export const TechnologyDetailPage: React.FC = () => {
     return technology ? getTechnologyDiscoveryResult(technology.id) : null;
   }, [technology]);
 
-  // Collect all technology IDs already visible in Direct Relationships for Deduplication
-  const displayedRelationshipTechIds = useMemo(() => {
-    if (!discoveryResult) return [];
-    const set = new Set<string>();
-    const addItems = (items: TechnologyInsightItem[]) => {
-      items.forEach((item) => set.add(item.technology.id));
-    };
-    addItems(discoveryResult.dependencies);
-    addItems(discoveryResult.dependents);
-    addItems(discoveryResult.platforms);
-    addItems(discoveryResult.hostedTechnologies);
-    addItems(discoveryResult.integrations);
-    addItems(discoveryResult.implementations);
-    addItems(discoveryResult.alternatives);
-    addItems(discoveryResult.compatibleWith);
-    addItems(discoveryResult.usedWith);
-    addItems(discoveryResult.coexistsWith);
-    addItems(discoveryResult.related);
-    return Array.from(set);
-  }, [discoveryResult]);
-
-  // Deduplicated Explore Next candidates (Primary Discovery Surface)
-  const exploreNextRecommendations = useMemo(() => {
-    if (!technology) return [];
-    return getExploreNextTechnologies({
-      technologyId: technology.id,
-      alreadyDisplayedTechnologyIds: displayedRelationshipTechIds,
-      maxResults: 6,
-    });
-  }, [technology, displayedRelationshipTechIds]);
-
   const architectures = useMemo(() => {
     return technology ? getArchitecturesForTechnology(technology.id) : [];
   }, [technology]);
@@ -130,6 +99,43 @@ export const TechnologyDetailPage: React.FC = () => {
   const stackPaths = useMemo(() => {
     return technology ? getStackPathsForTechnology(technology.id) : [];
   }, [technology]);
+
+  // Collect all technology IDs already visible in Direct Relationships & Stack Path hops for Deduplication
+  const displayedDiscoveryTechIds = useMemo(() => {
+    if (!technology) return [];
+    const set = new Set<string>();
+    if (discoveryResult) {
+      const addItems = (items: TechnologyInsightItem[]) => {
+        items.forEach((item) => set.add(item.technology.id));
+      };
+      addItems(discoveryResult.dependencies);
+      addItems(discoveryResult.dependents);
+      addItems(discoveryResult.platforms);
+      addItems(discoveryResult.hostedTechnologies);
+      addItems(discoveryResult.integrations);
+      addItems(discoveryResult.implementations);
+      addItems(discoveryResult.alternatives);
+      addItems(discoveryResult.compatibleWith);
+      addItems(discoveryResult.usedWith);
+      addItems(discoveryResult.coexistsWith);
+      addItems(discoveryResult.related);
+    }
+    stackPaths.forEach((path) => {
+      path.hops.forEach((hop) => set.add(hop.technologyId));
+    });
+    set.delete(technology.id);
+    return Array.from(set);
+  }, [technology, discoveryResult, stackPaths]);
+
+  // Deduplicated Explore Next candidates (Primary Discovery Surface)
+  const exploreNextRecommendations = useMemo(() => {
+    if (!technology) return [];
+    return getExploreNextTechnologies({
+      technologyId: technology.id,
+      alreadyDisplayedTechnologyIds: displayedDiscoveryTechIds,
+      maxResults: 6,
+    });
+  }, [technology, displayedDiscoveryTechIds]);
 
   // Ecosystem linked objects
   const linkedTools = useMemo(() => {
@@ -432,7 +438,6 @@ export const TechnologyDetailPage: React.FC = () => {
       {/* 4. Authoritative Direct Relationships Section (Compact & Scannable) */}
       {discoveryResult && (
         <RelationshipExplorerSection
-          currentTech={technology}
           discoveryResult={discoveryResult}
         />
       )}
@@ -520,7 +525,7 @@ export const TechnologyDetailPage: React.FC = () => {
                               </span>
                             )}
                             <span className="text-xs font-mono text-slate-500">
-                              {profile.technologyIds.length} Techs
+                              {t.architectures.technologiesCount.replace('{count}', String(profile.technologyIds.length))}
                             </span>
                           </div>
                           <h4 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -604,7 +609,7 @@ export const TechnologyDetailPage: React.FC = () => {
                             </h4>
                           </div>
                           <span className="text-xs font-mono text-slate-500 shrink-0">
-                            {path.hops.length} Hops
+                            {t.techDetail.hopsCount.replace('{count}', String(path.hops.length))}
                           </span>
                         </div>
 
@@ -628,7 +633,7 @@ export const TechnologyDetailPage: React.FC = () => {
                                   <span>{hopName}</span>
                                   {isCurrent && (
                                     <span className="text-[8px] px-1 py-0.2 rounded bg-white/25 text-white font-mono uppercase font-bold">
-                                      Current
+                                      {t.techDetail.currentHop}
                                     </span>
                                   )}
                                 </Link>
@@ -787,7 +792,7 @@ export const TechnologyDetailPage: React.FC = () => {
                         onClick={() => navigate('/tools')}
                         className="text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline"
                       >
-                        Launch
+                        {t.techDetail.launchTool}
                       </button>
                     </div>
                   ))}
