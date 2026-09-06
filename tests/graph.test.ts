@@ -3052,6 +3052,155 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 68 Passed: Phase 8.5.1 Strict Sparse Recommendations, i18n Completeness & Safety Invariant verified.');
 }
 
+// Test 69: Phase 8.5.2 — Architecture Comparison Modal State Resolution Invariants
+{
+  const { resolveInitialComparisonPair } = await import('../src/lib/architecture/comparison.js');
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
+
+  assert.ok(architectureProfiles.length >= 2, 'Must have at least 2 architecture profiles to test');
+  const p0 = architectureProfiles[0].id;
+  const p1 = architectureProfiles[1].id;
+
+  // Case 1: Valid distinct initial IDs
+  const r1 = resolveInitialComparisonPair(architectureProfiles, p0, p1);
+  assert.strictEqual(r1.archAId, p0);
+  assert.strictEqual(r1.archBId, p1);
+  assert.notStrictEqual(r1.archAId, r1.archBId);
+
+  // Case 2: Identical initial IDs -> picks another distinct profile for B
+  const r2 = resolveInitialComparisonPair(architectureProfiles, p0, p0);
+  assert.strictEqual(r2.archAId, p0);
+  assert.notStrictEqual(r2.archAId, r2.archBId);
+  assert.ok(architectureProfiles.some((p) => p.id === r2.archBId));
+
+  // Case 3: Only initialArchAId provided -> picks distinct profile for B
+  const r3 = resolveInitialComparisonPair(architectureProfiles, p0, undefined);
+  assert.strictEqual(r3.archAId, p0);
+  assert.notStrictEqual(r3.archAId, r3.archBId);
+  assert.ok(architectureProfiles.some((p) => p.id === r3.archBId));
+
+  // Case 4: Neither provided -> picks first 2 distinct profiles
+  const r4 = resolveInitialComparisonPair(architectureProfiles);
+  assert.strictEqual(r4.archAId, p0);
+  assert.strictEqual(r4.archBId, p1);
+  assert.notStrictEqual(r4.archAId, r4.archBId);
+
+  // Case 5: Non-existent IDs provided -> gracefully falls back to valid profiles
+  const r5 = resolveInitialComparisonPair(architectureProfiles, 'non-existent-1', 'non-existent-2');
+  assert.ok(architectureProfiles.some((p) => p.id === r5.archAId));
+  assert.ok(architectureProfiles.some((p) => p.id === r5.archBId));
+  assert.notStrictEqual(r5.archAId, r5.archBId);
+
+  // Invariant across all profiles: passing each profile as Arch A always yields valid, distinct Arch B
+  for (const prof of architectureProfiles) {
+    const { archAId, archBId } = resolveInitialComparisonPair(architectureProfiles, prof.id, prof.id);
+    assert.strictEqual(archAId, prof.id);
+    assert.notStrictEqual(archAId, archBId);
+    assert.ok(architectureProfiles.some((p) => p.id === archBId));
+  }
+
+  console.log('✅ Test 69 Passed: Architecture Comparison Modal State Resolution Invariants verified.');
+}
+
+// Test 70: Phase 8.5.2 — Deep Dictionary Parity, Modals & Pre-Review Safety Invariants
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  // 1. Recursive Deep Dictionary Key Parity & Template Variables
+  function checkParity(enObj: any, koObj: any, path = '') {
+    const enKeys = Object.keys(enObj);
+    const koKeys = Object.keys(koObj);
+
+    for (const key of enKeys) {
+      const currentPath = path ? `${path}.${key}` : key;
+      assert.ok(
+        key in koObj,
+        `Key "${currentPath}" present in EN dictionary but missing in KO dictionary`
+      );
+
+      if (typeof enObj[key] === 'object' && enObj[key] !== null) {
+        assert.strictEqual(
+          typeof koObj[key],
+          'object',
+          `Expected "${currentPath}" to be an object in KO dictionary`
+        );
+        checkParity(enObj[key], koObj[key], currentPath);
+      } else if (typeof enObj[key] === 'string') {
+        assert.strictEqual(
+          typeof koObj[key],
+          'string',
+          `Expected "${currentPath}" to be a string in KO dictionary`
+        );
+        assert.ok(
+          koObj[key].trim().length > 0,
+          `String "${currentPath}" must not be empty in KO dictionary`
+        );
+
+        // Check template parameter placeholders like {count}, {layer}, {name}, etc.
+        const enPlaceholders = (enObj[key].match(/\{[a-zA-Z0-9_-]+\}/g) || []).sort();
+        const koPlaceholders = (koObj[key].match(/\{[a-zA-Z0-9_-]+\}/g) || []).sort();
+        assert.deepStrictEqual(
+          enPlaceholders,
+          koPlaceholders,
+          `Template placeholder mismatch at "${currentPath}": EN has ${JSON.stringify(enPlaceholders)}, KO has ${JSON.stringify(koPlaceholders)}`
+        );
+      }
+    }
+
+    for (const key of koKeys) {
+      const currentPath = path ? `${path}.${key}` : key;
+      assert.ok(
+        key in enObj,
+        `Key "${currentPath}" present in KO dictionary but missing in EN dictionary`
+      );
+    }
+  }
+
+  checkParity(en, ko);
+
+  // 2. Specific Phase 8.5.2 Keys Invariant
+  const requiredKeys = [
+    { section: 'architectures', key: 'searchPlaceholder' },
+    { section: 'architectures', key: 'architectureA' },
+    { section: 'architectures', key: 'architectureB' },
+    { section: 'architectures', key: 'noOverlappingTechs' },
+    { section: 'architectures', key: 'onlyInArch' },
+    { section: 'architectures', key: 'noUniqueTechs' },
+    { section: 'architectures', key: 'actionHeader' },
+    { section: 'architectures', key: 'exploreAction' },
+    { section: 'whatIf', key: 'directAlternative' },
+    { section: 'whatIf', key: 'sameLayerGroup' },
+    { section: 'whatIf', key: 'candidatesGroup' },
+    { section: 'decisionSupport', key: 'gapsCount' },
+    { section: 'techDetail', key: 'architecturesAndPathsSubtitle' },
+    { section: 'techDetail', key: 'ecosystemSubtitle' },
+    { section: 'techDetail', key: 'statConnectedTechs' },
+    { section: 'techDetail', key: 'statRelationshipLinks' },
+    { section: 'techDetail', key: 'statConnectedLayers' },
+    { section: 'techDetail', key: 'statArchitectures' },
+    { section: 'techDetail', key: 'statStackPaths' },
+    { section: 'techDetail', key: 'findGraphPathFromHere' },
+  ] as const;
+
+  for (const { section, key } of requiredKeys) {
+    const enVal = (en as any)[section]?.[key];
+    const koVal = (ko as any)[section]?.[key];
+    assert.ok(enVal && enVal.trim().length > 0, `en.${section}.${key} must exist and not be empty`);
+    assert.ok(koVal && koVal.trim().length > 0, `ko.${section}.${key} must exist and not be empty`);
+  }
+
+  // 3. Safety Invariant: Perseus Pegasus Hypervisor remains ASIL-D Certified
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.ok(perseus, 'perseus-hypervisor must exist');
+  assert.strictEqual(perseus?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(perseus?.functionalSafety?.asilLevel, 'ASIL-D');
+  assert.strictEqual(perseus?.functionalSafety?.standard, 'ISO 26262');
+
+  console.log('✅ Test 70 Passed: Deep Dictionary Parity, Modals & Pre-Review Safety Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

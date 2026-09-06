@@ -9,14 +9,12 @@ import { stackLayers } from '../../data/stackLayers';
 import { RelationshipBadge } from '../stack/RelationshipBadge';
 
 interface ExploreNextSectionProps {
-  currentTech: StackTechnology;
   recommendations: TechnologyRecommendation[];
   alternatives?: TechnologyInsightItem[];
   onSelectTech?: (tech: StackTechnology) => void;
 }
 
 export const ExploreNextSection: React.FC<ExploreNextSectionProps> = ({
-  currentTech,
   recommendations,
   alternatives = [],
   onSelectTech,

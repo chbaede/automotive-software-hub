@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRightLeft, ExternalLink, Compass } from 'lucide-react';
+import { ArrowRightLeft, ExternalLink } from 'lucide-react';
 import { ArchitectureMatchResult } from '../../lib/architecture/types';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -32,7 +32,7 @@ export const ArchitectureComparisonTable: React.FC<ArchitectureComparisonTablePr
               <th className="py-2 px-3 font-semibold text-center">{t.decisionSupport.coverage}</th>
               <th className="py-2 px-3 font-semibold text-center">{t.decisionSupport.matched}</th>
               <th className="py-2 px-3 font-semibold text-center">{t.decisionSupport.missing}</th>
-              <th className="py-2 pl-3 font-semibold text-right">Action</th>
+              <th className="py-2 pl-3 font-semibold text-right">{t.architectures.actionHeader}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -80,7 +80,7 @@ export const ArchitectureComparisonTable: React.FC<ArchitectureComparisonTablePr
                       to={`/architectures/${profile.id}`}
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
                     >
-                      <span>Explore</span>
+                      <span>{t.architectures.exploreAction}</span>
                       <ExternalLink className="w-3 h-3" />
                     </Link>
                   </td>

@@ -2,11 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Compass,
-  Sparkles,
   Layers,
   Check,
   Circle,
-  ArrowRight,
   ExternalLink,
   Plus,
   Info,
@@ -28,7 +26,7 @@ export const ArchitectureDiscoverySummary: React.FC<ArchitectureDiscoverySummary
   onOpenWhatIf,
 }) => {
   const { language, t } = useLanguage();
-  const { primaryArchitecture, primaryLayerCoverage, isStrongMatch } = viewModel;
+  const { primaryArchitecture, primaryLayerCoverage } = viewModel;
 
   if (!primaryArchitecture) return null;
 

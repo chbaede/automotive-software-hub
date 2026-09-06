@@ -1,10 +1,9 @@
 import React from 'react';
-import { Compass, Sparkles, Layers, Route, ArrowRight, Info } from 'lucide-react';
+import { Compass, Sparkles, Info } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface DiscoveryEmptyStateProps {
   type: 'empty' | 'weak';
-  onExploreArchitecture?: () => void;
 }
 
 export const DiscoveryEmptyState: React.FC<DiscoveryEmptyStateProps> = ({ type }) => {

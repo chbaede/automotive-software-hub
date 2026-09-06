@@ -456,9 +456,7 @@ export const TechnologyDetailPage: React.FC = () => {
                   {t.techDetail.architecturesAndPaths}
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {language === 'ko'
-                    ? '이 기술이 통합 활용되는 참조 아키텍처 패턴 및 대표 실행 경로입니다.'
-                    : 'Reference vehicle architecture patterns and representative software stack execution journeys.'}
+                  {t.techDetail.architecturesAndPathsSubtitle}
                 </p>
               </div>
             </div>
@@ -660,7 +658,6 @@ export const TechnologyDetailPage: React.FC = () => {
 
       {/* 6. Explore Next (Main Discovery Surface — Deduplicated) */}
       <ExploreNextSection
-        currentTech={technology}
         recommendations={exploreNextRecommendations}
       />
 
@@ -680,9 +677,7 @@ export const TechnologyDetailPage: React.FC = () => {
                 {t.techDetail.ecosystem}
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {language === 'ko'
-                  ? '이 기술과 관련된 기업, 오픈소스 프로젝트, 개발 도구, 기술 자료 및 행사입니다.'
-                  : 'Vendors, open-source projects, tools, technical resources, and industry events tied to this technology.'}
+                {t.techDetail.ecosystemSubtitle}
               </p>
             </div>
           </div>

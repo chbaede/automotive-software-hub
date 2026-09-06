@@ -146,3 +146,38 @@ export function convertArchitectureToStackSelection(
   return selection;
 }
 
+/**
+ * Deterministically resolves initial architecture selections for comparison.
+ *
+ * Rules:
+ * - Prefers valid initialArchAId and initialArchBId if present in profiles.
+ * - Arch A and B must never resolve to the same architecture if another profile is available.
+ * - If one is missing or invalid, a valid deterministic fallback is selected.
+ * - If both are missing, defaults to the first two available profiles.
+ */
+export function resolveInitialComparisonPair(
+  profiles: { id: string }[],
+  initialArchAId?: string,
+  initialArchBId?: string
+): { archAId: string; archBId: string } {
+  if (profiles.length === 0) {
+    return { archAId: '', archBId: '' };
+  }
+
+  const validA = initialArchAId && profiles.some((p) => p.id === initialArchAId)
+    ? initialArchAId
+    : profiles[0]?.id || '';
+
+  let validB = initialArchBId && profiles.some((p) => p.id === initialArchBId)
+    ? initialArchBId
+    : undefined;
+
+  // A and B must never resolve to the same architecture if another profile is available
+  if (!validB || validB === validA) {
+    const fallbackB = profiles.find((p) => p.id !== validA);
+    validB = fallbackB ? fallbackB.id : validA;
+  }
+
+  return { archAId: validA, archBId: validB };
+}
+

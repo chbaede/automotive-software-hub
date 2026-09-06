@@ -7,11 +7,7 @@ import {
   Trash2,
   Check,
   Sparkles,
-  ShieldCheck,
   ChevronDown,
-  Info,
-  Compass,
-  ArrowRightLeft,
 } from 'lucide-react';
 import {
   CORE_STACK_LAYER_IDS,
@@ -26,7 +22,6 @@ import { buildArchitectureDiscoveryViewModel } from '../../lib/architecture/disc
 import { stackLayers } from '../../data/stackLayers';
 import { technologyById } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { getLocalizedText } from '../../types/i18n';
 import { LayerTechSelector } from '../../components/builder/LayerTechSelector';
 import { StackPreviewLadder } from '../../components/builder/StackPreviewLadder';
 import { StackValidationPanel } from '../../components/builder/StackValidationPanel';
@@ -39,7 +34,7 @@ import { ArchitectureComparisonTable } from '../../components/discovery/Architec
 import { ArchitectureGapPanel } from '../../components/discovery/ArchitectureGapPanel';
 
 export const StackBuilderPage: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [showSupporting, setShowSupporting] = useState(false);

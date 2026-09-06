@@ -4,7 +4,6 @@ import {
   Sparkles,
   ArrowRightLeft,
   Check,
-  Search,
   Shield,
   Layers,
   Info,
@@ -69,9 +68,6 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
     return '';
   });
 
-  // Search filter for replacement dropdown
-  const [searchQuery, setSearchQuery] = useState('');
-
   // Synchronize target and replacement whenever modal opens or initialTarget changes
   useEffect(() => {
     if (!isOpen) return;
@@ -100,8 +96,19 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
     } else {
       setReplacementTechId('');
     }
-    setSearchQuery('');
   }, [isOpen, initialTargetTechId, selectedTechIds]);
+
+  // Modal interaction: Close on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   // Update target technology
   const handleSelectTarget = (id: string) => {
@@ -119,16 +126,6 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
     }
   };
 
-  const filteredCandidates = useMemo(() => {
-    if (!searchQuery.trim()) return sameLayerCandidates;
-    const q = searchQuery.toLowerCase();
-    return sameLayerCandidates.filter((tech) => {
-      const name = tech.name.toLowerCase();
-      const desc = getLocalizedText(tech.description, language).toLowerCase();
-      return name.includes(q) || desc.includes(q);
-    });
-  }, [sameLayerCandidates, searchQuery, language]);
-
   // Compute What-if Comparison
   const comparison = useMemo(() => {
     if (!targetTechId || !replacementTechId || targetTechId === replacementTechId) return null;
@@ -142,8 +139,17 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.whatIf.title}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto"
+      >
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50 shrink-0">
           <div className="flex items-center gap-2.5">
@@ -212,14 +218,14 @@ export const WhatIfModal: React.FC<WhatIfModalProps> = ({
                   <optgroup label={`⭐ ${t.discovery.architecturalAlternatives}`}>
                     {alternatives.map((alt) => (
                       <option key={alt.id} value={alt.id}>
-                        {alt.name} (Direct Alternative)
+                        {alt.name} ({t.whatIf.directAlternative})
                       </option>
                     ))}
                   </optgroup>
                 )}
 
                 {/* Same Layer Candidates Group */}
-                <optgroup label={targetTech ? `Same Layer: ${targetTech.layerId}` : 'Candidates'}>
+                <optgroup label={targetTech ? t.whatIf.sameLayerGroup.replace('{layer}', targetTech.layerId) : t.whatIf.candidatesGroup}>
                   {sameLayerCandidates
                     .filter((c) => !alternatives.some((a) => a.id === c.id))
                     .map((cand) => (

@@ -321,7 +321,7 @@ export const ArchitectureDetailPage: React.FC = () => {
                   </div>
 
                   <span className="text-xs font-mono text-slate-500">
-                    {layerTechs.length} {language === 'ko' ? '개 기술' : 'techs'}
+                    {t.architectures.technologiesCount.replace('{count}', String(layerTechs.length))}
                   </span>
                 </div>
 

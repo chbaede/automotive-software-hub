@@ -382,19 +382,19 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
                   <Network className="w-4 h-4" />
-                  <span>{language === 'ko' ? '지식 그래프 연결 맥락' : 'Knowledge Graph Context'}</span>
+                  <span>{t.techDetail.knowledgeGraphContext}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {graphContext.isHub && (
                     <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded flex items-center gap-1">
                       <Zap className="w-2.5 h-2.5" />
-                      {language === 'ko' ? '핵심 허브' : 'Hub'}
+                      {t.stackBuilder.hubBadge}
                     </span>
                   )}
                   {graphContext.isCrossLayer && (
                     <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded flex items-center gap-1">
                       <GitFork className="w-2.5 h-2.5" />
-                      {language === 'ko' ? '크로스 레이어' : 'Cross-Layer'}
+                      {t.stackBuilder.crossLayerBadge}
                     </span>
                   )}
                 </div>
@@ -402,23 +402,23 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
               <div className="grid grid-cols-5 gap-1.5 text-center text-xs">
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '연결 기술' : 'Techs'}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{t.techDetail.statConnectedTechs}</div>
                   <div className="text-sm font-bold text-cyan-400 mt-0.5">{graphContext.connectionCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '관계 링크' : 'Links'}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{t.techDetail.statRelationshipLinks}</div>
                   <div className="text-sm font-bold text-sky-400 mt-0.5">{graphContext.relationshipCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '연결 계층' : 'Layers'}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{t.techDetail.statConnectedLayers}</div>
                   <div className="text-sm font-bold text-emerald-400 mt-0.5">{graphContext.connectedLayersCount}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '아키텍처' : 'Archs'}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{t.techDetail.statArchitectures}</div>
                   <div className="text-sm font-bold text-purple-400 mt-0.5">{graphContext.architectures.length}</div>
                 </div>
                 <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
-                  <div className="text-[10px] text-slate-400 font-semibold">{language === 'ko' ? '스택 경로' : 'Paths'}</div>
+                  <div className="text-[10px] text-slate-400 font-semibold">{t.techDetail.statStackPaths}</div>
                   <div className="text-sm font-bold text-indigo-400 mt-0.5">{graphContext.stackPaths.length}</div>
                 </div>
               </div>
@@ -429,7 +429,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
                   className="w-full py-2 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition"
                 >
                   <Route className="w-3.5 h-3.5" />
-                  <span>{language === 'ko' ? '이 기술에서 다른 기술로 경로 탐색' : 'Find Graph Connection Path from Here'}</span>
+                  <span>{t.techDetail.findGraphPathFromHere}</span>
                 </button>
               )}
             </div>
@@ -631,7 +631,6 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
 
           {/* Explore Next (Primary Discovery Surface — Deduplicated) */}
           <ExploreNextSection
-            currentTech={technology}
             recommendations={exploreNextRecommendations}
             onSelectTech={onSelectTech}
           />

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   X,
@@ -6,13 +6,14 @@ import {
   Compass,
   Layers,
   Route,
-  CheckCircle2,
   Wrench,
-  Tag,
-  Shield,
 } from 'lucide-react';
 import { architectureProfiles } from '../../data/architectureProfiles';
-import { compareArchitectures, convertArchitectureToStackSelection } from '../../lib/architecture/comparison';
+import {
+  compareArchitectures,
+  convertArchitectureToStackSelection,
+  resolveInitialComparisonPair,
+} from '../../lib/architecture/comparison';
 import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -35,17 +36,36 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
   const navigate = useNavigate();
 
   const [archAId, setArchAId] = useState<string>(() => {
-    return initialArchAId || architectureProfiles[0]?.id || '';
+    return resolveInitialComparisonPair(architectureProfiles, initialArchAId, initialArchBId).archAId;
   });
 
   const [archBId, setArchBId] = useState<string>(() => {
-    return (
-      initialArchBId ||
-      architectureProfiles.find((p) => p.id !== (initialArchAId || architectureProfiles[0]?.id))?.id ||
-      architectureProfiles[1]?.id ||
-      ''
-    );
+    return resolveInitialComparisonPair(architectureProfiles, initialArchAId, initialArchBId).archBId;
   });
+
+  // Synchronize internal architecture selections when modal opens or initial context changes
+  useEffect(() => {
+    if (!isOpen) return;
+    const resolved = resolveInitialComparisonPair(
+      architectureProfiles,
+      initialArchAId,
+      initialArchBId
+    );
+    setArchAId(resolved.archAId);
+    setArchBId(resolved.archBId);
+  }, [isOpen, initialArchAId, initialArchBId]);
+
+  // Modal interaction: Close on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const comparison = useMemo(() => {
     if (!archAId || !archBId || archAId === archBId) return null;
@@ -74,8 +94,16 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
     : undefined;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50 shrink-0">
           <div className="flex items-center gap-2.5">
@@ -109,7 +137,7 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                 <Compass className="w-3.5 h-3.5 text-indigo-500" />
-                <span>Architecture A</span>
+                <span>{t.architectures.architectureA}</span>
               </label>
               <select
                 value={archAId}
@@ -128,7 +156,7 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                 <Compass className="w-3.5 h-3.5 text-cyan-500" />
-                <span>Architecture B</span>
+                <span>{t.architectures.architectureB}</span>
               </label>
               <select
                 value={archBId}
@@ -227,7 +255,7 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
                       ))}
                     </div>
                   ) : (
-                    <p className="text-[11px] text-slate-400">No overlapping technologies.</p>
+                    <p className="text-[11px] text-slate-400">{t.architectures.noOverlappingTechs}</p>
                   )}
                 </div>
 
@@ -236,7 +264,9 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
                   {/* Unique in A */}
                   <div className="p-3 rounded-xl bg-indigo-50/30 dark:bg-indigo-950/20 border border-indigo-500/20 space-y-2">
                     <div className="text-xs font-bold text-indigo-800 dark:text-indigo-300">
-                      Only in {getLocalizedText(comparison.architectureA.name, language)} ({comparison.onlyTechnologiesInA.length})
+                      {t.architectures.onlyInArch
+                        .replace('{name}', getLocalizedText(comparison.architectureA.name, language))
+                        .replace('{count}', String(comparison.onlyTechnologiesInA.length))}
                     </div>
                     {comparison.onlyTechnologiesInA.length > 0 ? (
                       <div className="flex flex-wrap gap-1.5">
@@ -251,14 +281,16 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-slate-400">No unique technologies.</p>
+                      <p className="text-[11px] text-slate-400">{t.architectures.noUniqueTechs}</p>
                     )}
                   </div>
 
                   {/* Unique in B */}
                   <div className="p-3 rounded-xl bg-cyan-50/30 dark:bg-cyan-950/20 border border-cyan-500/20 space-y-2">
                     <div className="text-xs font-bold text-cyan-800 dark:text-cyan-300">
-                      Only in {getLocalizedText(comparison.architectureB.name, language)} ({comparison.onlyTechnologiesInB.length})
+                      {t.architectures.onlyInArch
+                        .replace('{name}', getLocalizedText(comparison.architectureB.name, language))
+                        .replace('{count}', String(comparison.onlyTechnologiesInB.length))}
                     </div>
                     {comparison.onlyTechnologiesInB.length > 0 ? (
                       <div className="flex flex-wrap gap-1.5">
@@ -273,7 +305,7 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[11px] text-slate-400">No unique technologies.</p>
+                      <p className="text-[11px] text-slate-400">{t.architectures.noUniqueTechs}</p>
                     )}
                   </div>
                 </div>

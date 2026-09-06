@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Plus, ArrowRight, Layers, Network, Compass } from 'lucide-react';
+import { AlertCircle, Plus, Layers, Network, Compass } from 'lucide-react';
 import { ActionableGapItem } from '../../lib/architecture/discoveryViewModel';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -61,7 +61,7 @@ export const ArchitectureGapPanel: React.FC<ArchitectureGapPanelProps> = ({
           </div>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          {gaps.length} Gaps
+          {t.decisionSupport.gapsCount.replace('{count}', String(gaps.length))}
         </span>
       </div>
 
