@@ -4,6 +4,7 @@ import { Search, Globe, Github, Menu, X, Cpu, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useTheme } from '../../theme/ThemeContext';
 import { GlobalSearchModal } from '../search/GlobalSearchModal';
+import { APP_VERSION } from '../../version';
 
 interface HeaderProps {
   onOpenTool?: (tool: any) => void;
@@ -59,10 +60,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
               <Cpu className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition truncate">
-                Automotive Software Hub
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 -mt-1 hidden sm:inline">
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition truncate">
+                  Automotive Software Hub
+                </span>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                  {APP_VERSION}
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 -mt-0.5 hidden sm:inline">
                 SDV • AUTOSAR • Yocto • Embedded Linux
               </span>
             </div>

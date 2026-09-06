@@ -1,6 +1,7 @@
 import React from 'react';
 import { Info, ShieldCheck, Heart, FileCode2, Cpu } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { APP_VERSION } from '../../version';
 
 export const AboutPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -11,7 +12,7 @@ export const AboutPage: React.FC = () => {
       <div className="space-y-2 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <Info className="w-4 h-4" />
-          <span>Independent Open Portal</span>
+          <span>Independent Open Portal • v{APP_VERSION}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.about.title}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Cpu, Github, FileText, Heart } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { APP_VERSION } from '../../version';
 
 export const Footer: React.FC = () => {
   const { t } = useLanguage();
@@ -122,8 +123,11 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div>
-            © {new Date().getFullYear()} Automotive Software Hub. Open Community Resource.
+          <div className="flex items-center gap-2.5 flex-wrap justify-center sm:justify-start">
+            <span>© {new Date().getFullYear()} Automotive Software Hub. Open Community Resource.</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+              v{APP_VERSION}
+            </span>
           </div>
           <div className="font-mono text-[11px] text-slate-400">
             Hosted entirely on GitHub Pages (Static Build)
