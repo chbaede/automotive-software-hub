@@ -4215,6 +4215,141 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 80 Passed: Strategy Source Roles, Current Freshness & Historical Preservation verified.');
 }
 
+// Test 81: Strategy Comparative Intelligence Dashboard & Domain Integrity
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const {
+    getCompanyStrategies,
+    getStrategyKPIs,
+    getStrategicLandscapeData,
+    getStrategicMilestones,
+    getRelatedTechnologiesForStrategy,
+    companyById,
+    technologyById,
+  } = await import('../src/lib/domain/index.js');
+
+  // 1. Domain Selector Invariants
+  const strategies = getCompanyStrategies();
+  assert.strictEqual(strategies.length, 26, 'getCompanyStrategies must return all 26 canonical company strategies');
+
+  // 2. KPI Integrity
+  const kpis = getStrategyKPIs();
+  assert.strictEqual(kpis.total, 26, 'Total KPIs must equal 26');
+  assert.strictEqual(kpis.oems, 21, 'OEMs count must equal 21');
+  assert.strictEqual(kpis.semis, 3, 'Semiconductors count must equal 3');
+  assert.strictEqual(kpis.tier1s, 2, 'Tier-1 count must equal 2');
+  assert.strictEqual(kpis.oems + kpis.semis + kpis.tier1s, kpis.total, 'Category breakdown must sum to total');
+
+  const continentSum =
+    kpis.byContinent['north-america'] +
+    kpis.byContinent['europe'] +
+    kpis.byContinent['asia'];
+  assert.strictEqual(continentSum, kpis.total, 'Continent breakdown must sum to total');
+  assert.ok(kpis.monetization > 0 && kpis.monetization <= kpis.total, 'Monetization count must be positive and <= total');
+  assert.ok(kpis.zonal > 0 && kpis.zonal <= kpis.total, 'Zonal count must be positive and <= total');
+
+  // 3. Strategic Landscape Qualitative Positioning
+  const landscape = getStrategicLandscapeData();
+  assert.strictEqual(landscape.length, 26, 'Landscape data must include all 26 companies');
+  const validTopologies = new Set(['distributed-domain', 'central-domain', 'central-zonal']);
+  const validDepths = new Set(['commercial-ecosystem', 'dual-track', 'proprietary-fullstack']);
+
+  landscape.forEach((item) => {
+    assert.ok(companyById.has(item.companyId), `Landscape item has unknown companyId ${item.companyId}`);
+    assert.ok(validTopologies.has(item.eeTopology), `Invalid topology '${item.eeTopology}' for ${item.companyId}`);
+    assert.ok(validDepths.has(item.osDepth), `Invalid osDepth '${item.osDepth}' for ${item.companyId}`);
+    assert.ok(item.sdvOsSummary.length > 0, `Missing sdvOsSummary for ${item.companyId}`);
+    assert.ok(item.eeZonalSummary.length > 0, `Missing eeZonalSummary for ${item.companyId}`);
+  });
+
+  // 4. Strategic Milestones Timeline
+  const milestones = getStrategicMilestones();
+  assert.ok(milestones.length >= 70, `Milestones count must be >= 70, found ${milestones.length}`);
+  for (let i = 1; i < milestones.length; i++) {
+    const prevYear = parseInt(milestones[i - 1].year, 10) || 0;
+    const currYear = parseInt(milestones[i].year, 10) || 0;
+    assert.ok(prevYear <= currYear, `Milestones must be chronologically ordered: ${prevYear} <= ${currYear}`);
+  }
+
+  // 5. Canonical Technology Linking & Stack Explorer Connectivity
+  const mbStrat = strategies.find((s) => s.companyId === 'mercedes-benz')!;
+  const mbTechs = getRelatedTechnologiesForStrategy(mbStrat);
+  assert.ok(mbTechs.some((t) => t.id === 'nvidia-drive-thor'), 'Mercedes-Benz must link to nvidia-drive-thor');
+
+  const bmwStrat = strategies.find((s) => s.companyId === 'bmw-group')!;
+  const bmwTechs = getRelatedTechnologiesForStrategy(bmwStrat);
+  assert.ok(bmwTechs.some((t) => t.id === 'qualcomm-snapdragon-cockpit'), 'BMW must link to qualcomm-snapdragon-cockpit');
+  assert.ok(bmwTechs.some((t) => t.id === 'android-automotive-os'), 'BMW must link to android-automotive-os');
+
+  const gmStrat = strategies.find((s) => s.companyId === 'general-motors')!;
+  const gmTechs = getRelatedTechnologiesForStrategy(gmStrat);
+  assert.ok(gmTechs.some((t) => t.id === 'android-automotive-os'), 'GM must link to android-automotive-os');
+
+  strategies.forEach((strat) => {
+    const techs = getRelatedTechnologiesForStrategy(strat);
+    techs.forEach((t) => {
+      assert.ok(technologyById.has(t.id), `Strategy tech ${t.id} must exist in canonical index`);
+    });
+  });
+
+  // 6. Localization (i18n) Parity for Dashboard Keys
+  const dashboardKeys = [
+    'kpiTotalCompanies',
+    'kpiOems',
+    'kpiSemis',
+    'kpiTier1s',
+    'kpiZonal',
+    'kpiMonetization',
+    'kpiRegionalBreakdown',
+    'landscapeTitle',
+    'landscapeSubtitle',
+    'landscapeYAxis',
+    'landscapeXAxis',
+    'landscapeLegendNoScores',
+    'comparisonTitle',
+    'comparisonSubtitle',
+    'compareAddBtn',
+    'compareRemoveBtn',
+    'compareClearAll',
+    'compareLimitNotice',
+    'comparePresetsTitle',
+    'presetGermanTrio',
+    'presetVolumeOems',
+    'presetSiliconGiants',
+    'presetChineseEv',
+    'presetUsPioneers',
+    'presetTier1Integrators',
+    'timelineTitle',
+    'timelineSubtitle',
+    'timelineFilterAll',
+    'quickInsightsTitle',
+    'quickInsightsSubtitle',
+    'insightInHouseOsTitle',
+    'insightAaosTitle',
+    'insightNvidiaTitle',
+    'insightQualcommTitle',
+    'insightZonalTitle',
+    'insightMonetizationTitle',
+    'regionalIntelligenceTitle',
+    'regionNaTitle',
+    'regionEuTitle',
+    'regionAsiaTitle',
+    'linkedStackTechnologies',
+    'viewInStackExplorer',
+    'jumpToDetail',
+    'scrollUp',
+    'companiesMatchingFilter',
+  ] as const;
+
+  for (const k of dashboardKeys) {
+    assert.ok(en.strategyInsights[k], `Missing EN translation for '${k}'`);
+    assert.ok(ko.strategyInsights[k], `Missing KO translation for '${k}'`);
+  }
+
+  console.log('✅ Test 81 Passed: Strategy Comparative Intelligence Dashboard, KPIs & Domain Integrity verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

@@ -9,7 +9,8 @@ import { projects } from '../../data/projects';
 import { events } from '../../data/events';
 import { Company, CompanyContinent, COMPANY_CONTINENT_ORDER } from '../../types/company';
 export { COMPANY_CONTINENT_ORDER };
-import { CompanyStrategyInsight } from '../../types/strategy';
+import { CompanyStrategyInsight, StrategyCategory } from '../../types/strategy';
+import { LocalizedText } from '../../types/i18n';
 import { StackLayer, StackTechnology } from '../../types/stack';
 import { ArchitectureProfile } from '../../types/architecture';
 import { Tool } from '../../types/tool';
@@ -245,3 +246,251 @@ export function getEventsForTechnology(tech?: StackTechnology | null): Event[] {
     .map((id) => eventById.get(id))
     .filter((e): e is Event => Boolean(e));
 }
+
+// ==========================================
+// STRATEGY INTELLIGENCE SELECTORS & DERIVATIONS
+// ==========================================
+
+/**
+ * Resolves all company strategy insights.
+ */
+export function getCompanyStrategies(): CompanyStrategyInsight[] {
+  return companyStrategies;
+}
+
+export interface StrategyKPIs {
+  total: number;
+  oems: number;
+  semis: number;
+  tier1s: number;
+  monetization: number;
+  zonal: number;
+  byContinent: Record<CompanyContinent, number>;
+}
+
+/**
+ * Derives aggregate KPIs from canonical strategy data.
+ */
+export function getStrategyKPIs(): StrategyKPIs {
+  const byContinent: Record<CompanyContinent, number> = {
+    'north-america': 0,
+    'europe': 0,
+    'asia': 0,
+    'south-america': 0,
+    'africa': 0,
+    'oceania': 0,
+  };
+
+  let oems = 0;
+  let semis = 0;
+  let tier1s = 0;
+  let monetization = 0;
+  let zonal = 0;
+
+  companyStrategies.forEach((cs) => {
+    if (cs.category === 'oem') oems++;
+    else if (cs.category === 'semiconductor') semis++;
+    else if (cs.category === 'tier1') tier1s++;
+
+    const comp = companyById.get(cs.companyId);
+    if (comp) {
+      byContinent[comp.continent] = (byContinent[comp.continent] || 0) + 1;
+    }
+
+    if (cs.softwareMonetization) monetization++;
+
+    const zonalText = (
+      cs.matrixSummary.eeZonal.en + ' ' + cs.eeZonalArchitecture.en
+    ).toLowerCase();
+    if (zonalText.includes('zonal') || zonalText.includes('zone')) {
+      zonal++;
+    }
+  });
+
+  return {
+    total: companyStrategies.length,
+    oems,
+    semis,
+    tier1s,
+    monetization,
+    zonal,
+    byContinent,
+  };
+}
+
+export type EeArchitectureTopology =
+  | 'distributed-domain'
+  | 'central-domain'
+  | 'central-zonal';
+
+export type OsPlatformDepth =
+  | 'commercial-ecosystem'
+  | 'dual-track'
+  | 'proprietary-fullstack';
+
+export interface StrategicLandscapeItem {
+  companyId: string;
+  companyName: string;
+  category: StrategyCategory;
+  continent?: CompanyContinent;
+  eeTopology: EeArchitectureTopology;
+  osDepth: OsPlatformDepth;
+  sdvOsSummary: string;
+  eeZonalSummary: string;
+}
+
+/**
+ * Computes deterministic qualitative 2D positioning for the Strategic Landscape Matrix.
+ * Strictly qualitative; no synthetic or arbitrary numerical scores.
+ */
+export function getStrategicLandscapeData(): StrategicLandscapeItem[] {
+  return companyStrategies.map((cs) => {
+    const comp = companyById.get(cs.companyId);
+    const eeText = (
+      cs.matrixSummary.eeZonal.en + ' ' + cs.eeZonalArchitecture.en
+    ).toLowerCase();
+    const osText = (
+      cs.matrixSummary.sdvOs.en + ' ' + cs.sdvArchitecture.en
+    ).toLowerCase();
+
+    // Determine E/E Topology
+    let eeTopology: EeArchitectureTopology = 'central-domain';
+    if (
+      eeText.includes('zonal') ||
+      eeText.includes('zone controller') ||
+      eeText.includes('zonal gateway') ||
+      eeText.includes('zonal nodes') ||
+      eeText.includes('3 zonal ecus')
+    ) {
+      eeTopology = 'central-zonal';
+    } else if (
+      eeText.includes('scalable domain') ||
+      eeText.includes('domain controller layout') ||
+      eeText.includes('true redundancy')
+    ) {
+      eeTopology = 'distributed-domain';
+    }
+
+    // Determine OS Strategy Depth
+    let osDepth: OsPlatformDepth = 'dual-track';
+    if (
+      osText.includes('proprietary') ||
+      osText.includes('full-stack os') ||
+      osText.includes('custom linux') ||
+      osText.includes('chip-to-cloud') ||
+      osText.includes('woven') ||
+      osText.includes('tian shu') ||
+      osText.includes('xos') ||
+      osText.includes('xuanji') ||
+      osText.includes('flyme')
+    ) {
+      osDepth = 'proprietary-fullstack';
+    } else if (
+      osText.includes('alphaware') ||
+      osText.includes('zconnect') ||
+      osText.includes('adrenox') ||
+      osText.includes('dxp')
+    ) {
+      osDepth = 'commercial-ecosystem';
+    }
+
+    return {
+      companyId: cs.companyId,
+      companyName: cs.companyName,
+      category: cs.category,
+      continent: comp?.continent,
+      eeTopology,
+      osDepth,
+      sdvOsSummary: cs.matrixSummary.sdvOs.en,
+      eeZonalSummary: cs.matrixSummary.eeZonal.en,
+    };
+  });
+}
+
+export interface StrategicMilestoneItem {
+  year: string;
+  companyId: string;
+  companyName: string;
+  category: StrategyCategory;
+  milestone: LocalizedText;
+}
+
+/**
+ * Aggregates all strategic milestones chronologically.
+ */
+export function getStrategicMilestones(): StrategicMilestoneItem[] {
+  const items: StrategicMilestoneItem[] = [];
+  companyStrategies.forEach((cs) => {
+    cs.strategicTargets.forEach((target) => {
+      items.push({
+        year: target.year,
+        companyId: cs.companyId,
+        companyName: cs.companyName,
+        category: cs.category,
+        milestone: target.milestone,
+      });
+    });
+  });
+
+  return items.sort((a, b) => {
+    const yA = parseInt(a.year, 10) || 9999;
+    const yB = parseInt(b.year, 10) || 9999;
+    if (yA !== yB) return yA - yB;
+    return a.companyName.localeCompare(b.companyName);
+  });
+}
+
+/**
+ * Resolves stack technologies linked to a company's strategy.
+ * Combines direct company technologies and canonical technologies mentioned in strategy texts.
+ */
+const STRATEGY_TECH_PATTERNS: { pattern: RegExp; techId: string }[] = [
+  { pattern: /android automotive|aaos/i, techId: 'android-automotive-os' },
+  { pattern: /nvidia drive|drive thor|drive orin/i, techId: 'nvidia-drive-thor' },
+  { pattern: /qualcomm|snapdragon digital cockpit|snapdragon ride/i, techId: 'qualcomm-snapdragon-cockpit' },
+  { pattern: /mobileye|eyeq/i, techId: 'mobileye-eyeq' },
+  { pattern: /autosar adaptive/i, techId: 'autosar-adaptive' },
+  { pattern: /autosar classic/i, techId: 'autosar-classic' },
+  { pattern: /qnx hypervisor|blackberry qnx|qnx neutrino/i, techId: 'qnx-hypervisor' },
+  { pattern: /renesas|r-car/i, techId: 'renesas-rcar' },
+  { pattern: /vsomeip|some\/ip|someip/i, techId: 'vsomeip-middleware' },
+  { pattern: /momenta/i, techId: 'momenta-flywheel-ad' },
+  { pattern: /flutter/i, techId: 'flutter-automotive' },
+  { pattern: /kanzi/i, techId: 'kanzi-ui-engine' },
+  { pattern: /unece|r155|r156/i, techId: 'unece-r155-r156' },
+  { pattern: /iso 26262|iso26262/i, techId: 'iso-26262-functional-safety' },
+  { pattern: /iso 21434|iso21434/i, techId: 'iso-21434-cybersecurity' },
+  { pattern: /ota-cloud|connected car ota|fleet platform|over-the-air/i, techId: 'ota-cloud-fleet' },
+];
+
+export function getRelatedTechnologiesForStrategy(
+  strategy: CompanyStrategyInsight
+): StackTechnology[] {
+  const direct = getTechnologiesForCompany(strategy.companyId);
+  const matchedIds = new Set<string>(direct.map((t) => t.id));
+
+  const text = (
+    strategy.sdvArchitecture.en +
+    ' ' +
+    strategy.eeZonalArchitecture.en +
+    ' ' +
+    strategy.autonomousDrivingAi.en +
+    ' ' +
+    strategy.evPlatformStrategy.en +
+    ' ' +
+    strategy.matrixSummary.sdvOs.en +
+    ' ' +
+    strategy.matrixSummary.eeZonal.en
+  );
+
+  STRATEGY_TECH_PATTERNS.forEach(({ pattern, techId }) => {
+    if (pattern.test(text) && technologyById.has(techId)) {
+      matchedIds.add(techId);
+    }
+  });
+
+  return Array.from(matchedIds)
+    .map((id) => technologyById.get(id))
+    .filter((t): t is StackTechnology => Boolean(t));
+}
+
