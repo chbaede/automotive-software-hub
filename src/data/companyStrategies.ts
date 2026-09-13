@@ -73,13 +73,25 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Mercedes-Benz Capital Market Days & Strategy Updates",
-          ko: "메르세데스-벤츠 캐피털 마켓 데이 및 전략 업데이트",
+          en: "Mercedes-Benz Capital Market Day 2025: Mastering Transformation",
+          ko: "메르세데스-벤츠 캐피털 마켓 데이 2025: 변화의 주도 (Mastering Transformation)",
         },
-        url: "https://group.mercedes-benz.com/investors/events/capital-market-days/",
+        url: "https://group.mercedes-benz.com/investors/events/2025-capital-market-day.html",
         sourceType: "capital-markets-day",
         role: "latest",
-        publishedDate: "2024-02-22",
+        publishedDate: "2025-02-20",
+        lastVerified: "2026-09-13",
+        confidence: "official",
+      },
+      {
+        title: {
+          en: "Mercedes-Benz Strategy Update: MB.OS Operating System Preview",
+          ko: "메르세데스-벤츠 전략 업데이트: 자체 운영체제 MB.OS 최초 공개",
+        },
+        url: "https://group.mercedes-benz.com/investors/events/2023-02-mercedes-benz-group-strategy-update.html",
+        sourceType: "official-event",
+        role: "historical",
+        publishedDate: "2023-02-22",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -91,7 +103,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         url: "https://group.mercedes-benz.com/investors/",
         sourceType: "official-website",
         role: "primary",
-        publishedDate: "2024-07-26",
+        publishedDate: "2025-02-20",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -777,7 +789,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
         url: "https://investor.qualcomm.com/",
         sourceType: "official-website",
-        role: "latest",
+        role: "primary",
         publishedDate: "2024-07-31",
         lastVerified: "2026-09-13",
         confidence: "official",
@@ -789,7 +801,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
         url: "https://www.qualcomm.com/products/automotive",
         sourceType: "official-website",
-        role: "primary",
+        role: "supporting",
         publishedDate: "2024-07-31",
         lastVerified: "2026-09-13",
         confidence: "official",
@@ -2004,18 +2016,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "SAIC Motor Annual Strategic & Financial Disclosure",
-          ko: "상하이자동차 연간 전략 및 재무 공시 보고서",
-        },
-        url: "https://www.saicmotor.com/english/investor_relations/index.shtml",
-        sourceType: "annual-report",
-        role: "latest",
-        publishedDate: "2024-04-28",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "SAIC Motor Corporation Official Investor Relations Portal",

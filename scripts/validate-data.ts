@@ -506,6 +506,9 @@ companyStrategies.forEach((cs) => {
           if (!source.publishedDate) {
             error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Latest source must have a publishedDate.`);
           }
+          if (source.confidence !== 'official') {
+            error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Latest source must have confidence 'official'.`);
+          }
         }
       }
       if (source.publishedDate) {
@@ -513,6 +516,11 @@ companyStrategies.forEach((cs) => {
       }
       if (source.lastVerified) {
         validateIsoDate(source.lastVerified, `[Company Strategy ID: ${cs.companyId} Source #${idx} lastVerified]`);
+      }
+      if (source.publishedDate && source.lastVerified && source.publishedDate > source.lastVerified) {
+        error(
+          `[Company Strategy ID: ${cs.companyId} Source #${idx}] publishedDate '${source.publishedDate}' cannot be after lastVerified '${source.lastVerified}'.`
+        );
       }
       if (source.confidence && !validConfidences.has(source.confidence)) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown confidence: '${source.confidence}'.`);

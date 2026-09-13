@@ -4049,6 +4049,17 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
           /^\d{4}-\d{2}-\d{2}$/.test(source.publishedDate),
           `Latest source '${source.title.en}' for company '${cs.companyId}' publishedDate '${source.publishedDate}' must be YYYY-MM-DD`
         );
+        assert.strictEqual(
+          source.confidence,
+          'official',
+          `Latest source '${source.title.en}' for company '${cs.companyId}' must have confidence 'official'`
+        );
+      }
+      if (source.publishedDate && source.lastVerified) {
+        assert.ok(
+          source.publishedDate <= source.lastVerified,
+          `Source '${source.title.en}' publishedDate '${source.publishedDate}' cannot be after lastVerified '${source.lastVerified}'`
+        );
       }
 
       // Invariant: Generic IR landing pages must not be typed as dedicated events
@@ -4073,6 +4084,16 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   // 2. Specific Historical Sources Preservation
+  // Mercedes-Benz: 2023 MB.OS Strategy Update
+  const mbStrat = getCompanyStrategy('mercedes-benz');
+  assert.ok(mbStrat, 'Mercedes-Benz strategy profile must exist');
+  const mbHistorical = mbStrat.sources.find(
+    (s) => s.role === 'historical' && s.url.includes('2023-02-mercedes-benz-group-strategy-update')
+  );
+  assert.ok(mbHistorical, 'Mercedes-Benz 2023 MB.OS Strategy Update must be present as historical source');
+  assert.strictEqual(mbHistorical.sourceType, 'official-event');
+  assert.strictEqual(mbHistorical.publishedDate, '2023-02-22');
+
   // Ford: Capital Markets Day 2023
   const fordStrat = getCompanyStrategy('ford');
   assert.ok(fordStrat, 'Ford strategy profile must exist');
@@ -4110,6 +4131,11 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(gmHistorical, 'GM 2023 Investor Day must remain present as historical source');
 
   // 3. Representative Latest and Primary Sources Semantics
+  const mbLatest = mbStrat.sources.find((s) => s.role === 'latest');
+  assert.ok(mbLatest && mbLatest.sourceType === 'capital-markets-day', 'Mercedes-Benz latest source must be capital-markets-day');
+  assert.strictEqual(mbLatest.publishedDate, '2025-02-20');
+  assert.ok(mbLatest.url.includes('2025-capital-market-day'));
+
   const fordLatest = fordStrat.sources.find((s) => s.role === 'latest');
   assert.ok(fordLatest && fordLatest.sourceType === 'annual-report', 'Ford latest source must be annual report');
 
@@ -4119,10 +4145,6 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const teslaStrat = getCompanyStrategy('tesla');
   assert.ok(teslaStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'press-release'), 'Tesla must have a latest press-release source');
   assert.ok(teslaStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Tesla must have a primary official-website source');
-
-  const mbStrat = getCompanyStrategy('mercedes-benz');
-  assert.ok(mbStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'capital-markets-day'), 'Mercedes-Benz must have a latest capital-markets-day source');
-  assert.ok(mbStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Mercedes-Benz must have a primary official-website source');
 
   const hmcStrat = getCompanyStrategy('hyundai-motor-group');
   assert.ok(hmcStrat?.sources.some((s) => s.role === 'latest' && s.url.includes('ceo-investor-day')), 'Hyundai latest must link to dedicated ceo-investor-day page');
@@ -4141,6 +4163,10 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const lgStrat = getCompanyStrategy('lg-electronics-vs');
   assert.strictEqual(lgStrat?.sources.length, 1, 'LG VS must have exactly 1 consolidated primary portal source');
   assert.strictEqual(lgStrat?.sources[0].sourceType, 'official-website');
+
+  const saicStrat = getCompanyStrategy('saic');
+  assert.strictEqual(saicStrat?.sources.length, 1, 'SAIC must have exactly 1 consolidated primary portal source');
+  assert.strictEqual(saicStrat?.sources[0].sourceType, 'official-website');
 
   // 5. Localization (i18n) Parity for Source Roles
   const roleKeys = ['sourceRoleLatest', 'sourceRolePrimary', 'sourceRoleHistorical', 'sourceRoleSupporting'] as const;
