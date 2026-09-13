@@ -16,10 +16,17 @@ export type StrategySourceType =
   | 'official-event'
   | 'official-website';
 
+export type StrategySourceRole =
+  | 'latest'
+  | 'primary'
+  | 'historical'
+  | 'supporting';
+
 export interface StrategySource {
   title: LocalizedText;
   url: string;
   sourceType: StrategySourceType;
+  role?: StrategySourceRole;
   publishedDate?: string; // YYYY-MM-DD
   lastVerified?: string;  // YYYY-MM-DD
   confidence?: 'official' | 'vendor' | 'community';

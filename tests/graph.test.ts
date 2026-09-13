@@ -4013,6 +4013,110 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 79 Passed: Global OEM Expansion, Continent Classification & Strategy Intelligence Integrity verified.');
 }
 
+// ---------------------------------------------------------------------------
+// TEST 80: Strategy Source Roles, Current Freshness & Historical Preservation
+// ---------------------------------------------------------------------------
+{
+  const { companyStrategies } = await import('../src/data/companyStrategies.js');
+  const { getCompanyStrategy } = await import('../src/lib/domain/index.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const validRoles = new Set(['latest', 'primary', 'historical', 'supporting']);
+
+  // 1. Validate all source roles across all company strategies
+  for (const cs of companyStrategies) {
+    let latestCount = 0;
+    for (const source of cs.sources) {
+      if (source.role) {
+        assert.ok(
+          validRoles.has(source.role),
+          `Strategy source '${source.title.en}' for company '${cs.companyId}' has invalid role '${source.role}'`
+        );
+      }
+      if (source.role === 'latest') {
+        latestCount++;
+        assert.ok(
+          source.publishedDate,
+          `Latest source '${source.title.en}' for company '${cs.companyId}' must have a publishedDate`
+        );
+        assert.ok(
+          /^\d{4}-\d{2}-\d{2}$/.test(source.publishedDate),
+          `Latest source '${source.title.en}' for company '${cs.companyId}' publishedDate '${source.publishedDate}' must be YYYY-MM-DD`
+        );
+      }
+    }
+
+    assert.ok(
+      latestCount <= 1,
+      `Company '${cs.companyId}' must have at most one latest source. Found ${latestCount}.`
+    );
+  }
+
+  // 2. Specific Historical Sources Preservation
+  // Ford: Capital Markets Day 2023
+  const fordStrat = getCompanyStrategy('ford');
+  assert.ok(fordStrat, 'Ford strategy profile must exist');
+  const fordHistorical = fordStrat.sources.find(
+    (s) => s.role === 'historical' && s.url.includes('Delivering-Ford-Capital-Markets-Day-2023')
+  );
+  assert.ok(fordHistorical, 'Ford Capital Markets Day 2023 must remain present as historical source');
+  assert.strictEqual(fordHistorical.sourceType, 'investor-presentation');
+  assert.strictEqual(fordHistorical.publishedDate, '2023-05-22');
+
+  // Stellantis: Software Day 2021
+  const stellantisStrat = getCompanyStrategy('stellantis');
+  assert.ok(stellantisStrat, 'Stellantis strategy profile must exist');
+  const stellantisHistorical = stellantisStrat.sources.find(
+    (s) => s.role === 'historical' && s.url.includes('sw-day-2021')
+  );
+  assert.ok(stellantisHistorical, 'Stellantis Software Day 2021 must remain present as historical source');
+  assert.strictEqual(stellantisHistorical.sourceType, 'official-event');
+  assert.strictEqual(stellantisHistorical.publishedDate, '2021-12-07');
+
+  // Kia: 2024 CEO Investor Day
+  const kiaStrat = getCompanyStrategy('kia');
+  assert.ok(kiaStrat, 'Kia strategy profile must exist');
+  const kiaHistorical = kiaStrat.sources.find(
+    (s) => s.role === 'historical' && s.publishedDate === '2024-04-05' && s.sourceType === 'investor-presentation'
+  );
+  assert.ok(kiaHistorical, 'Kia 2024 CEO Investor Day must remain present as historical source');
+
+  // 3. Coexistence of Current and Historical Sources
+  const fordLatest = fordStrat.sources.find((s) => s.role === 'latest');
+  assert.ok(fordLatest, 'Ford must have a latest official source');
+  assert.ok(fordLatest.publishedDate && fordLatest.publishedDate >= '2024-01-01', 'Ford latest source must be recent');
+
+  const stellantisLatest = stellantisStrat.sources.find((s) => s.role === 'latest');
+  assert.ok(stellantisLatest, 'Stellantis must have a latest official source');
+  assert.ok(stellantisLatest.publishedDate && stellantisLatest.publishedDate >= '2024-01-01', 'Stellantis latest source must be recent');
+
+  const kiaLatest = kiaStrat.sources.find((s) => s.role === 'latest');
+  assert.ok(kiaLatest, 'Kia must have a latest official source');
+  assert.ok(kiaLatest.publishedDate && kiaLatest.publishedDate >= '2024-01-01', 'Kia latest source must be recent');
+
+  // 4. Representative Company Semantics
+  const teslaStrat = getCompanyStrategy('tesla');
+  assert.ok(teslaStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'press-release'), 'Tesla must have a latest press-release source');
+  assert.ok(teslaStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Tesla must have a primary official-website source');
+
+  const mbStrat = getCompanyStrategy('mercedes-benz');
+  assert.ok(mbStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'capital-markets-day'), 'Mercedes-Benz must have a latest capital-markets-day source');
+  assert.ok(mbStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Mercedes-Benz must have a primary official-website source');
+
+  const gmStrat = getCompanyStrategy('general-motors');
+  assert.ok(gmStrat?.sources.some((s) => s.role === 'historical' && s.publishedDate === '2023-11-15'), 'GM must have 2023 historical source');
+  assert.ok(gmStrat?.sources.some((s) => s.role === 'latest'), 'GM must have latest source');
+
+  // 5. Localization (i18n) Parity for Source Roles
+  const roleKeys = ['sourceRoleLatest', 'sourceRolePrimary', 'sourceRoleHistorical', 'sourceRoleSupporting'] as const;
+  for (const k of roleKeys) {
+    assert.ok(en.strategyInsights[k], `Missing EN translation for '${k}'`);
+    assert.ok(ko.strategyInsights[k], `Missing KO translation for '${k}'`);
+  }
+
+  console.log('✅ Test 80 Passed: Strategy Source Roles, Current Freshness & Historical Preservation verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

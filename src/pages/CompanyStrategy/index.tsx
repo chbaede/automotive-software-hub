@@ -577,6 +577,16 @@ export const CompanyStrategyPage: React.FC = () => {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 text-xs transition group shadow-2xs"
                       >
+                        {source.role === 'latest' && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                            {t.strategyInsights.sourceRoleLatest || 'Latest'}
+                          </span>
+                        )}
+                        {source.role === 'historical' && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                            {t.strategyInsights.sourceRoleHistorical || 'Historical'}
+                          </span>
+                        )}
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-brand-500/10 text-brand-700 dark:text-brand-300 border border-brand-500/20">
                           {getSourceTypeLabel(source.sourceType)}
                         </span>

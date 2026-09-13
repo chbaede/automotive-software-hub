@@ -411,6 +411,7 @@ const validSourceTypes = new Set([
   'official-event',
   'official-website',
 ]);
+const validSourceRoles = new Set(['latest', 'primary', 'historical', 'supporting']);
 const validConfidences = new Set(['official', 'vendor', 'community']);
 const seenStrategyCompanyIds = new Set<string>();
 
@@ -465,7 +466,7 @@ companyStrategies.forEach((cs) => {
     error(`[Company Strategy ID: ${cs.companyId}] Must have at least one strategic target.`);
   } else {
     cs.strategicTargets.forEach((st, idx) => {
-      if (!/^\d{4}$/.test(st.year)) {
+      if (!st.year || !/^\d{4}$/.test(st.year)) {
         error(`[Company Strategy ID: ${cs.companyId} Target #${idx}] Invalid target year: '${st.year}'.`);
       }
       if (!st.milestone?.en || !st.milestone?.ko) {
@@ -477,6 +478,7 @@ companyStrategies.forEach((cs) => {
   if (!cs.sources || cs.sources.length === 0) {
     error(`[Company Strategy ID: ${cs.companyId}] Must have at least one traceable source.`);
   } else {
+    let latestCount = 0;
     cs.sources.forEach((source, idx) => {
       if (!source.title?.en || !source.title?.ko) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Missing localized source title.`);
@@ -486,6 +488,17 @@ companyStrategies.forEach((cs) => {
       }
       if (!validSourceTypes.has(source.sourceType)) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown sourceType: '${source.sourceType}'.`);
+      }
+      if (source.role) {
+        if (!validSourceRoles.has(source.role)) {
+          error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown role: '${source.role}'. Must be one of: latest, primary, historical, supporting.`);
+        }
+        if (source.role === 'latest') {
+          latestCount++;
+          if (!source.publishedDate) {
+            error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Latest source must have a publishedDate.`);
+          }
+        }
       }
       if (source.publishedDate) {
         validateIsoDate(source.publishedDate, `[Company Strategy ID: ${cs.companyId} Source #${idx} publishedDate]`);
@@ -511,6 +524,10 @@ companyStrategies.forEach((cs) => {
         );
       }
     });
+
+    if (latestCount > 1) {
+      error(`[Company Strategy ID: ${cs.companyId}] Cannot have more than one source with role 'latest'. Found ${latestCount}.`);
+    }
   }
 
   if (cs.lastVerified) {
