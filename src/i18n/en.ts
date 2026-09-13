@@ -182,6 +182,7 @@ export const en = {
     visitWebsite: 'Visit Website',
     visitIr: 'IR Portal',
     viewStrategy: 'Strategy Roadmap',
+    strategyInsightsBannerBadge: 'Official IR & Strategic Roadmaps',
     strategyInsightsBannerTitle: 'OEM & Tech SDV / EV Strategy Insights',
     strategyInsightsBannerDesc: 'In-depth vehicle OS, E/E zonal architecture, and electrification roadmaps analyzed from official quarterly IR reports and Capital Markets Days.',
     exploreStrategyBtn: 'Explore IR Strategy Roadmaps →',

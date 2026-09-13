@@ -70,17 +70,17 @@ export const CompaniesPage: React.FC = () => {
       </div>
 
       {/* Strategic Insights Hero Callout Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-slate-900 via-indigo-950 to-brand-950 p-6 text-white border border-brand-500/30 shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-slate-900 bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-950 p-6 sm:p-7 text-white border border-brand-500/30 shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/20 border border-brand-400/30 text-brand-300 text-[11px] font-semibold tracking-wide">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/20 border border-brand-400/40 text-brand-300 text-[11px] font-semibold tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-              <span>{t.companies.strategyInsightsBannerTitle}</span>
+              <span>{t.companies.strategyInsightsBannerBadge}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               {t.companies.strategyInsightsBannerTitle}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
               {t.companies.strategyInsightsBannerDesc}
             </p>
           </div>

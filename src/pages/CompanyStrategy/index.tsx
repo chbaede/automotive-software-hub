@@ -144,12 +144,12 @@ export const CompanyStrategyPage: React.FC = () => {
       </div>
 
       {/* Industry Strategic Overview Card */}
-      <div className="p-6 bg-linear-to-br from-slate-900 via-slate-900 to-brand-950 text-white rounded-2xl border border-slate-800 shadow-lg space-y-4">
+      <div className="p-6 sm:p-7 bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-900 to-brand-950 text-white rounded-2xl border border-slate-800 shadow-lg space-y-4">
         <div className="flex items-center gap-2 text-brand-400 font-bold text-base">
           <Sparkles className="w-5 h-5 text-brand-400" />
           <h2>{t.strategyInsights.executiveSummaryTitle}</h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-4xl">
+        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-4xl">
           {t.strategyInsights.executiveSummaryDesc}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800/80 text-xs">
@@ -158,7 +158,7 @@ export const CompanyStrategyPage: React.FC = () => {
               <Layers className="w-4 h-4" />
               <span>1. Zonal Architecture</span>
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-300 text-[11px] leading-relaxed">
               Consolidating 100+ distributed domain ECUs into 2~4 high-performance zonal controllers with Gigabit Ethernet backbones.
             </p>
           </div>
@@ -167,7 +167,7 @@ export const CompanyStrategyPage: React.FC = () => {
               <Cpu className="w-4 h-4" />
               <span>2. In-House Vehicle OS</span>
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-300 text-[11px] leading-relaxed">
               Chip-to-cloud proprietary software stacks (MB.OS, ccOS, Arene, Neue Klasse) with decoupled hardware/software release cycles.
             </p>
           </div>
@@ -176,7 +176,7 @@ export const CompanyStrategyPage: React.FC = () => {
               <TrendingUp className="w-4 h-4" />
               <span>3. Software Monetization</span>
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-300 text-[11px] leading-relaxed">
               Targeting recurring revenue streams through over-the-air (OTA) features-on-demand, subscription ADAS, and robotaxi platforms.
             </p>
           </div>

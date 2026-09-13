@@ -184,6 +184,7 @@ export const ko: Translations = {
     visitWebsite: '웹사이트 방문',
     visitIr: 'IR 공시·자료실',
     viewStrategy: '전략 로드맵 분석',
+    strategyInsightsBannerBadge: '공식 IR 및 전략 심층 분석',
     strategyInsightsBannerTitle: '완성차 및 테크 기업 SDV·EV 전략 로드맵 분석',
     strategyInsightsBannerDesc: '최신 분기 IR 및 인베스터 데이(Capital Markets Day) 공식 발표를 기반으로 분석한 차량용 OS, Zonal 아키텍처, 전동화 전략 분석.',
     exploreStrategyBtn: 'SDV·EV 전략 로드맵 분석 보기 →',
