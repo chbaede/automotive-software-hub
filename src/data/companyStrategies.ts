@@ -382,7 +382,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         url: "https://www.bmwgroup.com/en/investor-relations/company-reports.html",
         sourceType: "annual-report",
         role: "latest",
-        publishedDate: "2024-03-21",
+        publishedDate: "2025-03-20",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
