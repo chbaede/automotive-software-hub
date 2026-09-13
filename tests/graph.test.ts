@@ -3520,6 +3520,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(validateDocUrlPolicy('ftp://docs.yoctoproject.org/').valid, false);
   assert.strictEqual(validateDocUrlPolicy('not-a-url').valid, false);
   assert.strictEqual(validateDocUrlPolicy('javascript:alert(1)').valid, false);
+  assert.strictEqual(validateDocUrlPolicy('').valid, false);
 
   // Part B — Open Source project documentation integrity
   const { projects } = await import('../src/data/projects.js');

@@ -5,6 +5,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { projects } from '../../data/projects';
 import { ProjectCard } from '../../components/cards/ProjectCard';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
+import { TopicId } from '../../types/taxonomy';
 import { getLocalizedText } from '../../types/i18n';
 
 export const OpenSourcePage: React.FC = () => {
@@ -40,7 +41,7 @@ export const OpenSourcePage: React.FC = () => {
     const query = searchQuery.trim().toLowerCase();
 
     const matchesQuery = !query || proj.name.toLowerCase().includes(query) || desc.includes(query) || proj.tags.some((t) => t.includes(query));
-    const matchesTopic = topicFilter === 'all' || proj.topics.includes(topicFilter as any);
+    const matchesTopic = topicFilter === 'all' || proj.topics.includes(topicFilter as TopicId);
     const matchesOrg = orgFilter === 'all' || proj.organization === orgFilter;
 
     return matchesQuery && matchesTopic && matchesOrg;

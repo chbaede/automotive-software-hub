@@ -142,15 +142,19 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
       }
     }
 
-    if (item.documentation) {
+    if (item.documentation !== undefined) {
       const docUrl = item.documentation;
-      try {
-        const parsed = new URL(docUrl);
-        if (parsed.protocol !== 'https:') {
-          error(`[${collectionName} ID: ${item.id}] Documentation URL must use HTTPS: '${docUrl}'.`);
+      if (!docUrl || typeof docUrl !== 'string' || !docUrl.trim()) {
+        error(`[${collectionName} ID: ${item.id}] Documentation URL cannot be empty.`);
+      } else {
+        try {
+          const parsed = new URL(docUrl);
+          if (parsed.protocol !== 'https:') {
+            error(`[${collectionName} ID: ${item.id}] Documentation URL must use HTTPS: '${docUrl}'.`);
+          }
+        } catch {
+          error(`[${collectionName} ID: ${item.id}] Invalid documentation URL string: '${docUrl}'.`);
         }
-      } catch {
-        error(`[${collectionName} ID: ${item.id}] Invalid documentation URL string: '${docUrl}'.`);
       }
     }
   });
