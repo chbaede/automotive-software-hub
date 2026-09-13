@@ -8,7 +8,8 @@
     "build": "tsx scripts/generate-sitemap.ts && tsc && vite build && tsx scripts/postbuild.ts",
     "validate-data": "tsx scripts/validate-data.ts",
     "test": "tsx tests/graph.test.ts",
-    "generate-sitemap": "tsx scripts/generate-sitemap.ts"
+    "generate-sitemap": "tsx scripts/generate-sitemap.ts",
+    "bump": "npm version --no-git-tag-version"
   },
   "dependencies": {
     "clsx": "^2.1.1",

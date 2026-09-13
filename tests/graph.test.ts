@@ -3589,12 +3589,26 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const fs = await import('fs');
   const path = await import('path');
 
-  // Part A — Version 0.8.4 invariant
+  // Part A — Version SSOT & Synchronization Invariant
   const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
-  assert.strictEqual(pkg.version, '0.8.4', 'package.json must be bumped to 0.8.4');
+  assert.ok(
+    /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/.test(pkg.version),
+    `package.json version '${pkg.version}' must follow valid semver format`
+  );
 
   const pkgLock = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package-lock.json'), 'utf-8'));
-  assert.strictEqual(pkgLock.version, '0.8.4', 'package-lock.json must be bumped to 0.8.4');
+  assert.strictEqual(
+    pkgLock.version,
+    pkg.version,
+    'package-lock.json version must stay synchronized with package.json (SSOT)'
+  );
+
+  const { APP_VERSION } = await import('../src/version.js');
+  assert.strictEqual(
+    APP_VERSION,
+    pkg.version,
+    'src/version.ts APP_VERSION must automatically match package.json version'
+  );
 
   // Part B — Dead code files must not exist in src/
   const deadFiles = [
@@ -3652,7 +3666,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(directPath, 'getStackPath must resolve path by ID');
   assert.strictEqual(directPath.id, 'aaos-ivi-cockpit-path');
 
-  console.log('✅ Test 77 Passed: Phase 8.x Architecture Cleanup, Inverted Indexes & Dead Code Pruning verified (v0.8.3).');
+  console.log('✅ Test 77 Passed: Phase 8.x Architecture Cleanup, Inverted Indexes & Version SSOT Synchronization verified.');
 }
 
 // ---------------------------------------------------------------------------
