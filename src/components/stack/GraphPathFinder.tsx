@@ -14,8 +14,7 @@ import {
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { stackTechnologies } from '../../data/stackTechnologies';
-import { stackLayers } from '../../data/stackLayers';
-import { findShortestPath, GraphPathStep } from '../../lib/graph';
+import { findShortestPath, GraphPathStep, getStackLayer } from '../../lib/graph';
 import { RelationshipType, RELATIONSHIP_METADATA } from '../../types/relationship';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -94,7 +93,7 @@ export const GraphPathFinder: React.FC<GraphPathFinderProps> = ({
   };
 
   const getLayerName = (layerId: string) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 

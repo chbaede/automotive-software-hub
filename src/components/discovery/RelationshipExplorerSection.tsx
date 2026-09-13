@@ -10,7 +10,7 @@ import { StackTechnology } from '../../types/stack';
 import { TechnologyDiscoveryResult, TechnologyInsightItem } from '../../lib/graph/intelligence';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { stackLayers } from '../../data/stackLayers';
+import { getStackLayer } from '../../lib/graph';
 import { RelationshipBadge } from '../stack/RelationshipBadge';
 
 interface RelationshipExplorerSectionProps {
@@ -42,7 +42,7 @@ export const RelationshipExplorerSection: React.FC<RelationshipExplorerSectionPr
   };
 
   const getLayerName = (layerId: string) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 

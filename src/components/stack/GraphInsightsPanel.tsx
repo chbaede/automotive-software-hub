@@ -12,8 +12,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { getGraphInsights } from '../../lib/graph';
-import { stackLayers } from '../../data/stackLayers';
+import { getGraphInsights, getStackLayer } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 
@@ -30,12 +29,12 @@ export const GraphInsightsPanel: React.FC<GraphInsightsPanelProps> = ({
   const insights = useMemo(() => getGraphInsights(), []);
 
   const getLayerName = (layerId: string) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 
   const getLayerInfo = (layerId: string) => {
-    return stackLayers.find((l) => l.id === layerId);
+    return getStackLayer(layerId);
   };
 
   // Sort layer distribution according to canonical stack layer order

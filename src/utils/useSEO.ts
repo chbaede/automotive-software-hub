@@ -9,6 +9,16 @@ export const useSEO = () => {
 
   useEffect(() => {
     const currentPath = location.pathname || '/';
+
+    // Do not overwrite SEO for dynamic detail pages managed independently
+    if (
+      currentPath.startsWith('/stack/') ||
+      currentPath.startsWith('/architectures/') ||
+      currentPath.startsWith('/architecture/')
+    ) {
+      return;
+    }
+
     const seoData = ROUTE_SEO_MAP[currentPath] || ROUTE_SEO_MAP['/'];
 
     const langKey = language === 'ko' ? 'ko' : 'en';

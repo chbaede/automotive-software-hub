@@ -8,10 +8,9 @@
 
 import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { StackLayer, StackTechnology, StackLayerId } from '../../types/stack';
-import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackLayers } from '../../data/stackLayers';
 import { stackPaths } from '../../data/stackPaths';
-import { technologyById } from '../graph';
+import { technologyById, getArchitectureProfile } from '../graph';
 import { StackSelection } from '../graph/matching';
 
 export interface ArchitectureComparisonResult {
@@ -48,8 +47,8 @@ export function compareArchitectures(
   archAId: string,
   archBId: string
 ): ArchitectureComparisonResult {
-  const profileA = architectureProfiles.find((p) => p.id === archAId);
-  const profileB = architectureProfiles.find((p) => p.id === archBId);
+  const profileA = getArchitectureProfile(archAId);
+  const profileB = getArchitectureProfile(archBId);
 
   if (!profileA) {
     throw new Error(`Architecture profile "${archAId}" not found`);

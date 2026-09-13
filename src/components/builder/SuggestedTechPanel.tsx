@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Plus, ArrowRight } from 'lucide-react';
 import { TechnologyCandidate } from '../../lib/builder/stackBuilderEngine';
-import { stackLayers } from '../../data/stackLayers';
+import { getStackLayer } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { RELATIONSHIP_METADATA } from '../../types/relationship';
@@ -38,7 +38,7 @@ export const SuggestedTechPanel: React.FC<SuggestedTechPanelProps> = ({
 
       <div className="space-y-2.5">
         {candidates.map(({ technology, layerId, connectedToTech, relationship, reason }) => {
-          const layer = stackLayers.find((l) => l.id === layerId);
+          const layer = getStackLayer(layerId);
           const layerName = layer ? getLocalizedText(layer.name, language) : layerId;
           const relMeta = relationship ? RELATIONSHIP_METADATA[relationship.type] : undefined;
           const relLabel = relMeta ? getLocalizedText(relMeta.label, language) : relationship?.type;

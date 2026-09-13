@@ -124,6 +124,13 @@ export function getTechnology(id: string): StackTechnology | undefined {
 }
 
 /**
+ * Returns the architecture profile matching the ID, or undefined.
+ */
+export function getArchitectureProfile(id: string): ArchitectureProfile | undefined {
+  return profileById.get(id);
+}
+
+/**
  * Returns outgoing relationships from a technology node.
  */
 export function getOutgoingRelationships(id: string): TechnologyRelationship[] {

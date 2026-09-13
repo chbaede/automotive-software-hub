@@ -11,7 +11,7 @@ import { StackTechnology, StackLayer, StackLayerId } from '../../types/stack';
 import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { LocalizedText } from '../../types/i18n';
 import { stackLayers } from '../../data/stackLayers';
-import { technologyById } from '../graph';
+import { technologyById, getStackLayer } from '../graph';
 import {
   ArchitectureDiscoveryResult,
   ArchitectureMatchResult,
@@ -151,7 +151,7 @@ export function buildArchitectureDiscoveryViewModel(
   // A. Architecture Gaps (Technologies in primary matched architecture that are missing)
   if (primaryArchitecture && primaryArchitecture.missingTechnologies.length > 0) {
     primaryArchitecture.missingTechnologies.forEach((tech) => {
-      const layer = stackLayers.find((l) => l.id === tech.layerId);
+      const layer = getStackLayer(tech.layerId);
       gaps.push({
         id: `arch-gap-${tech.id}`,
         category: 'architecture-gap',
@@ -176,7 +176,7 @@ export function buildArchitectureDiscoveryViewModel(
 
   // B. Layer Gaps (Unpopulated mandatory core runtime layers)
   missingCoreLayers.forEach((layerId) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     if (layer) {
       gaps.push({
         id: `layer-gap-${layerId}`,

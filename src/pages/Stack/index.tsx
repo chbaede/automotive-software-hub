@@ -8,6 +8,7 @@ import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackRelationships } from '../../data/stackRelationships';
 import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile } from '../../types/architecture';
+import { getTechnology, getArchitectureProfile } from '../../lib/graph';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
@@ -40,7 +41,7 @@ export const StackPage: React.FC = () => {
   useEffect(() => {
     const techIdParam = searchParams.get('tech');
     if (techIdParam) {
-      const foundTech = stackTechnologies.find((st) => st.id === techIdParam);
+      const foundTech = getTechnology(techIdParam);
       if (foundTech) {
         setSelectedTech(foundTech);
       }
@@ -50,7 +51,7 @@ export const StackPage: React.FC = () => {
 
     const archParam = searchParams.get('architecture');
     if (archParam) {
-      const foundArch = architectureProfiles.find((ap) => ap.id === archParam);
+      const foundArch = getArchitectureProfile(archParam);
       if (foundArch) {
         setSelectedProfile(foundArch);
       }
@@ -139,7 +140,7 @@ export const StackPage: React.FC = () => {
       // Check related technology names
       const relatedNames = (tech.relatedTechnologyIds || [])
         .map((rid) => {
-          const rTech = stackTechnologies.find((st) => st.id === rid);
+          const rTech = getTechnology(rid);
           return rTech ? rTech.name.toLowerCase() : '';
         })
         .join(' ');

@@ -20,16 +20,21 @@ import {
   STACK_PATH_TYPE_METADATA,
 } from '../../types/architecture';
 import { StackTechnology } from '../../types/stack';
-import { stackTechnologies } from '../../data/stackTechnologies';
+import { Company } from '../../types/company';
+import { OpenSourceProject } from '../../types/project';
+import { Tool } from '../../types/tool';
+import { Resource } from '../../types/resource';
 import { stackPaths } from '../../data/stackPaths';
-import { companies } from '../../data/companies';
-import { projects } from '../../data/projects';
-import { tools } from '../../data/tools';
-import { resources } from '../../data/resources';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { technologyById } from '../../utils/graphIndexes';
-import { getStackLayer } from '../../lib/graph';
+import {
+  technologyById,
+  getStackLayer,
+  getCompany,
+  getProject,
+  getTool,
+  getResource,
+} from '../../lib/graph';
 import { formatVerifiedDate } from '../../utils/formatters';
 
 interface ArchitectureProfilePanelProps {
@@ -53,7 +58,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
 
   // Dynamically resolve technologies & ecosystem
   const coreTechs = profile.technologyIds
-    .map((id) => stackTechnologies.find((st) => st.id === id))
+    .map((id) => technologyById.get(id))
     .filter((st): st is StackTechnology => Boolean(st));
 
   // Group technologies by layer
@@ -69,23 +74,23 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
 
   const linkedCompanyIds = Array.from(new Set(coreTechs.flatMap((t) => t.companyIds || [])));
   const linkedCompanies = linkedCompanyIds
-    .map((cid) => companies.find((c) => c.id === cid))
-    .filter(Boolean);
+    .map((cid) => getCompany(cid))
+    .filter((c): c is Company => Boolean(c));
 
   const linkedProjectIds = Array.from(new Set(coreTechs.flatMap((t) => t.openSourceProjectIds || [])));
   const linkedProjects = linkedProjectIds
-    .map((pid) => projects.find((p) => p.id === pid))
-    .filter(Boolean);
+    .map((pid) => getProject(pid))
+    .filter((p): p is OpenSourceProject => Boolean(p));
 
   const linkedToolIds = Array.from(new Set(coreTechs.flatMap((t) => t.toolIds || [])));
   const linkedTools = linkedToolIds
-    .map((tid) => tools.find((t) => t.id === tid))
-    .filter(Boolean);
+    .map((tid) => getTool(tid))
+    .filter((t): t is Tool => Boolean(t));
 
   const linkedResourceIds = Array.from(new Set(coreTechs.flatMap((t) => t.resourceIds || [])));
   const linkedResources = linkedResourceIds
-    .map((rid) => resources.find((r) => r.id === rid))
-    .filter(Boolean);
+    .map((rid) => getResource(rid))
+    .filter((r): r is Resource => Boolean(r));
 
   return (
     <div className="bg-gradient-to-r from-brand-500/10 via-brand-500/5 to-slate-100 dark:to-slate-900 rounded-2xl border border-brand-500/30 p-5 shadow-sm space-y-4 animate-fade-in">

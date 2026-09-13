@@ -20,7 +20,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
-import { getCountryFlag } from '../../utils/formatters';
+import { getCountryFlag, formatVerifiedDate } from '../../utils/formatters';
 
 export const CompanyStrategyPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -245,7 +245,13 @@ export const CompanyStrategyPage: React.FC = () => {
                     {getLocalizedText(item.matrixSummary.evPlatform, language)}
                   </td>
                   <td className="py-3 px-4 font-mono font-bold text-brand-600 dark:text-brand-400 text-[11px]">
-                    {item.strategicTargets[0]?.year}–{item.strategicTargets[item.strategicTargets.length - 1]?.year}
+                    {(() => {
+                      const firstYear = item.strategicTargets[0]?.year;
+                      const lastYear = item.strategicTargets[item.strategicTargets.length - 1]?.year;
+                      if (!firstYear && !lastYear) return '—';
+                      if (!lastYear || firstYear === lastYear) return firstYear;
+                      return `${firstYear}–${lastYear}`;
+                    })()}
                   </td>
                   <td className="py-3 px-4 text-right">
                     <a
@@ -355,6 +361,14 @@ export const CompanyStrategyPage: React.FC = () => {
                       <span>{getCountryFlag(strategy.headquarters)}</span>
                       <span>{strategy.headquarters}</span>
                     </span>
+                    {strategy.lastVerified && (
+                      <span className="text-[11px] font-mono px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded">
+                        {t.strategyInsights.verifiedDateLabel.replace(
+                          '{date}',
+                          formatVerifiedDate(strategy.lastVerified, language)
+                        )}
+                      </span>
+                    )}
                   </div>
                   <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
                     {strategy.companyName}

@@ -16,6 +16,7 @@ import {
 } from '../../lib/architecture/comparison';
 import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../../types/architecture';
+import { getArchitectureProfile } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 
@@ -79,7 +80,7 @@ export const ArchitectureComparisonModal: React.FC<ArchitectureComparisonModalPr
   if (!isOpen) return null;
 
   const handleBuildStack = (profileId: string) => {
-    const profile = architectureProfiles.find((p) => p.id === profileId);
+    const profile = getArchitectureProfile(profileId);
     if (!profile) return;
     const selection = convertArchitectureToStackSelection(profile);
     const searchParams = encodeStackToSearchParams(selection);

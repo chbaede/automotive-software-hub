@@ -5,11 +5,11 @@ import { TechnologyRelationship, RELATIONSHIP_METADATA } from '../../types/relat
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { stackLayers } from '../../data/stackLayers';
 import {
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
   technologyById,
+  getStackLayer,
 } from '../../utils/graphIndexes';
 import {
   Network,
@@ -36,7 +36,7 @@ export const InteractiveGraphView: React.FC<InteractiveGraphViewProps> = ({
   const incomingRels = incomingRelationshipsByTechnologyId.get(technology.id) || [];
 
   const getLayerName = (layerId: string) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 

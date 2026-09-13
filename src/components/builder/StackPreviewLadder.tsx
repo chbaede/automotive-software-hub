@@ -15,8 +15,7 @@ import {
   getSelectedTechIds,
   findRelationshipBetween,
 } from '../../lib/builder/stackBuilderEngine';
-import { stackLayers } from '../../data/stackLayers';
-import { technologyById } from '../../lib/graph';
+import { technologyById, getStackLayer } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { RELATIONSHIP_METADATA } from '../../types/relationship';
@@ -58,7 +57,7 @@ export const StackPreviewLadder: React.FC<StackPreviewLadderProps> = ({
 
       <div className="space-y-2 relative">
         {coreLayersReversed.map((layerId, idx) => {
-          const layer = stackLayers.find((l) => l.id === layerId);
+          const layer = getStackLayer(layerId);
           if (!layer) return null;
 
           const isHypervisor = layerId === 'hypervisor-virtualization';

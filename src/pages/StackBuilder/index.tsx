@@ -19,8 +19,7 @@ import {
 } from '../../lib/builder/stackBuilderEngine';
 import { discoverArchitecture } from '../../lib/architecture/discovery';
 import { buildArchitectureDiscoveryViewModel } from '../../lib/architecture/discoveryViewModel';
-import { stackLayers } from '../../data/stackLayers';
-import { technologyById } from '../../lib/graph';
+import { technologyById, getStackLayer } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LayerTechSelector } from '../../components/builder/LayerTechSelector';
 import { StackPreviewLadder } from '../../components/builder/StackPreviewLadder';
@@ -48,10 +47,6 @@ export const StackBuilderPage: React.FC = () => {
   const selection: StackSelection = useMemo(() => {
     return decodeStackFromSearchParams(searchParams);
   }, [searchParams]);
-
-  useEffect(() => {
-    document.title = `${t.stackBuilder.title} | Automotive Software Hub`;
-  }, [t.stackBuilder.title]);
 
   // Toggle technology in a layer (supports multi-selection)
   const handleToggleTechnology = useCallback(
@@ -234,7 +229,7 @@ export const StackBuilderPage: React.FC = () => {
 
             <div className="space-y-3">
               {CORE_STACK_LAYER_IDS.map((layerId) => {
-                const layer = stackLayers.find((l) => l.id === layerId);
+                const layer = getStackLayer(layerId);
                 if (!layer) return null;
 
                 return (
@@ -274,7 +269,7 @@ export const StackBuilderPage: React.FC = () => {
             {showSupporting && (
               <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
                 {SUPPORTING_STACK_LAYER_IDS.map((layerId) => {
-                  const layer = stackLayers.find((l) => l.id === layerId);
+                  const layer = getStackLayer(layerId);
                   if (!layer) return null;
 
                   return (

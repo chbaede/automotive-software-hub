@@ -1,6 +1,7 @@
 import React from 'react';
 import { StackLayer, StackLayerId } from '../../types/stack';
 import { stackLayers } from '../../data/stackLayers';
+import { getStackLayer } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { Layers, ArrowDown, Sparkles, CheckCircle2 } from 'lucide-react';
@@ -25,7 +26,7 @@ export const StackLadderVisualizer: React.FC<StackLadderVisualizerProps> = ({
     .filter((l) => l.layerType === 'cross-cutting')
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-  const currentLayer = stackLayers.find((l) => l.id === currentLayerId);
+  const currentLayer = getStackLayer(currentLayerId);
   const isCrossCutting = currentLayer?.layerType === 'cross-cutting';
 
   return (

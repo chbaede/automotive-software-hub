@@ -24,7 +24,7 @@ import {
 import { StackLayerId } from '../../types/stack';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { technologyById } from '../../utils/graphIndexes';
+import { technologyById, getStackLayer } from '../../utils/graphIndexes';
 import { convertArchitectureToStackSelection } from '../../lib/architecture/comparison';
 import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
 import { ArchitectureComparisonModal } from '../../components/stack/ArchitectureComparisonModal';
@@ -40,17 +40,14 @@ const PROFILE_TYPES: ArchitectureProfileType[] = [
 export const ArchitecturesPage: React.FC = () => {
   const { language, t } = useLanguage();
   const navigate = useNavigate();
+
   const [selectedType, setSelectedType] = useState<ArchitectureProfileType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [compareArchAId, setCompareArchAId] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    document.title = `${t.architectures.title} | Automotive Software Hub`;
-  }, [t.architectures.title]);
-
   const getLayerName = (layerId: string) => {
-    const layer = stackLayers.find((l) => l.id === layerId);
+    const layer = getStackLayer(layerId);
     return layer ? getLocalizedText(layer.name, language) : layerId;
   };
 
