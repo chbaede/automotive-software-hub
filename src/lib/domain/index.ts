@@ -68,16 +68,11 @@ stackTechnologies.forEach((tech) => {
   if (tech.openSourceProjectIds) {
     tech.openSourceProjectIds.forEach((pId) => {
       const list = technologiesByProjectId.get(pId) || [];
-      list.push(tech);
+      if (!list.some((t) => t.id === tech.id)) {
+        list.push(tech);
+      }
       technologiesByProjectId.set(pId, list);
     });
-  }
-  if (projectById.has(tech.id)) {
-    const list = technologiesByProjectId.get(tech.id) || [];
-    if (!list.some((t) => t.id === tech.id)) {
-      list.push(tech);
-      technologiesByProjectId.set(tech.id, list);
-    }
   }
 });
 
@@ -186,35 +181,23 @@ export function getResourcesForTechnology(tech?: StackTechnology | null): Resour
 
 /**
  * Resolves all open source projects linked to a technology.
+ * Uses canonical explicit relationships (openSourceProjectIds).
  */
 export function getProjectsForTechnology(tech?: StackTechnology | null): OpenSourceProject[] {
-  if (!tech) return [];
-  const projectIds = new Set<string>(tech.openSourceProjectIds || []);
-  if (projectById.has(tech.id)) {
-    projectIds.add(tech.id);
-  }
-  return Array.from(projectIds)
+  if (!tech?.openSourceProjectIds || tech.openSourceProjectIds.length === 0) return [];
+  return tech.openSourceProjectIds
     .map((id) => projectById.get(id))
     .filter((p): p is OpenSourceProject => Boolean(p));
 }
 
 /**
  * Resolves all stack technologies linked to an open source project.
- * Uses precomputed inverted index (technologiesByProjectId),
- * falling back to topic alignment if direct links are absent.
+ * Uses canonical explicit relationships (openSourceProjectIds via technologiesByProjectId).
+ * Never infers relationships from topics, tags, or heuristics.
  */
 export function getTechnologiesForProject(project?: OpenSourceProject | null): StackTechnology[] {
   if (!project) return [];
-
-  const directMatches = technologiesByProjectId.get(project.id);
-  if (directMatches && directMatches.length > 0) {
-    return directMatches;
-  }
-
-  const topicSet = new Set(project.topics || []);
-  return stackTechnologies
-    .filter((tech) => tech.topics?.some((t) => topicSet.has(t)))
-    .slice(0, 4);
+  return technologiesByProjectId.get(project.id) || [];
 }
 
 /**

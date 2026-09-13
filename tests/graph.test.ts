@@ -3555,8 +3555,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const yoctoProject = getProject('yocto-project');
   assert.ok(yoctoProject, 'yocto-project must exist');
   const yoctoTechs = getTechnologiesForProject(yoctoProject);
-  assert.ok(yoctoTechs.length > 0, 'yocto-project must have related technologies');
-  assert.ok(yoctoTechs.some((t) => t.id.includes('yocto') || t.topics.includes('yocto')), 'yocto-project must resolve yocto technologies');
+  assert.ok(yoctoTechs.some((t) => t.id === 'yocto-project'), 'yocto-project must resolve yocto technologies');
+  assert.ok(yoctoTechs.every((t) => t.openSourceProjectIds?.includes('yocto-project')), 'All resolved technologies must explicitly declare yocto-project');
 
   const autosarProject = getProject('autosar-open-standards');
   assert.ok(autosarProject, 'autosar-open-standards must exist');
@@ -3653,6 +3653,145 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(directPath.id, 'aaos-ivi-cockpit-path');
 
   console.log('✅ Test 77 Passed: Phase 8.x Architecture Cleanup, Inverted Indexes & Dead Code Pruning verified (v0.8.3).');
+}
+
+// ---------------------------------------------------------------------------
+// TEST 78: Strict Knowledge Graph Data Integrity — Zero Topic-Inferred Relationships & Explicit OSS Linking
+// ---------------------------------------------------------------------------
+{
+  const {
+    getTechnology,
+    getProject,
+    getProjectsForTechnology,
+    getTechnologiesForProject,
+  } = await import('../src/lib/domain/index.js');
+  const { projects } = await import('../src/data/projects.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  // 1. Regression Test: Project with matching topics/tags but NO explicit relationship MUST return []
+  const regressionProject = {
+    id: 'unlinked-community-tool',
+    name: 'Unlinked Community Tool',
+    description: { en: 'Android automotive test tool', ko: '안드로이드 오토모티브 시험 도구' },
+    category: 'android-automotive' as const,
+    topics: ['android-automotive', 'sdv', 'embedded-linux'] as any,
+    tags: ['aaos', 'android-automotive', 'vhal'],
+    website: 'https://example.com/unlinked-tool',
+    organization: 'Independent Dev',
+  };
+  const regressionResult = getTechnologiesForProject(regressionProject);
+  assert.deepStrictEqual(
+    regressionResult,
+    [],
+    'Project with matching topics but NO explicit canonical relationship must return [] (Original Bug Regression)'
+  );
+
+  // 2. Topics/tags alone NEVER create a Knowledge Graph relationship
+  const topicOnlyProject = {
+    id: 'topic-only-project',
+    name: 'Topic Only Project',
+    description: { en: 'Test', ko: '테스트' },
+    category: 'autosar' as const,
+    topics: ['autosar', 'someip', 'functional-safety', 'can'] as any,
+    tags: ['autosar', 'bsw', 'mcal'],
+    website: 'https://example.com/topic-only',
+    organization: 'Test Org',
+  };
+  assert.deepStrictEqual(
+    getTechnologiesForProject(topicOnlyProject),
+    [],
+    'Topics alone must NEVER create a Knowledge Graph relationship'
+  );
+
+  // 3. ID Collision (technology.id === project.id) without explicit openSourceProjectIds does NOT link
+  const perseusTech = getTechnology('perseus-hypervisor');
+  assert.ok(perseusTech, 'perseus-hypervisor must exist');
+  assert.strictEqual(perseusTech.openSourceProjectIds, undefined, 'perseus-hypervisor must not have openSourceProjectIds');
+
+  const collisionProject = {
+    id: 'perseus-hypervisor',
+    name: 'Coincidental Collision Project',
+    description: { en: 'Collision test', ko: '충돌 테스트' },
+    category: 'hypervisor' as const,
+    topics: ['functional-safety', 'sdv'] as any,
+    website: 'https://example.com/collision',
+    organization: 'Collision Org',
+  };
+  const collisionResult = getTechnologiesForProject(collisionProject);
+  assert.deepStrictEqual(
+    collisionResult,
+    [],
+    'ID collision without explicit openSourceProjectIds must NOT create an implicit relationship'
+  );
+
+  const collisionTechProjects = getProjectsForTechnology(perseusTech);
+  assert.deepStrictEqual(
+    collisionTechProjects,
+    [],
+    'Technology without openSourceProjectIds must NOT link to project by ID coincidence'
+  );
+
+  // 4. Project with explicit openSourceProjectIds returns the expected technologies
+  const aaosProject = getProject('android-automotive-os');
+  assert.ok(aaosProject, 'android-automotive-os project must exist');
+  const aaosTechs = getTechnologiesForProject(aaosProject);
+  assert.ok(aaosTechs.length > 0, 'Explicitly linked project must resolve technologies');
+  assert.ok(aaosTechs.some((t) => t.id === 'android-automotive-os'), 'aaos project must resolve aaos technology');
+  for (const tech of aaosTechs) {
+    assert.ok(
+      tech.openSourceProjectIds?.includes('android-automotive-os'),
+      `Every resolved tech (${tech.id}) must explicitly declare android-automotive-os in openSourceProjectIds`
+    );
+  }
+
+  // 5. Existing legitimate Technology <-> Open Source relationships continue to work with strict bidirectionality
+  for (const proj of projects) {
+    const linkedTechs = getTechnologiesForProject(proj);
+    assert.ok(Array.isArray(linkedTechs), `Linked techs for ${proj.id} must be an array`);
+    for (const tech of linkedTechs) {
+      assert.ok(
+        tech.openSourceProjectIds?.includes(proj.id),
+        `Technology ${tech.id} must explicitly declare ${proj.id} in openSourceProjectIds`
+      );
+      const backLinkedProjects = getProjectsForTechnology(tech);
+      assert.ok(
+        backLinkedProjects.some((p) => p.id === proj.id),
+        `getProjectsForTechnology(${tech.id}) must contain ${proj.id}`
+      );
+    }
+  }
+
+  // 6. Symmetrical check from technology perspective
+  for (const tech of stackTechnologies) {
+    const linkedProjects = getProjectsForTechnology(tech);
+    assert.ok(Array.isArray(linkedProjects), `Linked projects for ${tech.id} must be an array`);
+    if (tech.openSourceProjectIds) {
+      assert.strictEqual(
+        linkedProjects.length,
+        tech.openSourceProjectIds.length,
+        `Technology ${tech.id} must resolve exactly the declared openSourceProjectIds`
+      );
+      for (const proj of linkedProjects) {
+        assert.ok(
+          tech.openSourceProjectIds.includes(proj.id),
+          `Technology ${tech.id} must explicitly declare ${proj.id}`
+        );
+        const backLinkedTechs = getTechnologiesForProject(proj);
+        assert.ok(
+          backLinkedTechs.some((t) => t.id === tech.id),
+          `getTechnologiesForProject(${proj.id}) must contain ${tech.id}`
+        );
+      }
+    } else {
+      assert.strictEqual(
+        linkedProjects.length,
+        0,
+        `Technology ${tech.id} without openSourceProjectIds must resolve 0 projects`
+      );
+    }
+  }
+
+  console.log('✅ Test 78 Passed: Strict Knowledge Graph Data Integrity & Zero Topic-Inferred Relationships verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
