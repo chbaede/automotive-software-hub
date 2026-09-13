@@ -1,5 +1,5 @@
 import React from 'react';
-import { Info, ShieldCheck, Heart, FileCode2, Cpu } from 'lucide-react';
+import { Info, ShieldCheck, Heart, FileCode2, Cpu, Linkedin } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { APP_VERSION } from '../../version';
 
@@ -53,14 +53,25 @@ export const AboutPage: React.FC = () => {
               <Heart className="w-5 h-5 text-red-500" />
               <h2>{t.about.contributionHeading}</h2>
             </div>
-            <a
-              href="https://github.com/chbaede/automotive-software-hub"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white rounded-lg transition self-start sm:self-auto"
-            >
-              <span>GitHub Repository →</span>
-            </a>
+            <div className="flex items-center gap-2 flex-wrap">
+              <a
+                href="https://www.linkedin.com/in/locust2001/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0A66C2] hover:bg-[#004182] text-white rounded-lg transition self-start sm:self-auto shadow-xs"
+              >
+                <Linkedin className="w-3.5 h-3.5" />
+                <span>LinkedIn (Changhyeok Bae) →</span>
+              </a>
+              <a
+                href="https://github.com/chbaede/automotive-software-hub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-500 text-white rounded-lg transition self-start sm:self-auto"
+              >
+                <span>GitHub Repository →</span>
+              </a>
+            </div>
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             {t.about.contributionBody}

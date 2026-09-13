@@ -18,6 +18,7 @@ export const ko: Translations = {
     searchPlaceholder: '도구, 개발 문서, 표준, 기업 검색...',
     searchShortcut: 'Cmd + K',
     language: '언어',
+    authorLinkedin: '제작자 링크드인',
   },
   stack: {
     title: '오토모티브 소프트웨어 스택 탐색기',
@@ -211,6 +212,8 @@ export const ko: Translations = {
     githubRepo: 'GitHub 저장소',
     contribute: '데이터 기여하기',
     dataValidation: '정적 데이터 스키마',
+    authorLinkedin: '제작자 링크드인 (배창혁)',
+    authorCredit: '배창혁 제작',
     disclaimer: '독립적인 커뮤니티 리소스입니다. 명시된 OEM, 재단 또는 벤더와 제휴되어 있지 않습니다.',
   },
   notFound: {

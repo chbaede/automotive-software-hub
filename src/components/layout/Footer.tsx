@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Cpu, Github, FileText, Heart } from 'lucide-react';
+import { Cpu, Github, FileText, Heart, Linkedin } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { APP_VERSION } from '../../version';
 
@@ -87,6 +87,17 @@ export const Footer: React.FC = () => {
             <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
               <li>
                 <a
+                  href="https://www.linkedin.com/in/locust2001/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-[#0A66C2] transition"
+                >
+                  <Linkedin className="w-3.5 h-3.5 text-[#0A66C2]" />
+                  <span>{t.footer.authorLinkedin}</span>
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://github.com/chbaede/automotive-software-hub"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -124,7 +135,17 @@ export const Footer: React.FC = () => {
 
         <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2.5 flex-wrap justify-center sm:justify-start">
-            <span>© {new Date().getFullYear()} Automotive Software Hub. Open Community Resource.</span>
+            <span>
+              © {new Date().getFullYear()} Automotive Software Hub. {t.footer.authorCredit}{' '}
+              <a
+                href="https://www.linkedin.com/in/locust2001/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-700 dark:text-slate-200 hover:text-[#0A66C2] dark:hover:text-[#0A66C2] underline decoration-slate-300 dark:decoration-slate-700 underline-offset-2 transition"
+              >
+                Changhyeok Bae
+              </a>.
+            </span>
             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
               v{APP_VERSION}
             </span>

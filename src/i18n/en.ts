@@ -16,6 +16,7 @@ export const en = {
     searchPlaceholder: 'Search tools, resources, standards, companies...',
     searchShortcut: 'Cmd + K',
     language: 'Language',
+    authorLinkedin: "Author's LinkedIn",
   },
   stack: {
     title: 'Automotive Stack Explorer',
@@ -209,6 +210,8 @@ export const en = {
     githubRepo: 'GitHub Repository',
     contribute: 'Contribute Data',
     dataValidation: 'Static Data Schemas',
+    authorLinkedin: "Author's LinkedIn (Changhyeok Bae)",
+    authorCredit: 'Curated and created by',
     disclaimer: 'Independent community resource. Not affiliated with listed OEMs, foundations, or vendors.',
   },
   notFound: {
