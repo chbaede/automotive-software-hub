@@ -24,3 +24,4 @@ export interface CompanyStrategyInsight {
   strategicTargets: StrategicTarget[];
   keyCitations: string[];
 }
+

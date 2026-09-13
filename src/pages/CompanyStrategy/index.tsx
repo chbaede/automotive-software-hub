@@ -500,3 +500,4 @@ export const CompanyStrategyPage: React.FC = () => {
     </div>
   );
 };
+

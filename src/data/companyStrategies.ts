@@ -248,7 +248,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     headquarters: 'Wolfsburg, Germany',
     ticker: 'VOW3',
     exchange: 'XETRA',
-    irUrl: 'https://www.volkswagen-group.com/en/investor-relations-15745',
+    irUrl: 'https://www.volkswagen-group.com/en/investor-relations',
     latestEventOrReport: {
       en: 'Volkswagen Group Capital Markets Day & Rivian Joint Venture Announcement',
       ko: '폭스바겐 그룹 캐피털 마켓 데이 및 리비안(Rivian) 전략적 합작법인 발표',
@@ -567,7 +567,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     headquarters: 'Seoul, South Korea',
     ticker: '066570',
     exchange: 'KRX',
-    irUrl: 'https://www.lge.co.kr/company/ir',
+    irUrl: 'https://www.lg.com/global/investor-relations/',
     latestEventOrReport: {
       en: 'LG Electronics Global Corporate Presentation & VS Business Division Briefing',
       ko: 'LG전자 글로벌 기업 설명회 및 VS(전장) 사업본부 전략 브리핑',
@@ -610,3 +610,4 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     ],
   },
 ];
+
