@@ -172,6 +172,7 @@ export const en = {
     organization: 'Organization',
     repository: 'Repository',
     website: 'Website',
+    documentation: 'Documentation',
     license: 'License',
     languages: 'Languages',
     noResults: 'No matching open-source projects found.',

@@ -141,6 +141,18 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
         }
       }
     }
+
+    if ((item as any).documentation) {
+      const docUrl = (item as any).documentation;
+      try {
+        const parsed = new URL(docUrl);
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+          error(`[${collectionName} ID: ${item.id}] Documentation URL must use HTTPS: '${docUrl}'.`);
+        }
+      } catch {
+        error(`[${collectionName} ID: ${item.id}] Invalid documentation URL string: '${docUrl}'.`);
+      }
+    }
   });
 
   console.log(`✅ ${collectionName}: ${items.length} items validated successfully.`);

@@ -19,6 +19,7 @@ export interface OpenSourceProject {
   category: ProjectCategory;
   topics: TopicId[];
   website: string;
+  documentation?: string;
   repository?: string;
   organization: string;
   languages?: string[];

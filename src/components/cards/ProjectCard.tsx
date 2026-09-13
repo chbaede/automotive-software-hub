@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, Code2, Layers } from 'lucide-react';
+import { ExternalLink, Code2, Layers, BookOpen } from 'lucide-react';
 import { OpenSourceProject } from '../../types/project';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -73,23 +73,36 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         )}
       </div>
 
-      <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+      <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80">
         <a
           href={project.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1 py-2 px-3 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition"
+          className="flex-1 min-w-[85px] flex items-center justify-center gap-1 py-2 px-2.5 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition"
         >
           <span>{t.openSource.website}</span>
-          <ExternalLink className="w-3 h-3" />
+          <ExternalLink className="w-3 h-3 text-slate-400" />
         </a>
+
+        {project.documentation && (
+          <a
+            href={project.documentation}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition border border-transparent hover:border-brand-500/30"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-brand-500" />
+            <span>{t.openSource.documentation}</span>
+            <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+          </a>
+        )}
 
         {project.repository && (
           <a
             href={project.repository}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1 py-2 px-3 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition"
+            className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition"
           >
             <Code2 className="w-3.5 h-3.5" />
             <span>{t.openSource.repository}</span>

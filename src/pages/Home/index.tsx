@@ -150,27 +150,19 @@ export const HomePage: React.FC = () => {
         </Link>
       </section>
 
-      {/* Primary Category Grid (5 Core Sections) */}
+      {/* Primary Category Grid (4 Core Sections) */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
           {t.hero.primarySections}
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <CategoryCard
             icon={Wrench}
             title={t.categories.toolsTitle}
             description={t.categories.toolsDesc}
             count={tools.length}
             linkTo="/tools"
-          />
-
-          <CategoryCard
-            icon={BookOpen}
-            title={t.categories.resourcesTitle}
-            description={t.categories.resourcesDesc}
-            count={resources.length}
-            linkTo="/resources"
           />
 
           <CategoryCard
@@ -216,7 +208,7 @@ export const HomePage: React.FC = () => {
             return (
               <button
                 key={topicId}
-                onClick={() => navigate(`/resources?topic=${topicId}`)}
+                onClick={() => navigate(`/open-source?topic=${topicId}`)}
                 className="px-3 py-1.5 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-700 dark:text-slate-300 rounded-lg transition border border-slate-200 dark:border-slate-800"
               >
                 {label}

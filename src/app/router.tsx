@@ -1,10 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { HomePage } from '../pages/Home';
 import { StackPage } from '../pages/Stack';
 import { ToolsPage } from '../pages/Tools';
-import { ResourcesPage } from '../pages/Resources';
 import { OpenSourcePage } from '../pages/OpenSource';
 import { EventsPage } from '../pages/Events';
 import { CompaniesPage } from '../pages/Companies';
@@ -29,7 +28,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/architecture/:architectureId" element={<ArchitectureDetailPage />} />
           <Route path="/stack-builder" element={<StackBuilderPage />} />
           <Route path="/tools" element={<ToolsPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
+          <Route path="/resources" element={<Navigate to="/open-source" replace />} />
           <Route path="/open-source" element={<OpenSourcePage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/companies" element={<CompaniesPage />} />

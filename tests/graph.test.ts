@@ -3476,7 +3476,32 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 74 Passed: Bilingual Company IR Resolution & Korean IR Portal Localization verified.');
 }
 
+// Test 75: Open Source Documentation Link Integration & Navigation Parity
+{
+  const { projects } = await import('../src/data/projects.js');
+  const { projectById, getProject } = await import('../src/lib/domain/index.js');
+
+  assert.ok(projects.length >= 14, 'Must have at least 14 open source projects');
+  assert.strictEqual(projectById.size, projects.length, 'projectById size must match projects count');
+
+  for (const proj of projects) {
+    const fromDomain = getProject(proj.id);
+    assert.ok(fromDomain, `Project '${proj.id}' must be retrievable via getProject`);
+    assert.ok(proj.documentation, `Project '${proj.id}' must have a documentation URL`);
+    assert.match(proj.documentation!, /^https?:\/\//, `Project '${proj.id}' documentation URL must start with http/https`);
+  }
+
+  // Verify i18n key parity for documentation in openSource section
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  assert.strictEqual(en.openSource.documentation, 'Documentation');
+  assert.strictEqual(ko.openSource.documentation, '공식 문서');
+
+  console.log('✅ Test 75 Passed: Open Source Documentation Link Integration & Navigation Parity verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
 
 

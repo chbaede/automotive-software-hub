@@ -46,7 +46,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
 
   const ecosystemNavItems = [
     { to: '/tools', label: t.nav.tools },
-    { to: '/resources', label: t.nav.resources },
     { to: '/open-source', label: t.nav.openSource },
     { to: '/events', label: t.nav.events },
     { to: '/companies', label: t.nav.companies },

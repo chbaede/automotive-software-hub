@@ -174,6 +174,7 @@ export const ko: Translations = {
     organization: '주관 조직',
     repository: '저장소 (Repository)',
     website: '공식 웹사이트',
+    documentation: '공식 문서',
     license: '라이선스',
     languages: '주요 언어',
     noResults: '조건에 일치하는 오픈소스 프로젝트가 없습니다.',
