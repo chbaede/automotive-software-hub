@@ -3805,18 +3805,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getCompanyStrategy,
     getCompaniesByContinent,
     companiesByContinent,
+    COMPANY_CONTINENT_ORDER,
   } = await import('../src/lib/domain/index.js');
   const { en } = await import('../src/i18n/en.js');
   const { ko } = await import('../src/i18n/ko.js');
 
-  const validContinents = new Set([
-    'north-america',
-    'south-america',
-    'europe',
-    'asia',
-    'africa',
-    'oceania',
-  ]);
+  const validContinents = new Set(COMPANY_CONTINENT_ORDER);
 
   // 1. Every company must have a valid continent from the defined enum
   assert.strictEqual(companies.length, 69, 'Total company count must be exactly 69 (54 existing + 15 new OEMs)');
@@ -3934,8 +3928,53 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(en.strategyInsights.filterContinentAll, 'Missing EN translation for strategyInsights.filterContinentAll');
   assert.ok(ko.strategyInsights.filterContinentAll, 'Missing KO translation for strategyInsights.filterContinentAll');
 
-  // 5. Total Strategy Count & Integrity
+  // 5. Total Strategy Count & Reverse Referential Integrity
   assert.strictEqual(companyStrategies.length, 26, 'Total company strategies must be exactly 26 (11 existing + 15 new)');
+
+  // Requirement A & B: Every strategy companyId exists in companyById, and no duplicate strategy companyIds
+  const seenStrategyIds = new Set<string>();
+  for (const strat of companyStrategies) {
+    assert.ok(
+      !seenStrategyIds.has(strat.companyId),
+      `Duplicate companyId found in companyStrategies: ${strat.companyId}`
+    );
+    seenStrategyIds.add(strat.companyId);
+
+    // Requirement E: getCompany(strategy.companyId) resolves to a valid company with a valid continent
+    const matchedCompany = getCompany(strat.companyId);
+    assert.ok(matchedCompany, `getCompany('${strat.companyId}') must resolve to a valid company`);
+    assert.ok(
+      validContinents.has(matchedCompany.continent),
+      `Company ${matchedCompany.id} continent '${matchedCompany.continent}' must be in COMPANY_CONTINENT_ORDER`
+    );
+    // Requirement C (part 1): company has hasStrategyInsight === true
+    assert.strictEqual(
+      matchedCompany.hasStrategyInsight,
+      true,
+      `Company ${matchedCompany.id} must have hasStrategyInsight: true`
+    );
+  }
+
+  // Requirement C (part 2): Every company with hasStrategyInsight === true has a strategy
+  for (const comp of companies) {
+    if (comp.hasStrategyInsight) {
+      assert.ok(
+        seenStrategyIds.has(comp.id),
+        `Company ${comp.id} has hasStrategyInsight: true but is missing in companyStrategies`
+      );
+      assert.ok(
+        getCompanyStrategy(comp.id),
+        `getCompanyStrategy('${comp.id}') must return a valid insight`
+      );
+    }
+  }
+
+  // Requirement D: Verify COMPANY_CONTINENT_ORDER integrity
+  assert.deepStrictEqual(
+    COMPANY_CONTINENT_ORDER,
+    ['north-america', 'europe', 'asia', 'south-america', 'africa', 'oceania'],
+    'COMPANY_CONTINENT_ORDER must match canonical 6-continent ordering'
+  );
 
   console.log('✅ Test 79 Passed: Global OEM Expansion, Continent Classification & Strategy Intelligence Integrity verified.');
 }

@@ -22,7 +22,7 @@ import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
 import { getCountryFlag, formatVerifiedDate } from '../../utils/formatters';
-import { getCompany } from '../../lib/domain';
+import { getCompany, COMPANY_CONTINENT_ORDER } from '../../lib/domain';
 
 export const CompanyStrategyPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -311,10 +311,11 @@ export const CompanyStrategyPage: React.FC = () => {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {[
-            { id: 'all', label: t.continents.all },
-            { id: 'north-america', label: t.continents.northAmerica },
-            { id: 'europe', label: t.continents.europe },
-            { id: 'asia', label: t.continents.asia },
+            { id: 'all' as const, label: t.continents.all },
+            ...COMPANY_CONTINENT_ORDER.map((cont) => ({
+              id: cont,
+              label: getContinentLabel(cont),
+            })),
           ].map((tab) => {
             const isActive = selectedContinent === tab.id;
             return (

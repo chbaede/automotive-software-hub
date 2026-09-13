@@ -7,16 +7,8 @@ import { CompanyCard } from '../../components/cards/CompanyCard';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { TopicId } from '../../types/taxonomy';
 import { CompanyContinent } from '../../types/company';
+import { COMPANY_CONTINENT_ORDER } from '../../lib/domain';
 import { getLocalizedText } from '../../types/i18n';
-
-const CONTINENT_ORDER: CompanyContinent[] = [
-  'north-america',
-  'europe',
-  'asia',
-  'south-america',
-  'africa',
-  'oceania',
-];
 
 export const CompaniesPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -147,13 +139,11 @@ export const CompaniesPage: React.FC = () => {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {[
-            { id: 'all', label: t.continents.all },
-            { id: 'north-america', label: t.continents.northAmerica },
-            { id: 'europe', label: t.continents.europe },
-            { id: 'asia', label: t.continents.asia },
-            { id: 'south-america', label: t.continents.southAmerica },
-            { id: 'africa', label: t.continents.africa },
-            { id: 'oceania', label: t.continents.oceania },
+            { id: 'all' as const, label: t.continents.all },
+            ...COMPANY_CONTINENT_ORDER.map((cont) => ({
+              id: cont,
+              label: getContinentLabel(cont),
+            })),
           ].map((tab) => {
             const isActive = continentFilter === tab.id;
             return (
@@ -263,7 +253,7 @@ export const CompaniesPage: React.FC = () => {
         </div>
       ) : continentFilter === 'all' ? (
         <div className="space-y-10">
-          {CONTINENT_ORDER.map((cont) => {
+          {COMPANY_CONTINENT_ORDER.map((cont) => {
             const companiesInCont = filteredCompanies.filter((c) => c.continent === cont);
             if (companiesInCont.length === 0) return null;
 

@@ -17,6 +17,15 @@ export type CompanyContinent =
   | 'africa'
   | 'oceania';
 
+export const COMPANY_CONTINENT_ORDER: CompanyContinent[] = [
+  'north-america',
+  'europe',
+  'asia',
+  'south-america',
+  'africa',
+  'oceania',
+];
+
 export interface Company {
   id: string;
   name: string;

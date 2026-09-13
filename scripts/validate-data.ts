@@ -23,6 +23,7 @@ import { companyStrategies } from '../src/data/companyStrategies.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
 import { RELATIONSHIP_METADATA } from '../src/types/relationship.js';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA, STACK_PATH_TYPE_METADATA } from '../src/types/architecture.js';
+import { COMPANY_CONTINENT_ORDER } from '../src/types/company.js';
 
 const validTopicIds = new Set(Object.keys(TOPIC_TAXONOMY));
 const validToolIds = new Set(tools.map((t) => t.id));
@@ -30,6 +31,7 @@ const validResourceIds = new Set(resources.map((r) => r.id));
 const validProjectIds = new Set(projects.map((p) => p.id));
 const validEventIds = new Set(events.map((e) => e.id));
 const validCompanyIds = new Set(companies.map((c) => c.id));
+const companyById = new Map(companies.map((c) => [c.id, c]));
 const validLayerIds = new Set(stackLayers.map((l) => l.id));
 const validTechIds = new Set(stackTechnologies.map((st) => st.id));
 
@@ -171,14 +173,7 @@ checkCollection('Events', events);
 checkCollection('Companies', companies);
 
 // Validate Companies: Continent classification & Strategy linkage
-const validContinents = new Set([
-  'north-america',
-  'south-america',
-  'europe',
-  'asia',
-  'africa',
-  'oceania',
-]);
+const validContinents = new Set(COMPANY_CONTINENT_ORDER);
 
 const strategyCompanyIdSet = new Set(companyStrategies.map((cs) => cs.companyId));
 
@@ -425,8 +420,11 @@ companyStrategies.forEach((cs) => {
   }
   seenStrategyCompanyIds.add(cs.companyId);
 
-  if (!validCompanyIds.has(cs.companyId)) {
+  const targetCompany = companyById.get(cs.companyId);
+  if (!targetCompany) {
     error(`[Company Strategy ID: ${cs.companyId}] Unknown companyId in companies collection.`);
+  } else if (!targetCompany.hasStrategyInsight) {
+    error(`[Company Strategy ID: ${cs.companyId}] Company does not have hasStrategyInsight set to true.`);
   }
 
   if (!cs.irUrl) {
