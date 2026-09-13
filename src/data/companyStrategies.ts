@@ -73,22 +73,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Mercedes-Benz Strategy Update: MB.OS Architecture',
-          ko: '메르세데스-벤츠 전략 업데이트: MB.OS 아키텍처 공식 발표',
+          en: 'Mercedes-Benz Group Official Investor Relations Portal',
+          ko: '메르세데스-벤츠 그룹 공식 IR 포털',
         },
         url: 'https://group.mercedes-benz.com/investors/',
-        sourceType: 'capital-markets-day',
-        publishedDate: '2023-02-22',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'Mercedes-Benz Group Annual Financial Results & Investor Presentation',
-          ko: '메르세데스-벤츠 그룹 연례 실적 발표 및 투자자 프레젠테이션',
-        },
-        url: 'https://group.mercedes-benz.com/investors/',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-07-26',
         lastVerified: '2026-09-13',
         confidence: 'official',
@@ -168,23 +157,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Tesla Shareholder Deck & Quarterly Financial Disclosures',
-          ko: '테슬라 주주 서한 및 분기 재무 공시 자료',
+          en: 'Tesla Official Investor Relations Portal',
+          ko: '테슬라 공식 IR 포털',
         },
         url: 'https://ir.tesla.com/',
-        sourceType: 'shareholder-letter',
+        sourceType: 'official-website',
         publishedDate: '2024-10-23',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'Tesla "We, Robot" Autonomous Platform Unveil Keynote',
-          ko: '테슬라 "We, Robot" 자율주행 플랫폼 공개 기조연설',
-        },
-        url: 'https://ir.tesla.com/',
-        sourceType: 'official-event',
-        publishedDate: '2024-10-10',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
@@ -263,23 +241,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Hyundai Motor Company CEO Investor Day Presentation ("Hyundai Way")',
-          ko: '현대자동차 CEO 인베스터 데이 공식 발표 자료 ("현대 웨이")',
+          en: 'Hyundai Motor Company Official Investor Relations Portal',
+          ko: '현대자동차 공식 IR 포털',
         },
         url: 'https://www.hyundai.com/worldwide/en/company/ir',
-        sourceType: 'capital-markets-day',
+        sourceType: 'official-website',
         publishedDate: '2024-08-28',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'Hyundai Motor Group Unlock the Software Age Keynote Deck',
-          ko: '현대자동차그룹 소프트웨어 정의 차량(SDV) 비전 기조연설 자료',
-        },
-        url: 'https://www.hyundai.com/worldwide/en/company/ir',
-        sourceType: 'official-event',
-        publishedDate: '2022-10-12',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
@@ -358,22 +325,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'BMW Group Annual Report & Technology Disclosures',
-          ko: 'BMW 그룹 연례 보고서 및 전략 기술 공시',
+          en: 'BMW Group Official Investor Relations Portal',
+          ko: 'BMW 그룹 공식 IR 포털',
         },
         url: 'https://www.bmwgroup.com/en/investor-relations.html',
-        sourceType: 'annual-report',
-        publishedDate: '2024-03-21',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'BMW Group Neue Klasse E/E Architecture Briefing',
-          ko: 'BMW 그룹 노이에 클라쎄 E/E 아키텍처 공식 브리핑',
-        },
-        url: 'https://www.bmwgroup.com/en/investor-relations.html',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-03-21',
         lastVerified: '2026-09-13',
         confidence: 'official',
@@ -453,22 +409,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Volkswagen Group Capital Markets Day Strategy Presentation',
-          ko: '폭스바겐 그룹 인베스터 데이 전략 발표 자료',
+          en: 'Volkswagen Group Official Investor Relations Portal',
+          ko: '폭스바겐 그룹 공식 IR 포털',
         },
         url: 'https://www.volkswagen-group.com/en/investor-relations',
-        sourceType: 'capital-markets-day',
-        publishedDate: '2023-06-21',
+        sourceType: 'official-website',
+        publishedDate: '2024-06-25',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
       {
         title: {
-          en: 'Volkswagen Group & Rivian Joint Venture Announcement',
-          ko: '폭스바겐 그룹 - 리비안 SDV 합작법인 공식 발표',
+          en: 'CARIAD Official Software Architecture Portal',
+          ko: 'CARIAD 공식 소프트웨어 아키텍처 포털',
         },
-        url: 'https://www.volkswagen-group.com/en/investor-relations',
-        sourceType: 'press-release',
+        url: 'https://cariad.technology/',
+        sourceType: 'official-website',
         publishedDate: '2024-06-25',
         lastVerified: '2026-09-13',
         confidence: 'official',
@@ -544,23 +500,23 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Toyota Motor Corporation Financial Results & Strategic Briefing',
-          ko: '토요타 자동차 재무 실적 및 전략 브리핑',
+          en: 'Toyota Motor Corporation Official Investor Relations Portal',
+          ko: '토요타 자동차 공식 IR 포털',
         },
         url: 'https://global.toyota/en/ir/',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-05-08',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
       {
         title: {
-          en: 'Toyota Technical Workshop: Changing the Future of Cars (Arene OS)',
-          ko: '토요타 테크니컬 워크숍: 자동차의 미래를 바꾼다 (Arene OS)',
+          en: 'Woven by Toyota Official Software & Arene Platform Portal',
+          ko: '우븐 바이 토요타 공식 소프트웨어 및 Arene 플랫폼 포털',
         },
-        url: 'https://global.toyota/en/ir/',
-        sourceType: 'official-event',
-        publishedDate: '2023-06-13',
+        url: 'https://woven.toyota/en/',
+        sourceType: 'official-website',
+        publishedDate: '2024-05-08',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
@@ -628,22 +584,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'NVIDIA GTC Automotive Keynote: DRIVE Thor Architecture',
-          ko: '엔비디아 GTC 오토모티브 기조연설: DRIVE Thor 아키텍처',
+          en: 'NVIDIA Corporation Official Investor Relations Portal',
+          ko: '엔비디아 공식 IR 포털',
         },
         url: 'https://investor.nvidia.com/',
-        sourceType: 'official-event',
-        publishedDate: '2024-03-18',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'NVIDIA Corporation Quarterly Financial Disclosures (Automotive Segment)',
-          ko: '엔비디아 분기 실적 공시 (오토모티브 사업 부문)',
-        },
-        url: 'https://investor.nvidia.com/',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-08-28',
         lastVerified: '2026-09-13',
         confidence: 'official',
@@ -719,22 +664,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Qualcomm Automotive Investor Day & Snapdragon Digital Chassis Presentation',
-          ko: '퀄컴 오토모티브 인베스터 데이 및 디지털 섀시 발표 자료',
+          en: 'Qualcomm Official Investor Relations Portal',
+          ko: '퀄컴 공식 IR 포털',
         },
         url: 'https://investor.qualcomm.com/',
-        sourceType: 'capital-markets-day',
-        publishedDate: '2022-09-22',
+        sourceType: 'official-website',
+        publishedDate: '2024-07-31',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
       {
         title: {
-          en: 'Qualcomm Quarterly Earnings Presentation (Automotive Pipeline Update)',
-          ko: '퀄컴 분기 실적 발표 자료 (오토모티브 수주 잔고 업데이트)',
+          en: 'Snapdragon Digital Chassis Automotive Product Architecture',
+          ko: '스냅드래곤 디지털 섀시 오토모티브 제품 아키텍처 포털',
         },
-        url: 'https://investor.qualcomm.com/',
-        sourceType: 'investor-presentation',
+        url: 'https://www.qualcomm.com/products/automotive',
+        sourceType: 'official-website',
         publishedDate: '2024-07-31',
         lastVerified: '2026-09-13',
         confidence: 'official',
@@ -803,23 +748,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Mobileye Global Inc. Investor Relations Presentation',
-          ko: '모빌아이 글로벌 투자자 발표 자료',
+          en: 'Mobileye Global Inc. Official Investor Relations Portal',
+          ko: '모빌아이 글로벌 공식 IR 포털',
         },
         url: 'https://ir.mobileye.com/',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-08-01',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'Mobileye Technology Briefing: True Redundancy & EyeQ6 Specs',
-          ko: '모빌아이 기술 브리핑: 트루 리던던시 및 EyeQ6 규격 발표',
-        },
-        url: 'https://ir.mobileye.com/',
-        sourceType: 'official-event',
-        publishedDate: '2024-01-09',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
@@ -887,21 +821,21 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'Hyundai Mobis CEO Investor Day Presentation',
-          ko: '현대모비스 CEO 인베스터 데이 공식 발표 자료',
+          en: 'Hyundai Mobis Official Investor Relations Portal',
+          ko: '현대모비스 공식 IR 포털',
         },
         url: 'https://www.mobis.com/en/ir/ircop.do',
-        sourceType: 'capital-markets-day',
-        publishedDate: '2024-07-18',
+        sourceType: 'official-website',
+        publishedDate: '2024-07-26',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },
       {
         title: {
-          en: 'Hyundai Mobis Sustainability & Corporate Factbook',
-          ko: '현대모비스 지속가능경영 보고서 및 기업 팩트북',
+          en: 'Hyundai Mobis Earnings & Corporate Factbook Reports',
+          ko: '현대모비스 실적 보고서 및 기업 팩트북 공시',
         },
-        url: 'https://www.mobis.com/en/ir/ircop.do',
+        url: 'https://www.mobis.com/en/ir/irreport.do',
         sourceType: 'annual-report',
         publishedDate: '2024-07-26',
         lastVerified: '2026-09-13',
@@ -971,23 +905,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: 'LG Electronics Investor Relations Corporate Presentation',
-          ko: 'LG전자 IR 글로벌 기업설명회 공식 자료',
+          en: 'LG Electronics Official Investor Relations Portal',
+          ko: 'LG전자 공식 IR 포털',
         },
         url: 'https://www.lg.com/global/investor-relations/',
-        sourceType: 'investor-presentation',
+        sourceType: 'official-website',
         publishedDate: '2024-07-25',
-        lastVerified: '2026-09-13',
-        confidence: 'official',
-      },
-      {
-        title: {
-          en: 'LG AlphaWare SDV Solution Portfolio Launch Announcement',
-          ko: 'LG 알파웨어(AlphaWare) SDV 소프트웨어 솔루션 발표',
-        },
-        url: 'https://www.lg.com/global/investor-relations/',
-        sourceType: 'press-release',
-        publishedDate: '2024-01-08',
         lastVerified: '2026-09-13',
         confidence: 'official',
       },

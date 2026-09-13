@@ -146,7 +146,7 @@ export const CompanyStrategyPage: React.FC = () => {
         <div className="space-y-3 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-700 dark:text-brand-300 text-xs font-mono font-bold tracking-wide">
             <TrendingUp className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-            <span>Official Investor Relations & Capital Markets Day Intelligence</span>
+            <span>{t.strategyInsights.headerBadge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
             {t.strategyInsights.title}
@@ -177,28 +177,28 @@ export const CompanyStrategyPage: React.FC = () => {
           <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1">
             <div className="font-bold text-amber-300 flex items-center gap-1.5">
               <Layers className="w-4 h-4" />
-              <span>1. Zonal Architecture</span>
+              <span>{t.strategyInsights.overviewZonalTitle}</span>
             </div>
             <p className="text-slate-300 text-[11px] leading-relaxed">
-              Consolidating 100+ distributed domain ECUs into 2~4 high-performance zonal controllers with Gigabit Ethernet backbones.
+              {t.strategyInsights.overviewZonalDesc}
             </p>
           </div>
           <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1">
             <div className="font-bold text-emerald-300 flex items-center gap-1.5">
               <Cpu className="w-4 h-4" />
-              <span>2. In-House Vehicle OS</span>
+              <span>{t.strategyInsights.overviewOsTitle}</span>
             </div>
             <p className="text-slate-300 text-[11px] leading-relaxed">
-              Chip-to-cloud proprietary software stacks (MB.OS, ccOS, Arene, Neue Klasse) with decoupled hardware/software release cycles.
+              {t.strategyInsights.overviewOsDesc}
             </p>
           </div>
           <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1">
             <div className="font-bold text-sky-300 flex items-center gap-1.5">
               <TrendingUp className="w-4 h-4" />
-              <span>3. Software Monetization</span>
+              <span>{t.strategyInsights.overviewMonetizationTitle}</span>
             </div>
             <p className="text-slate-300 text-[11px] leading-relaxed">
-              Targeting recurring revenue streams through over-the-air (OTA) features-on-demand, subscription ADAS, and robotaxi platforms.
+              {t.strategyInsights.overviewMonetizationDesc}
             </p>
           </div>
         </div>
@@ -386,7 +386,7 @@ export const CompanyStrategyPage: React.FC = () => {
                     to={`/companies?search=${encodeURIComponent(strategy.companyName)}`}
                     className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition"
                   >
-                    <span>Directory Profile →</span>
+                    <span>{t.strategyInsights.viewDirectoryProfile}</span>
                   </Link>
                 </div>
               </div>
