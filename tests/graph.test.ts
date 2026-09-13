@@ -4189,7 +4189,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(bmwLatest, 'BMW latest source must exist');
   assert.strictEqual(bmwLatest.role, 'latest');
   assert.strictEqual(bmwLatest.confidence, 'official');
-  assert.strictEqual(bmwLatest.sourceType, 'annual-report');
+  assert.strictEqual(bmwLatest.sourceType, 'investor-presentation');
   assert.ok(bmwLatest.publishedDate);
 
   // 4. Transparent Primary IR Portal Handling without Artificial Duplication

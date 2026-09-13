@@ -376,13 +376,13 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "BMW Group Annual Financial & Corporate Reports",
-          ko: "BMW 그룹 연간 재무 및 기업 보고서",
+          en: "BMW Group Investor & Analyst Days 2025: Key Messages & Strategic Architecture",
+          ko: "BMW 그룹 인베스터 & 애널리스트 데이 2025: 핵심 메시지 및 전략 아키텍처",
         },
-        url: "https://www.bmwgroup.com/en/investor-relations/company-reports.html",
-        sourceType: "annual-report",
+        url: "https://www.bmwgroup.com/content/dam/grpw/websites/bmwgroup_com/ir/downloads/en/2025/investor-and-analyst-days-2025/BMW-Group-Investor-Analyst-Days-2025-Key-Messages.pdf",
+        sourceType: "investor-presentation",
         role: "latest",
-        publishedDate: "2025-03-20",
+        publishedDate: "2025-07-15",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -394,6 +394,17 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         url: "https://www.bmwgroup.com/en/investor-relations.html",
         sourceType: "official-website",
         role: "primary",
+        lastVerified: "2026-09-13",
+        confidence: "official",
+      },
+      {
+        title: {
+          en: "BMW Group Company Reports & Financial Disclosures Archive",
+          ko: "BMW 그룹 연간 재무 및 기업 보고서 아카이브",
+        },
+        url: "https://www.bmwgroup.com/en/investor-relations/company-reports.html",
+        sourceType: "official-website",
+        role: "supporting",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
