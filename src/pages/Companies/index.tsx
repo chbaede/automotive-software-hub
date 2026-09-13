@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Building2, Search } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Building2, Search, Compass, TrendingUp, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { companies } from '../../data/companies';
 import { CompanyCard } from '../../components/cards/CompanyCard';
@@ -14,6 +14,7 @@ export const CompaniesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [categoryFilter, setCategoryFilter] = useState<string>(searchParams.get('category') || 'all');
   const [topicFilter, setTopicFilter] = useState<string>(searchParams.get('topic') || 'all');
+  const [onlyWithIr, setOnlyWithIr] = useState<boolean>(false);
 
   const handleCategoryChange = (cat: string) => {
     setCategoryFilter(cat);
@@ -47,8 +48,9 @@ export const CompaniesPage: React.FC = () => {
 
     const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
     const matchesTopic = topicFilter === 'all' || c.automotiveTopics.includes(topicFilter as any);
+    const matchesIr = !onlyWithIr || Boolean(c.irUrl);
 
-    return matchesQuery && matchesCategory && matchesTopic;
+    return matchesQuery && matchesCategory && matchesTopic && matchesIr;
   });
 
   return (
@@ -67,6 +69,31 @@ export const CompaniesPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Strategic Insights Hero Callout Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-slate-900 via-indigo-950 to-brand-950 p-6 text-white border border-brand-500/30 shadow-lg">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/20 border border-brand-400/30 text-brand-300 text-[11px] font-semibold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+              <span>{t.companies.strategyInsightsBannerTitle}</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              {t.companies.strategyInsightsBannerTitle}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {t.companies.strategyInsightsBannerDesc}
+            </p>
+          </div>
+          <Link
+            to="/companies/strategy"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs sm:text-sm transition shadow-md hover:shadow-brand-500/25 shrink-0"
+          >
+            <Compass className="w-4 h-4" />
+            <span>{t.companies.exploreStrategyBtn}</span>
+          </Link>
+        </div>
+      </div>
+
       {/* Search & Filters */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="relative flex-1">
@@ -80,7 +107,7 @@ export const CompaniesPage: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           {/* Category Filter Dropdown */}
           <select
             value={categoryFilter}
@@ -109,6 +136,20 @@ export const CompaniesPage: React.FC = () => {
               </option>
             ))}
           </select>
+
+          {/* With Official IR Filter Toggle */}
+          <button
+            type="button"
+            onClick={() => setOnlyWithIr(!onlyWithIr)}
+            className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border transition ${
+              onlyWithIr
+                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40'
+                : 'bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-900'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+            <span>{t.companies.irAvailableFilter}</span>
+          </button>
         </div>
       </div>
 

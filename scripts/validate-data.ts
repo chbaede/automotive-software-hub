@@ -77,7 +77,7 @@ function getSafetyRelevantTexts(st: any): { text: string; location: string }[] {
   return items;
 }
 
-function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any }>(
+function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any; irUrl?: any }>(
   collectionName: string,
   items: T[]
 ) {
@@ -122,6 +122,17 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
         new URL(url);
       } catch {
         error(`[${collectionName} ID: ${item.id}] Invalid URL string: '${url}'.`);
+      }
+    }
+
+    if (item.irUrl) {
+      const rawIr = typeof item.irUrl === 'string' ? item.irUrl : item.irUrl?.en;
+      if (rawIr) {
+        try {
+          new URL(rawIr);
+        } catch {
+          error(`[${collectionName} ID: ${item.id}] Invalid IR URL string: '${rawIr}'.`);
+        }
       }
     }
   });

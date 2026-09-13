@@ -8,6 +8,7 @@ import { ResourcesPage } from '../pages/Resources';
 import { OpenSourcePage } from '../pages/OpenSource';
 import { EventsPage } from '../pages/Events';
 import { CompaniesPage } from '../pages/Companies';
+import { CompanyStrategyPage } from '../pages/CompanyStrategy';
 import { AboutPage } from '../pages/About';
 import { NotFoundPage } from '../pages/NotFound';
 import { TechnologyDetailPage } from '../pages/Stack/TechnologyDetailPage';
@@ -32,6 +33,8 @@ export const AppRouter: React.FC = () => {
           <Route path="/open-source" element={<OpenSourcePage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/companies" element={<CompaniesPage />} />
+          <Route path="/companies/strategy" element={<CompanyStrategyPage />} />
+          <Route path="/strategy" element={<CompanyStrategyPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

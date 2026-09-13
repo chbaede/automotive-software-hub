@@ -16,6 +16,7 @@ const staticRoutes = [
   { path: 'open-source', priority: '0.85', changefreq: 'monthly' },
   { path: 'events', priority: '0.80', changefreq: 'weekly' },
   { path: 'companies', priority: '0.80', changefreq: 'monthly' },
+  { path: 'companies/strategy', priority: '0.85', changefreq: 'weekly' },
   { path: 'about', priority: '0.70', changefreq: 'monthly' },
 ];
 

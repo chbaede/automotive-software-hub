@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ExternalLink, Layers } from 'lucide-react';
+import { MapPin, ExternalLink, Layers, TrendingUp, Compass } from 'lucide-react';
 import { Company } from '../../types/company';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
@@ -79,6 +79,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
 
   const style = getCategoryStyles(company.category);
   const websiteUrl = typeof company.website === 'string' ? company.website : getLocalizedText(company.website, language);
+  const irUrl = company.irUrl ? (typeof company.irUrl === 'string' ? company.irUrl : getLocalizedText(company.irUrl, language)) : undefined;
   const flag = getCountryFlag(company.headquarters);
 
   // Find linked technologies in Stack Explorer
@@ -157,16 +158,51 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
         )}
       </div>
 
-      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
-        <a
-          href={websiteUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-700 dark:text-slate-300 rounded-lg transition"
-        >
-          <span>{t.companies.visitWebsite}</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
+      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+        {/* Strategy Roadmap Link if featured */}
+        {company.hasStrategyInsight && (
+          <Link
+            to={`/companies/strategy#${company.id}`}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs font-semibold bg-brand-500/10 hover:bg-brand-500 text-brand-700 dark:text-brand-300 hover:text-white dark:hover:text-white rounded-lg border border-brand-500/30 transition shadow-xs group"
+          >
+            <Compass className="w-3.5 h-3.5 text-brand-500 group-hover:text-white transition" />
+            <span>{t.companies.viewStrategy} →</span>
+          </Link>
+        )}
+
+        {/* Action Buttons: Website & IR */}
+        {irUrl ? (
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href={websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 py-1.5 px-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition"
+            >
+              <span>{t.companies.visitWebsite}</span>
+              <ExternalLink className="w-3 h-3 text-slate-400" />
+            </a>
+            <a
+              href={irUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 py-1.5 px-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-300 rounded-lg transition"
+            >
+              <TrendingUp className="w-3 h-3 text-emerald-500" />
+              <span>{t.companies.visitIr}</span>
+            </a>
+          </div>
+        ) : (
+          <a
+            href={websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-700 dark:text-slate-300 rounded-lg transition"
+          >
+            <span>{t.companies.visitWebsite}</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        )}
       </div>
     </div>
   );

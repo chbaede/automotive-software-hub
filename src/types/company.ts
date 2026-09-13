@@ -19,6 +19,8 @@ export interface Company {
   ticker?: string;
   exchange?: string;
   isPublic?: boolean;
+  irUrl?: string | LocalizedText;
+  hasStrategyInsight?: boolean;
   automotiveTopics: TopicId[];
   technologies: string[];
   tags: string[];
