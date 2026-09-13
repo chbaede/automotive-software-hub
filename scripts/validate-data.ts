@@ -127,12 +127,17 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
     }
 
     if (item.irUrl) {
-      const rawIr = typeof item.irUrl === 'string' ? item.irUrl : item.irUrl?.en;
-      if (rawIr) {
-        try {
-          new URL(rawIr);
-        } catch {
-          error(`[${collectionName} ID: ${item.id}] Invalid IR URL string: '${rawIr}'.`);
+      const rawUrls = typeof item.irUrl === 'string' ? [item.irUrl] : [item.irUrl.en, item.irUrl.ko];
+      for (const rawIr of rawUrls) {
+        if (rawIr) {
+          try {
+            const parsed = new URL(rawIr);
+            if (parsed.protocol !== 'https:') {
+              error(`[${collectionName} ID: ${item.id}] IR URL must use HTTPS: '${rawIr}'.`);
+            }
+          } catch {
+            error(`[${collectionName} ID: ${item.id}] Invalid IR URL string: '${rawIr}'.`);
+          }
         }
       }
     }
@@ -383,8 +388,15 @@ companyStrategies.forEach((cs) => {
     error(`[Company Strategy ID: ${cs.companyId}] Unknown companyId in companies collection.`);
   }
 
-  if (!cs.irUrl || !cs.irUrl.startsWith('https://')) {
-    error(`[Company Strategy ID: ${cs.companyId}] Invalid or missing HTTPS irUrl: '${cs.irUrl}'`);
+  if (!cs.irUrl) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing irUrl.`);
+  } else {
+    const rawUrls = typeof cs.irUrl === 'string' ? [cs.irUrl] : [cs.irUrl.en, cs.irUrl.ko];
+    for (const u of rawUrls) {
+      if (!u || !u.startsWith('https://')) {
+        error(`[Company Strategy ID: ${cs.companyId}] Invalid or missing HTTPS irUrl: '${u}'`);
+      }
+    }
   }
 
   if (!cs.matrixSummary?.sdvOs?.en || !cs.matrixSummary?.sdvOs?.ko) {

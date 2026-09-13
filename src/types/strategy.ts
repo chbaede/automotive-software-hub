@@ -38,7 +38,7 @@ export interface CompanyStrategyInsight {
   headquarters: string;
   ticker?: string;
   exchange?: string;
-  irUrl: string;
+  irUrl: string | LocalizedText;
   latestEventOrReport: LocalizedText;
   matrixSummary: CompanyStrategyMatrixSummary;
   sdvArchitecture: LocalizedText;

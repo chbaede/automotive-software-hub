@@ -3422,6 +3422,60 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 73 Passed: Domain vs Graph Boundary & Zero Map Duplication verified.');
 }
 
+// Test 74: Bilingual Company IR Resolution & Korean IR Portal Localization
+{
+  const { getCompany, getCompanyStrategy } = await import('../src/lib/domain/index.js');
+  const { getLocalizedText } = await import('../src/types/i18n.js');
+
+  function resolveIrUrl(irUrl: string | { en: string; ko: string } | undefined, lang: 'en' | 'ko'): string | undefined {
+    if (!irUrl) return undefined;
+    return typeof irUrl === 'string' ? irUrl : getLocalizedText(irUrl, lang);
+  }
+
+  // 1. Hyundai Motor Group
+  const hmg = getCompany('hyundai-motor-group');
+  assert.ok(hmg, 'hyundai-motor-group must exist');
+  assert.strictEqual(resolveIrUrl(hmg.irUrl, 'en'), 'https://www.hyundai.com/worldwide/en/company/ir');
+  assert.strictEqual(resolveIrUrl(hmg.irUrl, 'ko'), 'https://www.hyundai.com/worldwide/ko/company/ir');
+
+  // 2. Hyundai Mobis
+  const mobis = getCompany('hyundai-mobis');
+  assert.ok(mobis, 'hyundai-mobis must exist');
+  assert.strictEqual(resolveIrUrl(mobis.irUrl, 'en'), 'https://www.mobis.com/en/ir/ircop.do');
+  assert.strictEqual(resolveIrUrl(mobis.irUrl, 'ko'), 'https://www.mobis.com/kr/ir/ircop.do');
+
+  // 3. Samsung Electronics
+  const samsung = getCompany('samsung-electronics');
+  assert.ok(samsung, 'samsung-electronics must exist');
+  assert.strictEqual(resolveIrUrl(samsung.irUrl, 'en'), 'https://www.samsung.com/global/ir/');
+  assert.strictEqual(resolveIrUrl(samsung.irUrl, 'ko'), 'https://www.samsung.com/sec/ir/');
+
+  // 4. Harman International (Samsung Subsidiary)
+  const harman = getCompany('harman-international');
+  assert.ok(harman, 'harman-international must exist');
+  assert.strictEqual(resolveIrUrl(harman.irUrl, 'en'), 'https://www.samsung.com/global/ir/');
+  assert.strictEqual(resolveIrUrl(harman.irUrl, 'ko'), 'https://www.samsung.com/sec/ir/');
+
+  // 5. Telechips
+  const telechips = getCompany('telechips');
+  assert.ok(telechips, 'telechips must exist');
+  assert.strictEqual(resolveIrUrl(telechips.irUrl, 'en'), 'https://www.telechips.com/view/media/ir');
+  assert.strictEqual(resolveIrUrl(telechips.irUrl, 'ko'), 'https://www.telechips.com/view/media/ir');
+
+  // 6. Strategy Profiles: Hyundai Motor & Mobis
+  const hmgStrategy = getCompanyStrategy('hyundai-motor-group');
+  assert.ok(hmgStrategy, 'hyundai-motor-group strategy must exist');
+  assert.strictEqual(resolveIrUrl(hmgStrategy.irUrl, 'en'), 'https://www.hyundai.com/worldwide/en/company/ir');
+  assert.strictEqual(resolveIrUrl(hmgStrategy.irUrl, 'ko'), 'https://www.hyundai.com/worldwide/ko/company/ir');
+
+  const mobisStrategy = getCompanyStrategy('hyundai-mobis');
+  assert.ok(mobisStrategy, 'hyundai-mobis strategy must exist');
+  assert.strictEqual(resolveIrUrl(mobisStrategy.irUrl, 'en'), 'https://www.mobis.com/en/ir/ircop.do');
+  assert.strictEqual(resolveIrUrl(mobisStrategy.irUrl, 'ko'), 'https://www.mobis.com/kr/ir/ircop.do');
+
+  console.log('✅ Test 74 Passed: Bilingual Company IR Resolution & Korean IR Portal Localization verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

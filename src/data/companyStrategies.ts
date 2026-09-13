@@ -176,7 +176,10 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     headquarters: 'Seoul, South Korea',
     ticker: '005380',
     exchange: 'KRX',
-    irUrl: 'https://www.hyundai.com/worldwide/en/company/ir',
+    irUrl: {
+      en: 'https://www.hyundai.com/worldwide/en/company/ir',
+      ko: 'https://www.hyundai.com/worldwide/ko/company/ir',
+    },
     latestEventOrReport: {
       en: 'Hyundai CEO Investor Day ("Hyundai Way") & HMG SDV Tech Day',
       ko: '현대 CEO 인베스터 데이 ("현대 웨이") 및 HMG SDV 테크 데이',
@@ -767,7 +770,10 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     headquarters: 'Seoul, South Korea',
     ticker: '012330',
     exchange: 'KRX',
-    irUrl: 'https://www.mobis.com/en/ir/ircop.do',
+    irUrl: {
+      en: 'https://www.mobis.com/en/ir/ircop.do',
+      ko: 'https://www.mobis.com/kr/ir/ircop.do',
+    },
     latestEventOrReport: {
       en: 'Hyundai Mobis CEO Investor Day & Business Strategy Presentation',
       ko: '현대모비스 CEO 인베스터 데이 및 사업 전략 발표',

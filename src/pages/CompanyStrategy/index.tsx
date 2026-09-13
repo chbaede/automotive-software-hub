@@ -255,7 +255,7 @@ export const CompanyStrategyPage: React.FC = () => {
                   </td>
                   <td className="py-3 px-4 text-right">
                     <a
-                      href={item.irUrl}
+                      href={typeof item.irUrl === 'string' ? item.irUrl : getLocalizedText(item.irUrl, language)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0A66C2] hover:underline"
@@ -377,7 +377,7 @@ export const CompanyStrategyPage: React.FC = () => {
 
                 <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
                   <a
-                    href={strategy.irUrl}
+                    href={typeof strategy.irUrl === 'string' ? strategy.irUrl : getLocalizedText(strategy.irUrl, language)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#0A66C2] hover:bg-[#004182] text-white rounded-lg transition shadow-xs"
