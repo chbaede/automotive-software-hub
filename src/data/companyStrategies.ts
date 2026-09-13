@@ -518,7 +518,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     headquarters: 'Seoul, South Korea',
     ticker: '012330',
     exchange: 'KRX',
-    irUrl: 'https://www.mobis.co.kr/en/ir/main.do',
+    irUrl: 'https://www.mobis.com/en/ir/ircop.do',
     latestEventOrReport: {
       en: 'Hyundai Mobis CEO Investor Day & Business Strategy Presentation',
       ko: '현대모비스 CEO 인베스터 데이 및 사업 전략 발표',
