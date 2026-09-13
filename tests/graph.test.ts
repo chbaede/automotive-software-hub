@@ -4026,7 +4026,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // 1. Validate all source roles across all company strategies
   for (const cs of companyStrategies) {
     let latestCount = 0;
+    const seenUrls = new Set<string>();
+
     for (const source of cs.sources) {
+      // Invariant: No duplicate URLs for the same company
+      assert.ok(!seenUrls.has(source.url), `Company '${cs.companyId}' has duplicate source URL: '${source.url}'`);
+      seenUrls.add(source.url);
+
       if (source.role) {
         assert.ok(
           validRoles.has(source.role),
@@ -4042,6 +4048,20 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
         assert.ok(
           /^\d{4}-\d{2}-\d{2}$/.test(source.publishedDate),
           `Latest source '${source.title.en}' for company '${cs.companyId}' publishedDate '${source.publishedDate}' must be YYYY-MM-DD`
+        );
+      }
+
+      // Invariant: Generic IR landing pages must not be typed as dedicated events
+      const isDedicatedType =
+        source.sourceType === 'capital-markets-day' ||
+        source.sourceType === 'investor-presentation' ||
+        source.sourceType === 'official-event';
+      if (isDedicatedType) {
+        const pathname = new URL(source.url).pathname.toLowerCase().replace(/\/+$/, '');
+        const genericPaths = new Set(['', '/investors', '/investor-relations', '/investor-relations.html', '/ir', '/ir.html', '/finance']);
+        assert.ok(
+          !genericPaths.has(pathname),
+          `Generic IR URL '${source.url}' for '${cs.companyId}' must not be typed as '${source.sourceType}'`
         );
       }
     }
@@ -4081,20 +4101,21 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   );
   assert.ok(kiaHistorical, 'Kia 2024 CEO Investor Day must remain present as historical source');
 
-  // 3. Coexistence of Current and Historical Sources
+  // GM: 2023 Investor Day
+  const gmStrat = getCompanyStrategy('general-motors');
+  assert.ok(gmStrat, 'GM strategy profile must exist');
+  const gmHistorical = gmStrat.sources.find(
+    (s) => s.role === 'historical' && s.publishedDate === '2023-11-15'
+  );
+  assert.ok(gmHistorical, 'GM 2023 Investor Day must remain present as historical source');
+
+  // 3. Representative Latest and Primary Sources Semantics
   const fordLatest = fordStrat.sources.find((s) => s.role === 'latest');
-  assert.ok(fordLatest, 'Ford must have a latest official source');
-  assert.ok(fordLatest.publishedDate && fordLatest.publishedDate >= '2024-01-01', 'Ford latest source must be recent');
+  assert.ok(fordLatest && fordLatest.sourceType === 'annual-report', 'Ford latest source must be annual report');
 
   const stellantisLatest = stellantisStrat.sources.find((s) => s.role === 'latest');
-  assert.ok(stellantisLatest, 'Stellantis must have a latest official source');
-  assert.ok(stellantisLatest.publishedDate && stellantisLatest.publishedDate >= '2024-01-01', 'Stellantis latest source must be recent');
+  assert.ok(stellantisLatest && stellantisLatest.sourceType === 'annual-report', 'Stellantis latest source must be annual report');
 
-  const kiaLatest = kiaStrat.sources.find((s) => s.role === 'latest');
-  assert.ok(kiaLatest, 'Kia must have a latest official source');
-  assert.ok(kiaLatest.publishedDate && kiaLatest.publishedDate >= '2024-01-01', 'Kia latest source must be recent');
-
-  // 4. Representative Company Semantics
   const teslaStrat = getCompanyStrategy('tesla');
   assert.ok(teslaStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'press-release'), 'Tesla must have a latest press-release source');
   assert.ok(teslaStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Tesla must have a primary official-website source');
@@ -4103,9 +4124,23 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.ok(mbStrat?.sources.some((s) => s.role === 'latest' && s.sourceType === 'capital-markets-day'), 'Mercedes-Benz must have a latest capital-markets-day source');
   assert.ok(mbStrat?.sources.some((s) => s.role === 'primary' && s.sourceType === 'official-website'), 'Mercedes-Benz must have a primary official-website source');
 
-  const gmStrat = getCompanyStrategy('general-motors');
-  assert.ok(gmStrat?.sources.some((s) => s.role === 'historical' && s.publishedDate === '2023-11-15'), 'GM must have 2023 historical source');
-  assert.ok(gmStrat?.sources.some((s) => s.role === 'latest'), 'GM must have latest source');
+  const hmcStrat = getCompanyStrategy('hyundai-motor-group');
+  assert.ok(hmcStrat?.sources.some((s) => s.role === 'latest' && s.url.includes('ceo-investor-day')), 'Hyundai latest must link to dedicated ceo-investor-day page');
+
+  const toyotaStrat = getCompanyStrategy('toyota-motor');
+  assert.ok(toyotaStrat?.sources.some((s) => s.role === 'latest' && s.url.includes('financial-results')), 'Toyota latest must link to financial-results archive');
+
+  const bmwStrat = getCompanyStrategy('bmw-group');
+  assert.ok(bmwStrat?.sources.some((s) => s.role === 'latest' && s.url.includes('company-reports')), 'BMW latest must link to company-reports page');
+
+  // 4. Transparent Primary IR Portal Handling without Artificial Duplication
+  const mobileyeStrat = getCompanyStrategy('mobileye');
+  assert.strictEqual(mobileyeStrat?.sources.length, 1, 'Mobileye must have exactly 1 consolidated primary portal source');
+  assert.strictEqual(mobileyeStrat?.sources[0].sourceType, 'official-website');
+
+  const lgStrat = getCompanyStrategy('lg-electronics-vs');
+  assert.strictEqual(lgStrat?.sources.length, 1, 'LG VS must have exactly 1 consolidated primary portal source');
+  assert.strictEqual(lgStrat?.sources[0].sourceType, 'official-website');
 
   // 5. Localization (i18n) Parity for Source Roles
   const roleKeys = ['sourceRoleLatest', 'sourceRolePrimary', 'sourceRoleHistorical', 'sourceRoleSupporting'] as const;

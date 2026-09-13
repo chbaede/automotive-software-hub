@@ -479,6 +479,7 @@ companyStrategies.forEach((cs) => {
     error(`[Company Strategy ID: ${cs.companyId}] Must have at least one traceable source.`);
   } else {
     let latestCount = 0;
+    const seenSourceUrls = new Set<string>();
     cs.sources.forEach((source, idx) => {
       if (!source.title?.en || !source.title?.ko) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Missing localized source title.`);
@@ -486,6 +487,13 @@ companyStrategies.forEach((cs) => {
       if (!source.url || !source.url.startsWith('https://')) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Invalid HTTPS source URL: '${source.url}'.`);
       }
+      if (seenSourceUrls.has(source.url)) {
+        error(
+          `[Company Strategy ID: ${cs.companyId} Source #${idx}] Duplicate source URL: '${source.url}'. Consolidate or use distinct URLs.`
+        );
+      }
+      seenSourceUrls.add(source.url);
+
       if (!validSourceTypes.has(source.sourceType)) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown sourceType: '${source.sourceType}'.`);
       }
@@ -508,6 +516,39 @@ companyStrategies.forEach((cs) => {
       }
       if (source.confidence && !validConfidences.has(source.confidence)) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown confidence: '${source.confidence}'.`);
+      }
+
+      // Semantic validation: Ensure dedicated event/report sources do not point to generic IR root landing pages
+      const isDedicatedType =
+        source.sourceType === 'capital-markets-day' ||
+        source.sourceType === 'investor-presentation' ||
+        source.sourceType === 'official-event';
+
+      if (isDedicatedType) {
+        try {
+          const parsed = new URL(source.url);
+          const pathname = parsed.pathname.toLowerCase().replace(/\/+$/, '');
+          const genericPaths = new Set([
+            '',
+            '/investors',
+            '/investor-relations',
+            '/investor-relations.html',
+            '/ir',
+            '/ir.html',
+            '/finance',
+            '/company/ir',
+            '/en/investors',
+            '/en/investor-relations.html',
+            '/en/finance',
+          ]);
+          if (genericPaths.has(pathname)) {
+            error(
+              `[Company Strategy ID: ${cs.companyId} Source #${idx}] Generic IR landing page '${source.url}' must not be typed as dedicated '${source.sourceType}'. Use 'official-website' or provide the specific event URL.`
+            );
+          }
+        } catch {
+          // Handled by URL check
+        }
       }
 
       // Semantic validation: Ensure dedicated event/report sources do not point to unrelated generic quarterly results

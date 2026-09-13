@@ -73,13 +73,13 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Mercedes-Benz Capital Market Days & Software Updates",
-          ko: "메르세데스-벤츠 캐피털 마켓 데이 및 소프트웨어 전략 발표",
+          en: "Mercedes-Benz Capital Market Days & Strategy Updates",
+          ko: "메르세데스-벤츠 캐피털 마켓 데이 및 전략 업데이트",
         },
         url: "https://group.mercedes-benz.com/investors/events/capital-market-days/",
         sourceType: "capital-markets-day",
         role: "latest",
-        publishedDate: "2025-02-20",
+        publishedDate: "2024-02-22",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -182,8 +182,8 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
       {
         title: {
-          en: "Tesla Official Investor Relations Portal",
-          ko: "테슬라 공식 IR 포털",
+          en: "Tesla Official Investor Relations Portal & Shareholder Disclosures",
+          ko: "테슬라 공식 IR 포털 및 주주 공시",
         },
         url: "https://ir.tesla.com/",
         sourceType: "official-website",
@@ -273,7 +273,7 @@ export const companyStrategies: CompanyStrategyInsight[] = [
           en: "Hyundai CEO Investor Day (\"Hyundai Way\") Strategic Presentation",
           ko: "현대자동차 CEO 인베스터 데이 (\"Hyundai Way\") 공식 전략 발표",
         },
-        url: "https://www.hyundai.com/worldwide/en/company/ir",
+        url: "https://www.hyundai.com/worldwide/en/company/ir/ir-resources/ceo-investor-day",
         sourceType: "investor-presentation",
         role: "latest",
         publishedDate: "2024-08-28",
@@ -367,11 +367,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "BMW Group Annual Conference & Neue Klasse Strategic Briefing",
-          ko: "BMW 그룹 연례 컨퍼런스 및 노이어 클라세 전략 발표",
+          en: "BMW Group Annual Financial & Corporate Reports",
+          ko: "BMW 그룹 연간 재무 및 기업 보고서",
         },
-        url: "https://www.bmwgroup.com/en/investor-relations.html",
-        sourceType: "investor-presentation",
+        url: "https://www.bmwgroup.com/en/investor-relations/company-reports.html",
+        sourceType: "annual-report",
         role: "latest",
         publishedDate: "2024-03-21",
         lastVerified: "2026-09-13",
@@ -385,6 +385,18 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         url: "https://www.bmwgroup.com/en/investor-relations.html",
         sourceType: "official-website",
         role: "primary",
+        publishedDate: "2024-03-21",
+        lastVerified: "2026-09-13",
+        confidence: "official",
+      },
+      {
+        title: {
+          en: "BMW Group Innovation & Neue Klasse Architecture Portal",
+          ko: "BMW 그룹 이노베이션 및 노이어 클라세 기술 포털",
+        },
+        url: "https://www.bmwgroup.com/en/innovation.html",
+        sourceType: "official-website",
+        role: "supporting",
         publishedDate: "2024-03-21",
         lastVerified: "2026-09-13",
         confidence: "official",
@@ -464,11 +476,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Volkswagen Group Official Investor Relations & Rivian JV Disclosures",
-          ko: "폭스바겐 그룹 공식 투자자 관계 및 리비안 JV 공시",
+          en: "Volkswagen Group Corporate Press Releases & Strategic Announcements",
+          ko: "폭스바겐 그룹 공식 보도자료 및 전략 공시",
         },
-        url: "https://www.volkswagen-group.com/en/investor-relations",
-        sourceType: "official-website",
+        url: "https://www.volkswagen-group.com/en/press-releases",
+        sourceType: "press-release",
         role: "latest",
         publishedDate: "2024-06-25",
         lastVerified: "2026-09-13",
@@ -476,13 +488,13 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
       {
         title: {
-          en: "Volkswagen Group Capital Markets Day & Software Strategy",
-          ko: "폭스바겐 그룹 캐피털 마켓 데이 및 소프트웨어 전략",
+          en: "Volkswagen Group Official Investor Relations Portal",
+          ko: "폭스바겐 그룹 공식 IR 포털",
         },
         url: "https://www.volkswagen-group.com/en/investor-relations",
-        sourceType: "capital-markets-day",
+        sourceType: "official-website",
         role: "primary",
-        publishedDate: "2023-06-21",
+        publishedDate: "2024-06-25",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -569,10 +581,10 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Toyota Financial Results Briefing & Software Strategy Update",
-          ko: "토요타 연간 결산 발표 및 소프트웨어 전략 업데이트",
+          en: "Toyota Financial Results & Management Briefings Archive",
+          ko: "토요타 실적 발표 및 경영 브리핑 아카이브",
         },
-        url: "https://global.toyota/en/ir/",
+        url: "https://global.toyota/en/ir/financial-results/",
         sourceType: "investor-presentation",
         role: "latest",
         publishedDate: "2024-05-08",
@@ -667,11 +679,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "NVIDIA GTC Automotive Keynote & DRIVE Platform Presentation",
-          ko: "엔비디아 GTC 오토모티브 기조연설 및 DRIVE 플랫폼 전략",
+          en: "NVIDIA Newsroom: Official Automotive News & Strategic Announcements",
+          ko: "엔비디아 뉴스룸: 공식 오토모티브 뉴스 및 전략 보도자료",
         },
-        url: "https://investor.nvidia.com/",
-        sourceType: "official-event",
+        url: "https://nvidianews.nvidia.com/news/automotive",
+        sourceType: "press-release",
         role: "latest",
         publishedDate: "2024-08-28",
         lastVerified: "2026-09-13",
@@ -846,18 +858,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Mobileye Investor Conference & EyeQ Platform Briefing",
-          ko: "모빌아이 투자자 컨퍼런스 및 EyeQ 플랫폼 기술 브리핑",
-        },
-        url: "https://ir.mobileye.com/",
-        sourceType: "investor-presentation",
-        role: "latest",
-        publishedDate: "2024-08-01",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "Mobileye Global Inc. Official Investor Relations Portal",
           ko: "모빌아이 글로벌 공식 IR 포털",
         },
@@ -1021,18 +1021,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "LG Electronics VS Division Business Strategy Briefing",
-          ko: "LG전자 전장(VS) 사업본부 사업 전략 공식 브리핑",
-        },
-        url: "https://www.lg.com/global/investor-relations/",
-        sourceType: "investor-presentation",
-        role: "latest",
-        publishedDate: "2024-07-25",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "LG Electronics Official Investor Relations Portal",
           ko: "LG전자 공식 IR 포털",
         },
@@ -1116,18 +1104,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "GM Investor Day & Strategic Software Presentation",
-          ko: "GM 인베스터 데이 및 소프트웨어 전략 공식 발표",
-        },
-        url: "https://investor.gm.com/events-and-presentations",
-        sourceType: "investor-presentation",
-        role: "latest",
-        publishedDate: "2024-10-08",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "General Motors Official Investor Relations Portal",
@@ -1445,18 +1421,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Renault Group Financial Disclosures & Strategic Presentations",
-          ko: "르노 그룹 연간 재무 공시 및 전략 프레젠테이션",
-        },
-        url: "https://www.renaultgroup.com/en/finance/publications/",
-        sourceType: "annual-report",
-        role: "latest",
-        publishedDate: "2024-04-23",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "Renault Group Investor Relations & Finance Portal",
           ko: "르노 그룹 공식 IR 및 재무 웹 포털",
         },
@@ -1469,8 +1433,8 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
       {
         title: {
-          en: "Renault Group Financial Publications & Presentation Disclosures",
-          ko: "르노 그룹 재무 간행물 및 전략 발표 공시",
+          en: "Renault Group Capital Market Day & Ampere Strategy Disclosures",
+          ko: "르노 그룹 캐피털 마켓 데이 및 암페어 전략 공시",
         },
         url: "https://www.renaultgroup.com/en/finance/publications/",
         sourceType: "capital-markets-day",
@@ -1552,18 +1516,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "Honda Motor Financial Results & Business Briefing",
-          ko: "혼다 모터 결산 발표 및 경영 전략 브리핑",
-        },
-        url: "https://global.honda/en/investors/",
-        sourceType: "investor-presentation",
-        role: "latest",
-        publishedDate: "2024-05-16",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "Honda Motor Global Investor Relations Web Portal",
@@ -1663,25 +1615,25 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "Nissan Motor Corporation Official Investor Relations Portal",
-          ko: "닛산 자동차 공식 IR 웹 포털",
-        },
-        url: "https://www.nissan-global.com/EN/IR/",
-        sourceType: "official-website",
-        role: "latest",
-        publishedDate: "2024-05-09",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "Nissan Motor Official IR Library & Management Presentation Archive",
           ko: "닛산 자동차 공식 IR 라이브러리 및 경영 전략 발표 아카이브",
         },
         url: "https://www.nissan-global.com/EN/IR/LIBRARY/",
         sourceType: "investor-presentation",
-        role: "primary",
+        role: "latest",
         publishedDate: "2024-03-25",
+        lastVerified: "2026-09-13",
+        confidence: "official",
+      },
+      {
+        title: {
+          en: "Nissan Motor Corporation Official Investor Relations Portal",
+          ko: "닛산 자동차 공식 IR 웹 포털",
+        },
+        url: "https://www.nissan-global.com/EN/IR/",
+        sourceType: "official-website",
+        role: "primary",
+        publishedDate: "2024-05-09",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -1761,18 +1713,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "Kia CEO Investor Day & Global Business Strategy",
-          ko: "기아 CEO 인베스터 데이 및 글로벌 비즈니스 전략 발표",
-        },
-        url: "https://worldwide.kia.com/en/company/investor-relations/library/ir-activities",
-        sourceType: "investor-presentation",
-        role: "latest",
-        publishedDate: "2025-04-04",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "Kia Corporation Official Investor Relations Portal",
@@ -1872,25 +1812,25 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "BYD Company Official Investor Relations Web Portal",
-          ko: "BYD 컴퍼니 공식 IR 웹 포털",
-        },
-        url: "https://www.bydglobal.com/en/InvestorRelations.html",
-        sourceType: "official-website",
-        role: "latest",
-        publishedDate: "2024-04-29",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "BYD Dream Day Whole-Vehicle Intelligence Strategy Presentation",
           ko: "BYD 드림 데이 차량 전체 지능화 전략 및 쉔지(Xuanji) 아키텍처 공식 발표",
         },
         url: "https://www.bydglobal.com/en/news/2024-01-16/BYD-Launches-Xuanji-Architecture",
         sourceType: "official-event",
-        role: "primary",
+        role: "latest",
         publishedDate: "2024-01-16",
+        lastVerified: "2026-09-13",
+        confidence: "official",
+      },
+      {
+        title: {
+          en: "BYD Company Official Investor Relations Web Portal",
+          ko: "BYD 컴퍼니 공식 IR 웹 포털",
+        },
+        url: "https://www.bydglobal.com/en/InvestorRelations.html",
+        sourceType: "official-website",
+        role: "primary",
+        publishedDate: "2024-04-29",
         lastVerified: "2026-09-13",
         confidence: "official",
       },
@@ -2163,18 +2103,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     sources: [
       {
         title: {
-          en: "NIO Strategic Announcements & Financial News Releases",
-          ko: "NIO 전략 공시 및 분기 실적 보도자료",
-        },
-        url: "https://ir.nio.com/news-releases",
-        sourceType: "press-release",
-        role: "latest",
-        publishedDate: "2024-06-06",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
-      {
-        title: {
           en: "NIO Inc. Official Investor Relations Web Portal",
           ko: "NIO Inc. 공식 IR 웹 포털",
         },
@@ -2270,18 +2198,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "XPeng Corporate News Releases & Strategic Disclosures",
-          ko: "샤오펑 공식 기업 공시 및 전략 보도자료",
-        },
-        url: "https://ir.xiaopeng.com/news-releases",
-        sourceType: "press-release",
-        role: "latest",
-        publishedDate: "2024-05-21",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "XPeng Inc. Investor Relations Web Portal",
@@ -2573,18 +2489,6 @@ export const companyStrategies: CompanyStrategyInsight[] = [
       },
     ],
     sources: [
-      {
-        title: {
-          en: "Mahindra Investor Reports & Financial Results",
-          ko: "마힌드라 투자자 보고서 및 연간 경영 실적",
-        },
-        url: "https://www.mahindra.com/investor-relations/reports",
-        sourceType: "annual-report",
-        role: "latest",
-        publishedDate: "2024-05-16",
-        lastVerified: "2026-09-13",
-        confidence: "official",
-      },
       {
         title: {
           en: "Mahindra & Mahindra Official Investor Relations Web Portal",
