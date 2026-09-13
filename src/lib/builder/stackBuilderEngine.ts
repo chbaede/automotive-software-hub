@@ -6,7 +6,7 @@
  */
 
 import { StackLayerId } from '../../types/stack';
-import { technologyById } from '../graph';
+import { technologyById } from '../domain';
 import {
   StackSelection,
   FlexibleStackSelection,

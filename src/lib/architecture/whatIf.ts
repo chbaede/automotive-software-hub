@@ -8,10 +8,8 @@
 
 import { StackLayerId, StackTechnology } from '../../types/stack';
 import { TechnologyRelationship } from '../../types/relationship';
-import {
-  technologyById,
-  outgoingRelationshipsByTechnologyId,
-} from '../graph';
+import { technologyById } from '../domain';
+import { outgoingRelationshipsByTechnologyId } from '../graph';
 import {
   StackSelection,
   FlexibleStackSelection,

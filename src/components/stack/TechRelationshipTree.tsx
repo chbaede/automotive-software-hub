@@ -15,12 +15,12 @@ import { RELATIONSHIP_METADATA, TechnologyRelationship, RelationshipType } from 
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { technologyById } from '../../lib/domain';
 import {
-  technologyById,
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
   getGroupedTechnologyRelationships,
-} from '../../utils/graphIndexes';
+} from '../../lib/graph';
 
 interface TechRelationshipTreeProps {
   technology: StackTechnology;

@@ -16,7 +16,7 @@ import {
 } from '../../lib/architecture/comparison';
 import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA } from '../../types/architecture';
-import { getArchitectureProfile } from '../../lib/graph';
+import { getArchitectureProfile } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 

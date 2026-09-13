@@ -5,8 +5,8 @@
  */
 
 import { StackTechnology } from '../../../types/stack';
+import { technologyById } from '../../domain';
 import {
-  technologyById,
   profilesByTechnologyId,
   graphAdjacencyByTechnologyId,
 } from '../index';

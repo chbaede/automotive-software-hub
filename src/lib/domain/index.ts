@@ -1,6 +1,8 @@
 import { companies } from '../../data/companies';
 import { companyStrategies } from '../../data/companyStrategies';
 import { stackLayers } from '../../data/stackLayers';
+import { stackTechnologies } from '../../data/stackTechnologies';
+import { architectureProfiles } from '../../data/architectureProfiles';
 import { tools } from '../../data/tools';
 import { resources } from '../../data/resources';
 import { projects } from '../../data/projects';
@@ -8,6 +10,7 @@ import { events } from '../../data/events';
 import { Company } from '../../types/company';
 import { CompanyStrategyInsight } from '../../types/strategy';
 import { StackLayer, StackTechnology } from '../../types/stack';
+import { ArchitectureProfile } from '../../types/architecture';
 import { Tool } from '../../types/tool';
 import { Resource } from '../../types/resource';
 import { OpenSourceProject } from '../../types/project';
@@ -16,6 +19,17 @@ import { Event } from '../../types/event';
 // ==========================================
 // CANONICAL DOMAIN INDEXES (O(1) Map Lookups)
 // ==========================================
+
+export const technologyById = new Map<string, StackTechnology>(
+  stackTechnologies.map((tech) => [tech.id, tech])
+);
+
+export const architectureProfileById = new Map<string, ArchitectureProfile>(
+  architectureProfiles.map((prof) => [prof.id, prof])
+);
+
+// Canonical alias for backwards compatibility
+export const profileById = architectureProfileById;
 
 export const companyById = new Map<string, Company>(
   companies.map((c) => [c.id, c])
@@ -28,6 +42,9 @@ export const strategyByCompanyId = new Map<string, CompanyStrategyInsight>(
 export const layerById = new Map<string, StackLayer>(
   stackLayers.map((layer) => [layer.id, layer])
 );
+
+// Canonical alias for backwards compatibility
+export const stackLayerById = layerById;
 
 export const toolById = new Map<string, Tool>(
   tools.map((tool) => [tool.id, tool])
@@ -48,6 +65,20 @@ export const eventById = new Map<string, Event>(
 // ==========================================
 // CANONICAL DOMAIN SELECTORS / HELPERS
 // ==========================================
+
+/**
+ * Resolves a Technology by its canonical ID.
+ */
+export function getTechnology(id: string): StackTechnology | undefined {
+  return technologyById.get(id);
+}
+
+/**
+ * Resolves an Architecture Profile by its canonical ID.
+ */
+export function getArchitectureProfile(id: string): ArchitectureProfile | undefined {
+  return architectureProfileById.get(id);
+}
 
 /**
  * Resolves a Company by its canonical ID.

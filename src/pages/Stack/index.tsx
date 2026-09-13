@@ -8,7 +8,7 @@ import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackRelationships } from '../../data/stackRelationships';
 import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile } from '../../types/architecture';
-import { getTechnology, getArchitectureProfile } from '../../lib/graph';
+import { getTechnology, getArchitectureProfile } from '../../lib/domain';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';

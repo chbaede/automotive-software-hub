@@ -4,8 +4,8 @@
  * Provides a unified entry point for all intelligence, discovery, and gap analysis operations.
  */
 
+import { technologyById } from '../../domain';
 import {
-  technologyById,
   outgoingRelationshipsByTechnologyId,
   getTechnologyDegree,
 } from '../index';

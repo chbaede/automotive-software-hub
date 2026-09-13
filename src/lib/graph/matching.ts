@@ -15,8 +15,8 @@ import { TechnologyRelationship } from '../../types/relationship';
 import { LocalizedText } from '../../types/i18n';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackPaths } from '../../data/stackPaths';
+import { technologyById } from '../domain';
 import {
-  technologyById,
   outgoingRelationshipsByTechnologyId,
   graphAdjacencyByTechnologyId,
 } from './index';

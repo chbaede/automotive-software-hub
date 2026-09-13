@@ -12,7 +12,8 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { getGraphInsights, getStackLayer } from '../../lib/graph';
+import { getStackLayer } from '../../lib/domain';
+import { getGraphInsights } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 

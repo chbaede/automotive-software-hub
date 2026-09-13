@@ -14,8 +14,8 @@ import {
   getLayerTechIds,
   getSelectedTechIds,
   findRelationshipBetween,
-} from '../../lib/builder/stackBuilderEngine';
-import { technologyById, getStackLayer } from '../../lib/graph';
+} from '../../lib/graph';
+import { technologyById, getStackLayer } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { RELATIONSHIP_METADATA } from '../../types/relationship';

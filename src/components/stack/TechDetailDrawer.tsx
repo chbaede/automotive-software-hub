@@ -30,20 +30,20 @@ import { architectureProfiles } from '../../data/architectureProfiles';
 import { TechArchitectureMicroMap } from './TechArchitectureMicroMap';
 import { Tool } from '../../types/tool';
 import {
-  pathsByTechnologyId,
   technologyById,
-  getTechnologyGraphContext,
-} from '../../utils/graphIndexes';
-import {
-  getTechnologyDiscoveryResult,
-  getExploreNextTechnologies,
-  TechnologyInsightItem,
   getStackLayer,
   getToolsForTechnology,
   getResourcesForTechnology,
   getProjectsForTechnology,
   getCompaniesForTechnology,
   getEventsForTechnology,
+} from '../../lib/domain';
+import {
+  pathsByTechnologyId,
+  getTechnologyGraphContext,
+  getTechnologyDiscoveryResult,
+  getExploreNextTechnologies,
+  TechnologyInsightItem,
 } from '../../lib/graph';
 import { ExploreNextSection } from '../discovery/ExploreNextSection';
 import { RelationshipExplorerSection } from '../discovery/RelationshipExplorerSection';

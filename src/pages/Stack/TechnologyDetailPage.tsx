@@ -22,10 +22,21 @@ import {
 } from 'lucide-react';
 import {
   getTechnology,
+  technologyById,
+  getStackLayer,
+  getToolsForTechnology,
+  getResourcesForTechnology,
+  getProjectsForTechnology,
+  getCompaniesForTechnology,
+  getEventsForTechnology,
+} from '../../lib/domain';
+import {
   getArchitecturesForTechnology,
   getStackPathsForTechnology,
-  technologyById,
-} from '../../utils/graphIndexes';
+  getTechnologyDiscoveryResult,
+  getExploreNextTechnologies,
+  TechnologyInsightItem,
+} from '../../lib/graph';
 import { StackLadderVisualizer } from '../../components/stack/StackLadderVisualizer';
 import {
   ARCHITECTURE_PROFILE_TYPE_METADATA,
@@ -33,17 +44,6 @@ import {
 } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import {
-  getTechnologyDiscoveryResult,
-  getExploreNextTechnologies,
-  TechnologyInsightItem,
-  getStackLayer,
-  getToolsForTechnology,
-  getResourcesForTechnology,
-  getProjectsForTechnology,
-  getCompaniesForTechnology,
-  getEventsForTechnology,
-} from '../../lib/graph';
 import { ExploreNextSection } from '../../components/discovery/ExploreNextSection';
 import { RelationshipExplorerSection } from '../../components/discovery/RelationshipExplorerSection';
 import { formatVerifiedDate } from '../../utils/formatters';

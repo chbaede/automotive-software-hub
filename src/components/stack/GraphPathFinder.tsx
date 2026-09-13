@@ -14,7 +14,8 @@ import {
 } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { stackTechnologies } from '../../data/stackTechnologies';
-import { findShortestPath, GraphPathStep, getStackLayer } from '../../lib/graph';
+import { getStackLayer } from '../../lib/domain';
+import { findShortestPath, GraphPathStep } from '../../lib/graph';
 import { RelationshipType, RELATIONSHIP_METADATA } from '../../types/relationship';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';

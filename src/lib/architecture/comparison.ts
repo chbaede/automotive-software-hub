@@ -10,7 +10,7 @@ import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { StackLayer, StackTechnology, StackLayerId } from '../../types/stack';
 import { stackLayers } from '../../data/stackLayers';
 import { stackPaths } from '../../data/stackPaths';
-import { technologyById, getArchitectureProfile } from '../graph';
+import { technologyById, getArchitectureProfile } from '../domain';
 import { StackSelection } from '../graph/matching';
 
 export interface ArchitectureComparisonResult {

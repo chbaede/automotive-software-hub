@@ -34,7 +34,7 @@ import {
   getProject,
   getTool,
   getResource,
-} from '../../lib/graph';
+} from '../../lib/domain';
 import { formatVerifiedDate } from '../../utils/formatters';
 
 interface ArchitectureProfilePanelProps {

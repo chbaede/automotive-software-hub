@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Route, ArrowRight, Check, Circle, Info } from 'lucide-react';
 import { StackPathMatchResult } from '../../lib/builder/stackBuilderEngine';
-import { technologyById } from '../../lib/graph';
+import { technologyById } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { STACK_PATH_TYPE_METADATA } from '../../types/architecture';

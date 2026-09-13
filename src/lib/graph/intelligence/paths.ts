@@ -4,10 +4,8 @@
  * Identifies and ranks end-to-end vehicle execution paths containing a given technology.
  */
 
-import {
-  technologyById,
-  pathsByTechnologyId,
-} from '../index';
+import { technologyById } from '../../domain';
+import { pathsByTechnologyId } from '../index';
 import { calculatePathRelevance } from '../scoring';
 import { StackPathInsightItem } from './types';
 

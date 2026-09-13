@@ -1,7 +1,7 @@
 import React from 'react';
 import { StackLayer, StackLayerId } from '../../types/stack';
 import { stackLayers } from '../../data/stackLayers';
-import { getStackLayer } from '../../lib/graph';
+import { getStackLayer } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { Layers, ArrowDown, Sparkles, CheckCircle2 } from 'lucide-react';

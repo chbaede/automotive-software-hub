@@ -5,7 +5,8 @@
  * the currently inspected technology to two or more different stack layers.
  */
 
-import { technologyById, graphAdjacencyByTechnologyId } from '../index';
+import { technologyById } from '../../domain';
+import { graphAdjacencyByTechnologyId } from '../index';
 import { RELATIONSHIP_PRIORITY, calculateBridgeScore } from '../scoring';
 import { BridgeTechnologyCandidate } from './types';
 

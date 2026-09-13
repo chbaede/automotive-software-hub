@@ -357,8 +357,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
 // Test 18: Graph Intelligence Basic Queries & Canonical Source (stackRelationships)
 {
+  const { getTechnology } = await import('../src/lib/domain/index.js');
   const {
-    getTechnology,
     getNeighbors,
     getOutgoingRelationships,
     getIncomingRelationships,
@@ -545,8 +545,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
 // Test 23: Technology Detail Pages & Deep Linking Context Resolution
 {
+  const { getTechnology } = await import('../src/lib/domain/index.js');
   const {
-    getTechnology,
     getTechnologyGraphContext,
     getNeighbors,
     getArchitecturesForTechnology,
@@ -684,10 +684,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
 // Test 24: Architecture Explorer & Technology Neighborhood Graph Resolution
 {
+  const { profileById, technologyById, getTechnology } = await import('../src/lib/domain/index.js');
   const {
-    profileById,
-    technologyById,
-    getTechnology,
     getNeighbors,
     getGroupedTechnologyRelationships,
     getArchitecturesForTechnology,
@@ -835,7 +833,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   const { en } = await import('../src/i18n/en.js');
   const { ko } = await import('../src/i18n/ko.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   // 1. Incomplete stack handling
   const incompleteResult = validateStack({});
@@ -1095,7 +1093,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     decodeStackFromSearchParams,
   } = await import('../src/lib/builder/stackBuilderEngine.js');
 
-  const { technologyById, profileById } = await import('../src/lib/graph/index.js');
+  const { technologyById, profileById } = await import('../src/lib/domain/index.js');
   const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
   const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
 
@@ -1184,13 +1182,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { stackRelationships } = await import('../src/data/stackRelationships.js');
   const { stackPaths } = await import('../src/data/stackPaths.js');
 
+  const { technologyById, profileById } = await import('../src/lib/domain/index.js');
   const {
-    technologyById,
     technologiesByLayerId,
     outgoingRelationshipsByTechnologyId,
     incomingRelationshipsByTechnologyId,
     graphAdjacencyByTechnologyId,
-    profileById,
     pathById,
   } = await import('../src/lib/graph/index.js');
 
@@ -1387,7 +1384,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getTechnologyDiscoveryResult,
   } = await import('../src/lib/graph/intelligence.js');
 
-  const { technologyById, profileById, pathById } = await import('../src/lib/graph/index.js');
+  const { technologyById, profileById } = await import('../src/lib/domain/index.js');
+  const { pathById } = await import('../src/lib/graph/index.js');
 
   // 1. Directed Semantics Invariants
   // ros2-autoware depends on ros2-middleware
@@ -1582,7 +1580,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const recs = await import('../src/lib/graph/intelligence/recommendations.js');
   const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
   const intelIndex = await import('../src/lib/graph/intelligence/index.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   // 1. Scoring Calculations & Constants
   assert.strictEqual(scoring.RELATIONSHIP_PRIORITY['runs-on'], 10);
@@ -1657,7 +1655,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const bridges = await import('../src/lib/graph/intelligence/bridges.js');
   const stackInsights = await import('../src/lib/graph/intelligence/stackInsights.js');
   const { encodeStackToSearchParams, decodeStackFromSearchParams } = await import('../src/lib/builder/stackBuilderEngine.js');
-  const { technologyById, outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
+  const { outgoingRelationshipsByTechnologyId } = await import('../src/lib/graph/index.js');
 
   // 1. Core Stack Layer Categorization
   assert.strictEqual(CORE_STACK_LAYER_IDS.length, 6, 'Must have exactly 6 core runtime layers');
@@ -2128,7 +2127,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 {
   const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
   const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   const stackWithPerseus = {
     'hardware-compute': ['nvidia-drive-thor'],
@@ -2206,7 +2205,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 // Test 47: Target & Replacement Candidate Synchronization Logic
 {
   const { getAlternatives } = await import('../src/lib/graph/intelligence/relationships.js');
-  const { technologiesByLayerId, technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
+  const { technologiesByLayerId } = await import('../src/lib/graph/index.js');
 
   const selectedTechIds = ['nvidia-drive-thor', 'qnx-neutrino', 'autosar-adaptive'];
 
@@ -2273,7 +2273,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 {
   const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
   const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   // Perseus Pegasus Hypervisor ASIL-D Certified invariant
   const perseus = technologyById.get('perseus-hypervisor');
@@ -2580,7 +2580,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
 // Test 61: Functional Safety Invariant Preservation
 {
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
   const { discoverArchitecture } = await import('../src/lib/architecture/discovery.js');
   const { compareWhatIfStack } = await import('../src/lib/architecture/whatIf.js');
 
@@ -2653,7 +2653,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 // Test 63: Cockpit Domain Safety Invariant (QM Standard)
 {
   const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   const customLinuxProfile = architectureProfiles.find((p) => p.id === 'modern-ivi')!;
   
@@ -2672,7 +2672,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 // Test 64: Concrete OSS Software Stacks & Pruned Abstract Protocols
 {
   const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
   const { projects } = await import('../src/data/projects.js');
 
   // 1. Abstract protocols must be completely pruned
@@ -3106,7 +3106,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 {
   const { en } = await import('../src/i18n/en.js');
   const { ko } = await import('../src/i18n/ko.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   // 1. Recursive Deep Dictionary Key Parity & Template Variables
   function checkParity(enObj: any, koObj: any, path = '') {
@@ -3206,7 +3206,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { companyStrategies } = await import('../src/data/companyStrategies.js');
   const { companies } = await import('../src/data/companies.js');
   const { stackRelationships } = await import('../src/data/stackRelationships.js');
-  const { technologyById } = await import('../src/lib/graph/index.js');
+  const { technologyById } = await import('../src/lib/domain/index.js');
 
   assert.strictEqual(companyStrategies.length, 11, 'Expected exactly 11 company strategy profiles');
 
@@ -3275,10 +3275,14 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     companyById,
     strategyByCompanyId,
     layerById,
+    stackLayerById,
     toolById,
     resourceById,
     projectById,
     eventById,
+    technologyById,
+    architectureProfileById,
+    profileById,
     getCompany,
     getCompanyStrategy,
     getStackLayer,
@@ -3286,13 +3290,16 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getResource,
     getProject,
     getEvent,
+    getTechnology,
+    getArchitectureProfile,
     getToolsForTechnology,
     getResourcesForTechnology,
     getProjectsForTechnology,
     getCompaniesForTechnology,
     getEventsForTechnology,
-    technologyById,
-  } = await import('../src/lib/graph/index.js');
+  } = await import('../src/lib/domain/index.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { architectureProfiles } = await import('../src/data/architectureProfiles.js');
   const { companies } = await import('../src/data/companies.js');
   const { stackLayers } = await import('../src/data/stackLayers.js');
   const { tools } = await import('../src/data/tools.js');
@@ -3302,9 +3309,13 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { companyStrategies } = await import('../src/data/companyStrategies.js');
   const { CANONICAL_STATIC_ROUTES, ROUTE_SEO_MAP } = await import('../src/app/routes.js');
 
-  // 1. Entity Map size & Lookup integrity
+  // 1. Entity Map size & Lookup integrity across all 9 canonical entities
+  assert.strictEqual(technologyById.size, stackTechnologies.length, 'technologyById size must match stackTechnologies count');
+  assert.strictEqual(architectureProfileById.size, architectureProfiles.length, 'architectureProfileById size must match architectureProfiles count');
+  assert.strictEqual(profileById.size, architectureProfiles.length, 'profileById alias size must match architectureProfiles count');
   assert.strictEqual(companyById.size, companies.length, 'companyById size must match companies count');
   assert.strictEqual(layerById.size, stackLayers.length, 'layerById size must match stackLayers count');
+  assert.strictEqual(stackLayerById.size, stackLayers.length, 'stackLayerById alias size must match stackLayers count');
   assert.strictEqual(toolById.size, tools.length, 'toolById size must match tools count');
   assert.strictEqual(resourceById.size, resources.length, 'resourceById size must match resources count');
   assert.strictEqual(projectById.size, projects.length, 'projectById size must match projects count');
@@ -3312,6 +3323,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(strategyByCompanyId.size, companyStrategies.length, 'strategyByCompanyId size must match companyStrategies count');
 
   // 2. Canonical Getters work and return exact references
+  for (const tech of stackTechnologies) {
+    assert.strictEqual(getTechnology(tech.id), tech, `getTechnology('${tech.id}') must return exact object`);
+  }
+  for (const prof of architectureProfiles) {
+    assert.strictEqual(getArchitectureProfile(prof.id), prof, `getArchitectureProfile('${prof.id}') must return exact object`);
+  }
   for (const c of companies) {
     assert.strictEqual(getCompany(c.id), c, `getCompany('${c.id}') must return exact object`);
   }
@@ -3363,6 +3380,46 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   console.log('✅ Test 72 Passed: Repository-wide Single Source of Truth & Domain Selectors verified.');
+}
+
+// Test 73: Phase 8.x — Domain vs Graph Boundary & Zero Map Duplication
+{
+  const domainModule = await import('../src/lib/domain/index.js');
+  const graphModule = await import('../src/lib/graph/index.js');
+
+  // 1. Verify entity lookup maps are exported from Domain
+  assert.ok(domainModule.technologyById, 'domainModule must export technologyById');
+  assert.ok(domainModule.architectureProfileById, 'domainModule must export architectureProfileById');
+  assert.ok(domainModule.companyById, 'domainModule must export companyById');
+  assert.ok(domainModule.layerById, 'domainModule must export layerById');
+
+  // 2. Verify graphModule does not redefine duplicate entity Maps
+  // Graph algorithms use domainModule.technologyById directly (exact same instance)
+  assert.strictEqual(
+    graphModule.technologyById,
+    undefined,
+    'graphModule must NOT define or export its own technologyById'
+  );
+  assert.strictEqual(
+    graphModule.getTechnology,
+    undefined,
+    'graphModule must NOT export getTechnology (lives canonically in domainModule)'
+  );
+  assert.strictEqual(
+    graphModule.getCompany,
+    undefined,
+    'graphModule must NOT export getCompany (lives canonically in domainModule)'
+  );
+
+  // 3. Verify graphModule retains graph-specific indexes and operations
+  assert.ok(graphModule.outgoingRelationshipsByTechnologyId, 'graphModule must export outgoingRelationshipsByTechnologyId');
+  assert.ok(graphModule.incomingRelationshipsByTechnologyId, 'graphModule must export incomingRelationshipsByTechnologyId');
+  assert.ok(graphModule.graphAdjacencyByTechnologyId, 'graphModule must export graphAdjacencyByTechnologyId');
+  assert.ok(typeof graphModule.findShortestPath === 'function', 'graphModule must export findShortestPath');
+  assert.ok(typeof graphModule.getGraphInsights === 'function', 'graphModule must export getGraphInsights');
+  assert.ok(typeof graphModule.getRelationshipsForTechnology === 'function', 'graphModule must export getRelationshipsForTechnology');
+
+  console.log('✅ Test 73 Passed: Domain vs Graph Boundary & Zero Map Duplication verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

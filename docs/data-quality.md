@@ -79,26 +79,70 @@ Strategy Intelligence
 
 ---
 
-## 6. Single Source of Truth (SSOT) Architecture & Domain Selectors
+## 6. Single Source of Truth (SSOT) Architecture & Domain Boundaries
 
-Automotive Software Hub enforces a strict separation between data, domain indexing, and UI rendering:
+Automotive Software Hub enforces a strict separation between raw data, domain entity indexing, knowledge graph algorithms, and UI rendering:
 
 ```text
-[Data Layer: src/data/] (Entities & Relationships defined once)
+[Data Layer: src/data/] (Entities, facts & relationships defined once)
         ↓
-[Domain Selectors: src/lib/domain/ & src/lib/graph/] (Maps, lookups & ecosystem resolvers)
+[Domain Layer: src/lib/domain/] (Canonical entity lookup maps, 9 entity getters, ecosystem resolvers)
         ↓
-[UI Components: src/pages/ & src/components/] (100% presentation, zero duplicate databases)
+[Graph Layer: src/lib/graph/] (Relationships, traversal, shortest path, matching, intelligence)
+        ↓
+[Builder Layer: src/lib/builder/] (Stack builder engine, candidate scoring, URL state)
+        ↓
+[UI Layer: src/pages/ & src/components/] (Presentation layer consuming Domain & Graph)
 ```
 
-### Conventions
-1. **No Component-Level Entity Databases**: Components and pages must never maintain duplicate inline lists, IDs, or static fallback mappings.
-2. **Canonical Domain Selectors**:
-   - Fast $O(1)$ lookups: `getCompany(id)`, `getStackLayer(id)`, `getTool(id)`, `getResource(id)`, `getProject(id)`, `getEvent(id)`, `getCompanyStrategy(id)`.
-   - Ecosystem resolution: `getToolsForTechnology(tech)`, `getResourcesForTechnology(tech)`, `getProjectsForTechnology(tech)`, `getCompaniesForTechnology(tech)`, `getEventsForTechnology(tech)`.
-   - Formatters: Centralized `formatVerifiedDate(isoDate, lang)` and `getCountryFlag(headquarters)` in `src/utils/formatters.ts`.
-3. **Canonical Routes & SEO SSOT**:
+### Architectural Layering & Responsibilities
+
+1. **`src/data/` (Canonical Datasets)**:
+   - Canonical definitions of entities: `stackTechnologies`, `architectureProfiles`, `stackRelationships`, `stackLayers`, `companies`, `tools`, `resources`, `projects`, `events`, `companyStrategies`.
+   - Facts and metadata are defined exactly once here.
+
+2. **`src/lib/domain/` (Canonical Domain Entity Access)**:
+   - Maintains canonical $O(1)$ lookup maps: `technologyById`, `architectureProfileById`, `profileById`, `companyById`, `strategyByCompanyId`, `layerById`, `stackLayerById`, `toolById`, `resourceById`, `projectById`, `eventById`.
+   - Exports the 9 canonical entity getters:
+     - `getTechnology(id)`
+     - `getArchitectureProfile(id)`
+     - `getCompany(id)`
+     - `getCompanyStrategy(id)`
+     - `getStackLayer(id)`
+     - `getTool(id)`
+     - `getResource(id)`
+     - `getProject(id)`
+     - `getEvent(id)`
+   - Exports 5 cross-domain ecosystem resolvers:
+     - `getToolsForTechnology(tech)`
+     - `getResourcesForTechnology(tech)`
+     - `getProjectsForTechnology(tech)`
+     - `getCompaniesForTechnology(tech)`
+     - `getEventsForTechnology(tech)`
+
+3. **`src/lib/graph/` (Knowledge Graph Intelligence & Traversal)**:
+   - Encapsulates graph data structures and algorithms:
+     - Indexed adjacency lists: `outgoingRelationshipsByTechnologyId`, `incomingRelationshipsByTechnologyId`, `technologiesByLayerId`, `pathsByTechnologyId`.
+     - Traversal & shortest path: `findShortestPath`, `getTechnologyRelationships`, `getRelatedTechnologies`.
+     - Architecture & path matching: `matchStackToArchitectures`, `matchStackToPaths`, `findDirectAlternatives`.
+     - Topology & graph intelligence: `getGraphInsights`, `getTechnologyDiscoveryResult`, `getExploreNextTechnologies`.
+   - Resolves entities by consuming `src/lib/domain/` maps and getters.
+
+4. **`src/lib/builder/` (Automotive Stack Builder Engine)**:
+   - Evaluates stack validity, computes layer completeness, scores technology candidates, and synchronizes URL query state (`encodeStackToSearchParams`, `parseStackFromSearchParams`).
+
+5. **`src/app/routes.ts` (Canonical Routes & Bilingual SEO SSOT)**:
    - Route paths and SEO metadata are centrally registered in `src/app/routes.ts` (`CANONICAL_STATIC_ROUTES`, `ROUTE_SEO_MAP`).
    - Both `useSEO` and `scripts/generate-sitemap.ts` consume the exact same route registry.
-4. **Strict Bilingual Parity**:
-   - Every UI string, placeholder, and error message must reside in `src/i18n/{en,ko}.ts` and be verified by deep parity tests (`Test 70`).
+
+### Core Dependency Rules
+
+- **Unidirectional Flow**: `Graph → Domain → Data`.
+- **Domain Independence**: `src/lib/domain/` must **NEVER** import from `src/lib/graph/`.
+- **Zero Map Duplication**: Entity lookup maps (such as `technologyById` or `profileById`) are instantiated once in `src/lib/domain/` and never duplicated across graph modules.
+- **Consumer Rules**:
+  - UI components and pages import domain entity maps and getters from `src/lib/domain/`.
+  - UI components import graph traversal, matching, and intelligence helpers from `src/lib/graph/`.
+  - Legacy convenience alias `src/utils/graphIndexes.ts` re-exports both for backwards compatibility with clear deprecation annotations.
+- **Strict Bilingual Parity**:
+  - Every UI string, placeholder, and error message must reside in `src/i18n/{en,ko}.ts` and be verified by deep parity tests (`Test 70`).

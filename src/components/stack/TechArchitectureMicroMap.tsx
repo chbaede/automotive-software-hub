@@ -5,11 +5,11 @@ import { RELATIONSHIP_METADATA } from '../../types/relationship';
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { technologyById } from '../../lib/domain';
 import {
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
-  technologyById,
-} from '../../utils/graphIndexes';
+} from '../../lib/graph';
 
 interface TechArchitectureMicroMapProps {
   technology: StackTechnology;

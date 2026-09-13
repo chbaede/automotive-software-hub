@@ -2,23 +2,14 @@ import { stackTechnologies } from '../../data/stackTechnologies';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackRelationships } from '../../data/stackRelationships';
 import { stackPaths } from '../../data/stackPaths';
-import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile, StackPath } from '../../types/architecture';
+import { StackTechnology } from '../../types/stack';
 import { TechnologyRelationship, RelationshipType } from '../../types/relationship';
+import { technologyById, profileById } from '../domain';
 
 // ==========================================
 // CORE GRAPH INDEXES (Authoritative Knowledge Graph)
 // ==========================================
-
-// Index: Technology by ID
-export const technologyById = new Map<string, StackTechnology>(
-  stackTechnologies.map((tech) => [tech.id, tech])
-);
-
-// Index: Architecture Profile by ID
-export const profileById = new Map<string, ArchitectureProfile>(
-  architectureProfiles.map((prof) => [prof.id, prof])
-);
 
 // Index: Architecture Profiles by Technology ID
 export const profilesByTechnologyId = new Map<string, ArchitectureProfile[]>();
@@ -115,20 +106,6 @@ stackTechnologies.forEach((tech) => {
 // ==========================================
 // GRAPH TRAVERSAL & QUERY OPERATIONS
 // ==========================================
-
-/**
- * Returns the technology matching the ID, or undefined.
- */
-export function getTechnology(id: string): StackTechnology | undefined {
-  return technologyById.get(id);
-}
-
-/**
- * Returns the architecture profile matching the ID, or undefined.
- */
-export function getArchitectureProfile(id: string): ArchitectureProfile | undefined {
-  return profileById.get(id);
-}
 
 /**
  * Returns outgoing relationships from a technology node.
@@ -567,6 +544,5 @@ export function getGraphInsights(): GraphInsightsData {
 export * from './scoring';
 export * from './matching';
 export * from './intelligence/index';
-export * from '../domain';
 
 

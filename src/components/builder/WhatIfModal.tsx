@@ -8,10 +8,10 @@ import {
   Layers,
   Info,
 } from 'lucide-react';
+import { technologyById } from '../../lib/domain';
 import {
   FlexibleStackSelection,
   getSelectedTechIds,
-  technologyById,
   technologiesByLayerId,
 } from '../../lib/graph';
 import { StackTechnology } from '../../types/stack';

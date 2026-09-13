@@ -17,7 +17,8 @@ import {
   Network,
   Plus,
 } from 'lucide-react';
-import { profileById, technologyById, outgoingRelationshipsByTechnologyId } from '../../lib/graph';
+import { profileById, technologyById } from '../../lib/domain';
+import { outgoingRelationshipsByTechnologyId } from '../../lib/graph';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackLayers } from '../../data/stackLayers';
 import { stackPaths } from '../../data/stackPaths';

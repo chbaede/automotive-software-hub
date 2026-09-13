@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Plus, ArrowRight } from 'lucide-react';
 import { TechnologyCandidate } from '../../lib/builder/stackBuilderEngine';
-import { getStackLayer } from '../../lib/graph';
+import { getStackLayer } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { RELATIONSHIP_METADATA } from '../../types/relationship';

@@ -11,8 +11,8 @@ import {
   RELATIONSHIP_METADATA,
 } from '../../../types/relationship';
 import { LocalizedText } from '../../../types/i18n';
+import { technologyById } from '../../domain';
 import {
-  technologyById,
   graphAdjacencyByTechnologyId,
   profilesByTechnologyId,
   pathsByTechnologyId,

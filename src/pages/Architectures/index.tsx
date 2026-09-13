@@ -24,7 +24,7 @@ import {
 import { StackLayerId } from '../../types/stack';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { technologyById, getStackLayer } from '../../utils/graphIndexes';
+import { technologyById, getStackLayer } from '../../lib/domain';
 import { convertArchitectureToStackSelection } from '../../lib/architecture/comparison';
 import { encodeStackToSearchParams } from '../../lib/builder/stackBuilderEngine';
 import { ArchitectureComparisonModal } from '../../components/stack/ArchitectureComparisonModal';

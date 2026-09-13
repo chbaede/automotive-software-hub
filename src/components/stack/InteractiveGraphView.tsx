@@ -5,12 +5,11 @@ import { TechnologyRelationship, RELATIONSHIP_METADATA } from '../../types/relat
 import { RelationshipBadge } from './RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
+import { technologyById, getStackLayer } from '../../lib/domain';
 import {
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
-  technologyById,
-  getStackLayer,
-} from '../../utils/graphIndexes';
+} from '../../lib/graph';
 import {
   Network,
   ArrowRight,

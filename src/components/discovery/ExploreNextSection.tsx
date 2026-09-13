@@ -5,7 +5,7 @@ import { StackTechnology } from '../../types/stack';
 import { TechnologyRecommendation, TechnologyInsightItem } from '../../lib/graph/intelligence';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { getStackLayer } from '../../lib/graph';
+import { getStackLayer } from '../../lib/domain';
 import { RelationshipBadge } from '../stack/RelationshipBadge';
 
 interface ExploreNextSectionProps {

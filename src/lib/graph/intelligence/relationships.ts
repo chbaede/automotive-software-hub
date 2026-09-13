@@ -18,8 +18,8 @@
 import { StackTechnology } from '../../../types/stack';
 import { TechnologyRelationship } from '../../../types/relationship';
 import { LocalizedText } from '../../../types/i18n';
+import { technologyById } from '../../domain';
 import {
-  technologyById,
   outgoingRelationshipsByTechnologyId,
   incomingRelationshipsByTechnologyId,
   graphAdjacencyByTechnologyId,

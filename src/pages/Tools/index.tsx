@@ -7,7 +7,7 @@ import { Tool, ToolCategory, ToolStatus } from '../../types/tool';
 import { ToolCard } from '../../components/cards/ToolCard';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
 import { getLocalizedText } from '../../types/i18n';
-import { getTool } from '../../lib/graph';
+import { getTool } from '../../lib/domain';
 
 export const ToolsPage: React.FC = () => {
   const { language, t } = useLanguage();

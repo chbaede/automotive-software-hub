@@ -12,7 +12,8 @@ import {
   Info,
 } from 'lucide-react';
 import { StackLayer, StackTechnology } from '../../types/stack';
-import { technologiesByLayerId, technologyById } from '../../lib/graph';
+import { technologyById } from '../../lib/domain';
+import { technologiesByLayerId } from '../../lib/graph';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 

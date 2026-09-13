@@ -11,7 +11,7 @@ import { StackTechnology, StackLayer, StackLayerId } from '../../types/stack';
 import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { LocalizedText } from '../../types/i18n';
 import { stackLayers } from '../../data/stackLayers';
-import { technologyById, getStackLayer } from '../graph';
+import { technologyById, getStackLayer } from '../domain';
 import {
   ArchitectureDiscoveryResult,
   ArchitectureMatchResult,

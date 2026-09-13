@@ -19,7 +19,7 @@ import {
 } from '../../lib/builder/stackBuilderEngine';
 import { discoverArchitecture } from '../../lib/architecture/discovery';
 import { buildArchitectureDiscoveryViewModel } from '../../lib/architecture/discoveryViewModel';
-import { technologyById, getStackLayer } from '../../lib/graph';
+import { technologyById, getStackLayer } from '../../lib/domain';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LayerTechSelector } from '../../components/builder/LayerTechSelector';
 import { StackPreviewLadder } from '../../components/builder/StackPreviewLadder';
