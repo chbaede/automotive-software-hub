@@ -78,7 +78,9 @@ export function getCountryFlag(headquarters: string): string {
   if (hq.includes('israel') || hq.includes('jerusalem')) return '🇮🇱';
   if (hq.includes('canada')) return '🇨🇦';
   if (hq.includes('uk') || hq.includes('united kingdom')) return '🇬🇧';
-  if (hq.includes('sweden')) return '🇸🇪';
+  if (hq.includes('india') || hq.includes('mumbai')) return '🇮🇳';
+  if (hq.includes('spain') || hq.includes('madrid')) return '🇪🇸';
+  if (hq.includes('italy')) return '🇮🇹';
   return '🌐';
 }
 

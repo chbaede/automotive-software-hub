@@ -3208,7 +3208,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const { stackRelationships } = await import('../src/data/stackRelationships.js');
   const { technologyById } = await import('../src/lib/domain/index.js');
 
-  assert.strictEqual(companyStrategies.length, 11, 'Expected exactly 11 company strategy profiles');
+  assert.strictEqual(companyStrategies.length, 26, 'Expected exactly 26 company strategy profiles');
 
   const companyMap = new Map(companies.map((c) => [c.id, c]));
   const validSourceTypes = new Set([
@@ -3792,6 +3792,152 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   console.log('✅ Test 78 Passed: Strict Knowledge Graph Data Integrity & Zero Topic-Inferred Relationships verified.');
+}
+
+// ---------------------------------------------------------------------------
+// TEST 79: Global OEM Database Expansion, Continent Classification & Strategy Intelligence Integrity
+// ---------------------------------------------------------------------------
+{
+  const { companies } = await import('../src/data/companies.js');
+  const { companyStrategies } = await import('../src/data/companyStrategies.js');
+  const {
+    getCompany,
+    getCompanyStrategy,
+    getCompaniesByContinent,
+    companiesByContinent,
+  } = await import('../src/lib/domain/index.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  const validContinents = new Set([
+    'north-america',
+    'south-america',
+    'europe',
+    'asia',
+    'africa',
+    'oceania',
+  ]);
+
+  // 1. Every company must have a valid continent from the defined enum
+  assert.strictEqual(companies.length, 69, 'Total company count must be exactly 69 (54 existing + 15 new OEMs)');
+  for (const company of companies) {
+    assert.ok(company.continent, `Company ${company.id} must have a continent property`);
+    assert.ok(
+      validContinents.has(company.continent),
+      `Company ${company.id} has invalid continent: ${company.continent}`
+    );
+  }
+
+  // 2. Domain selector & inverted index getCompaniesByContinent
+  assert.strictEqual(getCompaniesByContinent().length, 69, 'getCompaniesByContinent() must return all 69 companies');
+  const naCompanies = getCompaniesByContinent('north-america');
+  const euCompanies = getCompaniesByContinent('europe');
+  const asiaCompanies = getCompaniesByContinent('asia');
+  const saCompanies = getCompaniesByContinent('south-america');
+  const afCompanies = getCompaniesByContinent('africa');
+  const ocCompanies = getCompaniesByContinent('oceania');
+
+  assert.ok(naCompanies.length > 0, 'North America must have companies');
+  assert.ok(euCompanies.length > 0, 'Europe must have companies');
+  assert.ok(asiaCompanies.length > 0, 'Asia must have companies');
+
+  const totalIndexed =
+    naCompanies.length +
+    euCompanies.length +
+    asiaCompanies.length +
+    saCompanies.length +
+    afCompanies.length +
+    ocCompanies.length;
+  assert.strictEqual(totalIndexed, 69, 'Sum of companies across all continents must equal 69');
+
+  // 3. Target OEM Universe Verification (21 OEMs)
+  const targetOems = [
+    // North America
+    { id: 'tesla', continent: 'north-america', name: 'Tesla, Inc.' },
+    { id: 'general-motors', continent: 'north-america', name: 'General Motors Company' },
+    { id: 'ford', continent: 'north-america', name: 'Ford Motor Company' },
+    // Europe
+    { id: 'volkswagen-group', continent: 'europe', name: 'Volkswagen Group (CARIAD)' },
+    { id: 'mercedes-benz', continent: 'europe', name: 'Mercedes-Benz Group AG' },
+    { id: 'bmw-group', continent: 'europe', name: 'BMW Group' },
+    { id: 'stellantis', continent: 'europe', name: 'Stellantis N.V.' },
+    { id: 'renault-group', continent: 'europe', name: 'Renault Group' },
+    // Japan (Asia)
+    { id: 'toyota-motor', continent: 'asia', name: 'Toyota Motor Corporation (Woven by Toyota)' },
+    { id: 'honda', continent: 'asia', name: 'Honda Motor Co., Ltd.' },
+    { id: 'nissan', continent: 'asia', name: 'Nissan Motor Co., Ltd.' },
+    // South Korea (Asia)
+    { id: 'hyundai-motor-group', continent: 'asia', name: 'Hyundai Motor Group' },
+    { id: 'kia', continent: 'asia', name: 'Kia Corporation' },
+    // China (Asia)
+    { id: 'byd', continent: 'asia', name: 'BYD Company Limited' },
+    { id: 'geely', continent: 'asia', name: 'Geely Holding Group (Geely Auto)' },
+    { id: 'saic', continent: 'asia', name: 'SAIC Motor Corporation Limited' },
+    { id: 'nio', continent: 'asia', name: 'NIO Inc.' },
+    { id: 'xpeng', continent: 'asia', name: 'XPeng Inc.' },
+    { id: 'li-auto', continent: 'asia', name: 'Li Auto Inc.' },
+    // India (Asia)
+    { id: 'tata-motors', continent: 'asia', name: 'Tata Motors Limited' },
+    { id: 'mahindra', continent: 'asia', name: 'Mahindra & Mahindra Limited' },
+  ];
+
+  for (const oem of targetOems) {
+    const comp = getCompany(oem.id);
+    assert.ok(comp, `Target OEM ${oem.id} must exist in companies SSOT`);
+    assert.strictEqual(comp.category, 'oem', `Target OEM ${oem.id} category must be 'oem'`);
+    assert.strictEqual(comp.continent, oem.continent, `Target OEM ${oem.id} must belong to continent '${oem.continent}'`);
+    assert.strictEqual(comp.hasStrategyInsight, true, `Target OEM ${oem.id} must have hasStrategyInsight: true`);
+
+    const strat = getCompanyStrategy(oem.id);
+    assert.ok(strat, `Target OEM ${oem.id} must have a CompanyStrategyInsight entry`);
+    assert.strictEqual(strat.category, 'oem', `Strategy insight for ${oem.id} must have category 'oem'`);
+
+    // Verify Strategy Data Completeness & Traceability
+    assert.ok(strat.matrixSummary?.sdvOs?.en && strat.matrixSummary?.sdvOs?.ko, `Strategy ${oem.id} must have localized sdvOs`);
+    assert.ok(strat.matrixSummary?.eeZonal?.en && strat.matrixSummary?.eeZonal?.ko, `Strategy ${oem.id} must have localized eeZonal`);
+    assert.ok(strat.matrixSummary?.evPlatform?.en && strat.matrixSummary?.evPlatform?.ko, `Strategy ${oem.id} must have localized evPlatform`);
+    assert.ok(strat.sdvArchitecture?.en && strat.sdvArchitecture?.ko, `Strategy ${oem.id} must have localized sdvArchitecture`);
+    assert.ok(strat.eeZonalArchitecture?.en && strat.eeZonalArchitecture?.ko, `Strategy ${oem.id} must have localized eeZonalArchitecture`);
+    assert.ok(strat.evPlatformStrategy?.en && strat.evPlatformStrategy?.ko, `Strategy ${oem.id} must have localized evPlatformStrategy`);
+    assert.ok(strat.autonomousDrivingAi?.en && strat.autonomousDrivingAi?.ko, `Strategy ${oem.id} must have localized autonomousDrivingAi`);
+
+    // Verify HTTPS IR URL
+    const irUrls = typeof strat.irUrl === 'string' ? [strat.irUrl] : [strat.irUrl.en, strat.irUrl.ko];
+    for (const u of irUrls) {
+      assert.ok(u.startsWith('https://'), `Strategy ${oem.id} irUrl must start with https://, got '${u}'`);
+    }
+
+    // Verify Strategic Targets
+    assert.ok(strat.strategicTargets.length > 0, `Strategy ${oem.id} must have strategic targets`);
+    for (const target of strat.strategicTargets) {
+      assert.ok(/^\d{4}$/.test(target.year), `Strategy ${oem.id} target year must be 4 digits, got '${target.year}'`);
+      assert.ok(target.milestone?.en && target.milestone?.ko, `Strategy ${oem.id} milestone must be localized`);
+    }
+
+    // Verify Traceable Sources
+    assert.ok(strat.sources.length > 0, `Strategy ${oem.id} must have traceable sources`);
+    for (const source of strat.sources) {
+      assert.ok(source.title?.en && source.title?.ko, `Strategy ${oem.id} source must have localized title`);
+      assert.ok(source.url.startsWith('https://'), `Strategy ${oem.id} source URL must be HTTPS, got '${source.url}'`);
+      assert.strictEqual(source.confidence, 'official', `Strategy ${oem.id} source confidence must be official`);
+    }
+  }
+
+  // 4. Localization (i18n) Parity for Continents
+  const continentKeys = ['all', 'northAmerica', 'europe', 'asia', 'southAmerica', 'africa', 'oceania'] as const;
+  for (const k of continentKeys) {
+    assert.ok(en.continents[k], `Missing EN translation for continent key '${k}'`);
+    assert.ok(ko.continents[k], `Missing KO translation for continent key '${k}'`);
+  }
+  assert.ok(en.companies.continentFilter, 'Missing EN translation for companies.continentFilter');
+  assert.ok(ko.companies.continentFilter, 'Missing KO translation for companies.continentFilter');
+  assert.ok(en.strategyInsights.filterContinentAll, 'Missing EN translation for strategyInsights.filterContinentAll');
+  assert.ok(ko.strategyInsights.filterContinentAll, 'Missing KO translation for strategyInsights.filterContinentAll');
+
+  // 5. Total Strategy Count & Integrity
+  assert.strictEqual(companyStrategies.length, 26, 'Total company strategies must be exactly 26 (11 existing + 15 new)');
+
+  console.log('✅ Test 79 Passed: Global OEM Expansion, Continent Classification & Strategy Intelligence Integrity verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

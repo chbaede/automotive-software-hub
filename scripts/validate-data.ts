@@ -170,6 +170,31 @@ checkCollection('Open Source Projects', projects);
 checkCollection('Events', events);
 checkCollection('Companies', companies);
 
+// Validate Companies: Continent classification & Strategy linkage
+const validContinents = new Set([
+  'north-america',
+  'south-america',
+  'europe',
+  'asia',
+  'africa',
+  'oceania',
+]);
+
+const strategyCompanyIdSet = new Set(companyStrategies.map((cs) => cs.companyId));
+
+companies.forEach((c) => {
+  if (!c.continent) {
+    error(`[Company ID: ${c.id}] Missing 'continent' field.`);
+  } else if (!validContinents.has(c.continent)) {
+    error(`[Company ID: ${c.id}] Invalid continent value: '${c.continent}'.`);
+  }
+
+  if (c.hasStrategyInsight && !strategyCompanyIdSet.has(c.id)) {
+    error(`[Company ID: ${c.id}] Declares hasStrategyInsight: true but is missing from companyStrategies.`);
+  }
+});
+console.log(`✅ Companies: ${companies.length} companies, continents & strategy linkages validated.`);
+
 // Validate Stack Layers
 const layerIds = new Set<string>();
 stackLayers.forEach((l) => {

@@ -15,12 +15,14 @@ import {
   ShieldCheck,
   Sparkles,
   ArrowUpRight,
+  Globe,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
 import { getCountryFlag, formatVerifiedDate } from '../../utils/formatters';
+import { getCompany } from '../../lib/domain';
 
 export const CompanyStrategyPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -28,6 +30,7 @@ export const CompanyStrategyPage: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedContinent, setSelectedContinent] = useState<string>('all');
 
   // Smooth scroll to anchor on initial mount or hash change
   useEffect(() => {
@@ -89,9 +92,30 @@ export const CompanyStrategyPage: React.FC = () => {
     }
   };
 
+  const getContinentLabel = (c: string): string => {
+    switch (c) {
+      case 'north-america':
+        return t.continents.northAmerica;
+      case 'europe':
+        return t.continents.europe;
+      case 'asia':
+        return t.continents.asia;
+      case 'south-america':
+        return t.continents.southAmerica;
+      case 'africa':
+        return t.continents.africa;
+      case 'oceania':
+        return t.continents.oceania;
+      default:
+        return c;
+    }
+  };
+
   const filteredStrategies = companyStrategies.filter((s) => {
     const q = searchQuery.trim().toLowerCase();
     const matchesCategory = selectedCategory === 'all' || s.category === selectedCategory;
+    const comp = getCompany(s.companyId);
+    const matchesContinent = selectedContinent === 'all' || comp?.continent === selectedContinent;
 
     const name = s.companyName.toLowerCase();
     const hq = s.headquarters.toLowerCase();
@@ -111,7 +135,7 @@ export const CompanyStrategyPage: React.FC = () => {
       ad.includes(q) ||
       ticker.includes(q);
 
-    return matchesCategory && matchesQuery;
+    return matchesCategory && matchesContinent && matchesQuery;
   });
 
   return (
@@ -221,53 +245,93 @@ export const CompanyStrategyPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {companyStrategies.map((item) => (
-                <tr
-                  key={item.companyId}
-                  className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition"
-                >
-                  <td className="py-3 px-4 font-semibold text-slate-900 dark:text-slate-100">
-                    <a
-                      href={`#${item.companyId}`}
-                      className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1.5"
-                    >
-                      <span>{getCountryFlag(item.headquarters)}</span>
-                      <span>{item.companyName}</span>
-                    </a>
-                  </td>
-                  <td className="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
-                    {getLocalizedText(item.matrixSummary.sdvOs, language)}
-                  </td>
-                  <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden md:table-cell text-[11px]">
-                    {getLocalizedText(item.matrixSummary.eeZonal, language)}
-                  </td>
-                  <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden lg:table-cell text-[11px]">
-                    {getLocalizedText(item.matrixSummary.evPlatform, language)}
-                  </td>
-                  <td className="py-3 px-4 font-mono font-bold text-brand-600 dark:text-brand-400 text-[11px]">
-                    {(() => {
-                      const firstYear = item.strategicTargets[0]?.year;
-                      const lastYear = item.strategicTargets[item.strategicTargets.length - 1]?.year;
-                      if (!firstYear && !lastYear) return '—';
-                      if (!lastYear || firstYear === lastYear) return firstYear;
-                      return `${firstYear}–${lastYear}`;
-                    })()}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <a
-                      href={typeof item.irUrl === 'string' ? item.irUrl : getLocalizedText(item.irUrl, language)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0A66C2] hover:underline"
-                    >
-                      <span>IR</span>
-                      <ArrowUpRight className="w-3 h-3" />
-                    </a>
+              {filteredStrategies.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-slate-500 text-xs">
+                    {t.strategyInsights.noResults}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredStrategies.map((item) => (
+                  <tr
+                    key={item.companyId}
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition"
+                  >
+                    <td className="py-3 px-4 font-semibold text-slate-900 dark:text-slate-100">
+                      <a
+                        href={`#${item.companyId}`}
+                        className="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1.5"
+                      >
+                        <span>{getCountryFlag(item.headquarters)}</span>
+                        <span>{item.companyName}</span>
+                      </a>
+                    </td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
+                      {getLocalizedText(item.matrixSummary.sdvOs, language)}
+                    </td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden md:table-cell text-[11px]">
+                      {getLocalizedText(item.matrixSummary.eeZonal, language)}
+                    </td>
+                    <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden lg:table-cell text-[11px]">
+                      {getLocalizedText(item.matrixSummary.evPlatform, language)}
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold text-brand-600 dark:text-brand-400 text-[11px]">
+                      {(() => {
+                        const firstYear = item.strategicTargets[0]?.year;
+                        const lastYear = item.strategicTargets[item.strategicTargets.length - 1]?.year;
+                        if (!firstYear && !lastYear) return '—';
+                        if (!lastYear || firstYear === lastYear) return firstYear;
+                        return `${firstYear}–${lastYear}`;
+                      })()}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <a
+                        href={typeof item.irUrl === 'string' ? item.irUrl : getLocalizedText(item.irUrl, language)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0A66C2] hover:underline"
+                      >
+                        <span>IR</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Continent Tabs */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <Globe className="w-3.5 h-3.5 text-brand-500" />
+          <span>{t.companies.continentFilter}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {[
+            { id: 'all', label: t.continents.all },
+            { id: 'north-america', label: t.continents.northAmerica },
+            { id: 'europe', label: t.continents.europe },
+            { id: 'asia', label: t.continents.asia },
+          ].map((tab) => {
+            const isActive = selectedContinent === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setSelectedContinent(tab.id)}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition ${
+                  isActive
+                    ? 'bg-slate-900 text-white dark:bg-brand-600 dark:text-white border-transparent shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -361,6 +425,15 @@ export const CompanyStrategyPage: React.FC = () => {
                       <span>{getCountryFlag(strategy.headquarters)}</span>
                       <span>{strategy.headquarters}</span>
                     </span>
+                    {(() => {
+                      const cObj = getCompany(strategy.companyId);
+                      return cObj?.continent ? (
+                        <span className="text-[11px] px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded font-medium border border-slate-200/60 dark:border-slate-800 flex items-center gap-1">
+                          <Globe className="w-3 h-3 text-brand-500" />
+                          <span>{getContinentLabel(cObj.continent)}</span>
+                        </span>
+                      ) : null;
+                    })()}
                     {strategy.lastVerified && (
                       <span className="text-[11px] font-mono px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded">
                         {t.strategyInsights.verifiedDateLabel.replace(

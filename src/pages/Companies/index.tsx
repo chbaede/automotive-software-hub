@@ -1,12 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Building2, Search, Compass, TrendingUp, Sparkles } from 'lucide-react';
+import { Building2, Search, Compass, TrendingUp, Sparkles, Globe } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { companies } from '../../data/companies';
 import { CompanyCard } from '../../components/cards/CompanyCard';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
 import { TopicId } from '../../types/taxonomy';
+import { CompanyContinent } from '../../types/company';
 import { getLocalizedText } from '../../types/i18n';
+
+const CONTINENT_ORDER: CompanyContinent[] = [
+  'north-america',
+  'europe',
+  'asia',
+  'south-america',
+  'africa',
+  'oceania',
+];
 
 export const CompaniesPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -15,6 +25,7 @@ export const CompaniesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [categoryFilter, setCategoryFilter] = useState<string>(searchParams.get('category') || 'all');
   const [topicFilter, setTopicFilter] = useState<string>(searchParams.get('topic') || 'all');
+  const [continentFilter, setContinentFilter] = useState<string>(searchParams.get('continent') || 'all');
   const [onlyWithIr, setOnlyWithIr] = useState<boolean>(false);
 
   const handleCategoryChange = (cat: string) => {
@@ -22,6 +33,15 @@ export const CompaniesPage: React.FC = () => {
     setSearchParams((prev) => {
       if (cat === 'all') prev.delete('category');
       else prev.set('category', cat);
+      return prev;
+    });
+  };
+
+  const handleContinentChange = (cont: string) => {
+    setContinentFilter(cont);
+    setSearchParams((prev) => {
+      if (cont === 'all') prev.delete('continent');
+      else prev.set('continent', cont);
       return prev;
     });
   };
@@ -35,6 +55,27 @@ export const CompaniesPage: React.FC = () => {
     });
   };
 
+  const getContinentLabel = (c: CompanyContinent | 'all'): string => {
+    switch (c) {
+      case 'all':
+        return t.continents.all;
+      case 'north-america':
+        return t.continents.northAmerica;
+      case 'europe':
+        return t.continents.europe;
+      case 'asia':
+        return t.continents.asia;
+      case 'south-america':
+        return t.continents.southAmerica;
+      case 'africa':
+        return t.continents.africa;
+      case 'oceania':
+        return t.continents.oceania;
+      default:
+        return c;
+    }
+  };
+
   const filteredCompanies = useMemo(() => {
     return companies.filter((c) => {
       const desc = getLocalizedText(c.description, language).toLowerCase();
@@ -46,15 +87,16 @@ export const CompaniesPage: React.FC = () => {
         desc.includes(query) ||
         c.headquarters.toLowerCase().includes(query) ||
         (c.ticker && c.ticker.toLowerCase().includes(query)) ||
-        c.technologies.some((t) => t.toLowerCase().includes(query));
+        c.technologies.some((tech) => tech.toLowerCase().includes(query));
 
       const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
+      const matchesContinent = continentFilter === 'all' || c.continent === continentFilter;
       const matchesTopic = topicFilter === 'all' || c.automotiveTopics.includes(topicFilter as TopicId);
       const matchesIr = !onlyWithIr || Boolean(c.irUrl);
 
-      return matchesQuery && matchesCategory && matchesTopic && matchesIr;
+      return matchesQuery && matchesCategory && matchesContinent && matchesTopic && matchesIr;
     });
-  }, [searchQuery, categoryFilter, topicFilter, onlyWithIr, language]);
+  }, [searchQuery, categoryFilter, continentFilter, topicFilter, onlyWithIr, language]);
 
   return (
     <div className="space-y-8">
@@ -94,6 +136,41 @@ export const CompaniesPage: React.FC = () => {
             <Compass className="w-4 h-4" />
             <span>{t.companies.exploreStrategyBtn}</span>
           </Link>
+        </div>
+      </div>
+
+      {/* Continent Tabs */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <Globe className="w-3.5 h-3.5 text-brand-500" />
+          <span>{t.companies.continentFilter}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {[
+            { id: 'all', label: t.continents.all },
+            { id: 'north-america', label: t.continents.northAmerica },
+            { id: 'europe', label: t.continents.europe },
+            { id: 'asia', label: t.continents.asia },
+            { id: 'south-america', label: t.continents.southAmerica },
+            { id: 'africa', label: t.continents.africa },
+            { id: 'oceania', label: t.continents.oceania },
+          ].map((tab) => {
+            const isActive = continentFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleContinentChange(tab.id)}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition ${
+                  isActive
+                    ? 'bg-slate-900 text-white dark:bg-brand-600 dark:text-white border-transparent shadow-xs'
+                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -179,10 +256,39 @@ export const CompaniesPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Grid */}
+      {/* Grid: Grouped by Continent when "all", or Single Grid when specific continent */}
       {filteredCompanies.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
           {t.companies.noResults}
+        </div>
+      ) : continentFilter === 'all' ? (
+        <div className="space-y-10">
+          {CONTINENT_ORDER.map((cont) => {
+            const companiesInCont = filteredCompanies.filter((c) => c.continent === cont);
+            if (companiesInCont.length === 0) return null;
+
+            return (
+              <div key={cont} className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                      {getContinentLabel(cont)}
+                    </h2>
+                  </div>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
+                    {companiesInCont.length}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {companiesInCont.map((c) => (
+                    <CompanyCard key={c.id} company={c} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

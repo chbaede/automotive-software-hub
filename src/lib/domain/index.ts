@@ -7,7 +7,7 @@ import { tools } from '../../data/tools';
 import { resources } from '../../data/resources';
 import { projects } from '../../data/projects';
 import { events } from '../../data/events';
-import { Company } from '../../types/company';
+import { Company, CompanyContinent } from '../../types/company';
 import { CompanyStrategyInsight } from '../../types/strategy';
 import { StackLayer, StackTechnology } from '../../types/stack';
 import { ArchitectureProfile } from '../../types/architecture';
@@ -88,6 +88,14 @@ stackTechnologies.forEach((tech) => {
   }
 });
 
+// Inverted Index: Companies by Continent
+export const companiesByContinent = new Map<CompanyContinent, Company[]>();
+companies.forEach((company) => {
+  const list = companiesByContinent.get(company.continent) || [];
+  list.push(company);
+  companiesByContinent.set(company.continent, list);
+});
+
 // ==========================================
 // CANONICAL DOMAIN SELECTORS / HELPERS
 // ==========================================
@@ -111,6 +119,15 @@ export function getArchitectureProfile(id: string): ArchitectureProfile | undefi
  */
 export function getCompany(id: string): Company | undefined {
   return companyById.get(id);
+}
+
+/**
+ * Resolves companies filtered by continent.
+ * If continent is undefined, returns all companies.
+ */
+export function getCompaniesByContinent(continent?: CompanyContinent): Company[] {
+  if (!continent) return companies;
+  return companiesByContinent.get(continent) || [];
 }
 
 /**

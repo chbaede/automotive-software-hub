@@ -70,6 +70,25 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   // Find linked technologies in Stack Explorer
   const linkedStackTechs = getTechnologiesForCompany(company.id);
 
+  const getContinentLabel = (continent: string): string => {
+    switch (continent) {
+      case 'north-america':
+        return t.continents.northAmerica;
+      case 'south-america':
+        return t.continents.southAmerica;
+      case 'europe':
+        return t.continents.europe;
+      case 'asia':
+        return t.continents.asia;
+      case 'africa':
+        return t.continents.africa;
+      case 'oceania':
+        return t.continents.oceania;
+      default:
+        return continent;
+    }
+  };
+
   return (
     <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${style.card}`}>
       <div>
@@ -95,9 +114,12 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
           {company.name}
         </h3>
 
-        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-3">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-3">
           <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <span>{flag} {company.headquarters}</span>
+          <span className="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded font-medium border border-slate-200/60 dark:border-slate-800">
+            {getContinentLabel(company.continent)}
+          </span>
         </div>
 
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">

@@ -9,10 +9,19 @@ export type CompanyCategory =
   | 'cloud-tech'
   | 'korean-tech';
 
+export type CompanyContinent =
+  | 'north-america'
+  | 'south-america'
+  | 'europe'
+  | 'asia'
+  | 'africa'
+  | 'oceania';
+
 export interface Company {
   id: string;
   name: string;
   category: CompanyCategory;
+  continent: CompanyContinent;
   description: LocalizedText;
   website: string | LocalizedText;
   headquarters: string;
