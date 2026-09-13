@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             <button
               onClick={toggleTheme}
               className="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
-              title={theme === 'dark' ? (language === 'ko' ? '라이트 모드로 전환' : 'Switch to Light Mode') : (language === 'ko' ? '다크 모드로 전환' : 'Switch to Dark Mode')}
+              title={theme === 'dark' ? t.nav.switchLight : t.nav.switchDark}
               aria-label="Toggle Theme"
             >
               {theme === 'dark' ? (
@@ -122,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="p-1.5 sm:p-2 text-slate-500 hover:text-[#0A66C2] dark:hover:text-[#0A66C2] hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition group"
-              title={language === 'ko' ? '제작자 링크드인 (배창혁)' : "Author's LinkedIn (Changhyeok Bae)"}
+              title={t.nav.authorLinkedin}
               aria-label="Author LinkedIn"
             >
               <Linkedin className="w-4 h-4 text-[#0A66C2]" />
@@ -218,7 +218,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             {/* Core Stack */}
             <div className="space-y-1">
               <span className="text-[10px] font-mono uppercase text-slate-400 font-bold px-3">
-                {language === 'ko' ? '아키텍처 & 스택' : 'Architecture & Stack'}
+                {t.nav.architectureSection}
               </span>
               {coreNavItems.map((item) => (
                 <NavLink
@@ -240,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             {/* Ecosystem */}
             <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-slate-800/60">
               <span className="text-[10px] font-mono uppercase text-slate-400 font-bold px-3">
-                {language === 'ko' ? '생태계 & 자료' : 'Ecosystem & Catalog'}
+                {t.nav.ecosystemSection}
               </span>
               {ecosystemNavItems.map((item) => (
                 <NavLink
@@ -273,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
 
             {/* Social & Author Links */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">{language === 'ko' ? '커뮤니티' : 'Community'}</span>
+              <span className="text-slate-500 font-medium">{t.nav.communitySection}</span>
               <div className="flex items-center gap-2">
                 <a
                   href="https://www.linkedin.com/in/locust2001/"

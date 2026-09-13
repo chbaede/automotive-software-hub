@@ -26,12 +26,6 @@ import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile, STACK_PATH_TYPE_METADATA } from '../../types/architecture';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { tools } from '../../data/tools';
-import { resources } from '../../data/resources';
-import { projects } from '../../data/projects';
-import { companies } from '../../data/companies';
-import { events } from '../../data/events';
-import { stackLayers } from '../../data/stackLayers';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { TechArchitectureMicroMap } from './TechArchitectureMicroMap';
 import { Tool } from '../../types/tool';
@@ -44,9 +38,16 @@ import {
   getTechnologyDiscoveryResult,
   getExploreNextTechnologies,
   TechnologyInsightItem,
+  getStackLayer,
+  getToolsForTechnology,
+  getResourcesForTechnology,
+  getProjectsForTechnology,
+  getCompaniesForTechnology,
+  getEventsForTechnology,
 } from '../../lib/graph';
 import { ExploreNextSection } from '../discovery/ExploreNextSection';
 import { RelationshipExplorerSection } from '../discovery/RelationshipExplorerSection';
+import { formatVerifiedDate } from '../../utils/formatters';
 
 interface TechDetailDrawerProps {
   technology: StackTechnology | null;
@@ -56,20 +57,6 @@ interface TechDetailDrawerProps {
   onOpenTool?: (tool: Tool) => void;
   onFindPathFromHere?: (techId: string) => void;
 }
-
-const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
-  const [year, month, day] = isoDate.split('-');
-  if (!year || !month || !day) return isoDate;
-  if (lang === 'ko') {
-    return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-  const monthName = months[parseInt(month, 10) - 1] || month;
-  return `${monthName} ${parseInt(day, 10)}, ${year}`;
-};
 
 export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   technology,
@@ -161,7 +148,7 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   const description = getLocalizedText(technology.description, language);
   const whereDoesItFit = getLocalizedText(technology.whereDoesItFit, language);
 
-  const layer = stackLayers.find((l) => l.id === technology.layerId);
+  const layer = getStackLayer(technology.layerId);
   const layerName = layer ? getLocalizedText(layer.name, language) : technology.layerId;
 
   // Resolve Linked Architecture Profiles
@@ -170,25 +157,11 @@ export const TechDetailDrawer: React.FC<TechDetailDrawerProps> = ({
   );
 
   // Resolve Linked Entity Objects
-  const linkedTools = (technology.toolIds || [])
-    .map((id) => tools.find((t) => t.id === id))
-    .filter((t): t is (typeof tools)[0] => Boolean(t));
-
-  const linkedResources = (technology.resourceIds || [])
-    .map((id) => resources.find((r) => r.id === id))
-    .filter((r): r is (typeof resources)[0] => Boolean(r));
-
-  const linkedProjects = (technology.openSourceProjectIds || [])
-    .map((id) => projects.find((p) => p.id === id))
-    .filter((p): p is (typeof projects)[0] => Boolean(p));
-
-  const linkedCompanies = (technology.companyIds || [])
-    .map((id) => companies.find((c) => c.id === id))
-    .filter((c): c is (typeof companies)[0] => Boolean(c));
-
-  const linkedEvents = (technology.eventIds || [])
-    .map((id) => events.find((e) => e.id === id))
-    .filter((e): e is (typeof events)[0] => Boolean(e));
+  const linkedTools = getToolsForTechnology(technology);
+  const linkedResources = getResourcesForTechnology(technology);
+  const linkedProjects = getProjectsForTechnology(technology);
+  const linkedCompanies = getCompaniesForTechnology(technology);
+  const linkedEvents = getEventsForTechnology(technology);
 
   const handleBackHistory = () => {
     if (history.length > 1) {

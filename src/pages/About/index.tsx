@@ -12,7 +12,7 @@ export const AboutPage: React.FC = () => {
       <div className="space-y-2 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <Info className="w-4 h-4" />
-          <span>Independent Open Portal • v{APP_VERSION}</span>
+          <span>{t.about.badge.replace('{version}', APP_VERSION)}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.about.title}
@@ -83,7 +83,7 @@ export const AboutPage: React.FC = () => {
               rel="noopener noreferrer"
               className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
             >
-              ✦ {language === 'ko' ? '신규 기술 / 행사 / 기업 데이터 제보 (Issue)' : 'Submit Tech / Event / Company Data'}
+              ✦ {t.about.submitIssue}
             </a>
             <a
               href="https://github.com/chbaede/automotive-software-hub/pulls"
@@ -91,7 +91,7 @@ export const AboutPage: React.FC = () => {
               rel="noopener noreferrer"
               className="text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
             >
-              ✦ {language === 'ko' ? '데이터 수정 및 Pull Request 보내기 (PR)' : 'Submit Data Pull Request (PR)'}
+              ✦ {t.about.submitPr}
             </a>
           </div>
         </div>

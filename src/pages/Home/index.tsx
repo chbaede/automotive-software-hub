@@ -14,6 +14,7 @@ import { performGlobalSearch } from '../../utils/searchEngine';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
 import { GoogleAdBanner } from '../../components/ads/GoogleAdBanner';
 import { Tool } from '../../types/tool';
+import { getLocalizedText } from '../../types/i18n';
 
 export const HomePage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -75,14 +76,14 @@ export const HomePage: React.FC = () => {
               <div className="mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-3 space-y-2 text-left z-20 relative max-h-72 overflow-y-auto">
                 {totalResults === 0 ? (
                   <div className="p-3 text-xs text-slate-400 font-mono">
-                    No matching results found for "{heroQuery}"
+                    {t.searchModal.noResults.replace('{query}', heroQuery)}
                   </div>
                 ) : (
                   <>
                     {searchResults.tools.length > 0 && (
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-2">
-                          Tools ({searchResults.tools.length})
+                          {t.searchModal.toolsHeader.replace('{count}', String(searchResults.tools.length))}
                         </div>
                         {searchResults.tools.slice(0, 3).map((item) => (
                           <div
@@ -94,7 +95,7 @@ export const HomePage: React.FC = () => {
                             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-xs cursor-pointer flex justify-between"
                           >
                             <span className="font-bold text-slate-800 dark:text-slate-200">{item.title}</span>
-                            <span className="text-brand-500 font-mono">Open Tool</span>
+                            <span className="text-brand-500 font-mono">{t.tools.openTool}</span>
                           </div>
                         ))}
                       </div>
@@ -103,7 +104,7 @@ export const HomePage: React.FC = () => {
                     {searchResults.resources.length > 0 && (
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-2">
-                          Resources ({searchResults.resources.length})
+                          {t.searchModal.resourcesHeader.replace('{count}', String(searchResults.resources.length))}
                         </div>
                         {searchResults.resources.slice(0, 3).map((item) => (
                           <a
@@ -131,7 +132,7 @@ export const HomePage: React.FC = () => {
         <div className="space-y-2 max-w-2xl z-10">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-brand-500/20 text-brand-300 text-xs font-mono font-bold rounded-full">
             <Layers className="w-3.5 h-3.5" />
-            <span>Interactive Architecture Feature</span>
+            <span>{t.stack.interactiveFeatureBadge}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             {t.stack.exploreStackHeroTitle}
@@ -152,7 +153,7 @@ export const HomePage: React.FC = () => {
       {/* Primary Category Grid (5 Core Sections) */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-          Primary Hub Sections
+          {t.hero.primarySections}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -204,14 +205,14 @@ export const HomePage: React.FC = () => {
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
             {t.hero.exploreTopics}
           </h2>
-          <span className="text-xs text-slate-400 font-mono">Taxonomy Tags</span>
+          <span className="text-xs text-slate-400 font-mono">{t.hero.taxonomyTags}</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
           {popularTopics.map((topicId) => {
             const meta = TOPIC_TAXONOMY[topicId];
             if (!meta) return null;
-            const label = language === 'ko' ? meta.label.ko : meta.label.en;
+            const label = getLocalizedText(meta.label, language);
             return (
               <button
                 key={topicId}

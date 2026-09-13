@@ -26,12 +26,6 @@ import {
   getStackPathsForTechnology,
   technologyById,
 } from '../../utils/graphIndexes';
-import { stackLayers } from '../../data/stackLayers';
-import { tools } from '../../data/tools';
-import { resources } from '../../data/resources';
-import { projects } from '../../data/projects';
-import { companies } from '../../data/companies';
-import { events } from '../../data/events';
 import { StackLadderVisualizer } from '../../components/stack/StackLadderVisualizer';
 import {
   ARCHITECTURE_PROFILE_TYPE_METADATA,
@@ -43,26 +37,19 @@ import {
   getTechnologyDiscoveryResult,
   getExploreNextTechnologies,
   TechnologyInsightItem,
+  getStackLayer,
+  getToolsForTechnology,
+  getResourcesForTechnology,
+  getProjectsForTechnology,
+  getCompaniesForTechnology,
+  getEventsForTechnology,
 } from '../../lib/graph';
 import { ExploreNextSection } from '../../components/discovery/ExploreNextSection';
 import { RelationshipExplorerSection } from '../../components/discovery/RelationshipExplorerSection';
+import { formatVerifiedDate } from '../../utils/formatters';
 
 const DEFAULT_ARCH_LIMIT = 3;
 const DEFAULT_PATH_LIMIT = 3;
-
-const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
-  const [year, month, day] = isoDate.split('-');
-  if (!year || !month || !day) return isoDate;
-  if (lang === 'ko') {
-    return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-  const monthName = months[parseInt(month, 10) - 1] || month;
-  return `${monthName} ${parseInt(day, 10)}, ${year}`;
-};
 
 export const TechnologyDetailPage: React.FC = () => {
   const { technologyId } = useParams<{ technologyId: string }>();
@@ -139,38 +126,23 @@ export const TechnologyDetailPage: React.FC = () => {
 
   // Ecosystem linked objects
   const linkedTools = useMemo(() => {
-    if (!technology?.toolIds) return [];
-    return technology.toolIds
-      .map((id) => tools.find((tool) => tool.id === id))
-      .filter((tool): tool is (typeof tools)[0] => Boolean(tool));
+    return getToolsForTechnology(technology);
   }, [technology]);
 
   const linkedResources = useMemo(() => {
-    if (!technology?.resourceIds) return [];
-    return technology.resourceIds
-      .map((id) => resources.find((res) => res.id === id))
-      .filter((res): res is (typeof resources)[0] => Boolean(res));
+    return getResourcesForTechnology(technology);
   }, [technology]);
 
   const linkedProjects = useMemo(() => {
-    if (!technology?.openSourceProjectIds) return [];
-    return technology.openSourceProjectIds
-      .map((id) => projects.find((p) => p.id === id))
-      .filter((p): p is (typeof projects)[0] => Boolean(p));
+    return getProjectsForTechnology(technology);
   }, [technology]);
 
   const linkedCompanies = useMemo(() => {
-    if (!technology?.companyIds) return [];
-    return technology.companyIds
-      .map((id) => companies.find((c) => c.id === id))
-      .filter((c): c is (typeof companies)[0] => Boolean(c));
+    return getCompaniesForTechnology(technology);
   }, [technology]);
 
   const linkedEvents = useMemo(() => {
-    if (!technology?.eventIds) return [];
-    return technology.eventIds
-      .map((id) => events.find((e) => e.id === id))
-      .filter((e): e is (typeof events)[0] => Boolean(e));
+    return getEventsForTechnology(technology);
   }, [technology]);
 
   const handleCopyLink = () => {
@@ -212,7 +184,7 @@ export const TechnologyDetailPage: React.FC = () => {
     );
   }
 
-  const layer = stackLayers.find((l) => l.id === technology.layerId);
+  const layer = getStackLayer(technology.layerId);
   const layerName = layer ? getLocalizedText(layer.name, language) : technology.layerId;
   const description = getLocalizedText(technology.description, language);
   const whereDoesItFit = technology.whereDoesItFit

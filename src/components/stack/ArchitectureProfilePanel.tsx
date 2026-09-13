@@ -22,7 +22,6 @@ import {
 import { StackTechnology } from '../../types/stack';
 import { stackTechnologies } from '../../data/stackTechnologies';
 import { stackPaths } from '../../data/stackPaths';
-import { stackLayers } from '../../data/stackLayers';
 import { companies } from '../../data/companies';
 import { projects } from '../../data/projects';
 import { tools } from '../../data/tools';
@@ -30,6 +29,8 @@ import { resources } from '../../data/resources';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { technologyById } from '../../utils/graphIndexes';
+import { getStackLayer } from '../../lib/graph';
+import { formatVerifiedDate } from '../../utils/formatters';
 
 interface ArchitectureProfilePanelProps {
   profile: ArchitectureProfile;
@@ -37,20 +38,6 @@ interface ArchitectureProfilePanelProps {
   onSelectTech: (tech: StackTechnology) => void;
   onOpenTool?: (tool: any) => void;
 }
-
-const formatVerifiedDate = (isoDate: string, lang: 'en' | 'ko') => {
-  const [year, month, day] = isoDate.split('-');
-  if (!year || !month || !day) return isoDate;
-  if (lang === 'ko') {
-    return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일`;
-  }
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-  const monthName = months[parseInt(month, 10) - 1] || month;
-  return `${monthName} ${parseInt(day, 10)}, ${year}`;
-};
 
 export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> = ({
   profile,
@@ -150,7 +137,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {Array.from(techsByLayer.entries()).map(([layerId, layerTechs]) => {
-            const layerObj = stackLayers.find((l) => l.id === layerId);
+            const layerObj = getStackLayer(layerId);
             const layerLabel = layerObj ? getLocalizedText(layerObj.name, language) : layerId;
 
             return (

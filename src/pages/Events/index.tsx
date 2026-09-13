@@ -46,7 +46,7 @@ export const EventsPage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <Calendar className="w-4 h-4" />
-          <span>Industry Conferences, Technical Summits & Webinars</span>
+          <span>{t.events.badge}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.events.title}
@@ -99,7 +99,7 @@ export const EventsPage: React.FC = () => {
               onChange={(e) => setFormatFilter(e.target.value)}
               className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg focus:outline-none"
             >
-              <option value="all">All Formats</option>
+              <option value="all">{t.events.allFormats}</option>
               <option value="conference">{t.events.formatConference}</option>
               <option value="meetup">{t.events.formatMeetup}</option>
               <option value="webinar">{t.events.formatWebinar}</option>
@@ -125,7 +125,7 @@ export const EventsPage: React.FC = () => {
       {/* Grid */}
       {filteredEvents.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
-          No matching automotive events found.
+          {t.events.noResults}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

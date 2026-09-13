@@ -7,6 +7,7 @@ import { Tool, ToolCategory, ToolStatus } from '../../types/tool';
 import { ToolCard } from '../../components/cards/ToolCard';
 import { ToolRunnerModal } from '../../components/tools/ToolRunnerModal';
 import { getLocalizedText } from '../../types/i18n';
+import { getTool } from '../../lib/graph';
 
 export const ToolsPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -21,7 +22,7 @@ export const ToolsPage: React.FC = () => {
   useEffect(() => {
     const idParam = searchParams.get('id');
     if (idParam) {
-      const found = tools.find((t) => t.id === idParam);
+      const found = getTool(idParam);
       if (found && found.status === 'available') {
         setActiveTool(found);
       }
@@ -64,7 +65,7 @@ export const ToolsPage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <Wrench className="w-4 h-4" />
-          <span>Automotive & Embedded Developer Utilities</span>
+          <span>{t.tools.badge}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.tools.title}
@@ -120,7 +121,7 @@ export const ToolsPage: React.FC = () => {
       {/* Tools Grid */}
       {filteredTools.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
-          No matching developer tools found.
+          {t.tools.noResults}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

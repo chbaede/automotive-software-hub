@@ -77,3 +77,28 @@ Strategy Intelligence
 3. **Target vs. Fact Distinction**: Planned future milestones (`strategicTargets`) represent announced company ambitions or projected SOP dates, never confirmed technical facts.
 4. **Data-Driven Matrix**: The comparison matrix renders concise, localized summary tokens (`matrixSummary`) exclusively from the canonical dataset without hardcoded component branches.
 
+---
+
+## 6. Single Source of Truth (SSOT) Architecture & Domain Selectors
+
+Automotive Software Hub enforces a strict separation between data, domain indexing, and UI rendering:
+
+```text
+[Data Layer: src/data/] (Entities & Relationships defined once)
+        ↓
+[Domain Selectors: src/lib/domain/ & src/lib/graph/] (Maps, lookups & ecosystem resolvers)
+        ↓
+[UI Components: src/pages/ & src/components/] (100% presentation, zero duplicate databases)
+```
+
+### Conventions
+1. **No Component-Level Entity Databases**: Components and pages must never maintain duplicate inline lists, IDs, or static fallback mappings.
+2. **Canonical Domain Selectors**:
+   - Fast $O(1)$ lookups: `getCompany(id)`, `getStackLayer(id)`, `getTool(id)`, `getResource(id)`, `getProject(id)`, `getEvent(id)`, `getCompanyStrategy(id)`.
+   - Ecosystem resolution: `getToolsForTechnology(tech)`, `getResourcesForTechnology(tech)`, `getProjectsForTechnology(tech)`, `getCompaniesForTechnology(tech)`, `getEventsForTechnology(tech)`.
+   - Formatters: Centralized `formatVerifiedDate(isoDate, lang)` and `getCountryFlag(headquarters)` in `src/utils/formatters.ts`.
+3. **Canonical Routes & SEO SSOT**:
+   - Route paths and SEO metadata are centrally registered in `src/app/routes.ts` (`CANONICAL_STATIC_ROUTES`, `ROUTE_SEO_MAP`).
+   - Both `useSEO` and `scripts/generate-sitemap.ts` consume the exact same route registry.
+4. **Strict Bilingual Parity**:
+   - Every UI string, placeholder, and error message must reside in `src/i18n/{en,ko}.ts` and be verified by deep parity tests (`Test 70`).

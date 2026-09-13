@@ -52,7 +52,7 @@ export const OpenSourcePage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <Code2 className="w-4 h-4" />
-          <span>Open Source Ecosystem Projects</span>
+          <span>{t.openSource.badge}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.openSource.title}
@@ -82,10 +82,10 @@ export const OpenSourcePage: React.FC = () => {
             onChange={(e) => handleTopicChange(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg focus:outline-none"
           >
-            <option value="all">All Topics</option>
+            <option value="all">{t.openSource.allTopics}</option>
             {Object.entries(TOPIC_TAXONOMY).map(([id, meta]) => (
               <option key={id} value={id}>
-                {language === 'ko' ? meta.label.ko : meta.label.en}
+                {getLocalizedText(meta.label, language)}
               </option>
             ))}
           </select>
@@ -96,7 +96,7 @@ export const OpenSourcePage: React.FC = () => {
             onChange={(e) => handleOrgChange(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg focus:outline-none"
           >
-            <option value="all">All Organizations</option>
+            <option value="all">{t.openSource.allOrgs}</option>
             {organizations.map((org) => (
               <option key={org} value={org}>
                 {org}
@@ -109,7 +109,7 @@ export const OpenSourcePage: React.FC = () => {
       {/* Grid */}
       {filteredProjects.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
-          No matching open-source projects found.
+          {t.openSource.noResults}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

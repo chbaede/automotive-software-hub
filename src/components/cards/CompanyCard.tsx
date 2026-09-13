@@ -5,6 +5,7 @@ import { Company } from '../../types/company';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import { stackTechnologies } from '../../data/stackTechnologies';
+import { getCountryFlag } from '../../utils/formatters';
 
 interface CompanyCardProps {
   company: Company;
@@ -59,22 +60,6 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
           card: 'border-slate-200 dark:border-slate-800 hover:border-brand-500/50',
         };
     }
-  };
-
-  const getCountryFlag = (headquarters: string): string => {
-    const hq = headquarters.toLowerCase();
-    if (hq.includes('south korea') || hq.includes('korea')) return '🇰🇷';
-    if (hq.includes('usa') || hq.includes('united states') || hq.includes('california') || hq.includes('texas') || hq.includes('michigan') || hq.includes('connecticut')) return '🇺🇸';
-    if (hq.includes('germany')) return '🇩🇪';
-    if (hq.includes('japan')) return '🇯🇵';
-    if (hq.includes('france')) return '🇫🇷';
-    if (hq.includes('ireland') || hq.includes('dublin')) return '🇮🇪';
-    if (hq.includes('netherlands')) return '🇳🇱';
-    if (hq.includes('china') || hq.includes('hong kong') || hq.includes('taiwan')) return '🇨🇳';
-    if (hq.includes('israel')) return '🇮🇱';
-    if (hq.includes('canada')) return '🇨🇦';
-    if (hq.includes('uk') || hq.includes('united kingdom')) return '🇬🇧';
-    return '🌐';
   };
 
   const style = getCategoryStyles(company.category);

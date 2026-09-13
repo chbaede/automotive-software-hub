@@ -3269,6 +3269,102 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 71 Passed: Strategy Intelligence Hardening, Evidence Traceability & Matrix Invariants verified.');
 }
 
+// Test 72: Phase 8.x — Repository-wide Single Source of Truth & Domain Selectors
+{
+  const {
+    companyById,
+    strategyByCompanyId,
+    layerById,
+    toolById,
+    resourceById,
+    projectById,
+    eventById,
+    getCompany,
+    getCompanyStrategy,
+    getStackLayer,
+    getTool,
+    getResource,
+    getProject,
+    getEvent,
+    getToolsForTechnology,
+    getResourcesForTechnology,
+    getProjectsForTechnology,
+    getCompaniesForTechnology,
+    getEventsForTechnology,
+    technologyById,
+  } = await import('../src/lib/graph/index.js');
+  const { companies } = await import('../src/data/companies.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { tools } = await import('../src/data/tools.js');
+  const { resources } = await import('../src/data/resources.js');
+  const { projects } = await import('../src/data/projects.js');
+  const { events } = await import('../src/data/events.js');
+  const { companyStrategies } = await import('../src/data/companyStrategies.js');
+  const { CANONICAL_STATIC_ROUTES, ROUTE_SEO_MAP } = await import('../src/app/routes.js');
+
+  // 1. Entity Map size & Lookup integrity
+  assert.strictEqual(companyById.size, companies.length, 'companyById size must match companies count');
+  assert.strictEqual(layerById.size, stackLayers.length, 'layerById size must match stackLayers count');
+  assert.strictEqual(toolById.size, tools.length, 'toolById size must match tools count');
+  assert.strictEqual(resourceById.size, resources.length, 'resourceById size must match resources count');
+  assert.strictEqual(projectById.size, projects.length, 'projectById size must match projects count');
+  assert.strictEqual(eventById.size, events.length, 'eventById size must match events count');
+  assert.strictEqual(strategyByCompanyId.size, companyStrategies.length, 'strategyByCompanyId size must match companyStrategies count');
+
+  // 2. Canonical Getters work and return exact references
+  for (const c of companies) {
+    assert.strictEqual(getCompany(c.id), c, `getCompany('${c.id}') must return exact object`);
+  }
+  for (const l of stackLayers) {
+    assert.strictEqual(getStackLayer(l.id), l, `getStackLayer('${l.id}') must return exact object`);
+  }
+  for (const t of tools) {
+    assert.strictEqual(getTool(t.id), t, `getTool('${t.id}') must return exact object`);
+  }
+  for (const r of resources) {
+    assert.strictEqual(getResource(r.id), r, `getResource('${r.id}') must return exact object`);
+  }
+  for (const p of projects) {
+    assert.strictEqual(getProject(p.id), p, `getProject('${p.id}') must return exact object`);
+  }
+  for (const e of events) {
+    assert.strictEqual(getEvent(e.id), e, `getEvent('${e.id}') must return exact object`);
+  }
+  for (const s of companyStrategies) {
+    assert.strictEqual(getCompanyStrategy(s.companyId), s, `getCompanyStrategy('${s.companyId}') must return exact object`);
+  }
+
+  // 3. Every technology's layerId resolves to a valid layer in layerById
+  for (const [, tech] of technologyById) {
+    assert.ok(layerById.has(tech.layerId), `Technology '${tech.id}' has unmapped layerId '${tech.layerId}'`);
+    assert.ok(getStackLayer(tech.layerId), `getStackLayer('${tech.layerId}') must resolve for tech '${tech.id}'`);
+
+    // Ecosystem linking selectors return valid arrays
+    const techTools = getToolsForTechnology(tech);
+    const techResources = getResourcesForTechnology(tech);
+    const techProjects = getProjectsForTechnology(tech);
+    const techCompanies = getCompaniesForTechnology(tech);
+    const techEvents = getEventsForTechnology(tech);
+
+    assert.ok(Array.isArray(techTools));
+    assert.ok(Array.isArray(techResources));
+    assert.ok(Array.isArray(techProjects));
+    assert.ok(Array.isArray(techCompanies));
+    assert.ok(Array.isArray(techEvents));
+  }
+
+  // 4. Canonical Routes & SEO SSOT integrity
+  assert.strictEqual(CANONICAL_STATIC_ROUTES.length, 11, 'Expected 11 canonical static routes');
+  for (const route of CANONICAL_STATIC_ROUTES) {
+    assert.ok(ROUTE_SEO_MAP[route.fullPath], `ROUTE_SEO_MAP must have entry for '${route.fullPath}'`);
+    const seo = ROUTE_SEO_MAP[route.fullPath];
+    assert.ok(seo.title.en && seo.title.ko, `Bilingual title required for route '${route.fullPath}'`);
+    assert.ok(seo.description.en && seo.description.ko, `Bilingual description required for route '${route.fullPath}'`);
+  }
+
+  console.log('✅ Test 72 Passed: Repository-wide Single Source of Truth & Domain Selectors verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

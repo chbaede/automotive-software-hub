@@ -47,6 +47,16 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/architectures" className="hover:text-brand-500 transition">
+                  {t.nav.architectures}
+                </Link>
+              </li>
+              <li>
+                <Link to="/stack-builder" className="hover:text-brand-500 transition">
+                  {t.nav.stackBuilder}
+                </Link>
+              </li>
+              <li>
                 <Link to="/tools" className="hover:text-brand-500 transition">
                   {t.nav.tools}
                 </Link>
@@ -69,6 +79,11 @@ export const Footer: React.FC = () => {
               <li>
                 <Link to="/companies" className="hover:text-brand-500 transition">
                   {t.nav.companies}
+                </Link>
+              </li>
+              <li>
+                <Link to="/companies/strategy" className="hover:text-brand-500 transition">
+                  {t.nav.strategy}
                 </Link>
               </li>
               <li>

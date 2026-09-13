@@ -221,7 +221,7 @@ export const ArchitectureDetailPage: React.FC = () => {
               </span>
             )}
             <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700">
-              {technologies.length} {language === 'ko' ? '개 통합 기술' : 'Integrated Technologies'}
+              {t.architectures.integratedTechsCount.replace('{count}', String(technologies.length))}
             </span>
             <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700">
               {layerGroups.length} {t.architectures.layersRepresented}
@@ -281,7 +281,7 @@ export const ArchitectureDetailPage: React.FC = () => {
             </h2>
           </div>
           <span className="text-xs font-mono text-slate-500">
-            {layerGroups.length} {language === 'ko' ? '개 스택 계층 매핑' : 'Layers Mapped'}
+            {t.architectures.layersMappedCount.replace('{count}', String(layerGroups.length))}
           </span>
         </div>
 
@@ -399,7 +399,7 @@ export const ArchitectureDetailPage: React.FC = () => {
               </div>
             </div>
             <span className="text-xs font-mono text-slate-500">
-              {internalRelationships.length} {language === 'ko' ? '개 직접 연계 관계' : 'Direct Relationships'}
+              {t.architectures.directRelationshipsCount.replace('{count}', String(internalRelationships.length))}
             </span>
           </div>
 
@@ -451,7 +451,7 @@ export const ArchitectureDetailPage: React.FC = () => {
               </div>
             </div>
             <span className="text-xs font-mono text-slate-500">
-              {relevantPaths.length} {language === 'ko' ? '개 스택 경로' : 'Stack Paths'}
+              {t.architectures.stackPathsCount.replace('{count}', String(relevantPaths.length))}
             </span>
           </div>
 
@@ -530,7 +530,7 @@ export const ArchitectureDetailPage: React.FC = () => {
               </div>
             </div>
             <span className="text-xs font-mono text-slate-500">
-              {discoveryResult.recommendedTechnologies.length} {language === 'ko' ? '개 추천' : 'Recommendations'}
+              {t.architectures.recommendationsCount.replace('{count}', String(discoveryResult.recommendedTechnologies.length))}
             </span>
           </div>
 

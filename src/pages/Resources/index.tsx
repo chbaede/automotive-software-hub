@@ -51,7 +51,7 @@ export const ResourcesPage: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
           <BookOpen className="w-4 h-4" />
-          <span>Official Developer Standards & Documentation</span>
+          <span>{t.resources.badge}</span>
         </div>
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">
           {t.resources.title}
@@ -81,10 +81,10 @@ export const ResourcesPage: React.FC = () => {
             onChange={(e) => handleTopicChange(e.target.value)}
             className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg focus:outline-none"
           >
-            <option value="all">All Topics</option>
+            <option value="all">{t.resources.allTopics}</option>
             {Object.entries(TOPIC_TAXONOMY).map(([id, meta]) => (
               <option key={id} value={id}>
-                {language === 'ko' ? meta.label.ko : meta.label.en}
+                {getLocalizedText(meta.label, language)}
               </option>
             ))}
           </select>
@@ -96,11 +96,11 @@ export const ResourcesPage: React.FC = () => {
             className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg focus:outline-none"
           >
             <option value="all">{t.resources.allCategories}</option>
-            <option value="documentation">Documentation</option>
-            <option value="tutorials">Tutorials</option>
-            <option value="standards">Standards</option>
-            <option value="cheat-sheets">Cheat Sheets</option>
-            <option value="specifications">Specifications</option>
+            <option value="documentation">{t.resources.catDocumentation}</option>
+            <option value="tutorials">{t.resources.catTutorials}</option>
+            <option value="standards">{t.resources.catStandards}</option>
+            <option value="cheat-sheets">{t.resources.catCheatSheets}</option>
+            <option value="specifications">{t.resources.catSpecifications}</option>
           </select>
         </div>
       </div>
@@ -108,7 +108,7 @@ export const ResourcesPage: React.FC = () => {
       {/* Grid List */}
       {filteredResources.length === 0 ? (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
-          No matching resources found.
+          {t.resources.noResults}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

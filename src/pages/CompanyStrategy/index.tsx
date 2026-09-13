@@ -20,6 +20,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
+import { getCountryFlag } from '../../utils/formatters';
 
 export const CompanyStrategyPage: React.FC = () => {
   const { language, t } = useLanguage();
@@ -40,17 +41,6 @@ export const CompanyStrategyPage: React.FC = () => {
       }
     }
   }, [location.hash]);
-
-  const getCountryFlag = (headquarters: string): string => {
-    const hq = headquarters.toLowerCase();
-    if (hq.includes('korea') || hq.includes('seoul')) return '🇰🇷';
-    if (hq.includes('germany') || hq.includes('stuttgart') || hq.includes('munich') || hq.includes('wolfsburg')) return '🇩🇪';
-    if (hq.includes('usa') || hq.includes('united states') || hq.includes('california') || hq.includes('texas')) return '🇺🇸';
-    if (hq.includes('japan') || hq.includes('aichi') || hq.includes('tokyo')) return '🇯🇵';
-    if (hq.includes('israel') || hq.includes('jerusalem')) return '🇮🇱';
-    if (hq.includes('china') || hq.includes('beijing') || hq.includes('shenzhen')) return '🇨🇳';
-    return '🌐';
-  };
 
   const getCategoryLabel = (cat: StrategyCategory): string => {
     switch (cat) {

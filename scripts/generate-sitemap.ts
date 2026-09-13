@@ -2,23 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { stackTechnologies } from '../src/data/stackTechnologies';
 import { architectureProfiles } from '../src/data/architectureProfiles';
+import { CANONICAL_STATIC_ROUTES } from '../src/app/routes';
 
 const SITE_URL = 'https://autohub.yocto.co.kr';
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
-const staticRoutes = [
-  { path: '', priority: '1.0', changefreq: 'weekly' },
-  { path: 'stack', priority: '0.95', changefreq: 'weekly' },
-  { path: 'architectures', priority: '0.90', changefreq: 'weekly' },
-  { path: 'stack-builder', priority: '0.90', changefreq: 'weekly' },
-  { path: 'tools', priority: '0.90', changefreq: 'monthly' },
-  { path: 'resources', priority: '0.85', changefreq: 'weekly' },
-  { path: 'open-source', priority: '0.85', changefreq: 'monthly' },
-  { path: 'events', priority: '0.80', changefreq: 'weekly' },
-  { path: 'companies', priority: '0.80', changefreq: 'monthly' },
-  { path: 'companies/strategy', priority: '0.85', changefreq: 'weekly' },
-  { path: 'about', priority: '0.70', changefreq: 'monthly' },
-];
+const staticRoutes = CANONICAL_STATIC_ROUTES.map((r) => ({
+  path: r.path,
+  priority: r.priority,
+  changefreq: r.changefreq,
+}));
 
 const archRoutes = architectureProfiles.map((arch) => ({
   path: `architectures/${arch.id}`,

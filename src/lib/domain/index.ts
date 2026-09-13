@@ -1,0 +1,153 @@
+import { companies } from '../../data/companies';
+import { companyStrategies } from '../../data/companyStrategies';
+import { stackLayers } from '../../data/stackLayers';
+import { tools } from '../../data/tools';
+import { resources } from '../../data/resources';
+import { projects } from '../../data/projects';
+import { events } from '../../data/events';
+import { Company } from '../../types/company';
+import { CompanyStrategyInsight } from '../../types/strategy';
+import { StackLayer, StackTechnology } from '../../types/stack';
+import { Tool } from '../../types/tool';
+import { Resource } from '../../types/resource';
+import { OpenSourceProject } from '../../types/project';
+import { Event } from '../../types/event';
+
+// ==========================================
+// CANONICAL DOMAIN INDEXES (O(1) Map Lookups)
+// ==========================================
+
+export const companyById = new Map<string, Company>(
+  companies.map((c) => [c.id, c])
+);
+
+export const strategyByCompanyId = new Map<string, CompanyStrategyInsight>(
+  companyStrategies.map((cs) => [cs.companyId, cs])
+);
+
+export const layerById = new Map<string, StackLayer>(
+  stackLayers.map((layer) => [layer.id, layer])
+);
+
+export const toolById = new Map<string, Tool>(
+  tools.map((tool) => [tool.id, tool])
+);
+
+export const resourceById = new Map<string, Resource>(
+  resources.map((res) => [res.id, res])
+);
+
+export const projectById = new Map<string, OpenSourceProject>(
+  projects.map((proj) => [proj.id, proj])
+);
+
+export const eventById = new Map<string, Event>(
+  events.map((event) => [event.id, event])
+);
+
+// ==========================================
+// CANONICAL DOMAIN SELECTORS / HELPERS
+// ==========================================
+
+/**
+ * Resolves a Company by its canonical ID.
+ */
+export function getCompany(id: string): Company | undefined {
+  return companyById.get(id);
+}
+
+/**
+ * Resolves Strategy Intelligence for a company by its ID.
+ */
+export function getCompanyStrategy(companyId: string): CompanyStrategyInsight | undefined {
+  return strategyByCompanyId.get(companyId);
+}
+
+/**
+ * Resolves a Stack Layer by its layer ID.
+ */
+export function getStackLayer(layerId: string): StackLayer | undefined {
+  return layerById.get(layerId);
+}
+
+/**
+ * Resolves a developer Tool by its ID.
+ */
+export function getTool(id: string): Tool | undefined {
+  return toolById.get(id);
+}
+
+/**
+ * Resolves a Resource specification/document by its ID.
+ */
+export function getResource(id: string): Resource | undefined {
+  return resourceById.get(id);
+}
+
+/**
+ * Resolves an Open Source Project by its ID.
+ */
+export function getProject(id: string): OpenSourceProject | undefined {
+  return projectById.get(id);
+}
+
+/**
+ * Resolves an Industry Event by its ID.
+ */
+export function getEvent(id: string): Event | undefined {
+  return eventById.get(id);
+}
+
+// ==========================================
+// TECHNOLOGY ECOSYSTEM RESOLUTION HELPERS
+// ==========================================
+
+/**
+ * Resolves all tools linked to a technology.
+ */
+export function getToolsForTechnology(tech?: StackTechnology | null): Tool[] {
+  if (!tech?.toolIds || tech.toolIds.length === 0) return [];
+  return tech.toolIds
+    .map((id) => toolById.get(id))
+    .filter((t): t is Tool => Boolean(t));
+}
+
+/**
+ * Resolves all resources linked to a technology.
+ */
+export function getResourcesForTechnology(tech?: StackTechnology | null): Resource[] {
+  if (!tech?.resourceIds || tech.resourceIds.length === 0) return [];
+  return tech.resourceIds
+    .map((id) => resourceById.get(id))
+    .filter((r): r is Resource => Boolean(r));
+}
+
+/**
+ * Resolves all open source projects linked to a technology.
+ */
+export function getProjectsForTechnology(tech?: StackTechnology | null): OpenSourceProject[] {
+  if (!tech?.openSourceProjectIds || tech.openSourceProjectIds.length === 0) return [];
+  return tech.openSourceProjectIds
+    .map((id) => projectById.get(id))
+    .filter((p): p is OpenSourceProject => Boolean(p));
+}
+
+/**
+ * Resolves all companies linked to a technology.
+ */
+export function getCompaniesForTechnology(tech?: StackTechnology | null): Company[] {
+  if (!tech?.companyIds || tech.companyIds.length === 0) return [];
+  return tech.companyIds
+    .map((id) => companyById.get(id))
+    .filter((c): c is Company => Boolean(c));
+}
+
+/**
+ * Resolves all industry events linked to a technology.
+ */
+export function getEventsForTechnology(tech?: StackTechnology | null): Event[] {
+  if (!tech?.eventIds || tech.eventIds.length === 0) return [];
+  return tech.eventIds
+    .map((id) => eventById.get(id))
+    .filter((e): e is Event => Boolean(e));
+}
