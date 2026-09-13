@@ -38,6 +38,16 @@ stackPaths.forEach((path) => {
   });
 });
 
+// Index: Stack Paths by Architecture Profile ID
+export const pathsByArchitectureId = new Map<string, StackPath[]>();
+stackPaths.forEach((path) => {
+  if (path.architectureProfileId) {
+    const list = pathsByArchitectureId.get(path.architectureProfileId) || [];
+    list.push(path);
+    pathsByArchitectureId.set(path.architectureProfileId, list);
+  }
+});
+
 // Adjacency Edge Definition for Graph Traversal
 export interface AdjacencyEdge {
   neighborId: string;
@@ -196,6 +206,20 @@ export function getArchitecturesForTechnology(id: string): ArchitectureProfile[]
  */
 export function getStackPathsForTechnology(id: string): StackPath[] {
   return pathsByTechnologyId.get(id) || [];
+}
+
+/**
+ * Resolves a Stack Path by its ID.
+ */
+export function getStackPath(id: string): StackPath | undefined {
+  return pathById.get(id);
+}
+
+/**
+ * Returns all Stack Paths associated with a given Architecture Profile.
+ */
+export function getStackPathsForArchitecture(profileId: string): StackPath[] {
+  return pathsByArchitectureId.get(profileId) || [];
 }
 
 /**

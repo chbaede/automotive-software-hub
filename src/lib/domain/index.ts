@@ -62,6 +62,37 @@ export const eventById = new Map<string, Event>(
   events.map((event) => [event.id, event])
 );
 
+// Inverted Index: Stack Technologies by Linked Open Source Project ID
+export const technologiesByProjectId = new Map<string, StackTechnology[]>();
+stackTechnologies.forEach((tech) => {
+  if (tech.openSourceProjectIds) {
+    tech.openSourceProjectIds.forEach((pId) => {
+      const list = technologiesByProjectId.get(pId) || [];
+      list.push(tech);
+      technologiesByProjectId.set(pId, list);
+    });
+  }
+  if (projectById.has(tech.id)) {
+    const list = technologiesByProjectId.get(tech.id) || [];
+    if (!list.some((t) => t.id === tech.id)) {
+      list.push(tech);
+      technologiesByProjectId.set(tech.id, list);
+    }
+  }
+});
+
+// Inverted Index: Stack Technologies by Linked Company ID
+export const technologiesByCompanyId = new Map<string, StackTechnology[]>();
+stackTechnologies.forEach((tech) => {
+  if (tech.companyIds) {
+    tech.companyIds.forEach((cId) => {
+      const list = technologiesByCompanyId.get(cId) || [];
+      list.push(tech);
+      technologiesByCompanyId.set(cId, list);
+    });
+  }
+});
+
 // ==========================================
 // CANONICAL DOMAIN SELECTORS / HELPERS
 // ==========================================
@@ -169,17 +200,14 @@ export function getProjectsForTechnology(tech?: StackTechnology | null): OpenSou
 
 /**
  * Resolves all stack technologies linked to an open source project.
- * Uses direct canonical links via openSourceProjectIds or matching technology ID,
+ * Uses precomputed inverted index (technologiesByProjectId),
  * falling back to topic alignment if direct links are absent.
  */
 export function getTechnologiesForProject(project?: OpenSourceProject | null): StackTechnology[] {
   if (!project) return [];
 
-  const directMatches = stackTechnologies.filter(
-    (tech) => tech.openSourceProjectIds?.includes(project.id) || tech.id === project.id
-  );
-
-  if (directMatches.length > 0) {
+  const directMatches = technologiesByProjectId.get(project.id);
+  if (directMatches && directMatches.length > 0) {
     return directMatches;
   }
 
@@ -187,6 +215,14 @@ export function getTechnologiesForProject(project?: OpenSourceProject | null): S
   return stackTechnologies
     .filter((tech) => tech.topics?.some((t) => topicSet.has(t)))
     .slice(0, 4);
+}
+
+/**
+ * Resolves all stack technologies associated with a company.
+ */
+export function getTechnologiesForCompany(companyId?: string | null): StackTechnology[] {
+  if (!companyId) return [];
+  return technologiesByCompanyId.get(companyId) || [];
 }
 
 /**

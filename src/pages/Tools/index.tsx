@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Wrench, Search, Filter } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -47,17 +47,19 @@ export const ToolsPage: React.FC = () => {
     });
   };
 
-  const filteredTools = tools.filter((tool) => {
-    const name = getLocalizedText(tool.name, language).toLowerCase();
-    const desc = getLocalizedText(tool.description, language).toLowerCase();
-    const query = searchQuery.trim().toLowerCase();
+  const filteredTools = useMemo(() => {
+    return tools.filter((tool) => {
+      const name = getLocalizedText(tool.name, language).toLowerCase();
+      const desc = getLocalizedText(tool.description, language).toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
 
-    const matchesQuery = !query || name.includes(query) || desc.includes(query) || tool.tags.some((t) => t.includes(query));
-    const matchesCategory = categoryFilter === 'all' || tool.category === categoryFilter;
-    const matchesStatus = statusFilter === 'all' || tool.status === statusFilter;
+      const matchesQuery = !query || name.includes(query) || desc.includes(query) || tool.tags.some((t) => t.includes(query));
+      const matchesCategory = categoryFilter === 'all' || tool.category === categoryFilter;
+      const matchesStatus = statusFilter === 'all' || tool.status === statusFilter;
 
-    return matchesQuery && matchesCategory && matchesStatus;
-  });
+      return matchesQuery && matchesCategory && matchesStatus;
+    });
+  }, [searchQuery, categoryFilter, statusFilter, language]);
 
   return (
     <div className="space-y-8">

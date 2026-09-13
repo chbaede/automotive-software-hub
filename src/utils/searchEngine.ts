@@ -114,7 +114,7 @@ export function performGlobalSearch(query: string, lang: Language): GroupedSearc
       title: getLocalizedText(r.name, lang),
       description: getLocalizedText(r.description, lang),
       url: r.url,
-      route: `/resources?topic=${r.topics[0] || ''}`,
+      route: `/open-source?topic=${r.topics[0] || ''}`,
       topics: r.topics,
       badgeText: r.official ? 'Official' : r.source,
       rawItem: r,

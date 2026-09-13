@@ -9,6 +9,7 @@ import { technologyById } from '../../domain';
 import { graphAdjacencyByTechnologyId } from '../index';
 import { RELATIONSHIP_PRIORITY, calculateBridgeScore } from '../scoring';
 import { BridgeTechnologyCandidate } from './types';
+import { StackLayerId } from '../../../types/stack';
 
 /**
  * Identifies technologies connected to the given technology that act as multi-layer bridges,
@@ -49,7 +50,7 @@ export function getBridgeTechnologies(
 
     // Discover what OTHER layers this neighbor connects to (excluding current tech's layer)
     const neighborEdges = graphAdjacencyByTechnologyId.get(neighbor.id) || [];
-    const connectedLayersSet = new Set<string>();
+    const connectedLayersSet = new Set<StackLayerId>();
 
     neighborEdges.forEach((nEdge) => {
       // Only meaningful relationship edges contribute to layer bridging

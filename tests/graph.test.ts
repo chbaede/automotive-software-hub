@@ -3582,6 +3582,79 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 76 Passed: Open Source & Knowledge Graph UX Hardening Invariants verified.');
 }
 
+// ---------------------------------------------------------------------------
+// TEST 77: Phase 8.x Architecture Cleanup, Dead Code Pruning & Performance (v0.8.3)
+// ---------------------------------------------------------------------------
+{
+  const fs = await import('fs');
+  const path = await import('path');
+
+  // Part A — Version 0.8.3 invariant
+  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
+  assert.strictEqual(pkg.version, '0.8.3', 'package.json must be bumped to 0.8.3');
+
+  const pkgLock = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package-lock.json'), 'utf-8'));
+  assert.strictEqual(pkgLock.version, '0.8.3', 'package-lock.json must be bumped to 0.8.3');
+
+  // Part B — Dead code files must not exist in src/
+  const deadFiles = [
+    'src/pages/Resources/index.tsx',
+    'src/components/cards/ResourceCard.tsx',
+    'src/components/builder/ArchitectureMatchPanel.tsx',
+    'src/components/stack/InteractiveGraphView.tsx',
+    'src/components/stack/TechRelationshipTree.tsx',
+  ];
+  for (const relPath of deadFiles) {
+    const fullPath = path.join(process.cwd(), relPath);
+    assert.strictEqual(fs.existsSync(fullPath), false, `Dead code file must be removed: ${relPath}`);
+  }
+
+  // Part C — Inverted domain indexes and company technology selector
+  const {
+    technologiesByProjectId,
+    technologiesByCompanyId,
+    getTechnologiesForCompany,
+    getTechnologiesForProject,
+    getProject,
+  } = await import('../src/lib/domain/index.js');
+
+  assert.ok(technologiesByProjectId instanceof Map, 'technologiesByProjectId must be a Map');
+  assert.ok(technologiesByProjectId.size > 0, 'technologiesByProjectId must be populated');
+  assert.ok(technologiesByCompanyId instanceof Map, 'technologiesByCompanyId must be a Map');
+  assert.ok(technologiesByCompanyId.size > 0, 'technologiesByCompanyId must be populated');
+
+  // Test getTechnologiesForCompany
+  const nvidiaTechs = getTechnologiesForCompany('nvidia');
+  assert.ok(nvidiaTechs.length > 0, 'nvidia must have associated technologies');
+  assert.ok(nvidiaTechs.some((t) => t.id === 'nvidia-drive-thor' || t.id === 'nvidia-drive-hypervisor'), 'nvidia must link to Drive Thor or Drive Hypervisor');
+
+  // Test getTechnologiesForProject O(1) indexed resolution
+  const aaosProject = getProject('android-automotive-os');
+  assert.ok(aaosProject, 'android-automotive-os project must exist');
+  const resolvedTechs = getTechnologiesForProject(aaosProject);
+  assert.ok(resolvedTechs.some((t) => t.id === 'android-automotive-os'), 'Must resolve aaos tech from index');
+
+  // Part D — Graph path architecture indexes and selectors
+  const {
+    pathsByArchitectureId,
+    getStackPath,
+    getStackPathsForArchitecture,
+  } = await import('../src/lib/graph/index.js');
+
+  assert.ok(pathsByArchitectureId instanceof Map, 'pathsByArchitectureId must be a Map');
+  assert.ok(pathsByArchitectureId.size > 0, 'pathsByArchitectureId must be populated');
+
+  const adaptivePaths = getStackPathsForArchitecture('autosar-adaptive');
+  assert.ok(Array.isArray(adaptivePaths), 'getStackPathsForArchitecture must return an array');
+  assert.ok(adaptivePaths.length > 0, 'autosar-adaptive must have associated paths');
+
+  const directPath = getStackPath('aaos-ivi-cockpit-path');
+  assert.ok(directPath, 'getStackPath must resolve path by ID');
+  assert.strictEqual(directPath.id, 'aaos-ivi-cockpit-path');
+
+  console.log('✅ Test 77 Passed: Phase 8.x Architecture Cleanup, Inverted Indexes & Dead Code Pruning verified (v0.8.3).');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

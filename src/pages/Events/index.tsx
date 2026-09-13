@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Calendar, Search, Filter } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -17,28 +17,30 @@ export const EventsPage: React.FC = () => {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const filteredEvents = events.filter((ev) => {
-    const name = getLocalizedText(ev.name, language).toLowerCase();
-    const desc = getLocalizedText(ev.description, language).toLowerCase();
-    const query = searchQuery.trim().toLowerCase();
+  const filteredEvents = useMemo(() => {
+    return events.filter((ev) => {
+      const name = getLocalizedText(ev.name, language).toLowerCase();
+      const desc = getLocalizedText(ev.description, language).toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
 
-    const matchesQuery =
-      !query ||
-      name.includes(query) ||
-      desc.includes(query) ||
-      (ev.city && ev.city.toLowerCase().includes(query)) ||
-      (ev.country && ev.country.toLowerCase().includes(query));
+      const matchesQuery =
+        !query ||
+        name.includes(query) ||
+        desc.includes(query) ||
+        (ev.city && ev.city.toLowerCase().includes(query)) ||
+        (ev.country && ev.country.toLowerCase().includes(query));
 
-    const matchesTime =
-      timeTab === 'all' ||
-      (timeTab === 'upcoming' && ev.endDate >= todayStr) ||
-      (timeTab === 'past' && ev.endDate < todayStr);
+      const matchesTime =
+        timeTab === 'all' ||
+        (timeTab === 'upcoming' && ev.endDate >= todayStr) ||
+        (timeTab === 'past' && ev.endDate < todayStr);
 
-    const matchesFormat = formatFilter === 'all' || ev.format === formatFilter;
-    const matchesRegion = regionFilter === 'all' || ev.region === regionFilter;
+      const matchesFormat = formatFilter === 'all' || ev.format === formatFilter;
+      const matchesRegion = regionFilter === 'all' || ev.region === regionFilter;
 
-    return matchesQuery && matchesTime && matchesFormat && matchesRegion;
-  });
+      return matchesQuery && matchesTime && matchesFormat && matchesRegion;
+    });
+  }, [searchQuery, timeTab, formatFilter, regionFilter, language, todayStr]);
 
   return (
     <div className="space-y-8">

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Building2, Search, Compass, TrendingUp, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { companies } from '../../data/companies';
 import { CompanyCard } from '../../components/cards/CompanyCard';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
+import { TopicId } from '../../types/taxonomy';
 import { getLocalizedText } from '../../types/i18n';
 
 export const CompaniesPage: React.FC = () => {
@@ -34,24 +35,26 @@ export const CompaniesPage: React.FC = () => {
     });
   };
 
-  const filteredCompanies = companies.filter((c) => {
-    const desc = getLocalizedText(c.description, language).toLowerCase();
-    const query = searchQuery.trim().toLowerCase();
+  const filteredCompanies = useMemo(() => {
+    return companies.filter((c) => {
+      const desc = getLocalizedText(c.description, language).toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
 
-    const matchesQuery =
-      !query ||
-      c.name.toLowerCase().includes(query) ||
-      desc.includes(query) ||
-      c.headquarters.toLowerCase().includes(query) ||
-      (c.ticker && c.ticker.toLowerCase().includes(query)) ||
-      c.technologies.some((t) => t.toLowerCase().includes(query));
+      const matchesQuery =
+        !query ||
+        c.name.toLowerCase().includes(query) ||
+        desc.includes(query) ||
+        c.headquarters.toLowerCase().includes(query) ||
+        (c.ticker && c.ticker.toLowerCase().includes(query)) ||
+        c.technologies.some((t) => t.toLowerCase().includes(query));
 
-    const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
-    const matchesTopic = topicFilter === 'all' || c.automotiveTopics.includes(topicFilter as any);
-    const matchesIr = !onlyWithIr || Boolean(c.irUrl);
+      const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
+      const matchesTopic = topicFilter === 'all' || c.automotiveTopics.includes(topicFilter as TopicId);
+      const matchesIr = !onlyWithIr || Boolean(c.irUrl);
 
-    return matchesQuery && matchesCategory && matchesTopic && matchesIr;
-  });
+      return matchesQuery && matchesCategory && matchesTopic && matchesIr;
+    });
+  }, [searchQuery, categoryFilter, topicFilter, onlyWithIr, language]);
 
   return (
     <div className="space-y-8">

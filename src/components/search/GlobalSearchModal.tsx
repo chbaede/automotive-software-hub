@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Wrench, BookOpen, Code2, Calendar, Building2, ExternalLink, Layers } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -32,7 +32,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   // Keyboard shortcut listener (Cmd+K / Ctrl+K) handled centrally or inside Header
   if (!isOpen) return null;
 
-  const results = performGlobalSearch(query, language);
+  const results = useMemo(() => {
+    return performGlobalSearch(query, language);
+  }, [query, language]);
+
   const totalResults =
     (results.architectures?.length || 0) +
     (results.technologies?.length || 0) +

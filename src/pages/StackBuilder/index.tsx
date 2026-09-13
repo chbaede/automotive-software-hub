@@ -307,7 +307,7 @@ export const StackBuilderPage: React.FC = () => {
               <SuggestedTechPanel
                 candidates={discoveryResult.recommendedTechnologies.map((r) => ({
                   technology: r.technology,
-                  layerId: r.layerId as any,
+                  layerId: r.layerId,
                   relationship: r.primaryRelationship,
                   priority: r.score,
                   reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },
@@ -345,7 +345,7 @@ export const StackBuilderPage: React.FC = () => {
               <SuggestedTechPanel
                 candidates={discoveryResult.recommendedTechnologies.map((r) => ({
                   technology: r.technology,
-                  layerId: r.layerId as any,
+                  layerId: r.layerId,
                   relationship: r.primaryRelationship,
                   priority: r.score,
                   reason: r.reasons[0] || { en: 'Recommended component', ko: '추천 구성요소' },

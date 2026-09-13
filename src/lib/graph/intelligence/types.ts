@@ -27,10 +27,10 @@ export interface TechnologyInsightItem {
 
 export interface BridgeTechnologyCandidate {
   technology: StackTechnology;
-  layerId: string;
+  layerId: StackLayerId;
   relationship: TechnologyRelationship;
   isOutgoing: boolean;
-  bridgedLayers: string[];
+  bridgedLayers: StackLayerId[];
   bridgedLayersCount: number;
   score: number;
   reason: LocalizedText;
@@ -58,7 +58,7 @@ export interface StackPathInsightItem {
 
 export interface TechnologyRecommendation {
   technology: StackTechnology;
-  layerId: string;
+  layerId: StackLayerId;
   score: number;
   primaryRelationship?: TechnologyRelationship;
   reasons: LocalizedText[];

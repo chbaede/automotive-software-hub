@@ -4,7 +4,7 @@ import { MapPin, ExternalLink, Layers, TrendingUp, Compass } from 'lucide-react'
 import { Company } from '../../types/company';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
-import { stackTechnologies } from '../../data/stackTechnologies';
+import { getTechnologiesForCompany } from '../../lib/domain';
 import { getCountryFlag } from '../../utils/formatters';
 
 interface CompanyCardProps {
@@ -68,9 +68,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   const flag = getCountryFlag(company.headquarters);
 
   // Find linked technologies in Stack Explorer
-  const linkedStackTechs = stackTechnologies.filter((st) =>
-    st.companyIds?.includes(company.id)
-  );
+  const linkedStackTechs = getTechnologiesForCompany(company.id);
 
   return (
     <div className={`flex flex-col justify-between p-5 bg-white dark:bg-slate-900 rounded-xl border transition shadow-sm ${style.card}`}>

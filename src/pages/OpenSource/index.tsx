@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Code2, Search } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -36,16 +36,18 @@ export const OpenSourcePage: React.FC = () => {
     });
   };
 
-  const filteredProjects = projects.filter((proj) => {
-    const desc = getLocalizedText(proj.description, language).toLowerCase();
-    const query = searchQuery.trim().toLowerCase();
+  const filteredProjects = useMemo(() => {
+    return projects.filter((proj) => {
+      const desc = getLocalizedText(proj.description, language).toLowerCase();
+      const query = searchQuery.trim().toLowerCase();
 
-    const matchesQuery = !query || proj.name.toLowerCase().includes(query) || desc.includes(query) || proj.tags.some((t) => t.includes(query));
-    const matchesTopic = topicFilter === 'all' || proj.topics.includes(topicFilter as TopicId);
-    const matchesOrg = orgFilter === 'all' || proj.organization === orgFilter;
+      const matchesQuery = !query || proj.name.toLowerCase().includes(query) || desc.includes(query) || proj.tags.some((t) => t.includes(query));
+      const matchesTopic = topicFilter === 'all' || proj.topics.includes(topicFilter as TopicId);
+      const matchesOrg = orgFilter === 'all' || proj.organization === orgFilter;
 
-    return matchesQuery && matchesTopic && matchesOrg;
-  });
+      return matchesQuery && matchesTopic && matchesOrg;
+    });
+  }, [searchQuery, topicFilter, orgFilter, language]);
 
   return (
     <div className="space-y-8">

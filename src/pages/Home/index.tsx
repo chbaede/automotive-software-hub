@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Wrench, BookOpen, Code2, Calendar, Building2, Search, ArrowRight, ShieldCheck, Layers } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { CategoryCard } from '../../components/cards/CategoryCard';
 import { tools } from '../../data/tools';
-import { resources } from '../../data/resources';
 import { projects } from '../../data/projects';
 import { events } from '../../data/events';
 import { companies } from '../../data/companies';
@@ -37,7 +36,10 @@ export const HomePage: React.FC = () => {
     'ros2',
   ];
 
-  const searchResults = performGlobalSearch(heroQuery, language);
+  const searchResults = useMemo(() => {
+    return performGlobalSearch(heroQuery, language);
+  }, [heroQuery, language]);
+
   const totalResults =
     searchResults.tools.length +
     searchResults.resources.length +

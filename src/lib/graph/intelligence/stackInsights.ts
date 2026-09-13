@@ -105,7 +105,7 @@ export function getStackInsights(rawSelection: FlexibleStackSelection): StackInt
       if (!neighbor) return;
 
       // In partial-stack insights, recommendations target unpopulated layers
-      if (populatedCoreLayers.includes(neighbor.layerId as any)) return;
+      if (populatedCoreLayers.includes(neighbor.layerId)) return;
 
       const baseScore = calculateRelationshipScore(
         edge.relationship.type,
@@ -116,7 +116,7 @@ export function getStackInsights(rawSelection: FlexibleStackSelection): StackInt
       const relLabelEn = relMeta?.label.en || edge.relationship.type;
       const relLabelKo = relMeta?.label.ko || edge.relationship.type;
 
-      const isMissingCore = missingCoreLayers.includes(neighbor.layerId as any);
+      const isMissingCore = missingCoreLayers.includes(neighbor.layerId);
 
       const existing = candidateScores.get(neighbor.id);
       if (existing) {

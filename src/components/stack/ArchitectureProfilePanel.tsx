@@ -24,7 +24,6 @@ import { Company } from '../../types/company';
 import { OpenSourceProject } from '../../types/project';
 import { Tool } from '../../types/tool';
 import { Resource } from '../../types/resource';
-import { stackPaths } from '../../data/stackPaths';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getLocalizedText } from '../../types/i18n';
 import {
@@ -35,6 +34,7 @@ import {
   getTool,
   getResource,
 } from '../../lib/domain';
+import { getStackPathsForArchitecture } from '../../lib/graph';
 import { formatVerifiedDate } from '../../utils/formatters';
 
 interface ArchitectureProfilePanelProps {
@@ -70,7 +70,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
   });
 
   // Find associated Stack Paths for this architecture profile
-  const associatedPaths = stackPaths.filter((p) => p.architectureProfileId === profile.id);
+  const associatedPaths = getStackPathsForArchitecture(profile.id);
 
   const linkedCompanyIds = Array.from(new Set(coreTechs.flatMap((t) => t.companyIds || [])));
   const linkedCompanies = linkedCompanyIds

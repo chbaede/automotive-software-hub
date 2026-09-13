@@ -10,6 +10,7 @@ import { StackTechnology } from '../../types/stack';
 import { ArchitectureProfile } from '../../types/architecture';
 import { getTechnology, getArchitectureProfile } from '../../lib/domain';
 import { TOPIC_TAXONOMY } from '../../data/taxonomy';
+import { TopicId } from '../../types/taxonomy';
 import { StackLayerBlock } from '../../components/stack/StackLayerBlock';
 import { TechDetailDrawer } from '../../components/stack/TechDetailDrawer';
 import { ArchitectureSelector } from '../../components/stack/ArchitectureSelector';
@@ -155,7 +156,7 @@ export const StackPage: React.FC = () => {
         (tech.tags && tech.tags.some((t) => t.toLowerCase().includes(query)));
 
       const matchesLayer = layerFilter === 'all' || tech.layerId === layerFilter;
-      const matchesTopic = topicFilter === 'all' || tech.topics.includes(topicFilter as any);
+      const matchesTopic = topicFilter === 'all' || tech.topics.includes(topicFilter as TopicId);
 
       return matchesQuery && matchesLayer && matchesTopic;
     });
