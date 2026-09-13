@@ -3589,12 +3589,12 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   const fs = await import('fs');
   const path = await import('path');
 
-  // Part A — Version 0.8.3 invariant
+  // Part A — Version 0.8.4 invariant
   const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
-  assert.strictEqual(pkg.version, '0.8.3', 'package.json must be bumped to 0.8.3');
+  assert.strictEqual(pkg.version, '0.8.4', 'package.json must be bumped to 0.8.4');
 
   const pkgLock = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package-lock.json'), 'utf-8'));
-  assert.strictEqual(pkgLock.version, '0.8.3', 'package-lock.json must be bumped to 0.8.3');
+  assert.strictEqual(pkgLock.version, '0.8.4', 'package-lock.json must be bumped to 0.8.4');
 
   // Part B — Dead code files must not exist in src/
   const deadFiles = [
