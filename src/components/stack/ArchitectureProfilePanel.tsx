@@ -243,7 +243,11 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
           <span className="flex items-center gap-1.5">
             <span>{t.stack.connectedEcosystemTitle}</span>
             <span className="text-[10px] font-mono px-2 py-0.5 bg-brand-500/15 text-brand-700 dark:text-brand-300 rounded font-normal">
-              {linkedCompanies.length} Companies · {linkedProjects.length} OSS Projects · {linkedTools.length} Tools · {linkedResources.length} Specs
+              {t.stack.ecosystemSummaryFormat
+                .replace('{companies}', String(linkedCompanies.length))
+                .replace('{projects}', String(linkedProjects.length))
+                .replace('{tools}', String(linkedTools.length))
+                .replace('{resources}', String(linkedResources.length))}
             </span>
           </span>
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -256,7 +260,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase">
                   <Building2 className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Key Companies ({linkedCompanies.length})</span>
+                  <span>{t.stack.ecosystemCompanies} ({linkedCompanies.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {linkedCompanies.slice(0, 6).map((comp: any) => (
@@ -279,7 +283,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase">
                   <Code2 className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Open Source ({linkedProjects.length})</span>
+                  <span>{t.stack.ecosystemOpenSource} ({linkedProjects.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {linkedProjects.slice(0, 5).map((p: any) => (
@@ -302,7 +306,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase">
                   <Wrench className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Dev Tools ({linkedTools.length})</span>
+                  <span>{t.stack.ecosystemTools} ({linkedTools.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {linkedTools.slice(0, 5).map((tool: any) => (
@@ -323,7 +327,7 @@ export const ArchitectureProfilePanel: React.FC<ArchitectureProfilePanelProps> =
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase">
                   <BookOpen className="w-3.5 h-3.5 text-brand-500" />
-                  <span>Standards ({linkedResources.length})</span>
+                  <span>{t.stack.ecosystemStandards} ({linkedResources.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {linkedResources.slice(0, 5).map((r: any) => (

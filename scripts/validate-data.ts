@@ -78,7 +78,7 @@ function getSafetyRelevantTexts(st: any): { text: string; location: string }[] {
   return items;
 }
 
-function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any; irUrl?: any }>(
+function checkCollection<T extends { id: string; name?: any; title?: any; description: any; topics?: string[]; website?: any; url?: any; irUrl?: any; documentation?: string }>(
   collectionName: string,
   items: T[]
 ) {
@@ -142,11 +142,11 @@ function checkCollection<T extends { id: string; name?: any; title?: any; descri
       }
     }
 
-    if ((item as any).documentation) {
-      const docUrl = (item as any).documentation;
+    if (item.documentation) {
+      const docUrl = item.documentation;
       try {
         const parsed = new URL(docUrl);
-        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+        if (parsed.protocol !== 'https:') {
           error(`[${collectionName} ID: ${item.id}] Documentation URL must use HTTPS: '${docUrl}'.`);
         }
       } catch {

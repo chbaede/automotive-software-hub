@@ -3500,7 +3500,89 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 75 Passed: Open Source Documentation Link Integration & Navigation Parity verified.');
 }
 
+// Test 76: Open Source & Knowledge Graph UX Hardening Invariants
+{
+  // Part A — Documentation URL policy: valid HTTPS passes, HTTP fails, malformed fails
+  function validateDocUrlPolicy(docUrl: string): { valid: boolean; reason?: string } {
+    try {
+      const parsed = new URL(docUrl);
+      if (parsed.protocol !== 'https:') {
+        return { valid: false, reason: 'Documentation URL must use HTTPS.' };
+      }
+      return { valid: true };
+    } catch {
+      return { valid: false, reason: 'Invalid documentation URL string.' };
+    }
+  }
+
+  assert.strictEqual(validateDocUrlPolicy('https://docs.yoctoproject.org/').valid, true);
+  assert.strictEqual(validateDocUrlPolicy('http://docs.yoctoproject.org/').valid, false);
+  assert.strictEqual(validateDocUrlPolicy('ftp://docs.yoctoproject.org/').valid, false);
+  assert.strictEqual(validateDocUrlPolicy('not-a-url').valid, false);
+  assert.strictEqual(validateDocUrlPolicy('javascript:alert(1)').valid, false);
+
+  // Part B — Open Source project documentation integrity
+  const { projects } = await import('../src/data/projects.js');
+  const { getProject } = await import('../src/lib/domain/index.js');
+  for (const proj of projects) {
+    assert.ok(proj.documentation, `Project '${proj.id}' must have documentation URL`);
+    const policy = validateDocUrlPolicy(proj.documentation!);
+    assert.strictEqual(policy.valid, true, `Project '${proj.id}' doc URL must be HTTPS: ${proj.documentation}`);
+    assert.ok(getProject(proj.id), `Project '${proj.id}' must resolve via getProject`);
+  }
+
+  // Part C — Technology ↔ Open Source resolution
+  const { getTechnology, getProjectsForTechnology, getTechnologiesForProject } = await import('../src/lib/domain/index.js');
+
+  // Test tech -> projects resolution
+  const aaosTech = getTechnology('android-automotive-os');
+  assert.ok(aaosTech, 'android-automotive-os tech must exist');
+  const aaosProjects = getProjectsForTechnology(aaosTech);
+  assert.ok(aaosProjects.some((p) => p.id === 'android-automotive-os'), 'AAOS tech must resolve AAOS project');
+
+  const autosarTech = getTechnology('autosar-adaptive');
+  assert.ok(autosarTech, 'autosar-adaptive tech must exist');
+  const autosarProjects = getProjectsForTechnology(autosarTech);
+  assert.ok(autosarProjects.some((p) => p.id === 'autosar-open-standards'), 'AUTOSAR tech must resolve autosar-open-standards');
+
+  const ros2Tech = getTechnology('ros2-middleware');
+  assert.ok(ros2Tech, 'ros2-middleware tech must exist');
+  const ros2Projects = getProjectsForTechnology(ros2Tech);
+  assert.ok(ros2Projects.some((p) => p.id === 'ros2-framework'), 'ROS2 tech must resolve ros2-framework');
+
+  // Test project -> technologies resolution
+  const yoctoProject = getProject('yocto-project');
+  assert.ok(yoctoProject, 'yocto-project must exist');
+  const yoctoTechs = getTechnologiesForProject(yoctoProject);
+  assert.ok(yoctoTechs.length > 0, 'yocto-project must have related technologies');
+  assert.ok(yoctoTechs.some((t) => t.id.includes('yocto') || t.topics.includes('yocto')), 'yocto-project must resolve yocto technologies');
+
+  const autosarProject = getProject('autosar-open-standards');
+  assert.ok(autosarProject, 'autosar-open-standards must exist');
+  const autosarLinkedTechs = getTechnologiesForProject(autosarProject);
+  assert.ok(autosarLinkedTechs.some((t) => t.id === 'autosar-classic' || t.id === 'autosar-adaptive'), 'autosar-open-standards must resolve AUTOSAR technologies');
+
+  // Part D — EN/KO parity for new openSource and stack i18n keys
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  assert.ok(en.openSource.relatedTechnologies, 'en.openSource.relatedTechnologies must exist');
+  assert.ok(ko.openSource.relatedTechnologies, 'ko.openSource.relatedTechnologies must exist');
+  assert.ok(en.openSource.topics, 'en.openSource.topics must exist');
+  assert.ok(ko.openSource.topics, 'ko.openSource.topics must exist');
+  assert.ok(en.openSource.standardsBadge, 'en.openSource.standardsBadge must exist');
+  assert.ok(ko.openSource.standardsBadge, 'ko.openSource.standardsBadge must exist');
+
+  assert.ok(en.architectures.relevantOpenSource, 'en.architectures.relevantOpenSource must exist');
+  assert.ok(ko.architectures.relevantOpenSource, 'ko.architectures.relevantOpenSource must exist');
+  assert.ok(en.stack.ecosystemSummaryFormat, 'en.stack.ecosystemSummaryFormat must exist');
+  assert.ok(ko.stack.ecosystemSummaryFormat, 'ko.stack.ecosystemSummaryFormat must exist');
+
+  console.log('✅ Test 76 Passed: Open Source & Knowledge Graph UX Hardening Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
 
 

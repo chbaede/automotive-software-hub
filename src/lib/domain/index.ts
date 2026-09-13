@@ -157,10 +157,36 @@ export function getResourcesForTechnology(tech?: StackTechnology | null): Resour
  * Resolves all open source projects linked to a technology.
  */
 export function getProjectsForTechnology(tech?: StackTechnology | null): OpenSourceProject[] {
-  if (!tech?.openSourceProjectIds || tech.openSourceProjectIds.length === 0) return [];
-  return tech.openSourceProjectIds
+  if (!tech) return [];
+  const projectIds = new Set<string>(tech.openSourceProjectIds || []);
+  if (projectById.has(tech.id)) {
+    projectIds.add(tech.id);
+  }
+  return Array.from(projectIds)
     .map((id) => projectById.get(id))
     .filter((p): p is OpenSourceProject => Boolean(p));
+}
+
+/**
+ * Resolves all stack technologies linked to an open source project.
+ * Uses direct canonical links via openSourceProjectIds or matching technology ID,
+ * falling back to topic alignment if direct links are absent.
+ */
+export function getTechnologiesForProject(project?: OpenSourceProject | null): StackTechnology[] {
+  if (!project) return [];
+
+  const directMatches = stackTechnologies.filter(
+    (tech) => tech.openSourceProjectIds?.includes(project.id) || tech.id === project.id
+  );
+
+  if (directMatches.length > 0) {
+    return directMatches;
+  }
+
+  const topicSet = new Set(project.topics || []);
+  return stackTechnologies
+    .filter((tech) => tech.topics?.some((t) => topicSet.has(t)))
+    .slice(0, 4);
 }
 
 /**

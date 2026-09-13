@@ -718,16 +718,41 @@ export const TechnologyDetailPage: React.FC = () => {
                           {project.license} • {project.organization}
                         </div>
                       </div>
-                      {project.repository && (
-                        <a
-                          href={project.repository}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
-                        >
-                          <FileCode className="w-3.5 h-3.5" />
-                        </a>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {project.website && (
+                          <a
+                            href={project.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
+                            title={t.openSource.website}
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        {project.documentation && (
+                          <a
+                            href={project.documentation}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
+                            title={t.openSource.documentation}
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        {project.repository && (
+                          <a
+                            href={project.repository}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1"
+                            title={t.openSource.repository}
+                          >
+                            <FileCode className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

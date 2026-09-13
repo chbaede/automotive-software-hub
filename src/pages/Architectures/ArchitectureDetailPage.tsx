@@ -16,8 +16,11 @@ import {
   ArrowRightLeft,
   Network,
   Plus,
+  Code2,
+  BookOpen,
 } from 'lucide-react';
-import { profileById, technologyById } from '../../lib/domain';
+import { profileById, technologyById, getProject } from '../../lib/domain';
+import { OpenSourceProject } from '../../types/project';
 import { outgoingRelationshipsByTechnologyId } from '../../lib/graph';
 import { architectureProfiles } from '../../data/architectureProfiles';
 import { stackLayers } from '../../data/stackLayers';
@@ -139,6 +142,18 @@ export const ArchitectureDetailPage: React.FC = () => {
       path.hops.some((hop) => techSet.has(hop.technologyId))
     );
   }, [profile]);
+
+  // Relevant Open Source & Resources associated with this architecture's technologies
+  const relevantProjects = useMemo(() => {
+    if (!profile) return [];
+    const projectIds = new Set<string>();
+    technologies.forEach((tech) => {
+      tech.openSourceProjectIds?.forEach((pid) => projectIds.add(pid));
+    });
+    return Array.from(projectIds)
+      .map((pid) => getProject(pid))
+      .filter((p): p is OpenSourceProject => Boolean(p));
+  }, [profile, technologies]);
 
   // Alternative architectures
   const alternativeArchitectures = useMemo(() => {
@@ -511,6 +526,92 @@ export const ArchitectureDetailPage: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Relevant Open Source & Resources */}
+      {relevantProjects.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-5 shadow-2xs">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Code2 className="w-5 h-5 text-indigo-500" />
+              <div>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  {t.architectures.relevantOpenSource}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.architectures.relevantOpenSourceDesc}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-mono text-slate-500">
+              {t.architectures.openSourceCount.replace('{count}', String(relevantProjects.length))}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {relevantProjects.map((project) => (
+              <div
+                key={project.id}
+                className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span className="text-[10px] font-mono font-bold uppercase text-slate-500">
+                      {project.organization}
+                    </span>
+                    {project.license && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
+                        {project.license}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                    {project.name}
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                    {getLocalizedText(project.description, language)}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800/60 flex-wrap">
+                  {project.website && (
+                    <a
+                      href={project.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1"
+                    >
+                      <span>{t.openSource.website}</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                  {project.documentation && (
+                    <a
+                      href={project.documentation}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                    >
+                      <BookOpen className="w-3 h-3" />
+                      <span>{t.openSource.documentation}</span>
+                    </a>
+                  )}
+                  {project.repository && (
+                    <a
+                      href={project.repository}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 ml-auto"
+                    >
+                      <Code2 className="w-3 h-3" />
+                      <span>{t.openSource.repository}</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
