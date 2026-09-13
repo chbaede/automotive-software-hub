@@ -65,6 +65,27 @@ export const CompanyStrategyPage: React.FC = () => {
     }
   };
 
+  const getSourceTypeLabel = (sourceType: string): string => {
+    switch (sourceType) {
+      case 'annual-report':
+        return t.strategyInsights.sourceTypeAnnualReport;
+      case 'investor-presentation':
+        return t.strategyInsights.sourceTypeInvestorPresentation;
+      case 'capital-markets-day':
+        return t.strategyInsights.sourceTypeCapitalMarketsDay;
+      case 'shareholder-letter':
+        return t.strategyInsights.sourceTypeShareholderLetter;
+      case 'press-release':
+        return t.strategyInsights.sourceTypePressRelease;
+      case 'official-event':
+        return t.strategyInsights.sourceTypeOfficialEvent;
+      case 'official-website':
+        return t.strategyInsights.sourceTypeOfficialWebsite;
+      default:
+        return sourceType;
+    }
+  };
+
   const getCategoryBadgeClass = (cat: StrategyCategory): string => {
     switch (cat) {
       case 'oem':
@@ -183,11 +204,19 @@ export const CompanyStrategyPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Editorial Methodology & Disclaimer Note */}
+      <div className="p-4 rounded-xl bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2.5">
+        <Sparkles className="w-4 h-4 text-brand-500 mt-0.5 shrink-0" />
+        <p className="leading-relaxed">
+          {t.strategyInsights.disclaimerNote}
+        </p>
+      </div>
+
       {/* Comparison Matrix Table (Collapsible / Summary) */}
       <div className="space-y-3">
         <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
           <Building2 className="w-4 h-4 text-brand-500" />
-          <span>Cross-Company Strategic Comparison Matrix</span>
+          <span>{t.strategyInsights.matrixTitle}</span>
         </h2>
         <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 shadow-xs">
           <table className="w-full text-left border-collapse text-xs">
@@ -217,43 +246,13 @@ export const CompanyStrategyPage: React.FC = () => {
                     </a>
                   </td>
                   <td className="py-3 px-4 text-slate-600 dark:text-slate-300 font-mono text-[11px]">
-                    {item.companyId === 'mercedes-benz' && 'MB.OS (Chip-to-Cloud)'}
-                    {item.companyId === 'tesla' && 'Tesla OS (Custom Linux)'}
-                    {item.companyId === 'hyundai-motor-group' && 'ccOS & 42dot Pleos'}
-                    {item.companyId === 'bmw-group' && 'Neue Klasse 4 Super-Brains'}
-                    {item.companyId === 'volkswagen-group' && 'E3 1.2 / Rivian JV E3 2.0'}
-                    {item.companyId === 'toyota-motor' && 'Arene OS (Woven)'}
-                    {item.companyId === 'nvidia' && 'DRIVE Thor & Blackwell'}
-                    {item.companyId === 'qualcomm' && 'Snapdragon Digital Chassis'}
-                    {item.companyId === 'mobileye' && 'EyeQ6 & DXP Platform'}
-                    {item.companyId === 'hyundai-mobis' && 'Software-Centric Vehicle'}
-                    {item.companyId === 'lg-electronics-vs' && 'LG AlphaWare Suite'}
+                    {getLocalizedText(item.matrixSummary.sdvOs, language)}
                   </td>
                   <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden md:table-cell text-[11px]">
-                    {item.companyId === 'mercedes-benz' && '4 Central Domains + Zonal'}
-                    {item.companyId === 'tesla' && '3 Zonal ECUs + 48V Bus'}
-                    {item.companyId === 'hyundai-motor-group' && 'HPVC + Zone Controllers'}
-                    {item.companyId === 'bmw-group' && '4 Super-Brains Compute'}
-                    {item.companyId === 'volkswagen-group' && 'Rivian-style Zonal Stack'}
-                    {item.companyId === 'toyota-motor' && 'Central E/E + Giga-casting'}
-                    {item.companyId === 'nvidia' && 'DRIVE Thor Central Brain'}
-                    {item.companyId === 'qualcomm' && 'Snapdragon Ride Flex SoC'}
-                    {item.companyId === 'mobileye' && 'True Redundancy ADAS/AD'}
-                    {item.companyId === 'hyundai-mobis' && 'Integrated Zonal DCU'}
-                    {item.companyId === 'lg-electronics-vs' && 'Telematics / Cockpit HPC'}
+                    {getLocalizedText(item.matrixSummary.eeZonal, language)}
                   </td>
                   <td className="py-3 px-4 text-slate-600 dark:text-slate-400 hidden lg:table-cell text-[11px]">
-                    {item.companyId === 'mercedes-benz' && 'MMA (800V) & MB.EA'}
-                    {item.companyId === 'tesla' && 'Unboxed / Cybercab'}
-                    {item.companyId === 'hyundai-motor-group' && 'IMA (13 segments)'}
-                    {item.companyId === 'bmw-group' && 'Neue Klasse 800V Gen6'}
-                    {item.companyId === 'volkswagen-group' && 'PPE / SSP Platform'}
-                    {item.companyId === 'toyota-motor' && 'Next-Gen BEV (Solid-State)'}
-                    {item.companyId === 'nvidia' && 'Global OEM EV Stacks'}
-                    {item.companyId === 'qualcomm' && '$45B+ Design Pipeline'}
-                    {item.companyId === 'mobileye' && 'VW, Porsche, Zeekr EVs'}
-                    {item.companyId === 'hyundai-mobis' && 'E-GMP & IMA Electrification'}
-                    {item.companyId === 'lg-electronics-vs' && 'LG Magna e-Powertrain'}
+                    {getLocalizedText(item.matrixSummary.evPlatform, language)}
                   </td>
                   <td className="py-3 px-4 font-mono font-bold text-brand-600 dark:text-brand-400 text-[11px]">
                     {item.strategicTargets[0]?.year}–{item.strategicTargets[item.strategicTargets.length - 1]?.year}
@@ -484,15 +483,39 @@ export const CompanyStrategyPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Key Citations */}
-              <div className="text-[11px] text-slate-400 dark:text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-1 pt-2">
-                <span className="font-semibold text-slate-500">Official Citations:</span>
-                {strategy.keyCitations.map((cit, idx) => (
-                  <span key={idx} className="italic">
-                    • {cit}
-                  </span>
-                ))}
-              </div>
+              {/* Official Traceable Sources */}
+              {strategy.sources && strategy.sources.length > 0 && (
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                    <ExternalLink className="w-3.5 h-3.5 text-brand-500" />
+                    <span>{t.strategyInsights.sectionSources}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {strategy.sources.map((source, idx) => (
+                      <a
+                        key={idx}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 text-xs transition group shadow-2xs"
+                      >
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-brand-500/10 text-brand-700 dark:text-brand-300 border border-brand-500/20">
+                          {getSourceTypeLabel(source.sourceType)}
+                        </span>
+                        <span className="font-medium group-hover:text-brand-600 dark:group-hover:text-brand-400">
+                          {getLocalizedText(source.title, language)}
+                        </span>
+                        {source.publishedDate && (
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            ({source.publishedDate})
+                          </span>
+                        )}
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}

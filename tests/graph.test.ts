@@ -3201,7 +3201,76 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 70 Passed: Deep Dictionary Parity, Modals & Pre-Review Safety Invariants verified.');
 }
 
+// Test 71: Phase 8.x — Strategy Intelligence Hardening, Evidence Traceability & Matrix Invariants
+{
+  const { companyStrategies } = await import('../src/data/companyStrategies.js');
+  const { companies } = await import('../src/data/companies.js');
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
+  const { technologyById } = await import('../src/lib/graph/index.js');
+
+  assert.strictEqual(companyStrategies.length, 11, 'Expected exactly 11 company strategy profiles');
+
+  const companyMap = new Map(companies.map((c) => [c.id, c]));
+  const validSourceTypes = new Set([
+    'annual-report',
+    'investor-presentation',
+    'capital-markets-day',
+    'shareholder-letter',
+    'press-release',
+    'official-event',
+    'official-website',
+  ]);
+
+  for (const cs of companyStrategies) {
+    // 1. Company reference integrity
+    assert.ok(companyMap.has(cs.companyId), `Company '${cs.companyId}' must exist in companies dataset`);
+    const comp = companyMap.get(cs.companyId);
+    assert.strictEqual(comp?.hasStrategyInsight, true, `Company '${cs.companyId}' must have hasStrategyInsight: true`);
+
+    // 2. Matrix summary completeness & bilingual parity
+    assert.ok(cs.matrixSummary, `Strategy '${cs.companyId}' must have matrixSummary`);
+    assert.ok(cs.matrixSummary.sdvOs.en && cs.matrixSummary.sdvOs.ko, `Bilingual sdvOs required for '${cs.companyId}'`);
+    assert.ok(cs.matrixSummary.eeZonal.en && cs.matrixSummary.eeZonal.ko, `Bilingual eeZonal required for '${cs.companyId}'`);
+    assert.ok(cs.matrixSummary.evPlatform.en && cs.matrixSummary.evPlatform.ko, `Bilingual evPlatform required for '${cs.companyId}'`);
+
+    // 3. Strategic targets validity
+    assert.ok(cs.strategicTargets && cs.strategicTargets.length > 0, `At least 1 target required for '${cs.companyId}'`);
+    for (const target of cs.strategicTargets) {
+      assert.match(target.year, /^\d{4}$/, `Target year must be 4 digits for '${cs.companyId}'`);
+      assert.ok(target.milestone.en && target.milestone.ko, `Bilingual milestone required for '${cs.companyId}'`);
+    }
+
+    // 4. Traceable official sources
+    assert.ok(cs.sources && cs.sources.length > 0, `At least 1 source required for '${cs.companyId}'`);
+    for (const src of cs.sources) {
+      assert.ok(src.title.en && src.title.ko, `Bilingual source title required in '${cs.companyId}'`);
+      assert.ok(src.url.startsWith('https://'), `Source URL must be HTTPS in '${cs.companyId}'`);
+      assert.ok(validSourceTypes.has(src.sourceType), `Invalid sourceType '${src.sourceType}' in '${cs.companyId}'`);
+      if (src.publishedDate) {
+        assert.match(src.publishedDate, /^\d{4}-\d{2}-\d{2}$/, `publishedDate must be YYYY-MM-DD in '${cs.companyId}'`);
+      }
+      if (src.lastVerified) {
+        assert.match(src.lastVerified, /^\d{4}-\d{2}-\d{2}$/, `lastVerified must be YYYY-MM-DD in '${cs.companyId}'`);
+      }
+    }
+
+    if (cs.lastVerified) {
+      assert.match(cs.lastVerified, /^\d{4}-\d{2}-\d{2}$/, `Profile lastVerified must be YYYY-MM-DD in '${cs.companyId}'`);
+    }
+  }
+
+  // 5. Invariant: Knowledge Graph integrity remains completely untouched
+  assert.strictEqual(technologyById.size, 112, 'Must maintain exactly 112 technologies in Knowledge Graph');
+  assert.strictEqual(stackRelationships.length, 193, 'Must maintain exactly 193 relationships in Knowledge Graph');
+  const pegasus = technologyById.get('perseus-hypervisor');
+  assert.strictEqual(pegasus?.functionalSafety?.claimType, 'certified');
+  assert.strictEqual(pegasus?.functionalSafety?.asilLevel, 'ASIL-D');
+
+  console.log('✅ Test 71 Passed: Strategy Intelligence Hardening, Evidence Traceability & Matrix Invariants verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
+
 
 
 

@@ -52,3 +52,28 @@ Every relationship in `stackRelationships.ts` is assigned a confidence level bas
 
 - **Stack Path ≠ Strict Dependency Graph**: A Stack Path defines an architectural exploration journey across layers.
 - **No Artificial Serialization**: Branches (e.g. Service Communication vs Diagnostics) are clearly demarcated in hop notes rather than forced into artificial 1-to-1 linear dependencies.
+
+---
+
+## 5. Strategy Intelligence & Corporate Disclosures Policy
+
+Corporate strategic analyses (`companyStrategies.ts`) adhere to strict evidence traceability and separation of facts from announced plans:
+
+```text
+Strategy Intelligence
+├── Official Source       (Primary IR portal, Annual Report, Capital Markets Day)
+├── Published Date        (Date when company originally disclosed the material: YYYY-MM-DD)
+├── Last Verified         (Date when Automotive Software Hub manually verified the claim)
+├── Confidence            (official | vendor | community)
+├── Strategic Target      (Announced roadmap milestone; NOT a guaranteed past/present fact)
+└── Editorial Analysis    (Synthesized technical perspective by Automotive Software Hub)
+```
+
+### Core Rules
+1. **Official Primary Sources**: Claims regarding Vehicle OS, Zonal E/E, EV architectures, and silicon roadmaps must cite official corporate disclosures (SEC/regulatory filings, Capital Markets Days, executive investor decks).
+2. **Date Independence**:
+   - `publishedDate`: Original publication date of the investor report or press announcement.
+   - `lastVerified`: When our editorial engineering team last inspected the claim for accuracy.
+3. **Target vs. Fact Distinction**: Planned future milestones (`strategicTargets`) represent announced company ambitions or projected SOP dates, never confirmed technical facts.
+4. **Data-Driven Matrix**: The comparison matrix renders concise, localized summary tokens (`matrixSummary`) exclusively from the canonical dataset without hardcoded component branches.
+

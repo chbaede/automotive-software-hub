@@ -10,8 +10,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     exchange: 'XETRA',
     irUrl: 'https://group.mercedes-benz.com/investors/',
     latestEventOrReport: {
-      en: 'Q2 2024 / H1 Results & Mercedes-Benz Strategy Update (MB.OS Launch Preparation)',
-      ko: '2024년 2분기 실적 발표 및 메르세데스-벤츠 전략 업데이트 (MB.OS 양산 준비)',
+      en: 'Mercedes-Benz Strategy Update (MB.OS Launch Architecture) & Annual Financial Reports',
+      ko: '메르세데스-벤츠 전략 업데이트 (MB.OS 양산 아키텍처) 및 연례 경영 실적 보고서',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'MB.OS (Chip-to-Cloud)',
+        ko: 'MB.OS (칩-투-클라우드)',
+      },
+      eeZonal: {
+        en: '4 Central Domains + Zonal',
+        ko: '4대 도메인 제어기 + Zonal 구조',
+      },
+      evPlatform: {
+        en: 'MMA (800V) & MB.EA',
+        ko: 'MMA (800V) 및 MB.EA 플랫폼',
+      },
     },
     sdvArchitecture: {
       en: 'Proprietary MB.OS (Chip-to-Cloud architecture) decoupling hardware and software lifecycles. Features dedicated high-performance computing clusters with NVIDIA SoC, Google Cloud navigation integration, and Unity real-time 3D graphics.',
@@ -56,10 +70,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Mercedes-Benz Strategy Update: MB.OS Presentation',
-      'Mercedes-Benz Group AG Annual Results & Capital Markets Information',
+    sources: [
+      {
+        title: {
+          en: 'Mercedes-Benz Strategy Update: MB.OS Architecture',
+          ko: '메르세데스-벤츠 전략 업데이트: MB.OS 아키텍처 공식 발표',
+        },
+        url: 'https://group.mercedes-benz.com/investors/',
+        sourceType: 'capital-markets-day',
+        publishedDate: '2023-02-22',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Mercedes-Benz Group Annual Financial Results & Investor Presentation',
+          ko: '메르세데스-벤츠 그룹 연례 실적 발표 및 투자자 프레젠테이션',
+        },
+        url: 'https://group.mercedes-benz.com/investors/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-07-26',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'tesla',
@@ -70,8 +105,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     exchange: 'NASDAQ',
     irUrl: 'https://ir.tesla.com/',
     latestEventOrReport: {
-      en: 'Q2/Q3 2024 Shareholder Update & "We, Robot" Autonomous Event',
-      ko: '2024년 2/3분기 주주 서한 및 "We, Robot" 자율주행 로보택시 공개 행사',
+      en: 'Tesla Shareholder Deck & "We, Robot" Autonomous Mobility Event',
+      ko: '테슬라 공식 주주 서한 및 "We, Robot" 자율주행 로보택시 공개 행사',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'Tesla OS (Custom Linux)',
+        ko: 'Tesla OS (자체 리눅스 기반)',
+      },
+      eeZonal: {
+        en: '3 Zonal ECUs + 48V Bus',
+        ko: '3개 Zonal ECU + 48V 전력망',
+      },
+      evPlatform: {
+        en: 'Unboxed / Cybercab',
+        ko: '언박스드 공정 / Cybercab 플랫폼',
+      },
     },
     sdvArchitecture: {
       en: 'Vertically integrated Linux OS stack with complete in-house middleware, sensor fusion, and neural network runtime. Over-the-air firmware updates update every micro-controller across powertrain, thermal, safety, and infotainment.',
@@ -116,10 +165,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Tesla Q2/Q3 Shareholder Presentation Deck',
-      'Tesla "We, Robot" Event Keynote & Autonomous Transportation Deck',
+    sources: [
+      {
+        title: {
+          en: 'Tesla Shareholder Deck & Quarterly Financial Disclosures',
+          ko: '테슬라 주주 서한 및 분기 재무 공시 자료',
+        },
+        url: 'https://ir.tesla.com/',
+        sourceType: 'shareholder-letter',
+        publishedDate: '2024-10-23',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Tesla "We, Robot" Autonomous Platform Unveil Keynote',
+          ko: '테슬라 "We, Robot" 자율주행 플랫폼 공개 기조연설',
+        },
+        url: 'https://ir.tesla.com/',
+        sourceType: 'official-event',
+        publishedDate: '2024-10-10',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'hyundai-motor-group',
@@ -130,8 +200,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     exchange: 'KRX',
     irUrl: 'https://www.hyundai.com/worldwide/en/company/ir',
     latestEventOrReport: {
-      en: 'Hyundai CEO Investor Day 2024 ("Hyundai Way") & HMG SDV Tech Day',
-      ko: '2024 현대 CEO 인베스터 데이 ("현대 웨이") 및 HMG SDV 테크 데이',
+      en: 'Hyundai CEO Investor Day ("Hyundai Way") & HMG SDV Tech Day',
+      ko: '현대 CEO 인베스터 데이 ("현대 웨이") 및 HMG SDV 테크 데이',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'ccOS & 42dot Pleos',
+        ko: 'ccOS 및 42dot Pleos OS',
+      },
+      eeZonal: {
+        en: 'HPVC + Zone Controllers',
+        ko: 'HPVC + 통합 영역(Zone) 제어기',
+      },
+      evPlatform: {
+        en: 'IMA (13 segments)',
+        ko: 'IMA 2세대 전기차 플랫폼 (13개 차급)',
+      },
     },
     sdvArchitecture: {
       en: 'Two-track operating system strategy: deploying Connected Car Operating System (ccOS) across current volume production, while 42dot leads the development of next-generation unified SDV OS (Pleos) with cloud-native microservices.',
@@ -176,10 +260,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Hyundai CEO Investor Day 2024 Presentation ("Hyundai Way")',
-      'Hyundai Motor Group Unlock the Software Age Keynote Deck',
+    sources: [
+      {
+        title: {
+          en: 'Hyundai Motor Company CEO Investor Day Presentation ("Hyundai Way")',
+          ko: '현대자동차 CEO 인베스터 데이 공식 발표 자료 ("현대 웨이")',
+        },
+        url: 'https://www.hyundai.com/worldwide/en/company/ir',
+        sourceType: 'capital-markets-day',
+        publishedDate: '2024-08-28',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Hyundai Motor Group Unlock the Software Age Keynote Deck',
+          ko: '현대자동차그룹 소프트웨어 정의 차량(SDV) 비전 기조연설 자료',
+        },
+        url: 'https://www.hyundai.com/worldwide/en/company/ir',
+        sourceType: 'official-event',
+        publishedDate: '2022-10-12',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'bmw-group',
@@ -190,8 +295,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     exchange: 'XETRA',
     irUrl: 'https://www.bmwgroup.com/en/investor-relations.html',
     latestEventOrReport: {
-      en: 'BMW Group Annual Conference & Half-Year Financial Report (Neue Klasse Milestones)',
-      ko: 'BMW 그룹 연례 컨퍼런스 및 반기 실적 보고서 (노이에 클라세 주요 일정)',
+      en: 'BMW Group Annual Conference & Neue Klasse Architecture Milestones',
+      ko: 'BMW 그룹 연례 컨퍼런스 및 노이에 클라쎄 아키텍처 마일스톤',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'Neue Klasse 4 Super-Brains',
+        ko: '노이에 클라쎄 4대 슈퍼브레인 OS',
+      },
+      eeZonal: {
+        en: '4 Super-Brains Compute',
+        ko: '4개 고성능 슈퍼브레인 중앙 컴퓨팅',
+      },
+      evPlatform: {
+        en: 'Neue Klasse 800V Gen6',
+        ko: '노이에 클라쎄 800V 6세대 eDrive',
+      },
     },
     sdvArchitecture: {
       en: 'BMW Operating System 8.5/9 (Android Automotive based) transitioning into the revolutionary Neue Klasse software architecture powered by 4 centralized "Super-Brains" high-performance computers.',
@@ -236,10 +355,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'BMW Group Annual Conference Presentation',
-      'BMW Vision Neue Klasse Technical Factsheet & Media Release',
+    sources: [
+      {
+        title: {
+          en: 'BMW Group Annual Report & Technology Disclosures',
+          ko: 'BMW 그룹 연례 보고서 및 전략 기술 공시',
+        },
+        url: 'https://www.bmwgroup.com/en/investor-relations.html',
+        sourceType: 'annual-report',
+        publishedDate: '2024-03-21',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'BMW Group Neue Klasse E/E Architecture Briefing',
+          ko: 'BMW 그룹 노이에 클라쎄 E/E 아키텍처 공식 브리핑',
+        },
+        url: 'https://www.bmwgroup.com/en/investor-relations.html',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-03-21',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'volkswagen-group',
@@ -252,6 +392,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'Volkswagen Group Capital Markets Day & Rivian Joint Venture Announcement',
       ko: '폭스바겐 그룹 캐피털 마켓 데이 및 리비안(Rivian) 전략적 합작법인 발표',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'E3 1.2 / Rivian JV E3 2.0',
+        ko: 'E3 1.2 / 리비안 합작 E3 2.0',
+      },
+      eeZonal: {
+        en: 'Rivian-style Zonal Stack',
+        ko: '리비안 협력 영역(Zonal) 아키텍처',
+      },
+      evPlatform: {
+        en: 'PPE / SSP Platform',
+        ko: 'PPE 및 차세대 SSP 통합 플랫폼',
+      },
     },
     sdvArchitecture: {
       en: 'E3 1.2 software platform currently in volume production on Porsche Macan EV & Audi Q6 e-tron. Partnering with Rivian through a $5B joint venture to co-develop next-generation E3 2.0 SDV platform using Rivian\'s proven zonal software stack.',
@@ -296,10 +450,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Volkswagen Group Capital Markets Day Presentation',
-      'Volkswagen Group & Rivian Joint Venture Investor Factsheet',
+    sources: [
+      {
+        title: {
+          en: 'Volkswagen Group Capital Markets Day Strategy Presentation',
+          ko: '폭스바겐 그룹 인베스터 데이 전략 발표 자료',
+        },
+        url: 'https://www.volkswagen-group.com/en/investor-relations',
+        sourceType: 'capital-markets-day',
+        publishedDate: '2023-06-21',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Volkswagen Group & Rivian Joint Venture Announcement',
+          ko: '폭스바겐 그룹 - 리비안 SDV 합작법인 공식 발표',
+        },
+        url: 'https://www.volkswagen-group.com/en/investor-relations',
+        sourceType: 'press-release',
+        publishedDate: '2024-06-25',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'toyota-motor',
@@ -312,6 +487,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'Toyota Financial Results Briefing & Workshop "Let\'s Change the Future of Cars"',
       ko: '토요타 회계연도 실적 브리핑 및 기술 워크숍 "자동차의 미래를 바꾸자"',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'Arene OS (Woven)',
+        ko: 'Arene OS (우븐 플래닛 자체 개발)',
+      },
+      eeZonal: {
+        en: 'Central E/E + Giga-casting',
+        ko: '중앙 집중형 E/E + 기가캐스팅',
+      },
+      evPlatform: {
+        en: 'Next-Gen BEV (Solid-State)',
+        ko: '차세대 BEV 전용 플랫폼 (전고체 배터리)',
+      },
     },
     sdvArchitecture: {
       en: 'Arene OS developed by Woven by Toyota: an integrated vehicle software operating system, simulation pipeline, and developer SDK designed to accelerate automotive software development and verification.',
@@ -352,10 +541,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Toyota Motor Corporation Financial Results & Strategic Briefing',
-      'Toyota Technical Workshop Presentation Materials',
+    sources: [
+      {
+        title: {
+          en: 'Toyota Motor Corporation Financial Results & Strategic Briefing',
+          ko: '토요타 자동차 재무 실적 및 전략 브리핑',
+        },
+        url: 'https://global.toyota/en/ir/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-05-08',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Toyota Technical Workshop: Changing the Future of Cars (Arene OS)',
+          ko: '토요타 테크니컬 워크숍: 자동차의 미래를 바꾼다 (Arene OS)',
+        },
+        url: 'https://global.toyota/en/ir/',
+        sourceType: 'official-event',
+        publishedDate: '2023-06-13',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'nvidia',
@@ -368,6 +578,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'NVIDIA GTC Automotive Keynote & Quarterly Earnings Presentation',
       ko: '엔비디아 GTC 오토모티브 기조연설 및 분기 실적 발표',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'DRIVE Thor & Blackwell',
+        ko: 'DRIVE Thor & 블랙웰(Blackwell)',
+      },
+      eeZonal: {
+        en: 'DRIVE Thor Central Brain',
+        ko: 'DRIVE Thor 중앙 집중 슈퍼컴퓨팅',
+      },
+      evPlatform: {
+        en: 'Global OEM EV Stacks',
+        ko: '글로벌 OEM 맞춤형 EV 솔루션',
+      },
     },
     sdvArchitecture: {
       en: 'NVIDIA DRIVE platform: End-to-End automotive software and silicon stack. Introduces DRIVE Thor SoC delivering 2,000 TFLOPS of FP8 compute on Blackwell GPU architecture, unifying Cockpit, Cluster, and Autonomous Driving on a single processor.',
@@ -401,10 +625,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'NVIDIA Automotive Investor Presentation',
-      'NVIDIA GTC Keynote: Future of Autonomous Transport',
+    sources: [
+      {
+        title: {
+          en: 'NVIDIA GTC Automotive Keynote: DRIVE Thor Architecture',
+          ko: '엔비디아 GTC 오토모티브 기조연설: DRIVE Thor 아키텍처',
+        },
+        url: 'https://investor.nvidia.com/',
+        sourceType: 'official-event',
+        publishedDate: '2024-03-18',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'NVIDIA Corporation Quarterly Financial Disclosures (Automotive Segment)',
+          ko: '엔비디아 분기 실적 공시 (오토모티브 사업 부문)',
+        },
+        url: 'https://investor.nvidia.com/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-08-28',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'qualcomm',
@@ -417,6 +662,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'Qualcomm Automotive Investor Day & Snapdragon Summit',
       ko: '퀄컴 오토모티브 인베스터 데이 및 스냅드래곤 서밋 발표',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'Snapdragon Digital Chassis',
+        ko: '스냅드래곤 디지털 섀시',
+      },
+      eeZonal: {
+        en: 'Snapdragon Ride Flex SoC',
+        ko: '스냅드래곤 라이드 플렉스 통합 SoC',
+      },
+      evPlatform: {
+        en: '$45B+ Design Pipeline',
+        ko: '$45B+ 전장 수주 파이프라인',
+      },
     },
     sdvArchitecture: {
       en: 'Snapdragon Digital Chassis: open, scalable, comprehensive platform spanning Snapdragon Cockpit, Snapdragon Ride (ADAS/AD), Snapdragon Auto Connectivity (5G/C-V2X), and Car-to-Cloud services.',
@@ -457,10 +716,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Qualcomm Automotive Investor Day Presentation & Factsheet',
-      'Snapdragon Digital Chassis Whitepaper & Technology Overview',
+    sources: [
+      {
+        title: {
+          en: 'Qualcomm Automotive Investor Day & Snapdragon Digital Chassis Presentation',
+          ko: '퀄컴 오토모티브 인베스터 데이 및 디지털 섀시 발표 자료',
+        },
+        url: 'https://investor.qualcomm.com/',
+        sourceType: 'capital-markets-day',
+        publishedDate: '2022-09-22',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Qualcomm Quarterly Earnings Presentation (Automotive Pipeline Update)',
+          ko: '퀄컴 분기 실적 발표 자료 (오토모티브 수주 잔고 업데이트)',
+        },
+        url: 'https://investor.qualcomm.com/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-07-31',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'mobileye',
@@ -471,8 +751,22 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     exchange: 'NASDAQ',
     irUrl: 'https://ir.mobileye.com/',
     latestEventOrReport: {
-      en: 'Mobileye Investor Conference & Q2 Earnings Call',
-      ko: '모빌아이 인베스터 컨퍼런스 및 2분기 실적 발표',
+      en: 'Mobileye Investor Conference & Technology Briefing',
+      ko: '모빌아이 인베스터 컨퍼런스 및 기술 브리핑',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'EyeQ6 & DXP Platform',
+        ko: 'EyeQ6 SoC & DXP 플랫폼',
+      },
+      eeZonal: {
+        en: 'True Redundancy ADAS/AD',
+        ko: '트루 리던던시 ADAS/AD 아키텍처',
+      },
+      evPlatform: {
+        en: 'VW, Porsche, Zeekr EVs',
+        ko: '폭스바겐, 포르쉐, 지커 EV 탑재',
+      },
     },
     sdvArchitecture: {
       en: 'Mobileye DXP (Developer Program) and EyeQ6 SoC family allowing automakers to customize algorithms while leveraging Mobileye\'s validated computer vision and REM (Road Experience Management) crowd-sourced mapping.',
@@ -506,10 +800,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Mobileye Investor Relations Presentation',
-      'Mobileye Technology Briefing: True Redundancy & EyeQ6 Specs',
+    sources: [
+      {
+        title: {
+          en: 'Mobileye Global Inc. Investor Relations Presentation',
+          ko: '모빌아이 글로벌 투자자 발표 자료',
+        },
+        url: 'https://ir.mobileye.com/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-08-01',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Mobileye Technology Briefing: True Redundancy & EyeQ6 Specs',
+          ko: '모빌아이 기술 브리핑: 트루 리던던시 및 EyeQ6 규격 발표',
+        },
+        url: 'https://ir.mobileye.com/',
+        sourceType: 'official-event',
+        publishedDate: '2024-01-09',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'hyundai-mobis',
@@ -522,6 +837,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'Hyundai Mobis CEO Investor Day & Business Strategy Presentation',
       ko: '현대모비스 CEO 인베스터 데이 및 사업 전략 발표',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'Software-Centric Vehicle',
+        ko: '소프트웨어 중심 모빌리티(SCV)',
+      },
+      eeZonal: {
+        en: 'Integrated Zonal DCU',
+        ko: '통합 영역(Zonal) 제어기 & DCU',
+      },
+      evPlatform: {
+        en: 'E-GMP & IMA Electrification',
+        ko: 'E-GMP 및 차세대 IMA 전동화 PE 모듈',
+      },
     },
     sdvArchitecture: {
       en: 'Software-Centric Vehicle (SCV) transformation: developing standardized middleware platforms, smart cockpit software (M.VICS), and integrated domain control units.',
@@ -555,10 +884,31 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'Hyundai Mobis CEO Investor Day Presentation',
-      'Hyundai Mobis Sustainability & Corporate Factbook',
+    sources: [
+      {
+        title: {
+          en: 'Hyundai Mobis CEO Investor Day Presentation',
+          ko: '현대모비스 CEO 인베스터 데이 공식 발표 자료',
+        },
+        url: 'https://www.mobis.com/en/ir/ircop.do',
+        sourceType: 'capital-markets-day',
+        publishedDate: '2024-07-18',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'Hyundai Mobis Sustainability & Corporate Factbook',
+          ko: '현대모비스 지속가능경영 보고서 및 기업 팩트북',
+        },
+        url: 'https://www.mobis.com/en/ir/ircop.do',
+        sourceType: 'annual-report',
+        publishedDate: '2024-07-26',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
   {
     companyId: 'lg-electronics-vs',
@@ -571,6 +921,20 @@ export const companyStrategies: CompanyStrategyInsight[] = [
     latestEventOrReport: {
       en: 'LG Electronics Global Corporate Presentation & VS Business Division Briefing',
       ko: 'LG전자 글로벌 기업 설명회 및 VS(전장) 사업본부 전략 브리핑',
+    },
+    matrixSummary: {
+      sdvOs: {
+        en: 'LG AlphaWare Suite',
+        ko: 'LG 알파웨어(AlphaWare) 스위트',
+      },
+      eeZonal: {
+        en: 'Telematics / Cockpit HPC',
+        ko: '텔레매틱스 & 인포테인먼트 HPC 통합',
+      },
+      evPlatform: {
+        en: 'LG Magna e-Powertrain',
+        ko: 'LG마그나 e-파워트레인 모듈',
+      },
     },
     sdvArchitecture: {
       en: 'LG AlphaWare software suite for SDVs consisting of 5 core modules: PlayWare (high-res IVI entertainment), MetaWare (AR-HUD & 3D graphics), VisionWare (AI driver monitoring & ADAS), BaseWare (AUTOSAR & OS abstraction), and OpsWare (cybersecurity & OTA fleet management).',
@@ -604,10 +968,30 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         },
       },
     ],
-    keyCitations: [
-      'LG Electronics Investor Relations Corporate Presentation',
-      'LG AlphaWare SDV Solution Portfolio Technical Whitepaper',
+    sources: [
+      {
+        title: {
+          en: 'LG Electronics Investor Relations Corporate Presentation',
+          ko: 'LG전자 IR 글로벌 기업설명회 공식 자료',
+        },
+        url: 'https://www.lg.com/global/investor-relations/',
+        sourceType: 'investor-presentation',
+        publishedDate: '2024-07-25',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
+      {
+        title: {
+          en: 'LG AlphaWare SDV Solution Portfolio Launch Announcement',
+          ko: 'LG 알파웨어(AlphaWare) SDV 소프트웨어 솔루션 발표',
+        },
+        url: 'https://www.lg.com/global/investor-relations/',
+        sourceType: 'press-release',
+        publishedDate: '2024-01-08',
+        lastVerified: '2026-09-13',
+        confidence: 'official',
+      },
     ],
+    lastVerified: '2026-09-13',
   },
 ];
-

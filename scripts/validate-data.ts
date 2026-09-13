@@ -19,6 +19,7 @@ import { stackTechnologies } from '../src/data/stackTechnologies.js';
 import { architectureProfiles } from '../src/data/architectureProfiles.js';
 import { stackRelationships } from '../src/data/stackRelationships.js';
 import { stackPaths } from '../src/data/stackPaths.js';
+import { companyStrategies } from '../src/data/companyStrategies.js';
 import { TOPIC_TAXONOMY } from '../src/data/taxonomy.js';
 import { RELATIONSHIP_METADATA } from '../src/types/relationship.js';
 import { ARCHITECTURE_PROFILE_TYPE_METADATA, STACK_PATH_TYPE_METADATA } from '../src/types/architecture.js';
@@ -358,6 +359,100 @@ stackPaths.forEach((path) => {
   });
 });
 console.log(`✅ Stack Paths: ${stackPaths.length} representative automotive software stack paths validated.`);
+
+// Validate Company Strategy Intelligence
+const validSourceTypes = new Set([
+  'annual-report',
+  'investor-presentation',
+  'capital-markets-day',
+  'shareholder-letter',
+  'press-release',
+  'official-event',
+  'official-website',
+]);
+const validConfidences = new Set(['official', 'vendor', 'community']);
+const seenStrategyCompanyIds = new Set<string>();
+
+companyStrategies.forEach((cs) => {
+  if (seenStrategyCompanyIds.has(cs.companyId)) {
+    error(`[Company Strategy] Duplicate strategy entry for companyId: '${cs.companyId}'`);
+  }
+  seenStrategyCompanyIds.add(cs.companyId);
+
+  if (!validCompanyIds.has(cs.companyId)) {
+    error(`[Company Strategy ID: ${cs.companyId}] Unknown companyId in companies collection.`);
+  }
+
+  if (!cs.irUrl || !cs.irUrl.startsWith('https://')) {
+    error(`[Company Strategy ID: ${cs.companyId}] Invalid or missing HTTPS irUrl: '${cs.irUrl}'`);
+  }
+
+  if (!cs.matrixSummary?.sdvOs?.en || !cs.matrixSummary?.sdvOs?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized matrixSummary.sdvOs.`);
+  }
+  if (!cs.matrixSummary?.eeZonal?.en || !cs.matrixSummary?.eeZonal?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized matrixSummary.eeZonal.`);
+  }
+  if (!cs.matrixSummary?.evPlatform?.en || !cs.matrixSummary?.evPlatform?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized matrixSummary.evPlatform.`);
+  }
+
+  if (!cs.sdvArchitecture?.en || !cs.sdvArchitecture?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized sdvArchitecture.`);
+  }
+  if (!cs.eeZonalArchitecture?.en || !cs.eeZonalArchitecture?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized eeZonalArchitecture.`);
+  }
+  if (!cs.evPlatformStrategy?.en || !cs.evPlatformStrategy?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized evPlatformStrategy.`);
+  }
+  if (!cs.autonomousDrivingAi?.en || !cs.autonomousDrivingAi?.ko) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing localized autonomousDrivingAi.`);
+  }
+
+  if (!cs.strategicTargets || cs.strategicTargets.length === 0) {
+    error(`[Company Strategy ID: ${cs.companyId}] Must have at least one strategic target.`);
+  } else {
+    cs.strategicTargets.forEach((st, idx) => {
+      if (!/^\d{4}$/.test(st.year)) {
+        error(`[Company Strategy ID: ${cs.companyId} Target #${idx}] Invalid target year: '${st.year}'.`);
+      }
+      if (!st.milestone?.en || !st.milestone?.ko) {
+        error(`[Company Strategy ID: ${cs.companyId} Target #${idx}] Missing localized milestone.`);
+      }
+    });
+  }
+
+  if (!cs.sources || cs.sources.length === 0) {
+    error(`[Company Strategy ID: ${cs.companyId}] Must have at least one traceable source.`);
+  } else {
+    cs.sources.forEach((source, idx) => {
+      if (!source.title?.en || !source.title?.ko) {
+        error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Missing localized source title.`);
+      }
+      if (!source.url || !source.url.startsWith('https://')) {
+        error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Invalid HTTPS source URL: '${source.url}'.`);
+      }
+      if (!validSourceTypes.has(source.sourceType)) {
+        error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown sourceType: '${source.sourceType}'.`);
+      }
+      if (source.publishedDate) {
+        validateIsoDate(source.publishedDate, `[Company Strategy ID: ${cs.companyId} Source #${idx} publishedDate]`);
+      }
+      if (source.lastVerified) {
+        validateIsoDate(source.lastVerified, `[Company Strategy ID: ${cs.companyId} Source #${idx} lastVerified]`);
+      }
+      if (source.confidence && !validConfidences.has(source.confidence)) {
+        error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown confidence: '${source.confidence}'.`);
+      }
+    });
+  }
+
+  if (cs.lastVerified) {
+    validateIsoDate(cs.lastVerified, `[Company Strategy ID: ${cs.companyId} lastVerified]`);
+  }
+});
+console.log(`✅ Company Strategy Intelligence: ${companyStrategies.length} strategy profiles & traceable sources validated.`);
 
 if (hasError) {
   console.error('\n❌ Data validation FAILED.');
