@@ -3931,6 +3931,26 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     }
   }
 
+  // 3.1 Specific Official Strategy Source URLs Verification
+  const fordStrat = getCompanyStrategy('ford');
+  assert.ok(fordStrat?.sources.some((s) => s.url.includes('Delivering-Ford-Capital-Markets-Day-2023')), 'Ford must link to specific Capital Markets Day 2023 page');
+
+  const stellantisStrat = getCompanyStrategy('stellantis');
+  assert.ok(stellantisStrat?.sources.some((s) => s.url.includes('sw-day-2021')), 'Stellantis must link to specific Software Day 2021 page');
+
+  const kiaStrat = getCompanyStrategy('kia');
+  assert.ok(kiaStrat?.sources.some((s) => s.url.includes('library/ir-activities')), 'Kia must link to specific IR Activities page');
+
+  // Verify no dedicated event source points to generic quarterly results
+  for (const cs of companyStrategies) {
+    for (const source of cs.sources) {
+      const t = source.title.en.toLowerCase();
+      if (t.includes('capital markets day') || t.includes('software day') || t.includes('investor day')) {
+        assert.ok(!source.url.includes('quarterly-results'), `Strategy source '${source.title.en}' must not point to quarterly-results`);
+      }
+    }
+  }
+
   // 4. Localization (i18n) Parity for Continents
   const continentKeys = ['all', 'northAmerica', 'europe', 'asia', 'southAmerica', 'africa', 'oceania'] as const;
   for (const k of continentKeys) {

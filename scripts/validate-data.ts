@@ -496,6 +496,20 @@ companyStrategies.forEach((cs) => {
       if (source.confidence && !validConfidences.has(source.confidence)) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Unknown confidence: '${source.confidence}'.`);
       }
+
+      // Semantic validation: Ensure dedicated event/report sources do not point to unrelated generic quarterly results
+      const titleLower = source.title?.en?.toLowerCase() || '';
+      const urlLower = source.url?.toLowerCase() || '';
+      const isDedicatedEventOrReport =
+        titleLower.includes('capital markets day') ||
+        titleLower.includes('software day') ||
+        titleLower.includes('investor day');
+
+      if (isDedicatedEventOrReport && urlLower.includes('quarterly-results')) {
+        error(
+          `[Company Strategy ID: ${cs.companyId} Source #${idx}] Semantic mismatch: Dedicated event source '${source.title.en}' must not point to generic quarterly-results URL: '${source.url}'.`
+        );
+      }
     });
   }
 
