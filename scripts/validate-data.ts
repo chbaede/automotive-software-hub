@@ -58,6 +58,24 @@ function validateIsoDate(dateStr: string, contextMsg: string) {
   }
 }
 
+function validateHttpsUrl(rawUrl: string | undefined, contextMsg: string): boolean {
+  if (!rawUrl || typeof rawUrl !== 'string') {
+    error(`${contextMsg}: URL must be a non-empty string.`);
+    return false;
+  }
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol !== 'https:') {
+      error(`${contextMsg}: Invalid URL protocol '${parsed.protocol}' for '${rawUrl}'. Must use https: protocol.`);
+      return false;
+    }
+    return true;
+  } catch {
+    error(`${contextMsg}: Malformed URL '${rawUrl}'.`);
+    return false;
+  }
+}
+
 function hasMisleadingCertificationLanguage(text: string): boolean {
   if (!text) return false;
   const enMisleading = /\b(asil-[abcd]\s+certified|safety-certified|iso\s*26262\s+certified|certified\s+for\s+iso|certified\s+up\s+to\s+asil)\b/i;
@@ -492,9 +510,7 @@ companyStrategies.forEach((cs) => {
       }
 
       if (ref.sourceUrl !== undefined) {
-        if (!ref.sourceUrl || !ref.sourceUrl.startsWith('https://')) {
-          error(`[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Invalid HTTPS sourceUrl: '${ref.sourceUrl}'.`);
-        }
+        validateHttpsUrl(ref.sourceUrl, `[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] sourceUrl`);
       }
 
       if (ref.reason !== undefined) {
@@ -506,10 +522,41 @@ companyStrategies.forEach((cs) => {
         }
       }
 
-      if (ref.evidenceLevel !== undefined) {
+      if (!ref.evidenceLevel) {
+        error(`[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Missing required evidenceLevel.`);
+      } else {
         const validEvidenceLevels = new Set(['specific-document', 'official-event', 'official-ir-page']);
         if (!validEvidenceLevels.has(ref.evidenceLevel)) {
           error(`[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Invalid evidenceLevel: '${ref.evidenceLevel}'. Must be one of ${Array.from(validEvidenceLevels).join(', ')}.`);
+        }
+      }
+
+      if (ref.evidenceLevel === 'official-event' && ref.sourceUrl) {
+        try {
+          const parsed = new URL(ref.sourceUrl);
+          const pathname = parsed.pathname.toLowerCase().replace(/\/+$/, '');
+          const genericPaths = new Set([
+            '',
+            '/investors',
+            '/investor-relations',
+            '/investor-relations.html',
+            '/ir',
+            '/ir.html',
+            '/finance',
+            '/company/ir',
+            '/en/investors',
+            '/en/investor-relations.html',
+            '/en/finance',
+            '/events-and-presentations/default.aspx',
+            '/investors/events-and-presentations/default.aspx',
+          ]);
+          if (genericPaths.has(pathname) || pathname.endsWith('default.aspx')) {
+            error(
+              `[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Generic IR/events landing page '${ref.sourceUrl}' must not be classified as 'official-event'. Use 'official-ir-page'.`
+            );
+          }
+        } catch {
+          // Handled by URL check
         }
       }
     });
@@ -550,9 +597,7 @@ companyStrategies.forEach((cs) => {
       if (!source.title?.en || !source.title?.ko) {
         error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Missing localized source title.`);
       }
-      if (!source.url || !source.url.startsWith('https://')) {
-        error(`[Company Strategy ID: ${cs.companyId} Source #${idx}] Invalid HTTPS source URL: '${source.url}'.`);
-      }
+      validateHttpsUrl(source.url, `[Company Strategy ID: ${cs.companyId} Source #${idx}] URL`);
       if (seenSourceUrls.has(source.url)) {
         error(
           `[Company Strategy ID: ${cs.companyId} Source #${idx}] Duplicate source URL: '${source.url}'. Consolidate or use distinct URLs.`

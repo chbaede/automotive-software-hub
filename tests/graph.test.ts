@@ -4573,6 +4573,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getStrategyTechnologyReferences,
     normalizeComparisonSelection,
     applyComparisonPreset,
+    isValidHttpsUrl,
     companyById,
     technologyById,
     COMPANY_CONTINENT_ORDER,
@@ -4615,8 +4616,17 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
       if (ref.sourceUrl !== undefined) {
         assert.ok(
-          ref.sourceUrl.startsWith('https://'),
-          `sourceUrl '${ref.sourceUrl}' in ${strat.companyId} must start with https://`
+          isValidHttpsUrl(ref.sourceUrl),
+          `sourceUrl '${ref.sourceUrl}' in ${strat.companyId} must be a valid HTTPS URL`
+        );
+        let parsed: URL;
+        assert.doesNotThrow(() => {
+          parsed = new URL(ref.sourceUrl!);
+        }, `sourceUrl '${ref.sourceUrl}' in ${strat.companyId} must parse without error`);
+        assert.strictEqual(
+          parsed!.protocol,
+          'https:',
+          `sourceUrl '${ref.sourceUrl}' in ${strat.companyId} must use https: protocol`
         );
       }
 
@@ -4637,6 +4647,22 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
         validEvidenceLevels.has(ref.evidenceLevel),
         `Invalid evidenceLevel '${ref.evidenceLevel}' for ${ref.technologyId} in ${strat.companyId}`
       );
+
+      // Generic landing pages must not be misclassified as official-event
+      if (ref.sourceUrl && ref.sourceUrl.includes('events-and-presentations/default.aspx')) {
+        assert.strictEqual(
+          ref.evidenceLevel,
+          'official-ir-page',
+          `Generic events landing page '${ref.sourceUrl}' in ${strat.companyId} must be classified as 'official-ir-page', not 'official-event'`
+        );
+      }
+      if (ref.evidenceLevel === 'official-event' && ref.sourceUrl) {
+        const parsed = new URL(ref.sourceUrl);
+        assert.ok(
+          !parsed.pathname.endsWith('default.aspx'),
+          `official-event in ${strat.companyId} must not point to generic default.aspx landing page: '${ref.sourceUrl}'`
+        );
+      }
     }
   }
 
@@ -4748,6 +4774,38 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   // 18. Relationship count / graph invariants
   assert.ok(strategies.length >= 26);
+
+  // 19. URL Validation Robustness: valid HTTPS passes, HTTP fails, malformed fails
+  assert.strictEqual(isValidHttpsUrl('https://group.mercedes-benz.com/investors/events/capital-markets-days/'), true);
+  assert.strictEqual(isValidHttpsUrl('https://example.com/report.pdf'), true);
+  assert.strictEqual(isValidHttpsUrl('http://example.com/report.pdf'), false, 'HTTP protocol must be rejected');
+  assert.strictEqual(isValidHttpsUrl('ftp://example.com/file'), false, 'FTP protocol must be rejected');
+  assert.strictEqual(isValidHttpsUrl('not-a-valid-url'), false, 'Malformed URL string must be rejected');
+  assert.strictEqual(isValidHttpsUrl('https://'), false, 'Incomplete HTTPS URL must be rejected');
+  assert.strictEqual(isValidHttpsUrl(''), false, 'Empty string must be rejected');
+  assert.strictEqual(isValidHttpsUrl(undefined), false, 'Undefined URL must be rejected');
+
+  // 20. EvidenceLevel validation: valid set, invalid rejected
+  const validEvidenceLevels = new Set(['specific-document', 'official-event', 'official-ir-page']);
+  assert.ok(validEvidenceLevels.has('specific-document'));
+  assert.ok(validEvidenceLevels.has('official-event'));
+  assert.ok(validEvidenceLevels.has('official-ir-page'));
+  assert.ok(!validEvidenceLevels.has('unverified-rumor'));
+  assert.ok(!validEvidenceLevels.has(''));
+
+  // 21. Existing valid strategy sources still pass HTTPS URL parsing
+  for (const strat of strategies) {
+    for (const src of strat.sources) {
+      assert.ok(
+        isValidHttpsUrl(src.url),
+        `Strategy source URL '${src.url}' for ${strat.companyId} must be a valid HTTPS URL`
+      );
+      assert.doesNotThrow(() => {
+        const parsed = new URL(src.url);
+        assert.strictEqual(parsed.protocol, 'https:');
+      });
+    }
+  }
 
   console.log('✅ Test 83 Passed: Strategy -> Technology Traceability, SSOT Company Integrity & Final Hardening Pass verified.');
 }

@@ -457,3 +457,16 @@ export function applyComparisonPreset(
   return normalizeComparisonSelection(presetCompanyIds, validCompanyIds);
 }
 
+/**
+ * Validates whether a string is a well-formed URL with HTTPS protocol.
+ */
+export function isValidHttpsUrl(rawUrl: string | undefined): boolean {
+  if (!rawUrl || typeof rawUrl !== 'string') return false;
+  try {
+    const parsed = new URL(rawUrl);
+    return parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+

@@ -62,7 +62,7 @@ export interface StrategyTechnologyReference {
   technologyId: string;
   reason?: LocalizedText;
   sourceUrl?: string;
-  evidenceLevel?: StrategyEvidenceLevel;
+  evidenceLevel: StrategyEvidenceLevel;
 }
 
 export interface CompanyStrategyInsight {

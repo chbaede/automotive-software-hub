@@ -736,7 +736,7 @@ sdvArchitecture: {
           ko: '블랙웰 GPU 아키텍처 기반의 자율주행 및 콕핏 AI 통합 플래그십 차량용 슈퍼컴퓨팅 SoC.',
         },
         sourceUrl: 'https://investor.nvidia.com/events-and-presentations/default.aspx',
-        evidenceLevel: 'official-event',
+        evidenceLevel: 'official-ir-page',
       },
     ],
 sdvArchitecture: {
@@ -1341,7 +1341,7 @@ sdvArchitecture: {
           ko: '인포테인먼트 및 커넥티드 서비스를 구동하는 Ford Digital Experience 플랫폼 아키텍처.',
         },
         sourceUrl: 'https://shareholder.ford.com/investors/events-and-presentations/default.aspx',
-        evidenceLevel: 'official-event',
+        evidenceLevel: 'official-ir-page',
       },
     ],
 sdvArchitecture: {
