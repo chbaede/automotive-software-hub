@@ -431,6 +431,40 @@ export function getRelatedTechnologiesForStrategy(
     .filter((t): t is StackTechnology => Boolean(t));
 }
 
+export interface TechnologyStrategyReferenceItem {
+  strategy: CompanyStrategyInsight;
+  reference?: StrategyTechnologyReference;
+  isDirectCompanyProduct: boolean;
+}
+
+/**
+ * Resolves all company strategy insights referencing a specific technology.
+ * Strictly derives connections from explicit strategyTechnology references and canonical company products.
+ */
+export function getStrategiesForTechnology(
+  technologyId: string
+): TechnologyStrategyReferenceItem[] {
+  const results: TechnologyStrategyReferenceItem[] = [];
+  const tech = technologyById.get(technologyId);
+
+  companyStrategies.forEach((strategy) => {
+    const explicitRef = (strategy.relatedTechnologies || []).find(
+      (ref) => ref.technologyId === technologyId
+    );
+    const isDirectCompany = Boolean(tech?.companyIds?.includes(strategy.companyId));
+
+    if (explicitRef || isDirectCompany) {
+      results.push({
+        strategy,
+        reference: explicitRef,
+        isDirectCompanyProduct: isDirectCompany,
+      });
+    }
+  });
+
+  return results;
+}
+
 /**
  * Normalizes comparison selection with deduplication, existence verification, and 4-company clamping.
  */

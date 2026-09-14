@@ -16,6 +16,12 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://autohub.yocto.co.kr/graph</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://autohub.yocto.co.kr/architectures</loc>
     <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>

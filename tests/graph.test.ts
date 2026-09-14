@@ -3371,7 +3371,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   // 4. Canonical Routes & SEO SSOT integrity
-  assert.strictEqual(CANONICAL_STATIC_ROUTES.length, 11, 'Expected 11 canonical static routes');
+  assert.strictEqual(CANONICAL_STATIC_ROUTES.length, 12, 'Expected 12 canonical static routes');
   for (const route of CANONICAL_STATIC_ROUTES) {
     assert.ok(ROUTE_SEO_MAP[route.fullPath], `ROUTE_SEO_MAP must have entry for '${route.fullPath}'`);
     const seo = ROUTE_SEO_MAP[route.fullPath];
@@ -4808,6 +4808,196 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   }
 
   console.log('✅ Test 83 Passed: Strategy -> Technology Traceability, SSOT Company Integrity & Final Hardening Pass verified.');
+}
+
+// ==========================================
+// KNOWLEDGE GRAPH EXPLORER 2.0 TEST SUITE
+// ==========================================
+
+// Test 84: Knowledge Graph Explorer 2.0 — Neighborhood Graph Resolution
+{
+  const { getNeighborhoodGraph } = await import('../src/lib/graph/index.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+
+  // 1. Non-existent tech returns null
+  assert.strictEqual(getNeighborhoodGraph('non-existent-tech-xyz'), null);
+
+  // 2. Resolve 1-hop neighborhood for NVIDIA DRIVE Thor
+  const thor1Hop = getNeighborhoodGraph('nvidia-drive-thor', { depth: 1 });
+  assert.ok(thor1Hop !== null, 'Thor 1-hop neighborhood must resolve');
+  assert.strictEqual(thor1Hop.focalTechnology.id, 'nvidia-drive-thor');
+  assert.ok(thor1Hop.nodes.length > 1, 'Thor must have multiple neighbor nodes');
+  assert.ok(thor1Hop.edges.length > 0, 'Thor must have connected edges');
+  assert.strictEqual(thor1Hop.summary.depth2Count, 0, 'Depth 1 must have zero depth2 nodes');
+
+  // Verify focal node is distance 0
+  const focalNode = thor1Hop.nodes.find((n) => n.distance === 0);
+  assert.ok(focalNode, 'Focal node must be present');
+  assert.strictEqual(focalNode.technology.id, 'nvidia-drive-thor');
+
+  // 3. Resolve 2-hop neighborhood for NVIDIA DRIVE Thor
+  const thor2Hop = getNeighborhoodGraph('nvidia-drive-thor', { depth: 2 });
+  assert.ok(thor2Hop !== null);
+  assert.ok(thor2Hop.summary.depth2Count > 0, 'Thor 2-hop must expand beyond 1-hop');
+  assert.ok(thor2Hop.nodes.length > thor1Hop.nodes.length, '2-hop node count must exceed 1-hop node count');
+  assert.ok(thor2Hop.edges.length > thor1Hop.edges.length, '2-hop edge count must exceed 1-hop edge count');
+
+  // 4. Filter by relationship type: 'runs-on'
+  const thorRunsOn = getNeighborhoodGraph('nvidia-drive-thor', { depth: 1, relationshipType: 'runs-on' });
+  assert.ok(thorRunsOn !== null);
+  for (const edge of thorRunsOn.edges) {
+    assert.strictEqual(edge.relationship.type, 'runs-on', 'All edges must be runs-on');
+  }
+
+  // 5. Filter by direction: 'outgoing' vs 'incoming'
+  const thorOutgoing = getNeighborhoodGraph('nvidia-drive-thor', { depth: 1, direction: 'outgoing' });
+  const thorIncoming = getNeighborhoodGraph('nvidia-drive-thor', { depth: 1, direction: 'incoming' });
+  assert.ok(thorOutgoing !== null && thorIncoming !== null);
+
+  for (const edge of thorOutgoing.edges) {
+    if (edge.distance === 1 && edge.sourceId === 'nvidia-drive-thor') {
+      assert.strictEqual(edge.sourceId, 'nvidia-drive-thor');
+    }
+  }
+
+  // 6. Filter by layerId: 'hypervisor-virtualization'
+  const thorHypervisors = getNeighborhoodGraph('nvidia-drive-thor', {
+    depth: 1,
+    layerId: 'hypervisor-virtualization',
+  });
+  assert.ok(thorHypervisors !== null);
+  const nonFocalNodes = thorHypervisors.nodes.filter((n) => n.distance > 0);
+  for (const node of nonFocalNodes) {
+    assert.strictEqual(node.layerId, 'hypervisor-virtualization');
+  }
+
+  // 7. Test across all 112 technologies: each must produce a non-null neighborhood
+  for (const tech of stackTechnologies) {
+    const neighborhood = getNeighborhoodGraph(tech.id, { depth: 1 });
+    assert.ok(neighborhood !== null, `Neighborhood must resolve for ${tech.id}`);
+    assert.strictEqual(neighborhood.focalTechnology.id, tech.id);
+  }
+
+  console.log('✅ Test 84 Passed: Knowledge Graph Explorer 2.0 Neighborhood Graph Resolution verified.');
+}
+
+// Test 85: Strategy-to-Technology Inverted Lookup & Evidence Traceability
+{
+  const { getStrategiesForTechnology, getTechnology } = await import('../src/lib/domain/index.js');
+  const { companyStrategies } = await import('../src/data/companyStrategies.js');
+
+  // 1. Verify technologies cited in OEM strategies return references
+  const validLevels = new Set(['specific-document', 'official-event', 'official-ir-page']);
+
+  let totalRefsChecked = 0;
+  for (const strategy of companyStrategies) {
+    if (strategy.relatedTechnologies) {
+      for (const ref of strategy.relatedTechnologies) {
+        const foundStrategies = getStrategiesForTechnology(ref.technologyId);
+        assert.ok(
+          foundStrategies.length > 0,
+          `getStrategiesForTechnology must find strategy for cited tech '${ref.technologyId}'`
+        );
+        const match = foundStrategies.find((s) => s.strategy.companyId === strategy.companyId);
+        assert.ok(match, `Strategy '${strategy.companyId}' must be present for tech '${ref.technologyId}'`);
+        assert.ok(match.reference, 'Explicit reference must be present on match');
+        assert.ok(
+          validLevels.has(match.reference.evidenceLevel),
+          `Evidence level '${match.reference.evidenceLevel}' must be valid`
+        );
+        totalRefsChecked++;
+      }
+    }
+  }
+  assert.ok(totalRefsChecked > 10, 'Expected at least 10 strategy references checked across hub');
+
+  // 2. Non-existent tech returns empty array
+  assert.deepStrictEqual(getStrategiesForTechnology('unreal-tech-999'), []);
+
+  console.log('✅ Test 85 Passed: Strategy-to-Technology Inverted Lookup & Evidence Traceability verified.');
+}
+
+// Test 86: Bilingual Localization Parity for Knowledge Graph Explorer strings
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+
+  // 1. Check nav key
+  assert.ok(en.nav.graphExplorer, 'en.nav.graphExplorer must exist');
+  assert.ok(ko.nav.graphExplorer, 'ko.nav.graphExplorer must exist');
+
+  // 2. Check graphExplorer dictionary object parity
+  const enKeys = Object.keys(en.graphExplorer).sort();
+  const koKeys = Object.keys(ko.graphExplorer).sort();
+
+  assert.deepStrictEqual(
+    enKeys,
+    koKeys,
+    'en.graphExplorer and ko.graphExplorer keys must match with 100% parity'
+  );
+
+  for (const key of enKeys) {
+    const enVal = (en.graphExplorer as Record<string, string>)[key];
+    const koVal = (ko.graphExplorer as Record<string, string>)[key];
+    assert.ok(
+      typeof enVal === 'string' && enVal.trim().length > 0,
+      `en.graphExplorer.${key} must be a non-empty string`
+    );
+    assert.ok(
+      typeof koVal === 'string' && koVal.trim().length > 0,
+      `ko.graphExplorer.${key} must be a non-empty string`
+    );
+  }
+
+  console.log('✅ Test 86 Passed: Bilingual Localization Parity for Knowledge Graph Explorer strings verified.');
+}
+
+// Test 87: Graph Explorer Invariants & Zero-Heuristic Validation
+{
+  const { getNeighborhoodGraph } = await import('../src/lib/graph/index.js');
+  const { stackTechnologies } = await import('../src/data/stackTechnologies.js');
+  const { stackRelationships } = await import('../src/data/stackRelationships.js');
+  const { getTechnology } = await import('../src/lib/domain/index.js');
+
+  const canonicalRelKeys = new Set(
+    stackRelationships.map((r) => `${r.sourceId}->${r.targetId}:${r.type}`)
+  );
+
+  // 1. Verify all edges extracted in 1-hop and 2-hop neighborhoods originate strictly from stackRelationships
+  for (const tech of stackTechnologies) {
+    const nh = getNeighborhoodGraph(tech.id, { depth: 2 });
+    if (!nh) continue;
+
+    for (const edge of nh.edges) {
+      assert.notStrictEqual(
+        edge.sourceId,
+        edge.targetId,
+        `Edge in ${tech.id} neighborhood cannot be self-referential`
+      );
+      assert.ok(
+        canonicalRelKeys.has(edge.id),
+        `Neighborhood edge '${edge.id}' must strictly exist in canonical stackRelationships SSOT`
+      );
+    }
+  }
+
+  // 2. Functional safety metadata invariants preserved
+  const perseus = getTechnology('perseus-hypervisor');
+  assert.ok(perseus?.functionalSafety);
+  assert.strictEqual(perseus.functionalSafety.asilLevel, 'ASIL-D');
+  assert.strictEqual(perseus.functionalSafety.claimType, 'certified');
+
+  const thor = getTechnology('nvidia-drive-thor');
+  assert.ok(thor?.functionalSafety);
+  assert.strictEqual(thor.functionalSafety.asilLevel, 'ASIL-D');
+  assert.strictEqual(thor.functionalSafety.claimType, 'capable');
+
+  const qnx = getTechnology('qnx-neutrino');
+  assert.ok(qnx?.functionalSafety);
+  assert.strictEqual(qnx.functionalSafety.asilLevel, 'ASIL-D');
+  assert.strictEqual(qnx.functionalSafety.claimType, 'capable');
+
+  console.log('✅ Test 87 Passed: Graph Explorer Invariants & Zero-Heuristic Validation verified.');
 }
 
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');

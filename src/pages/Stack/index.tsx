@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Layers, Search, RotateCcw, Compass, Wrench, LayoutGrid, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { stackLayers } from '../../data/stackLayers';
@@ -226,6 +226,14 @@ export const StackPage: React.FC = () => {
           <Network className="w-3.5 h-3.5 text-purple-500" />
           <span>{language === 'ko' ? '그래프 토폴로지 인사이트' : 'Graph Topology Insights'}</span>
         </button>
+
+        <Link
+          to={`/graph${selectedTech ? `?tech=${selectedTech.id}` : ''}`}
+          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 hover:bg-white/60 dark:hover:bg-slate-900/60 transition"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+          <span>{language === 'ko' ? '지식 그래프 탐색기 2.0 →' : 'Knowledge Graph Explorer 2.0 →'}</span>
+        </Link>
       </div>
 
       {/* Conditional View Mode Rendering */}

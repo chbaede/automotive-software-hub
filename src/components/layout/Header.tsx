@@ -40,6 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
   const coreNavItems = [
     { to: '/', label: t.nav.home },
     { to: '/stack', label: t.nav.stackExplorer },
+    { to: '/graph', label: t.nav.graphExplorer },
     { to: '/architectures', label: t.nav.architectures },
     { to: '/stack-builder', label: t.nav.stackBuilder, badge: 'Beta' },
   ];

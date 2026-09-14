@@ -14,6 +14,7 @@ import { TechnologyDetailPage } from '../pages/Stack/TechnologyDetailPage';
 import { ArchitecturesPage } from '../pages/Architectures';
 import { ArchitectureDetailPage } from '../pages/Architectures/ArchitectureDetailPage';
 import { StackBuilderPage } from '../pages/StackBuilder';
+import { GraphExplorerPage } from '../pages/GraphExplorer';
 
 export const AppRouter: React.FC = () => {
   return (
@@ -23,6 +24,9 @@ export const AppRouter: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/stack" element={<StackPage />} />
           <Route path="/stack/:technologyId" element={<TechnologyDetailPage />} />
+          <Route path="/technologies/:technologyId" element={<TechnologyDetailPage />} />
+          <Route path="/graph" element={<GraphExplorerPage />} />
+          <Route path="/graph/:technologyId" element={<GraphExplorerPage />} />
           <Route path="/architectures" element={<ArchitecturesPage />} />
           <Route path="/architectures/:architectureId" element={<ArchitectureDetailPage />} />
           <Route path="/architecture/:architectureId" element={<ArchitectureDetailPage />} />

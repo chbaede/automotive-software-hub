@@ -568,5 +568,6 @@ export function getGraphInsights(): GraphInsightsData {
 export * from './scoring';
 export * from './matching';
 export * from './intelligence/index';
+export * from './neighborhood';
 
 

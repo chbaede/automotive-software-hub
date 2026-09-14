@@ -43,6 +43,20 @@ export const CANONICAL_STATIC_ROUTES: RouteMetadata[] = [
     },
   },
   {
+    path: 'graph',
+    fullPath: '/graph',
+    priority: '0.95',
+    changefreq: 'weekly',
+    title: {
+      en: 'Knowledge Graph Explorer 2.0 — Automotive Software Hub',
+      ko: '지식 그래프 탐색기 2.0 — Automotive Software Hub',
+    },
+    description: {
+      en: 'Multi-dimensional automotive software knowledge graph explorer: start from any technology to discover dependencies, execution targets, integrations, alternatives, architectures, stack paths, and company strategies.',
+      ko: '차량용 소프트웨어 다차원 지식 그래프 탐색기: 임의의 기술을 시작점으로 의존성, 런타임 플랫폼, 연동 인터페이스, 대체재, 아키텍처 및 기업 전략 연계를 탐색합니다.',
+    },
+  },
+  {
     path: 'architectures',
     fullPath: '/architectures',
     priority: '0.90',
