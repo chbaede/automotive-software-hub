@@ -1,30 +1,19 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import {
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  Layers,
-  Sparkles,
-  Maximize2,
-  Minimize2,
-  Info,
-  Compass,
-} from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { ZoomIn, ZoomOut, RotateCcw, Compass } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { stackLayers } from '../../data/stackLayers';
+import { getStackLayers } from '../../lib/domain';
 import {
   NeighborhoodGraphData,
-  NeighborhoodGraphNode,
   NeighborhoodGraphEdge,
 } from '../../lib/graph/neighborhood';
 import {
   getLayerTheme,
   getRelationshipVisual,
   RELATIONSHIP_VISUALS,
-  LAYER_THEMES,
 } from './graphTheme';
+import { computeGraphLayout } from './graphLayout';
+import { GraphLegend } from './GraphLegend';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { getLocalizedText } from '../../types/i18n';
 
 interface KnowledgeGraphCanvasProps {
   data: NeighborhoodGraphData;
@@ -36,13 +25,6 @@ interface KnowledgeGraphCanvasProps {
   onToggleDepth?: () => void;
 }
 
-interface NodePosition {
-  x: number;
-  y: number;
-  angle: number;
-  node: NeighborhoodGraphNode;
-}
-
 export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
   data,
   selectedTechId,
@@ -52,7 +34,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
   depth,
   onToggleDepth,
 }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -60,7 +42,6 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
-  const [showLegend, setShowLegend] = useState(false);
 
   // SVG dimensions
   const width = 900;
@@ -74,145 +55,27 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
     setPan({ x: 0, y: 0 });
   }, [data.focalTechnology.id]);
 
-  // Order layers for natural physical clustering
+  // Order layers from domain selector for physical clustering
   const layerOrderMap = useMemo(() => {
     const map = new Map<string, number>();
-    stackLayers.forEach((l, idx) => map.set(l.id, idx));
+    const layers = getStackLayers();
+    layers.forEach((l, idx) => map.set(l.id, idx));
     return map;
   }, []);
 
   // Compute Layout Positions (Deterministic Radial Ring Layout)
   const { positions, edgesWithCoords } = useMemo(() => {
-    const posMap = new Map<string, NodePosition>();
-
-    // 1. Center Focal Node
-    const focalNode = data.nodes.find((n) => n.distance === 0);
-    if (focalNode) {
-      posMap.set(focalNode.technology.id, {
-        x: centerX,
-        y: centerY,
-        angle: 0,
-        node: focalNode,
-      });
-    }
-
-    // 2. 1-Hop Nodes (Sorted by layer order for clean clustering)
-    const depth1Nodes = data.nodes
-      .filter((n) => n.distance === 1)
-      .sort((a, b) => {
-        const orderA = layerOrderMap.get(a.layerId) ?? 99;
-        const orderB = layerOrderMap.get(b.layerId) ?? 99;
-        if (orderA !== orderB) return orderA - orderB;
-        return a.technology.name.localeCompare(b.technology.name);
-      });
-
-    const N1 = depth1Nodes.length;
-    const R1 = N1 > 16 ? 250 : N1 > 8 ? 220 : 180;
-
-    depth1Nodes.forEach((node, i) => {
-      // Angle starting from top (-PI/2)
-      const angle = (2 * Math.PI * i) / N1 - Math.PI / 2;
-      const x = centerX + R1 * Math.cos(angle);
-      const y = centerY + R1 * Math.sin(angle);
-      posMap.set(node.technology.id, { x, y, angle, node });
-    });
-
-    // 3. 2-Hop Nodes (Grouped around their 1-hop parent)
-    const depth2Nodes = data.nodes.filter((n) => n.distance === 2);
-    if (depth2Nodes.length > 0) {
-      // Map 2-hop node to connected 1-hop parent
-      const parentMap = new Map<string, string>();
-      data.edges.forEach((edge) => {
-        if (edge.distance === 2) {
-          if (posMap.has(edge.sourceId) && !posMap.has(edge.targetId)) {
-            parentMap.set(edge.targetId, edge.sourceId);
-          } else if (posMap.has(edge.targetId) && !posMap.has(edge.sourceId)) {
-            parentMap.set(edge.sourceId, edge.targetId);
-          }
-        }
-      });
-
-      const R2 = R1 + 150;
-      // Group depth2 nodes by parent
-      const groups = new Map<string, NeighborhoodGraphNode[]>();
-      depth2Nodes.forEach((node) => {
-        const pId = parentMap.get(node.technology.id) || depth1Nodes[0]?.technology.id;
-        const list = groups.get(pId) || [];
-        list.push(node);
-        groups.set(pId, list);
-      });
-
-      groups.forEach((children, parentId) => {
-        const parentPos = posMap.get(parentId);
-        const baseAngle = parentPos ? parentPos.angle : 0;
-        const childCount = children.length;
-        const arcSpread = Math.min(Math.PI / 3, (childCount * Math.PI) / 12);
-
-        children.forEach((child, idx) => {
-          const offsetAngle =
-            childCount === 1
-              ? 0
-              : -arcSpread / 2 + (idx * arcSpread) / (childCount - 1);
-          const angle = baseAngle + offsetAngle;
-          const x = centerX + R2 * Math.cos(angle);
-          const y = centerY + R2 * Math.sin(angle);
-          posMap.set(child.technology.id, { x, y, angle, node: child });
-        });
-      });
-    }
-
-    // Build Edges with Start and End Coordinates
-    const edgesWithCoordsList = data.edges
-      .map((edge) => {
-        const sourcePos = posMap.get(edge.sourceId);
-        const targetPos = posMap.get(edge.targetId);
-        if (!sourcePos || !targetPos) return null;
-
-        // Offset endpoints so arrow terminates at node perimeter
-        const dx = targetPos.x - sourcePos.x;
-        const dy = targetPos.y - sourcePos.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist === 0) return null;
-
-        const targetRadius =
-          targetPos.node.distance === 0 ? 34 : targetPos.node.distance === 1 ? 24 : 16;
-        const sourceRadius =
-          sourcePos.node.distance === 0 ? 34 : sourcePos.node.distance === 1 ? 24 : 16;
-
-        const ux = dx / dist;
-        const uy = dy / dist;
-
-        const x1 = sourcePos.x + ux * sourceRadius;
-        const y1 = sourcePos.y + uy * sourceRadius;
-        const x2 = targetPos.x - ux * targetRadius;
-        const y2 = targetPos.y - uy * targetRadius;
-
-        return {
-          edge,
-          x1,
-          y1,
-          x2,
-          y2,
-          sourcePos,
-          targetPos,
-        };
-      })
-      .filter((e): e is NonNullable<typeof e> => Boolean(e));
-
-    return {
-      positions: Array.from(posMap.values()),
-      edgesWithCoords: edgesWithCoordsList,
-    };
-  }, [data, centerX, centerY, layerOrderMap]);
+    return computeGraphLayout(data, width, height, layerOrderMap);
+  }, [data, width, height, layerOrderMap]);
 
   // Connected node IDs for hover highlights
   const connectedNodeIds = useMemo(() => {
     if (!hoveredNodeId) return null;
     const set = new Set<string>([hoveredNodeId]);
-    data.edges.forEach((edge) => {
+    for (const edge of data.edges) {
       if (edge.sourceId === hoveredNodeId) set.add(edge.targetId);
       if (edge.targetId === hoveredNodeId) set.add(edge.sourceId);
-    });
+    }
     return set;
   }, [hoveredNodeId, data.edges]);
 
@@ -261,92 +124,60 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
+      role="region"
+      aria-label={t.graphExplorer.title}
     >
       {/* Floating Viewport Controls */}
       <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5 bg-slate-800/90 dark:bg-slate-900/90 backdrop-blur-md p-1.5 rounded-xl border border-slate-700 shadow-lg">
         <button
           onClick={handleZoomIn}
-          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition"
+          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.zoomIn}
           aria-label={t.graphExplorer.zoomIn}
         >
-          <ZoomIn className="w-4 h-4" />
+          <ZoomIn className="w-4 h-4" aria-hidden="true" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition"
+          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.zoomOut}
           aria-label={t.graphExplorer.zoomOut}
         >
-          <ZoomOut className="w-4 h-4" />
+          <ZoomOut className="w-4 h-4" aria-hidden="true" />
         </button>
         <button
           onClick={handleReset}
-          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition"
+          className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.resetView}
           aria-label={t.graphExplorer.resetView}
         >
-          <RotateCcw className="w-4 h-4" />
+          <RotateCcw className="w-4 h-4" aria-hidden="true" />
         </button>
         {onToggleDepth && (
           <button
             onClick={onToggleDepth}
-            className={`px-2 py-1.5 text-[11px] font-mono font-bold rounded-lg transition flex items-center justify-center ${
+            className={`px-2 py-1.5 text-[11px] font-mono font-bold rounded-lg transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-500 ${
               depth === 2
                 ? 'bg-brand-600 text-white shadow-xs'
                 : 'text-slate-300 hover:text-white hover:bg-slate-700/80'
             }`}
-            title={`${t.graphExplorer.depthLabel}: ${depth === 1 ? '1-Hop' : '2-Hops'}`}
+            title={`${t.graphExplorer.depthLabel}: ${depth === 1 ? t.graphExplorer.depth1 : t.graphExplorer.depth2}`}
+            aria-label={`${t.graphExplorer.depthLabel}: ${depth === 1 ? t.graphExplorer.depth1 : t.graphExplorer.depth2}`}
           >
             {depth}H
           </button>
         )}
       </div>
 
-      {/* Floating Legend Toggle */}
-      <div className="absolute top-3 left-3 z-20">
-        <button
-          onClick={() => setShowLegend((prev) => !prev)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 dark:bg-slate-900/90 backdrop-blur-md text-xs font-semibold text-slate-300 hover:text-white rounded-xl border border-slate-700 shadow-md transition"
-        >
-          <Info className="w-3.5 h-3.5 text-brand-400" />
-          <span>{language === 'ko' ? '범례 (Legend)' : 'Legend'}</span>
-        </button>
-
-        {showLegend && (
-          <div className="mt-2 p-3 bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-xl shadow-2xl text-xs space-y-2.5 max-w-xs text-slate-200">
-            <div className="font-bold text-[11px] uppercase tracking-wider text-slate-400">
-              {language === 'ko' ? '관계 유형 (Relationship Types)' : 'Relationship Types'}
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 text-[11px]">
-              {Object.entries(RELATIONSHIP_VISUALS).map(([type, visual]) => (
-                <div key={type} className="flex items-center gap-1.5">
-                  <span
-                    className="w-3 h-0.5 inline-block rounded"
-                    style={{ backgroundColor: visual.color }}
-                  />
-                  <span className="truncate">
-                    {language === 'ko' ? visual.label.ko : visual.label.en}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="pt-2 border-t border-slate-800 font-bold text-[11px] uppercase tracking-wider text-slate-400">
-              {language === 'ko' ? '방향성 기호 (Direction)' : 'Direction Markers'}
-            </div>
-            <div className="space-y-1 text-[11px] text-slate-300">
-              <div>→ {language === 'ko' ? '화살표: 단방향 (의존/구동/연동)' : 'Arrow: Directional (Depends, Runs on, Integrates)'}</div>
-              <div>↔ {language === 'ko' ? '점선: 대칭 (대체재/호환/공존)' : 'Dashed: Symmetric (Alternative, Compatible)'}</div>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Floating Legend */}
+      <GraphLegend />
 
       {/* Primary SVG Canvas */}
       <svg
         id="graph-bg"
         viewBox={`0 0 ${width} ${height}`}
         className="w-full h-full cursor-grab active:cursor-grabbing"
+        aria-hidden="true"
       >
         <defs>
           {/* Arrowhead markers for each relationship type */}
@@ -444,7 +275,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
 
               return (
                 <g key={edge.id} className="cursor-pointer">
-                  {/* Invisible thick hit area for easy clicking */}
+                  {/* Hit area for clicking */}
                   <line
                     x1={x1}
                     y1={y1}
@@ -456,7 +287,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
                     onMouseEnter={() => setHoveredEdgeId(edge.id)}
                     onMouseLeave={() => setHoveredEdgeId(null)}
                   />
-                  {/* Visible Edge */}
+                  {/* Visible Edge Line */}
                   <line
                     x1={x1}
                     y1={y1}
@@ -467,7 +298,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
                     strokeDasharray={visual.dashArray}
                     strokeOpacity={opacity}
                     markerEnd={markerEnd}
-                    className="transition-all duration-200"
+                    className="transition-all duration-200 pointer-events-none"
                   />
                 </g>
               );
@@ -480,7 +311,6 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
               const isFocal = node.distance === 0;
               const isDepth1 = node.distance === 1;
               const isSelected = selectedTechId === node.technology.id;
-              const isHovered = hoveredNodeId === node.technology.id;
               const isDimmed = connectedNodeIds !== null && !connectedNodeIds.has(node.technology.id);
 
               const theme = getLayerTheme(node.layerId);
@@ -495,6 +325,15 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
                   onClick={() => onSelectTech(node.technology)}
                   onMouseEnter={() => setHoveredNodeId(node.technology.id)}
                   onMouseLeave={() => setHoveredNodeId(null)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${node.technology.name} (${theme.name})`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onSelectTech(node.technology);
+                    }
+                  }}
                 >
                   {/* Glowing ring for focal / selected node */}
                   {(isFocal || isSelected) && (
@@ -529,7 +368,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
                     className="drop-shadow-md"
                   />
 
-                  {/* Node Icon or Layer Initial */}
+                  {/* Node Name/Abbreviation inside circle */}
                   <text
                     textAnchor="middle"
                     dominantBaseline="central"
@@ -553,7 +392,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
                     {node.technology.name}
                   </text>
 
-                  {/* Layer Subtitle */}
+                  {/* Layer Subtitle for Focal */}
                   {isFocal && (
                     <text
                       y={radius + 28}
@@ -575,11 +414,11 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
 
       {/* Floating Center Badge */}
       <div className="absolute bottom-3 left-3 z-10 flex items-center gap-2 px-3 py-1.5 bg-slate-800/85 backdrop-blur-md rounded-xl border border-slate-700 text-xs text-slate-300 shadow-md">
-        <Compass className="w-3.5 h-3.5 text-brand-400" />
+        <Compass className="w-3.5 h-3.5 text-brand-400" aria-hidden="true" />
         <span className="font-semibold text-white">{data.focalTechnology.name}</span>
         <span className="text-slate-400">·</span>
         <span className="text-[11px] font-mono text-slate-300">
-          {data.summary.totalNeighbors} {language === 'ko' ? '연결 기술' : 'Neighbors'}
+          {data.summary.totalNeighbors} {t.graphExplorer.neighbors}
         </span>
       </div>
     </div>

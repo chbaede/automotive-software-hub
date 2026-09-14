@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
-import { Network, Sparkles, AlertCircle, RotateCcw, Share2, Check } from 'lucide-react';
+import { Network, AlertCircle, Share2, Check } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { getTechnology } from '../../lib/domain';
+import { getTechnology, getTechnologies } from '../../lib/domain';
 import { getNeighborhoodGraph } from '../../lib/graph';
-import { stackTechnologies } from '../../data/stackTechnologies';
 import { StackTechnology } from '../../types/stack';
 import { RelationshipType } from '../../types/relationship';
 import { NeighborhoodGraphEdge } from '../../lib/graph/neighborhood';
@@ -14,7 +13,7 @@ import { SelectedTechDetailPanel } from '../../components/graph/SelectedTechDeta
 import { AccessibleGraphListView } from '../../components/graph/AccessibleGraphListView';
 
 export const GraphExplorerPage: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const { technologyId: pathTechId } = useParams<{ technologyId?: string }>();
   const navigate = useNavigate();
@@ -50,7 +49,13 @@ export const GraphExplorerPage: React.FC = () => {
   // Sync state to URL
   const updateUrlParams = (newTechId?: string, newDepth?: 1 | 2, newRel?: string, newLayer?: string, newDir?: string) => {
     const params = new URLSearchParams(searchParams);
-    if (newTechId) params.set('tech', newTechId);
+    if (newTechId) {
+      if (pathTechId) {
+        navigate(`/graph/${newTechId}?${params.toString()}`, { replace: true });
+        return;
+      }
+      params.set('tech', newTechId);
+    }
     if (newDepth) params.set('depth', newDepth.toString());
     if (newRel) {
       if (newRel === 'all') params.delete('rel');
@@ -67,9 +72,9 @@ export const GraphExplorerPage: React.FC = () => {
     setSearchParams(params, { replace: true });
   };
 
-  // Focal Technology Object (guaranteed non-null fallback)
+  // Focal Technology Object (guaranteed non-null fallback via domain)
   const focalTech = useMemo(() => {
-    return getTechnology(focalTechId) || stackTechnologies[0];
+    return getTechnology(focalTechId) || getTechnologies()[0];
   }, [focalTechId]);
 
   // Active Selected Technology (defaults to focalTech)
@@ -145,7 +150,11 @@ export const GraphExplorerPage: React.FC = () => {
     setLayerFilter('all');
     setDirectionFilter('all');
     setSelectedEdge(null);
-    setSearchParams({ tech: focalTechId });
+    if (pathTechId) {
+      navigate(`/graph/${focalTechId}`, { replace: true });
+    } else {
+      setSearchParams({ tech: focalTechId });
+    }
   };
 
   const handleShare = () => {
@@ -159,13 +168,14 @@ export const GraphExplorerPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-16 text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
         <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-          Technology not found in Knowledge Graph
+          {t.graphExplorer.techNotFound}
         </h2>
         <button
+          type="button"
           onClick={() => handleCenterOnTech('nvidia-drive-thor')}
-          className="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold"
+          className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500"
         >
-          Reset to NVIDIA DRIVE Thor
+          {t.graphExplorer.resetToThor}
         </button>
       </div>
     );
@@ -177,7 +187,7 @@ export const GraphExplorerPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 rounded-lg text-brand-700 dark:text-brand-300 text-xs font-bold mb-1.5 shadow-2xs">
-            <Network className="w-3.5 h-3.5" />
+            <Network className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Knowledge Graph Explorer 2.0</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -191,18 +201,20 @@ export const GraphExplorerPage: React.FC = () => {
         {/* Share Button */}
         <div className="flex items-center gap-2 shrink-0">
           <button
+            type="button"
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold shadow-xs transition"
+            aria-label={copied ? t.graphExplorer.copied : t.graphExplorer.shareView}
+            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold shadow-xs transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-emerald-500" />
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">Copied!</span>
+                <Check className="w-4 h-4 text-emerald-500" aria-hidden="true" />
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">{t.graphExplorer.copied}</span>
               </>
             ) : (
               <>
-                <Share2 className="w-4 h-4" />
-                <span>Share View</span>
+                <Share2 className="w-4 h-4" aria-hidden="true" />
+                <span>{t.graphExplorer.shareView}</span>
               </>
             )}
           </button>
@@ -229,6 +241,7 @@ export const GraphExplorerPage: React.FC = () => {
       {/* Mobile Tab Switcher (< 1024px) */}
       <div className="lg:hidden flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
         <button
+          type="button"
           onClick={() => setMobileTab('canvas')}
           className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition ${
             mobileTab === 'canvas'
@@ -239,6 +252,7 @@ export const GraphExplorerPage: React.FC = () => {
           {viewMode === 'canvas' ? t.graphExplorer.viewModeCanvas : t.graphExplorer.viewModeList}
         </button>
         <button
+          type="button"
           onClick={() => setMobileTab('details')}
           className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition ${
             mobileTab === 'details'
@@ -246,7 +260,7 @@ export const GraphExplorerPage: React.FC = () => {
               : 'text-slate-600 dark:text-slate-400'
           }`}
         >
-          {activeTech ? `${activeTech.name} Details` : 'Technology Details'}
+          {activeTech ? `${activeTech.name} ${t.graphExplorer.techDetails}` : t.graphExplorer.technologyDetails}
         </button>
       </div>
 

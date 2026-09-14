@@ -226,7 +226,7 @@ export const TechnologyDetailPage: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition text-xs font-bold shadow-xs"
           >
             <Network className="w-3.5 h-3.5" />
-            <span>{language === 'ko' ? '지식 그래프 탐색' : 'Knowledge Graph'}</span>
+            <span>{t.graphExplorer.exploreInKnowledgeGraph}</span>
           </Link>
 
           <Link

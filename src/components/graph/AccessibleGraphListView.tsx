@@ -1,10 +1,9 @@
 import React from 'react';
 import { ArrowRight, ArrowLeft, ArrowLeftRight, Compass, Layers, Sparkles } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
-import { NeighborhoodGraphData, NeighborhoodGraphNode } from '../../lib/graph/neighborhood';
+import { NeighborhoodGraphData } from '../../lib/graph/neighborhood';
 import { RelationshipBadge } from '../stack/RelationshipBadge';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { getLocalizedText } from '../../types/i18n';
 
 interface AccessibleGraphListViewProps {
   data: NeighborhoodGraphData;
@@ -19,7 +18,7 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
   onSelectTech,
   onCenterOnTech,
 }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   const depth1Nodes = data.nodes.filter((n) => n.distance === 1);
   const depth2Nodes = data.nodes.filter((n) => n.distance === 2);
@@ -41,10 +40,12 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
         </div>
 
         <button
+          type="button"
           onClick={() => onCenterOnTech(data.focalTechnology.id)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition"
+          aria-label={`${t.graphExplorer.centerOnThis}: ${data.focalTechnology.name}`}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-brand-500"
         >
-          <Compass className="w-3.5 h-3.5" />
+          <Compass className="w-3.5 h-3.5" aria-hidden="true" />
           <span>{t.graphExplorer.centerOnThis}</span>
         </button>
       </div>
@@ -53,7 +54,7 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-brand-500" />
+            <Sparkles className="w-4 h-4 text-brand-500" aria-hidden="true" />
             <span>
               {t.graphExplorer.directConnections} ({depth1Nodes.length})
             </span>
@@ -89,18 +90,18 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
 
                     <div className="flex items-center gap-1 shrink-0">
                       {node.direction === 'outgoing' && (
-                        <span title="Outgoing Target">
-                          <ArrowRight className="w-3.5 h-3.5 text-brand-500" />
+                        <span title={t.graphExplorer.outgoingTarget} aria-label={t.graphExplorer.outgoingTarget}>
+                          <ArrowRight className="w-3.5 h-3.5 text-brand-500" aria-hidden="true" />
                         </span>
                       )}
                       {node.direction === 'incoming' && (
-                        <span title="Incoming Caller">
-                          <ArrowLeft className="w-3.5 h-3.5 text-brand-500" />
+                        <span title={t.graphExplorer.incomingCaller} aria-label={t.graphExplorer.incomingCaller}>
+                          <ArrowLeft className="w-3.5 h-3.5 text-brand-500" aria-hidden="true" />
                         </span>
                       )}
                       {node.direction === 'both' && (
-                        <span title="Bidirectional / Symmetric">
-                          <ArrowLeftRight className="w-3.5 h-3.5 text-brand-500" />
+                        <span title={t.graphExplorer.bidirectional} aria-label={t.graphExplorer.bidirectional}>
+                          <ArrowLeftRight className="w-3.5 h-3.5 text-brand-500" aria-hidden="true" />
                         </span>
                       )}
                     </div>
@@ -114,16 +115,20 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
 
                   <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
                     <button
+                      type="button"
                       onClick={() => onSelectTech(node.technology)}
-                      className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
+                      aria-label={`${t.graphExplorer.inspectDetails}: ${node.technology.name}`}
+                      className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
                     >
-                      Inspect Details
+                      {t.graphExplorer.inspectDetails}
                     </button>
                     <button
+                      type="button"
                       onClick={() => onCenterOnTech(node.technology.id)}
-                      className="text-[11px] font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                      aria-label={`${t.graphExplorer.centerHere}: ${node.technology.name}`}
+                      className="text-[11px] font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
                     >
-                      Center Here
+                      {t.graphExplorer.centerHere}
                     </button>
                   </div>
                 </div>
@@ -137,7 +142,7 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
       {depth2Nodes.length > 0 && (
         <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-800">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-            <Layers className="w-4 h-4 text-purple-500" />
+            <Layers className="w-4 h-4 text-purple-500" aria-hidden="true" />
             <span>
               {t.graphExplorer.extendedConnections} ({depth2Nodes.length})
             </span>
@@ -159,10 +164,12 @@ export const AccessibleGraphListView: React.FC<AccessibleGraphListViewProps> = (
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => onSelectTech(node.technology)}
-                  className="px-2 py-1 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition shrink-0"
+                  aria-label={`${t.graphExplorer.view}: ${node.technology.name}`}
+                  className="px-2 py-1 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
-                  View
+                  {t.graphExplorer.view}
                 </button>
               </div>
             ))}

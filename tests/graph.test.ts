@@ -5000,6 +5000,111 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 87 Passed: Graph Explorer Invariants & Zero-Heuristic Validation verified.');
 }
 
+// Test 88: Explorer 2.0 Hardening Pass — Domain Accessors, Zero Direct Data Imports & Translation Parity
+{
+  const { getTechnologies, getStackLayers, searchTechnologies } = await import('../src/lib/domain/index.js');
+  const { stackLayers } = await import('../src/data/stackLayers.js');
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  // 1. Domain Accessor Verification
+  const allTechs = getTechnologies();
+  assert.ok(Array.isArray(allTechs), 'getTechnologies must return an array');
+  assert.strictEqual(allTechs.length, stackTechnologies.length, 'getTechnologies must return all canonical technologies');
+
+  const allLayers = getStackLayers();
+  assert.ok(Array.isArray(allLayers), 'getStackLayers must return an array');
+  assert.strictEqual(allLayers.length, stackLayers.length, 'getStackLayers must return all canonical layers');
+  assert.strictEqual(allLayers[0].id, stackLayers[0].id, 'getStackLayers must preserve layer order');
+
+  const searchEn = searchTechnologies('hypervisor', 'en');
+  assert.ok(searchEn.length > 0, 'searchTechnologies should find hypervisors in English');
+  assert.ok(searchEn.some(t => t.id === 'perseus-hypervisor'), 'searchTechnologies should find perseus-hypervisor');
+
+  const searchKo = searchTechnologies('하이퍼바이저', 'ko');
+  assert.ok(searchKo.length > 0, 'searchTechnologies should find hypervisors in Korean');
+
+  // 2. Zero Direct Data Imports Invariant for Presentation Components
+  const checkDirForDataImports = (dirPath: string) => {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        checkDirForDataImports(fullPath);
+      } else if (entry.isFile() && (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))) {
+        const content = fs.readFileSync(fullPath, 'utf-8');
+        const match = content.match(/from\s+['"][^'"]*\/data(\/|['"])/);
+        assert.strictEqual(
+          match,
+          null,
+          `Forbidden direct import from src/data in presentation component: ${fullPath}`
+        );
+      }
+    }
+  };
+
+  checkDirForDataImports(path.resolve('src/components/graph'));
+  checkDirForDataImports(path.resolve('src/pages/GraphExplorer'));
+
+  // 3. i18n Key Parity & Completeness
+  const enGraphKeys = Object.keys(en.graphExplorer).sort();
+  const koGraphKeys = Object.keys(ko.graphExplorer).sort();
+
+  assert.deepStrictEqual(
+    enGraphKeys,
+    koGraphKeys,
+    'en.graphExplorer and ko.graphExplorer must have identical translation keys'
+  );
+
+  for (const key of enGraphKeys) {
+    const enVal = (en.graphExplorer as Record<string, string>)[key];
+    const koVal = (ko.graphExplorer as Record<string, string>)[key];
+    assert.ok(enVal && typeof enVal === 'string' && enVal.trim().length > 0, `Missing EN value for key: ${key}`);
+    assert.ok(koVal && typeof koVal === 'string' && koVal.trim().length > 0, `Missing KO value for key: ${key}`);
+  }
+
+  // 4. Verify specific newly added localized keys exist
+  const expectedNewKeys = [
+    'inspectDetails',
+    'centerHere',
+    'view',
+    'outgoingTarget',
+    'incomingCaller',
+    'bidirectional',
+    'legend',
+    'legendRelationshipTypes',
+    'legendDirectionMarkers',
+    'legendDirectionalDesc',
+    'legendSymmetricDesc',
+    'neighbors',
+    'direct',
+    'hosts',
+    'references',
+    'technologies',
+    'hops',
+    'connectedEcosystem',
+    'noResultsFound',
+    'focus',
+    'techNotFound',
+    'resetToThor',
+    'copied',
+    'shareView',
+    'techDetails',
+    'technologyDetails',
+    'closeInspector',
+    'exploreInKnowledgeGraph',
+  ];
+
+  for (const key of expectedNewKeys) {
+    assert.ok(key in en.graphExplorer, `Expected key '${key}' missing from en.graphExplorer`);
+    assert.ok(key in ko.graphExplorer, `Expected key '${key}' missing from ko.graphExplorer`);
+  }
+
+  console.log('✅ Test 88 Passed: Domain Accessors, Architectural Boundaries & Translation Parity verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

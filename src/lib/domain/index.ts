@@ -118,6 +118,44 @@ companies.forEach((company) => {
 // ==========================================
 
 /**
+ * Resolves all canonical Stack Technologies.
+ */
+export function getTechnologies(): StackTechnology[] {
+  return stackTechnologies;
+}
+
+/**
+ * Resolves all canonical Stack Layers.
+ */
+export function getStackLayers(): StackLayer[] {
+  return stackLayers;
+}
+
+/**
+ * Searches technologies across name, description, whereDoesItFit, tags, and layerId.
+ */
+export function searchTechnologies(
+  query: string,
+  language: 'en' | 'ko' = 'en'
+): StackTechnology[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return stackTechnologies;
+
+  return stackTechnologies.filter((tech) => {
+    const nameMatch = tech.name.toLowerCase().includes(q);
+    const desc = tech.description[language] || tech.description.en || '';
+    const descMatch = desc.toLowerCase().includes(q);
+    const fit = tech.whereDoesItFit
+      ? (tech.whereDoesItFit[language] || tech.whereDoesItFit.en || '').toLowerCase()
+      : '';
+    const fitMatch = fit.includes(q);
+    const layerMatch = tech.layerId.toLowerCase().includes(q);
+    const tagMatch = tech.tags?.some((t) => t.toLowerCase().includes(q)) ?? false;
+    return nameMatch || descMatch || fitMatch || layerMatch || tagMatch;
+  });
+}
+
+/**
  * Resolves a Technology by its canonical ID.
  */
 export function getTechnology(id: string): StackTechnology | undefined {

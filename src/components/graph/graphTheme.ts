@@ -220,3 +220,4 @@ export const CONFIDENCE_BADGES: Record<
     colorClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700',
   },
 };
+
