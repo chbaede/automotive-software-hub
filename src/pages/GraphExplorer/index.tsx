@@ -239,11 +239,17 @@ export const GraphExplorerPage: React.FC = () => {
       />
 
       {/* Mobile Tab Switcher (< 1024px) */}
-      <div className="lg:hidden flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+      <div
+        role="tablist"
+        aria-label={t.graphExplorer.title}
+        className="lg:hidden flex items-center p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800"
+      >
         <button
           type="button"
+          role="tab"
+          aria-selected={mobileTab === 'canvas'}
           onClick={() => setMobileTab('canvas')}
-          className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition ${
+          className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             mobileTab === 'canvas'
               ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-xs'
               : 'text-slate-600 dark:text-slate-400'
@@ -253,8 +259,10 @@ export const GraphExplorerPage: React.FC = () => {
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={mobileTab === 'details'}
           onClick={() => setMobileTab('details')}
-          className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition ${
+          className={`flex-1 py-2 text-xs font-bold rounded-lg text-center transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             mobileTab === 'details'
               ? 'bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-xs'
               : 'text-slate-600 dark:text-slate-400'

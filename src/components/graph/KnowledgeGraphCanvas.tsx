@@ -130,6 +130,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
       {/* Floating Viewport Controls */}
       <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5 bg-slate-800/90 dark:bg-slate-900/90 backdrop-blur-md p-1.5 rounded-xl border border-slate-700 shadow-lg">
         <button
+          type="button"
           onClick={handleZoomIn}
           className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.zoomIn}
@@ -138,6 +139,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
           <ZoomIn className="w-4 h-4" aria-hidden="true" />
         </button>
         <button
+          type="button"
           onClick={handleZoomOut}
           className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.zoomOut}
@@ -146,6 +148,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
           <ZoomOut className="w-4 h-4" aria-hidden="true" />
         </button>
         <button
+          type="button"
           onClick={handleReset}
           className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/80 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.resetView}
@@ -155,6 +158,7 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
         </button>
         {onToggleDepth && (
           <button
+            type="button"
             onClick={onToggleDepth}
             className={`px-2 py-1.5 text-[11px] font-mono font-bold rounded-lg transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-brand-500 ${
               depth === 2
@@ -163,8 +167,9 @@ export const KnowledgeGraphCanvas: React.FC<KnowledgeGraphCanvasProps> = ({
             }`}
             title={`${t.graphExplorer.depthLabel}: ${depth === 1 ? t.graphExplorer.depth1 : t.graphExplorer.depth2}`}
             aria-label={`${t.graphExplorer.depthLabel}: ${depth === 1 ? t.graphExplorer.depth1 : t.graphExplorer.depth2}`}
+            aria-pressed={depth === 2}
           >
-            {depth}H
+            {depth === 1 ? '1-HOP' : '2-HOP'}
           </button>
         )}
       </div>

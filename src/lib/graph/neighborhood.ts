@@ -1,4 +1,3 @@
-import { stackTechnologies } from '../../data/stackTechnologies';
 import { StackTechnology } from '../../types/stack';
 import { TechnologyRelationship, RelationshipType, RELATIONSHIP_METADATA } from '../../types/relationship';
 import { technologyById } from '../domain';

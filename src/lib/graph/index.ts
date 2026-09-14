@@ -5,7 +5,7 @@ import { stackPaths } from '../../data/stackPaths';
 import { ArchitectureProfile, StackPath } from '../../types/architecture';
 import { StackTechnology } from '../../types/stack';
 import { TechnologyRelationship, RelationshipType } from '../../types/relationship';
-import { technologyById, profileById } from '../domain';
+import { technologyById } from '../domain';
 
 // ==========================================
 // CORE GRAPH INDEXES (Authoritative Knowledge Graph)

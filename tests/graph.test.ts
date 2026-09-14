@@ -5105,6 +5105,105 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 88 Passed: Domain Accessors, Architectural Boundaries & Translation Parity verified.');
 }
 
+// Test 89: Knowledge Graph Explorer Final Hardening — TechnologySearch Combobox ARIA & Accessibility Semantics
+{
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  const searchComponentPath = path.resolve('src/components/graph/TechnologySearch.tsx');
+  const searchSource = fs.readFileSync(searchComponentPath, 'utf-8');
+
+  // 1. Combobox input semantics verification
+  assert.ok(
+    searchSource.includes('role="combobox"'),
+    'TechnologySearch input must declare role="combobox"'
+  );
+  assert.ok(
+    searchSource.includes('aria-expanded={isOpen}'),
+    'TechnologySearch input must bind aria-expanded to dropdown open state'
+  );
+  assert.ok(
+    searchSource.includes('aria-controls={isOpen ? listboxId : undefined}'),
+    'TechnologySearch input must link aria-controls to listbox ID only when open'
+  );
+  assert.ok(
+    searchSource.includes('aria-autocomplete="list"'),
+    'TechnologySearch input must declare aria-autocomplete="list"'
+  );
+  assert.ok(
+    searchSource.includes('aria-activedescendant={activeDescendantId}'),
+    'TechnologySearch input must bind aria-activedescendant to activeDescendantId'
+  );
+
+  // 2. Listbox container and Option semantics verification
+  assert.ok(
+    searchSource.includes('role="listbox"'),
+    'TechnologySearch dropdown must declare role="listbox"'
+  );
+  assert.ok(
+    searchSource.includes('id={listboxId}'),
+    'TechnologySearch listbox container must have deterministic ID matching aria-controls'
+  );
+  assert.ok(
+    searchSource.includes('role="option"'),
+    'TechnologySearch suggestions must declare role="option"'
+  );
+  assert.ok(
+    searchSource.includes('aria-selected={isSelected}'),
+    'TechnologySearch options must declare aria-selected reflecting focal technology state'
+  );
+  assert.ok(
+    searchSource.includes('id={optionId}'),
+    'TechnologySearch options must have deterministic IDs for aria-activedescendant'
+  );
+
+  // 3. Keyboard navigation, scroll management, and stale reference prevention
+  assert.ok(
+    searchSource.includes("e.key === 'ArrowDown'"),
+    'TechnologySearch must handle ArrowDown key navigation'
+  );
+  assert.ok(
+    searchSource.includes("e.key === 'ArrowUp'"),
+    'TechnologySearch must handle ArrowUp key navigation'
+  );
+  assert.ok(
+    searchSource.includes("e.key === 'Enter'"),
+    'TechnologySearch must handle Enter key selection'
+  );
+  assert.ok(
+    searchSource.includes("e.key === 'Escape'"),
+    'TechnologySearch must handle Escape key dismissal'
+  );
+  assert.ok(
+    searchSource.includes('scrollIntoView'),
+    'TechnologySearch must scroll active keyboard option into view'
+  );
+  assert.ok(
+    searchSource.includes('setActiveIndex(-1)'),
+    'TechnologySearch must reset activeIndex on query change or dismiss to prevent stale activedescendant'
+  );
+
+  // 4. Accessibility across Graph Explorer controls
+  const controlsSource = fs.readFileSync(path.resolve('src/components/graph/GraphControls.tsx'), 'utf-8');
+  assert.ok(controlsSource.includes('aria-pressed={viewMode === \'canvas\'}'), 'Canvas toggle button must declare aria-pressed');
+  assert.ok(controlsSource.includes('aria-pressed={viewMode === \'list\'}'), 'List toggle button must declare aria-pressed');
+
+  const filterSource = fs.readFileSync(path.resolve('src/components/graph/GraphFilterControls.tsx'), 'utf-8');
+  assert.ok(filterSource.includes('aria-pressed={depth === 1}'), 'Depth 1 button must declare aria-pressed');
+  assert.ok(filterSource.includes('aria-pressed={depth === 2}'), 'Depth 2 button must declare aria-pressed');
+  assert.ok(filterSource.includes('aria-pressed={directionFilter === \'all\'}'), 'Direction all button must declare aria-pressed');
+
+  const legendSource = fs.readFileSync(path.resolve('src/components/graph/GraphLegend.tsx'), 'utf-8');
+  assert.ok(legendSource.includes('aria-haspopup="dialog"'), 'GraphLegend button must declare aria-haspopup="dialog"');
+  assert.ok(legendSource.includes('role="dialog"'), 'GraphLegend modal must declare role="dialog"');
+
+  const explorerPageSource = fs.readFileSync(path.resolve('src/pages/GraphExplorer/index.tsx'), 'utf-8');
+  assert.ok(explorerPageSource.includes('role="tablist"'), 'Mobile tab switcher must declare role="tablist"');
+  assert.ok(explorerPageSource.includes('role="tab"'), 'Mobile tab items must declare role="tab"');
+
+  console.log('✅ Test 89 Passed: TechnologySearch Combobox ARIA & Graph Accessibility Semantics verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

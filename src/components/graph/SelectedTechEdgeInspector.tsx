@@ -37,6 +37,7 @@ export const SelectedTechEdgeInspector: React.FC<SelectedTechEdgeInspectorProps>
           <span>{t.graphExplorer.selectedRelationship}</span>
         </div>
         <button
+          type="button"
           onClick={onClearSelectedEdge}
           className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded focus:outline-none focus:ring-2 focus:ring-brand-500"
           aria-label={t.graphExplorer.closeInspector}

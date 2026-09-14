@@ -56,8 +56,10 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
           aria-label={t.graphExplorer.title}
         >
           <button
+            type="button"
             onClick={() => onChangeViewMode('canvas')}
             aria-label={t.graphExplorer.viewModeCanvas}
+            aria-pressed={viewMode === 'canvas'}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
               viewMode === 'canvas'
                 ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-800'
@@ -68,8 +70,10 @@ export const GraphControls: React.FC<GraphControlsProps> = ({
             <span>{t.graphExplorer.viewModeCanvas}</span>
           </button>
           <button
+            type="button"
             onClick={() => onChangeViewMode('list')}
             aria-label={t.graphExplorer.viewModeList}
+            aria-pressed={viewMode === 'list'}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
               viewMode === 'list'
                 ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-800'

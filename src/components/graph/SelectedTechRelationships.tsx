@@ -45,6 +45,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.dependencies.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
@@ -65,6 +67,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.platforms.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800/60 text-blue-900 dark:text-blue-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -85,6 +89,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.hostedTechnologies.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/60 border border-sky-200 dark:border-sky-800/60 text-sky-900 dark:text-sky-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
@@ -105,6 +111,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.integrations.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800/60 text-indigo-900 dark:text-indigo-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
@@ -125,6 +133,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.alternatives.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
@@ -145,6 +155,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.compatibleWith.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800/60 text-teal-900 dark:text-teal-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
@@ -165,6 +177,8 @@ export const SelectedTechRelationships: React.FC<SelectedTechRelationshipsProps>
               {discoveryResult.usedWith.map((item) => (
                 <button
                   key={item.technology.id}
+                  type="button"
+                  aria-label={`${t.graphExplorer.inspectDetails}: ${item.technology.name}`}
                   onClick={() => onSelectTech(item.technology)}
                   className="px-2.5 py-1 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-800/60 text-rose-900 dark:text-rose-200 rounded-lg text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-rose-500"
                 >

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useId } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
 import { StackTechnology } from '../../types/stack';
 import { searchTechnologies, getTechnologies } from '../../lib/domain';
@@ -19,6 +19,10 @@ export const TechnologySearch: React.FC<TechnologySearchProps> = ({
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const activeOptionRef = useRef<HTMLButtonElement | null>(null);
+
+  const baseId = useId();
+  const listboxId = `tech-search-listbox-${baseId.replace(/:/g, '')}`;
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -43,24 +47,46 @@ export const TechnologySearch: React.FC<TechnologySearchProps> = ({
     return searchTechnologies(searchQuery, language).slice(0, 20);
   }, [searchQuery, language]);
 
+  // Reset active index when search results change or dropdown closes
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [searchQuery, isOpen]);
+
+  // Scroll active keyboard option into view
+  useEffect(() => {
+    if (activeIndex >= 0 && activeOptionRef.current) {
+      activeOptionRef.current.scrollIntoView({ block: 'nearest' });
+    }
+  }, [activeIndex]);
+
+  const activeDescendantId =
+    isOpen && activeIndex >= 0 && activeIndex < filteredTechs.length
+      ? `${listboxId}-opt-${filteredTechs[activeIndex].id}`
+      : undefined;
+
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!isOpen) {
       if (e.key === 'ArrowDown' || e.key === 'Enter') {
-        setIsOpen(true);
         e.preventDefault();
+        setIsOpen(true);
+        setActiveIndex(0);
       }
       return;
     }
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((prev) => (prev + 1) % Math.max(1, filteredTechs.length));
+      if (filteredTechs.length > 0) {
+        setActiveIndex((prev) => (prev + 1) % filteredTechs.length);
+      }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev <= 0 ? filteredTechs.length - 1 : prev - 1
-      );
+      if (filteredTechs.length > 0) {
+        setActiveIndex((prev) =>
+          prev <= 0 ? filteredTechs.length - 1 : prev - 1
+        );
+      }
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (activeIndex >= 0 && activeIndex < filteredTechs.length) {
@@ -92,14 +118,15 @@ export const TechnologySearch: React.FC<TechnologySearchProps> = ({
           onChange={(e) => {
             setSearchQuery(e.target.value);
             setIsOpen(true);
-            setActiveIndex(-1);
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={t.graphExplorer.searchPlaceholder}
           aria-label={t.graphExplorer.searchPlaceholder}
           aria-expanded={isOpen}
+          aria-controls={isOpen ? listboxId : undefined}
           aria-autocomplete="list"
+          aria-activedescendant={activeDescendantId}
           role="combobox"
           className="w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
@@ -112,6 +139,7 @@ export const TechnologySearch: React.FC<TechnologySearchProps> = ({
       {/* Autocomplete Dropdown */}
       {isOpen && (
         <div
+          id={listboxId}
           role="listbox"
           aria-label={t.graphExplorer.title}
           className="absolute top-full left-0 right-0 mt-1.5 max-h-72 overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl z-30 py-1.5 divide-y divide-slate-100 dark:divide-slate-800/60"
@@ -124,10 +152,13 @@ export const TechnologySearch: React.FC<TechnologySearchProps> = ({
             filteredTechs.map((tech, index) => {
               const isSelected = tech.id === currentTech.id;
               const isKeyboardActive = index === activeIndex;
+              const optionId = `${listboxId}-opt-${tech.id}`;
 
               return (
                 <button
                   key={tech.id}
+                  id={optionId}
+                  ref={isKeyboardActive ? activeOptionRef : undefined}
                   type="button"
                   role="option"
                   aria-selected={isSelected}

@@ -47,6 +47,7 @@ export const SelectedTechSummary: React.FC<SelectedTechSummaryProps> = ({
 
         {/* Re-center / Focus Action Button */}
         <button
+          type="button"
           onClick={() => onCenterOnTech(technology.id)}
           className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-xs transition shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500"
           title={t.graphExplorer.centerOnThis}

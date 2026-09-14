@@ -46,13 +46,19 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
   return (
     <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
       {/* Exploration Depth Switcher */}
-      <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+      <div
+        className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800"
+        role="group"
+        aria-label={t.graphExplorer.depthLabel}
+      >
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1.5">
           {t.graphExplorer.depthLabel}:
         </span>
         <button
+          type="button"
           onClick={() => onChangeDepth(1)}
           aria-label={t.graphExplorer.depth1}
+          aria-pressed={depth === 1}
           className={`px-2.5 py-1 rounded-lg font-bold text-xs transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             depth === 1
               ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-800'
@@ -62,8 +68,10 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
           {t.graphExplorer.depth1}
         </button>
         <button
+          type="button"
           onClick={() => onChangeDepth(2)}
           aria-label={t.graphExplorer.depth2}
+          aria-pressed={depth === 2}
           className={`px-2.5 py-1 rounded-lg font-bold text-xs transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             depth === 2
               ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs border border-slate-200 dark:border-slate-800'
@@ -115,6 +123,7 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
         aria-label={t.graphExplorer.directionLabel}
       >
         <button
+          type="button"
           onClick={() => onChangeDirection('all')}
           className={`px-2 py-1 rounded-lg text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             directionFilter === 'all'
@@ -123,10 +132,12 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
           }`}
           title={t.graphExplorer.allDirections}
           aria-label={t.graphExplorer.allDirections}
+          aria-pressed={directionFilter === 'all'}
         >
           <ArrowLeftRight className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
         <button
+          type="button"
           onClick={() => onChangeDirection('outgoing')}
           className={`px-2 py-1 rounded-lg text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             directionFilter === 'outgoing'
@@ -135,10 +146,12 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
           }`}
           title={t.graphExplorer.outgoingOnly}
           aria-label={t.graphExplorer.outgoingOnly}
+          aria-pressed={directionFilter === 'outgoing'}
         >
           <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
         <button
+          type="button"
           onClick={() => onChangeDirection('incoming')}
           className={`px-2 py-1 rounded-lg text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             directionFilter === 'incoming'
@@ -147,6 +160,7 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
           }`}
           title={t.graphExplorer.incomingOnly}
           aria-label={t.graphExplorer.incomingOnly}
+          aria-pressed={directionFilter === 'incoming'}
         >
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
@@ -155,6 +169,7 @@ export const GraphFilterControls: React.FC<GraphFilterControlsProps> = ({
       {/* Reset Filters */}
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={onResetFilters}
           className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl border border-rose-200 dark:border-rose-800 transition focus:outline-none focus:ring-2 focus:ring-rose-500"
           aria-label={t.graphExplorer.resetFilters}
