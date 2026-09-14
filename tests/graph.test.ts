@@ -4360,6 +4360,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getStrategicLandscapeData,
     getStrategicMilestones,
     getRelatedTechnologiesForStrategy,
+    getStrategyTechnologyReferences,
     companyById,
     technologyById,
     COMPANY_CONTINENT_ORDER,
@@ -4420,27 +4421,29 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   assert.strictEqual(deduplicated.length, 2);
   assert.deepStrictEqual(deduplicated, ['bmw-group', 'mercedes-benz']);
 
-  // Test D: Explicit relatedTechnologyIds Resolution
+  // Test D: Explicit relatedTechnologies Resolution
   for (const strat of strategies) {
     const relatedTechs = getRelatedTechnologiesForStrategy(strat);
-    if (strat.relatedTechnologyIds && strat.relatedTechnologyIds.length > 0) {
-      for (const techId of strat.relatedTechnologyIds) {
+    const techRefs = getStrategyTechnologyReferences(strat);
+    if (techRefs.length > 0) {
+      for (const ref of techRefs) {
         assert.ok(
-          relatedTechs.some((t) => t.id === techId),
-          `Tech ${techId} must be resolved for strategy ${strat.companyId}`
+          relatedTechs.some((t) => t.id === ref.technologyId),
+          `Tech ${ref.technologyId} must be resolved for strategy ${strat.companyId}`
         );
       }
     }
   }
 
-  // Test E & F: Invalid & Duplicate relatedTechnologyIds Detection
+  // Test E & F: Invalid & Duplicate relatedTechnologies Detection
   for (const strat of strategies) {
-    if (strat.relatedTechnologyIds) {
+    const techRefs = getStrategyTechnologyReferences(strat);
+    if (techRefs.length > 0) {
       const seen = new Set<string>();
-      for (const tId of strat.relatedTechnologyIds) {
-        assert.ok(technologyById.has(tId), `Strategy ${strat.companyId} has non-existent tech ${tId}`);
-        assert.ok(!seen.has(tId), `Strategy ${strat.companyId} has duplicate tech ${tId}`);
-        seen.add(tId);
+      for (const ref of techRefs) {
+        assert.ok(technologyById.has(ref.technologyId), `Strategy ${strat.companyId} has non-existent tech ${ref.technologyId}`);
+        assert.ok(!seen.has(ref.technologyId), `Strategy ${strat.companyId} has duplicate tech ${ref.technologyId}`);
+        seen.add(ref.technologyId);
       }
     }
   }
@@ -4504,10 +4507,9 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
 
   // Test M: Strategy Technology IDs Resolve
   for (const strat of strategies) {
-    if (strat.relatedTechnologyIds) {
-      for (const tId of strat.relatedTechnologyIds) {
-        assert.ok(technologyById.has(tId), `Technology ${tId} in ${strat.companyId} must exist in technologyById`);
-      }
+    const techRefs = getStrategyTechnologyReferences(strat);
+    for (const ref of techRefs) {
+      assert.ok(technologyById.has(ref.technologyId), `Technology ${ref.technologyId} in ${strat.companyId} must exist in technologyById`);
     }
   }
 
@@ -4569,6 +4571,8 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     getStrategicMilestones,
     getRelatedTechnologiesForStrategy,
     getStrategyTechnologyReferences,
+    normalizeComparisonSelection,
+    applyComparisonPreset,
     companyById,
     technologyById,
     COMPANY_CONTINENT_ORDER,
@@ -4592,6 +4596,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   // 5. Invalid technology ID rejection
   // 6. Source URL validation (must be HTTPS)
   // 7. Localized reason (must have non-empty EN and KO)
+  // 8. Explicit evidenceLevel (specific-document | official-event | official-ir-page)
   for (const strat of strategies) {
     const refs = getStrategyTechnologyReferences(strat);
     const seenTechIds = new Set<string>();
@@ -4625,10 +4630,17 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
           `Reference to ${ref.technologyId} in ${strat.companyId} must have non-empty KO reason`
         );
       }
+
+      assert.ok(ref.evidenceLevel, `Tech ref ${ref.technologyId} in ${strat.companyId} must have an explicit evidenceLevel`);
+      const validEvidenceLevels = new Set(['specific-document', 'official-event', 'official-ir-page']);
+      assert.ok(
+        validEvidenceLevels.has(ref.evidenceLevel),
+        `Invalid evidenceLevel '${ref.evidenceLevel}' for ${ref.technologyId} in ${strat.companyId}`
+      );
     }
   }
 
-  // 8. Explicit Landscape classification: all enum values valid
+  // 9. Explicit Landscape classification: all enum values valid
   const validTopologies = new Set(['distributed-domain', 'central-domain', 'central-zonal']);
   const validDepths = new Set(['commercial-ecosystem', 'dual-track', 'proprietary-fullstack']);
   for (const strat of strategies) {
@@ -4642,7 +4654,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     );
   }
 
-  // 9. KPI reconciliation
+  // 10. KPI reconciliation
   const kpis = getStrategyKPIs();
   assert.strictEqual(kpis.total, 26);
   assert.strictEqual(kpis.oems + kpis.semis + kpis.tier1s, kpis.total);
@@ -4655,7 +4667,7 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     strategies.filter((s) => Boolean(s.softwareMonetization)).length
   );
 
-  // 10. No heuristic Strategy -> Technology inference
+  // 11. No heuristic Strategy -> Technology inference
   const testStrat = strategies.find((s) => s.companyId === 'bmw-group')!;
   const baselineTechs = getRelatedTechnologiesForStrategy(testStrat);
   const modifiedStrat = {
@@ -4672,16 +4684,34 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
     'Prose alterations must never heuristically infer or alter technology links'
   );
 
-  // 11. Comparison preset replacement, 12. max 4, 13. deduplication
-  const oversizedSelection = ['bmw-group', 'mercedes-benz', 'volkswagen-group', 'tesla', 'ford', 'byd'];
-  const deduplicatedSelection = Array.from(new Set(oversizedSelection))
-    .filter((id) => companyById.has(id))
-    .slice(0, 4);
-  assert.strictEqual(deduplicatedSelection.length, 4);
+  // 12. Comparison preset replacement, 13. max 4 clamping, 14. deduplication & invalid filtering
+  const presetWithOverfillAndDuplicates = ['bmw-group', 'bmw-group', 'mercedes-benz', 'volkswagen-group', 'non-existent-company', 'general-motors', 'ford'];
+  const nextSelection = applyComparisonPreset(presetWithOverfillAndDuplicates);
 
-  // 14. EN/KO translation parity for newly introduced keys
+  // Assert preset replaces entirely (no stale 'tesla' or 'rivian')
+  assert.ok(!nextSelection.includes('tesla'), 'Preset must completely replace existing selection (no stale tesla)');
+  assert.ok(!nextSelection.includes('rivian'), 'Preset must completely replace existing selection (no stale rivian)');
+  // Assert deduplication
+  assert.strictEqual(nextSelection.filter((id) => id === 'bmw-group').length, 1, 'Preset must deduplicate entries');
+  // Assert invalid company ID stripped
+  assert.ok(!nextSelection.includes('non-existent-company'), 'Invalid company IDs must be filtered out');
+  // Assert max 4 clamping
+  assert.strictEqual(nextSelection.length, 4, 'Applied preset must be clamped to max 4 items');
+  assert.deepStrictEqual(nextSelection, ['bmw-group', 'mercedes-benz', 'volkswagen-group', 'general-motors']);
+
+  // Test normalizeComparisonSelection directly
+  const normalized = normalizeComparisonSelection(['mercedes-benz', 'mercedes-benz', 'invalid-co', 'ford']);
+  assert.deepStrictEqual(normalized, ['mercedes-benz', 'ford']);
+
+  // 15. EN/KO translation parity for newly introduced keys
   assert.ok(en.strategyInsights.sourceEvidence, 'Missing EN sourceEvidence');
   assert.ok(ko.strategyInsights.sourceEvidence, 'Missing KO sourceEvidence');
+  assert.ok(en.strategyInsights.evidenceLevelSpecificDocument, 'Missing EN evidenceLevelSpecificDocument');
+  assert.ok(ko.strategyInsights.evidenceLevelSpecificDocument, 'Missing KO evidenceLevelSpecificDocument');
+  assert.ok(en.strategyInsights.evidenceLevelOfficialEvent, 'Missing EN evidenceLevelOfficialEvent');
+  assert.ok(ko.strategyInsights.evidenceLevelOfficialEvent, 'Missing KO evidenceLevelOfficialEvent');
+  assert.ok(en.strategyInsights.evidenceLevelOfficialIrPage, 'Missing EN evidenceLevelOfficialIrPage');
+  assert.ok(ko.strategyInsights.evidenceLevelOfficialIrPage, 'Missing KO evidenceLevelOfficialIrPage');
   assert.strictEqual(
     Object.keys(en.strategyInsights).length,
     Object.keys(ko.strategyInsights).length,

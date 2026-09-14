@@ -253,18 +253,30 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
                       <span>{tech.name}</span>
                       <ArrowUpRight className="w-3 h-3 opacity-40 group-hover:opacity-100" />
                     </Link>
-                    {ref?.sourceUrl && (
-                      <a
-                        href={ref.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition shrink-0"
-                        title={t.strategyInsights.sourceEvidence}
-                      >
-                        <span>{t.strategyInsights.sourceEvidence}</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {ref?.evidenceLevel && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-700/70 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                          {ref.evidenceLevel === 'specific-document'
+                            ? t.strategyInsights.evidenceLevelSpecificDocument
+                            : ref.evidenceLevel === 'official-event'
+                            ? t.strategyInsights.evidenceLevelOfficialEvent
+                            : t.strategyInsights.evidenceLevelOfficialIrPage}
+                        </span>
+                      )}
+                      {ref?.sourceUrl && (
+                        <a
+                          href={ref.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[10px] text-brand-600 dark:text-brand-400 hover:underline transition shrink-0 font-medium"
+                          title={`${t.strategyInsights.sourceEvidence}: ${tech.name}`}
+                          aria-label={`${t.strategyInsights.sourceEvidence} for ${tech.name}`}
+                        >
+                          <span>{t.strategyInsights.sourceEvidence}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                   {reasonText && (
                     <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">

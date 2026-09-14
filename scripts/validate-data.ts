@@ -505,20 +505,13 @@ companyStrategies.forEach((cs) => {
           error(`[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Missing or empty KO reason.`);
         }
       }
-    });
-  }
 
-  // Validate Backward-Compatible relatedTechnologyIds
-  if (cs.relatedTechnologyIds) {
-    const seenTechIds = new Set<string>();
-    cs.relatedTechnologyIds.forEach((techId) => {
-      if (!validTechIds.has(techId)) {
-        error(`[Company Strategy ID: ${cs.companyId}] Unknown relatedTechnologyId: '${techId}'.`);
+      if (ref.evidenceLevel !== undefined) {
+        const validEvidenceLevels = new Set(['specific-document', 'official-event', 'official-ir-page']);
+        if (!validEvidenceLevels.has(ref.evidenceLevel)) {
+          error(`[Company Strategy ID: ${cs.companyId} TechRef #${rIdx}] Invalid evidenceLevel: '${ref.evidenceLevel}'. Must be one of ${Array.from(validEvidenceLevels).join(', ')}.`);
+        }
       }
-      if (seenTechIds.has(techId)) {
-        error(`[Company Strategy ID: ${cs.companyId}] Duplicate relatedTechnologyId: '${techId}'.`);
-      }
-      seenTechIds.add(techId);
     });
   }
 

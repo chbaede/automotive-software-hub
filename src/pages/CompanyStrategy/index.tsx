@@ -17,7 +17,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
-import { getCompany, COMPANY_CONTINENT_ORDER } from '../../lib/domain';
+import { getCompany, COMPANY_CONTINENT_ORDER, applyComparisonPreset } from '../../lib/domain';
 import { StrategyKPIStrip } from './StrategyKPIStrip';
 import { StrategicLandscapeMatrix } from './StrategicLandscapeMatrix';
 import { CompanyComparisonMatrix } from './CompanyComparisonMatrix';
@@ -76,10 +76,7 @@ export const CompanyStrategyPage: React.FC = () => {
   };
 
   const handleSetComparison = (companyIds: string[]) => {
-    const valid = Array.from(new Set(companyIds))
-      .filter((id) => strategyByCompanyId.has(id))
-      .slice(0, 4);
-    setSelectedCompanyIds(valid);
+    setSelectedCompanyIds(applyComparisonPreset(companyIds, strategyByCompanyId));
   };
 
   const handleToggleCompare = (companyId: string) => {

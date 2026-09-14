@@ -16,12 +16,14 @@ import {
   OsPlatformDepth,
   StrategicLandscapeClassification,
   StrategyTechnologyReference,
+  StrategyEvidenceLevel,
 } from '../../types/strategy';
 export type {
   EeArchitectureTopology,
   OsPlatformDepth,
   StrategicLandscapeClassification,
   StrategyTechnologyReference,
+  StrategyEvidenceLevel,
 };
 import { LocalizedText } from '../../types/i18n';
 import { StackLayer, StackTechnology } from '../../types/stack';
@@ -396,8 +398,20 @@ export function getStrategicMilestones(): StrategicMilestoneItem[] {
 }
 
 /**
+ * Resolves explicit technology references for a company strategy.
+ * Returns structured StrategyTechnologyReference items with reasons and sources when present.
+ * Canonical Single Source of Truth API for strategy-to-technology linkages.
+ */
+export function getStrategyTechnologyReferences(
+  strategy: CompanyStrategyInsight
+): StrategyTechnologyReference[] {
+  return strategy.relatedTechnologies ?? [];
+}
+
+/**
  * Resolves stack technologies linked to a company's strategy.
- * Strictly resolves explicit relatedTechnologies, relatedTechnologyIds and direct canonical company technologies.
+ * Strictly derives explicit strategy relationships exclusively from getStrategyTechnologyReferences(strategy)
+ * and direct canonical company technologies.
  */
 export function getRelatedTechnologiesForStrategy(
   strategy: CompanyStrategyInsight
@@ -405,21 +419,12 @@ export function getRelatedTechnologiesForStrategy(
   const direct = getTechnologiesForCompany(strategy.companyId);
   const matchedIds = new Set<string>(direct.map((t) => t.id));
 
-  if (strategy.relatedTechnologies) {
-    strategy.relatedTechnologies.forEach((ref) => {
-      if (technologyById.has(ref.technologyId)) {
-        matchedIds.add(ref.technologyId);
-      }
-    });
-  }
-
-  if (strategy.relatedTechnologyIds) {
-    strategy.relatedTechnologyIds.forEach((techId) => {
-      if (technologyById.has(techId)) {
-        matchedIds.add(techId);
-      }
-    });
-  }
+  const explicitRefs = getStrategyTechnologyReferences(strategy);
+  explicitRefs.forEach((ref) => {
+    if (technologyById.has(ref.technologyId)) {
+      matchedIds.add(ref.technologyId);
+    }
+  });
 
   return Array.from(matchedIds)
     .map((id) => technologyById.get(id))
@@ -427,18 +432,28 @@ export function getRelatedTechnologiesForStrategy(
 }
 
 /**
- * Resolves explicit technology references for a company strategy.
- * Returns structured StrategyTechnologyReference items with reasons and sources when present.
+ * Normalizes comparison selection with deduplication, existence verification, and 4-company clamping.
  */
-export function getStrategyTechnologyReferences(
-  strategy: CompanyStrategyInsight
-): StrategyTechnologyReference[] {
-  if (strategy.relatedTechnologies && strategy.relatedTechnologies.length > 0) {
-    return strategy.relatedTechnologies;
-  }
-  if (strategy.relatedTechnologyIds) {
-    return strategy.relatedTechnologyIds.map((id) => ({ technologyId: id }));
-  }
-  return [];
+export function normalizeComparisonSelection(
+  companyIds: string[],
+  validCompanyIds?: Set<string> | Map<string, any>
+): string[] {
+  const validSet = validCompanyIds ?? strategyByCompanyId;
+  const hasCheck = (id: string) =>
+    validSet instanceof Set ? validSet.has(id) : validSet instanceof Map ? validSet.has(id) : false;
+
+  return Array.from(new Set(companyIds))
+    .filter((id) => hasCheck(id))
+    .slice(0, 4);
+}
+
+/**
+ * Applies a comparison preset, atomically replacing any previous selection.
+ */
+export function applyComparisonPreset(
+  presetCompanyIds: string[],
+  validCompanyIds?: Set<string> | Map<string, any>
+): string[] {
+  return normalizeComparisonSelection(presetCompanyIds, validCompanyIds);
 }
 

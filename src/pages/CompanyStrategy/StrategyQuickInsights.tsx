@@ -42,7 +42,7 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       description: t.strategyInsights.insightAaosDesc,
       companyIds: companyStrategies
         .filter((cs) => {
-          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || [];
           return ids.includes('android-automotive-os');
         })
         .map((cs) => cs.companyId),
@@ -55,7 +55,7 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       description: t.strategyInsights.insightNvidiaDesc,
       companyIds: companyStrategies
         .filter((cs) => {
-          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || [];
           return cs.companyId === 'nvidia' || ids.some((id) => id.startsWith('nvidia-'));
         })
         .map((cs) => cs.companyId),
@@ -68,7 +68,7 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       description: t.strategyInsights.insightQualcommDesc,
       companyIds: companyStrategies
         .filter((cs) => {
-          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || [];
           return cs.companyId === 'qualcomm' || ids.some((id) => id.startsWith('qualcomm-'));
         })
         .map((cs) => cs.companyId),
