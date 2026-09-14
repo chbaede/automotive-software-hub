@@ -17,7 +17,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { companyStrategies } from '../../data/companyStrategies';
 import { getLocalizedText } from '../../types/i18n';
 import { StrategyCategory } from '../../types/strategy';
-import { getCompany } from '../../lib/domain';
+import { getCompany, COMPANY_CONTINENT_ORDER } from '../../lib/domain';
 import { StrategyKPIStrip } from './StrategyKPIStrip';
 import { StrategicLandscapeMatrix } from './StrategicLandscapeMatrix';
 import { CompanyComparisonMatrix } from './CompanyComparisonMatrix';
@@ -28,6 +28,8 @@ import { CompanyStrategyCard } from './CompanyStrategyCard';
 export const CompanyStrategyPage: React.FC = () => {
   const { language, t } = useLanguage();
   const location = useLocation();
+
+  const strategyByCompanyId = new Map(companyStrategies.map((s) => [s.companyId, s]));
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -73,7 +75,15 @@ export const CompanyStrategyPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSetComparison = (companyIds: string[]) => {
+    const valid = Array.from(new Set(companyIds))
+      .filter((id) => strategyByCompanyId.has(id))
+      .slice(0, 4);
+    setSelectedCompanyIds(valid);
+  };
+
   const handleToggleCompare = (companyId: string) => {
+    if (!strategyByCompanyId.has(companyId)) return;
     setSelectedCompanyIds((prev) => {
       if (prev.includes(companyId)) {
         return prev.filter((id) => id !== companyId);
@@ -86,13 +96,15 @@ export const CompanyStrategyPage: React.FC = () => {
   };
 
   const handleAddCompany = (companyId: string) => {
-    if (!selectedCompanyIds.includes(companyId) && selectedCompanyIds.length < 4) {
-      setSelectedCompanyIds([...selectedCompanyIds, companyId]);
-    }
+    if (!strategyByCompanyId.has(companyId)) return;
+    setSelectedCompanyIds((prev) => {
+      if (prev.includes(companyId) || prev.length >= 4) return prev;
+      return [...prev, companyId];
+    });
   };
 
   const handleRemoveCompany = (companyId: string) => {
-    setSelectedCompanyIds(selectedCompanyIds.filter((id) => id !== companyId));
+    setSelectedCompanyIds((prev) => prev.filter((id) => id !== companyId));
   };
 
   const handleClearComparison = () => {
@@ -139,6 +151,10 @@ export const CompanyStrategyPage: React.FC = () => {
     { id: 'ad', label: t.strategyInsights.themeAd, icon: Bot },
     { id: 'monetization', label: t.strategyInsights.themeMonetization, icon: ShieldCheck },
   ];
+
+  const availableContinents = COMPANY_CONTINENT_ORDER.filter((cont) =>
+    companyStrategies.some((s) => getCompany(s.companyId)?.continent === cont)
+  );
 
   const filteredStrategies = companyStrategies.filter((s) => {
     const q = searchQuery.trim().toLowerCase();
@@ -271,6 +287,7 @@ export const CompanyStrategyPage: React.FC = () => {
       {/* 6. Side-by-Side Company Comparison Matrix */}
       <CompanyComparisonMatrix
         selectedCompanyIds={selectedCompanyIds}
+        onSetComparison={handleSetComparison}
         onAddCompany={handleAddCompany}
         onRemoveCompany={handleRemoveCompany}
         onClearComparison={handleClearComparison}
@@ -318,9 +335,11 @@ export const CompanyStrategyPage: React.FC = () => {
               className="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 font-medium focus:outline-hidden focus:ring-2 focus:ring-brand-500"
             >
               <option value="all">{t.strategyInsights.filterContinentAll}</option>
-              <option value="north-america">{t.continents.northAmerica}</option>
-              <option value="europe">{t.continents.europe}</option>
-              <option value="asia">{t.continents.asia}</option>
+              {availableContinents.map((continent) => (
+                <option key={continent} value={continent}>
+                  {getContinentLabel(continent)}
+                </option>
+              ))}
             </select>
 
             {(searchQuery || selectedCategory !== 'all' || selectedContinent !== 'all' || selectedTheme !== 'all') && (

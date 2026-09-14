@@ -27,7 +27,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'MMA (800V) 및 MB.EA 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+    relatedTechnologyIds: ["nvidia-drive-thor"],
+sdvArchitecture: {
       en: 'Proprietary MB.OS (Chip-to-Cloud architecture) decoupling hardware and software lifecycles. Features dedicated high-performance computing clusters with NVIDIA SoC, Google Cloud navigation integration, and Unity real-time 3D graphics.',
       ko: '하드웨어와 소프트웨어 수명 주기를 분리하는 자체 개발 칩-투-클라우드 MB.OS 아키텍처. 엔비디아 고성능 컴퓨팅 SoC, 구글 지도 내비게이션 연동, 유니티 실시간 3D 그래픽 엔진 탑재.',
     },
@@ -135,7 +140,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '언박스드 공정 / Cybercab 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+sdvArchitecture: {
       en: 'Vertically integrated Linux OS stack with complete in-house middleware, sensor fusion, and neural network runtime. Over-the-air firmware updates update every micro-controller across powertrain, thermal, safety, and infotainment.',
       ko: '자체 개발 리눅스 OS, 미들웨어, 센서 퓨전, 신경망 런타임의 수직 통합 스택. 파워트레인, 열관리, 안전, 인포테인먼트 등 전 영역 마이크로컨트롤러까지 100% 무선 OTA 펌웨어 업데이트 지원.',
     },
@@ -234,7 +243,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'IMA 2세대 전기차 플랫폼 (13개 차급)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'proprietary-fullstack',
+    },
+sdvArchitecture: {
       en: 'Two-track operating system strategy: deploying Connected Car Operating System (ccOS) across current volume production, while 42dot leads the development of next-generation unified SDV OS (Pleos) with cloud-native microservices.',
       ko: '투트랙 운영체제 전략: 양산 라인업에는 ccOS(Connected Car OS)를 순차 배포하고, 글로벌 소프트웨어 센터 포티투닷(42dot)을 통해 차세대 클라우드 네이티브 통합 SDV OS(Pleos) 개발 가속화.',
     },
@@ -330,7 +343,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '노이에 클라쎄 800V 6세대 eDrive',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os","qualcomm-snapdragon-cockpit"],
+sdvArchitecture: {
       en: 'BMW Operating System 8.5/9 (Android Automotive based) transitioning into the revolutionary Neue Klasse software architecture powered by 4 centralized "Super-Brains" high-performance computers.',
       ko: '안드로이드 오토모티브 기반 BMW OS 8.5/9에서 4개의 중앙 고성능 컴퓨터 "슈퍼 브레인(Super-Brains)"으로 제어되는 차세대 노이에 클라세(Neue Klasse) 소프트웨어 아키텍처로 도약.',
     },
@@ -448,7 +466,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'PPE 및 차세대 SSP 통합 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'E3 1.2 software platform currently in volume production on Porsche Macan EV & Audi Q6 e-tron. Partnering with Rivian through a $5B joint venture to co-develop next-generation E3 2.0 SDV platform using Rivian\'s proven zonal software stack.',
       ko: '포르쉐 마칸 EV 및 아우디 Q6 e-트론에 탑재된 E3 1.2 소프트웨어 플랫폼 양산. 차세대 E3 2.0 SDV 아키텍처는 리비안(Rivian)과의 50억 달러 합작법인을 통해 리비안의 검증된 존 소프트웨어 스택을 기반으로 공동 개발.',
     },
@@ -555,7 +578,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '차세대 BEV 전용 플랫폼 (전고체 배터리)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'proprietary-fullstack',
+    },
+sdvArchitecture: {
       en: 'Arene OS developed by Woven by Toyota: an integrated vehicle software operating system, simulation pipeline, and developer SDK designed to accelerate automotive software development and verification.',
       ko: '우븐 바이 토요타(Woven by Toyota)가 개발하는 아레네(Arene) OS: 차량용 운영체제, 가상 시뮬레이션 파이프라인, 개발자 SDK를 아우르는 소프트웨어 개발 및 검증 통합 플랫폼.',
     },
@@ -658,7 +685,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '글로벌 OEM 맞춤형 EV 솔루션',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+    relatedTechnologyIds: ["nvidia-drive-thor"],
+sdvArchitecture: {
       en: 'NVIDIA DRIVE platform: End-to-End automotive software and silicon stack. Introduces DRIVE Thor SoC delivering 2,000 TFLOPS of FP8 compute on Blackwell GPU architecture, unifying Cockpit, Cluster, and Autonomous Driving on a single processor.',
       ko: '엔비디아 DRIVE 플랫폼: 엔드투엔드 오토모티브 실리콘 및 소프트웨어 스택. 블랙웰(Blackwell) 아키텍처 기반 2,000 TFLOPS FP8 성능의 DRIVE Thor SoC를 통해 인포테인먼트, 계기판, 자율주행을 단일 칩으로 통합.',
     },
@@ -743,7 +775,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '$45B+ 전장 수주 파이프라인',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'commercial-ecosystem',
+    },
+    relatedTechnologyIds: ["qualcomm-snapdragon-cockpit"],
+sdvArchitecture: {
       en: 'Snapdragon Digital Chassis: open, scalable, comprehensive platform spanning Snapdragon Cockpit, Snapdragon Ride (ADAS/AD), Snapdragon Auto Connectivity (5G/C-V2X), and Car-to-Cloud services.',
       ko: '스냅드래곤 디지털 섀시(Snapdragon Digital Chassis): 스냅드래곤 콕핏, 스냅드래곤 라이드(자율주행/ADAS), 스냅드래곤 오토 커넥티비티(5G/C-V2X), 카-투-클라우드를 아우르는 개방형 통합 플랫폼.',
     },
@@ -834,7 +871,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '폭스바겐, 포르쉐, 지커 EV 탑재',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["mobileye-eyeq"],
+sdvArchitecture: {
       en: 'Mobileye DXP (Developer Program) and EyeQ6 SoC family allowing automakers to customize algorithms while leveraging Mobileye\'s validated computer vision and REM (Road Experience Management) crowd-sourced mapping.',
       ko: '모빌아이 DXP(Developer Program) 및 EyeQ6 SoC 라인업을 통해 완성차 제조사가 자체 알고리즘을 커스텀 개발하면서도 모빌아이의 검증된 컴퓨터 비전과 REM 크라우드소싱 고정밀 지도를 활용할 수 있는 개방형 플랫폼.',
     },
@@ -910,7 +952,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'E-GMP 및 차세대 IMA 전동화 PE 모듈',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'commercial-ecosystem',
+    },
+    relatedTechnologyIds: ["autosar-adaptive","autosar-classic"],
+sdvArchitecture: {
       en: 'Software-Centric Vehicle (SCV) transformation: developing standardized middleware platforms, smart cockpit software (M.VICS), and integrated domain control units.',
       ko: '소프트웨어 중심 모빌리티(SCV)로의 전환: 표준화된 미들웨어 플랫폼, 스마트 콕핏(M.VICS) 솔루션, 통합 도메인 제어기(DCU) 소프트웨어 자체 개발 가속.',
     },
@@ -995,7 +1042,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'LG마그나 e-파워트레인 모듈',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'distributed-domain',
+      osDepth: 'commercial-ecosystem',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'LG AlphaWare software suite for SDVs consisting of 5 core modules: PlayWare (high-res IVI entertainment), MetaWare (AR-HUD & 3D graphics), VisionWare (AI driver monitoring & ADAS), BaseWare (AUTOSAR & OS abstraction), and OpsWare (cybersecurity & OTA fleet management).',
       ko: 'SDV를 위한 LG 알파웨어(LG AlphaWare) 소프트웨어 스위트: PlayWare(고해상도 IVI 엔터테인먼트), MetaWare(AR-HUD 및 3D 그래픽), VisionWare(AI 운전자 모니터링 및 ADAS), BaseWare(AUTOSAR 및 OS 추상화), OpsWare(사이버보안 및 무선 OTA 차량 관제)의 5대 핵심 모듈 제공.',
     },
@@ -1068,7 +1120,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'Ultium 전용 전기차 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'Ultifi end-to-end software platform built upon GM\'s Vehicle Intelligence Platform (VIP). Features decoupled application layers, Linux/Android Automotive base, and cloud-native containerized software deployment enabling continuous over-the-air feature upgrades.',
       ko: 'GM의 차량 지능형 플랫폼(VIP) 위에 구축된 Ultifi 엔드투엔드 소프트웨어 플랫폼. 하드웨어와 분리된 애플리케이션 계층, 리눅스 및 안드로이드 오토모티브 기반 베이스, 클라우드 네이티브 컨테이너 배포를 통한 지속적 무선 OTA 기능 업데이트 제공.',
     },
@@ -1164,7 +1221,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '2세대 전용 EV 및 스컹크웍스 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'FNV (Fully Networked Vehicle) Gen 4 architecture with modern cloud connectivity, transitioning toward an in-house unified vehicle operating system. Decouples software release cadence from vehicle hardware lifecycles with continuous microservice OTA updates.',
       ko: '모던 클라우드 연결성을 갖춘 FNV(Fully Networked Vehicle) 4세대 아키텍처 및 자체 통합 차량용 운영체제로의 진화. 마이크로서비스 무선 OTA 업데이트를 통해 하드웨어 양산 주기와 독립적인 소프트웨어 배포 체계 확립.',
     },
@@ -1272,7 +1334,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'STLA Small / Medium / Large / Frame',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+sdvArchitecture: {
       en: 'STLA Brain fully cloud-integrated centralized electrical/software architecture completely decoupling hardware and software lifecycles. Co-developed with Amazon and Foxconn to power the STLA SmartCockpit and STLA AutoDrive platforms.',
       ko: '하드웨어와 소프트웨어 수명 주기를 완전히 분리하는 클라우드 통합 중앙 집중형 전자/소프트웨어 아키텍처 STLA Brain. 아마존 및 폭스콘과의 협업을 통해 STLA SmartCockpit 및 STLA AutoDrive 플랫폼 구동.',
     },
@@ -1380,7 +1446,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'AmpR Small / Medium (CMF-EV 기반)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'Leading European SDV platform developed by Ampere in partnership with Qualcomm (Snapdragon Digital Chassis) and Google (Android Automotive OS / Google Built-In). Reduces onboard computing complexity and cuts development times from 5 to 3 years.',
       ko: '전기차·SW 전담 자회사 암페어(Ampere)가 퀄컴(스냅드래곤 디지털 섀시) 및 구글(안드로이드 오토모티브 OS)과 공동 개발하는 차세대 SDV 아키텍처. 차량 컴퓨팅 복잡도를 줄이고 개발 기간을 5년에서 3년으로 단축.',
     },
@@ -1476,7 +1547,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '혼다 0 시리즈 전용 EV 아키텍처',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'Developing a proprietary vehicle operating system to debut with the global "Honda 0 Series" EV family in 2026. Emphasizes ultra-thin, light, and wise architecture, learning driver preferences and driving environments using onboard and cloud AI.',
       ko: '2026년 글로벌 "혼다 0 시리즈" 전용 전기차와 함께 데뷔하는 독자 차량용 운영체제. "Thin, Light, and Wise(얇고 가볍고 현명한)" 개발 철학에 따라 온보드 및 클라우드 AI를 활용해 운전자 성향과 주행 환경을 학습.',
     },
@@ -1572,7 +1648,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'CMF-EV 및 모듈러 전동화 아키텍처',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'dual-track',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'Developing a standardized centralized software platform under "The Arc" midterm plan, exploring strategic software partnership with Honda on joint research of SDV platforms, foundational OS, and vehicle semiconductors.',
       ko: '중기 경영 계획 "The Arc"에 따라 표준화된 중앙 집중식 소프트웨어 플랫폼을 개발 중이며, 혼다와 SDV 플랫폼, 기반 운영체제 및 차량용 반도체 공동 연구를 위한 전략적 파트너십 추진.',
     },
@@ -1671,7 +1752,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'E-GMP (800V) 및 PBV 스케이트보드',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'proprietary-fullstack',
+    },
+sdvArchitecture: {
       en: 'Deploying connected car Navigation Cockpit (ccNC) across EV6, EV9, and EV3, fully transitioning to software-defined vehicles aligned with Hyundai Motor Group\'s unified SDV OS development spearheaded by 42dot. Features Features-on-Demand (FoD) marketplace and continuous OTA.',
       ko: 'EV6, EV9, EV3 등 전 라인업에 ccNC(커넥티드 카 내비게이션 콕핏)를 배포하고, 포티투닷(42dot) 주도의 현대차그룹 공용 SDV OS 개발과 정렬. Features-on-Demand(FoD) 스토어 및 무선 OTA를 통한 소프트웨어 중심 자동차 전환 가속.',
     },
@@ -1767,7 +1852,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'e-Platform 3.0 Evo 및 CTB(셀투바디)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'proprietary-fullstack',
+    },
+    relatedTechnologyIds: ["nvidia-drive-thor"],
+sdvArchitecture: {
       en: 'Xuanji whole-vehicle intelligence architecture seamlessly integrating vehicle brain, cloud brain, and DiLink smart cockpit operating system. Powered by high-compute chips running large multi-modal language models for natural voice and real-time environment adaptation.',
       ko: '차량 브레인, 클라우드 브레인 및 DiLink 스마트 콕핏 OS를 통합한 현기(Xuanji) 전차 지능화 아키텍처. 고성능 컴퓨팅 칩과 대규모 멀티모달 언어 모델을 접목하여 자연어 음성 상호작용 및 주행 환경 실시간 최적화 지원.',
     },
@@ -1863,7 +1953,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'SEA 및 GEA 통합 전동화 아키텍처',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'dual-track',
+    },
+sdvArchitecture: {
       en: 'Flyme Auto intelligent cockpit operating system co-developed with Meizu, deeply integrating smartphone and vehicle computing. Integrated with G-EEA 3.0 central electronics architecture and in-house low-Earth orbit satellite network connectivity.',
       ko: '메이주(Meizu)와 공동 개발한 Flyme Auto 스마트 콕핏 OS로 스마트폰과 차량 컴퓨팅을 심층 통합. G-EEA 3.0 중앙 집중형 전자 아키텍처 및 자체 저궤도 위성 통신망과 결합.',
     },
@@ -1959,7 +2053,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '성운(Nebula) 전용 순수 전기차 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-domain',
+      osDepth: 'dual-track',
+    },
+sdvArchitecture: {
       en: 'Galaxy Full-Stack Solution 3.0 engineered by subsidiary Z-One Technology, featuring central compute Vehicle Central OS (VCOS) and Service-Oriented Architecture (SOA) developer platforms with microservices decoupling.',
       ko: '자회사 Z-One 테크놀로지가 개발한 은하(Galaxy) 풀스택 솔루션 3.0. 차량 중앙 운영체제(VCOS) 및 SOA(서비스 지향 아키텍처) 개발자 플랫폼을 기반으로 마이크로서비스 기능 분리 구현.',
     },
@@ -2043,7 +2141,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'NT 3.0 900V 플랫폼 및 배터리 스왑',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+    relatedTechnologyIds: ["nvidia-drive-thor"],
+sdvArchitecture: {
       en: 'SkyOS (Tian Shu) China\'s first full-stack vehicle operating system, encompassing SkyOS-H (hypervisor), SkyOS-M (real-time microkernel), SkyOS-L (lightweight Linux), and SkyOS-C (cockpit Android), delivering deterministic communication and end-to-end security.',
       ko: '하이퍼바이저(SkyOS-H), 마이크로커널(SkyOS-M), 경량 리눅스(SkyOS-L), 안드로이드 콕핏(SkyOS-C)을 총망라한 중국 최초의 풀스택 차량용 운영체제 천추(SkyOS). 결정론적 통신 및 종단간 보안 보장.',
     },
@@ -2139,7 +2242,11 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'SEPA 2.0 (800V SiC 고전압 플랫폼)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+sdvArchitecture: {
       en: 'XOS Tianji (AI-powered intelligent operating system) integrating large language models into smart cabin interactions, cross-device connectivity, and end-to-end autonomous driving perception and planning.',
       ko: '스마트 콕핏 상호작용, 기기간 크로스 연결 및 엔드투엔드 자율주행 인지·판단에 대규모 언어 모델을 결합한 XOS 천기(Tianji) 인공지능 차량 운영체제.',
     },
@@ -2235,7 +2342,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: '이원화 플랫폼: 주행거리연장형(EREV) 및 800V 5C 순수전기',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'central-zonal',
+      osDepth: 'proprietary-fullstack',
+    },
+    relatedTechnologyIds: ["nvidia-drive-thor"],
+sdvArchitecture: {
       en: 'Proprietary Li OS vehicle software platform embedded with in-house developed Mind GPT multi-modal cognitive model, enabling context-aware voice assistance, multi-screen family entertainment, and automated spatial comfort management.',
       ko: '자체 개발 Mind GPT 멀티모달 인지 인공지능 모델이 내장된 독자 Li OS 차량 소프트웨어 플랫폼. 맥락 인지 음성 비서, 다중 화면 패밀리 엔터테인먼트 및 공간 쾌적성 자동 제어 제공.',
     },
@@ -2331,7 +2443,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'acti.ev 전용 순수전기 및 Avinya EMA 플랫폼',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'distributed-domain',
+      osDepth: 'commercial-ecosystem',
+    },
+    relatedTechnologyIds: ["android-automotive-os"],
+sdvArchitecture: {
       en: 'acti.ev pure electric software architecture engineered for Software-Defined Vehicles with cloud-native connectivity, higher computing power, microservice OTA firmware updates, and integrated third-party app suites.',
       ko: '클라우드 네이티브 연결성, 고성능 컴퓨팅 파워, 마이크로서비스 무선 OTA 펌웨어 업데이트 및 서드파티 앱 생태계가 결합된 SDV 전용 acti.ev 순수 전기차 소프트웨어 아키텍처.',
     },
@@ -2427,7 +2544,12 @@ export const companyStrategies: CompanyStrategyInsight[] = [
         ko: 'INGLO 전용 플랫폼 (폭스바겐 MEB 전동화 부품)',
       },
     },
-    sdvArchitecture: {
+        strategicLandscape: {
+      eeTopology: 'distributed-domain',
+      osDepth: 'commercial-ecosystem',
+    },
+    relatedTechnologyIds: ["qualcomm-snapdragon-cockpit"],
+sdvArchitecture: {
       en: 'AdrenoX intelligent cockpit system powered by Qualcomm Snapdragon platform with Amazon Alexa built-in, offering multi-screen interactive clusters, remote smartphone controls, and continuous over-the-air firmware updates.',
       ko: '퀄컴 스냅드래곤 플랫폼과 아마존 알렉사를 내장한 AdrenoX 지능형 콕핏 시스템. 멀티스크린 대화형 계기판, 스마트폰 원격 차량 제어 및 지속적인 무선 OTA 펌웨어 업데이트 제공.',
     },

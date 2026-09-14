@@ -163,7 +163,7 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
           )}
 
           <Link
-            to={`/companies#company-${strategy.companyId}`}
+            to={`/companies?search=${encodeURIComponent(company?.name || strategy.companyName)}`}
             className="inline-flex items-center gap-1 text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium px-2 py-1.5"
           >
             <Building2 className="w-3.5 h-3.5" />
@@ -239,7 +239,7 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
             {relatedTechs.map((tech) => (
               <Link
                 key={tech.id}
-                to={`/stack-explorer?tech=${tech.id}`}
+                to={`/stack/${tech.id}`}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/50 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-700 transition shadow-2xs group"
               >
                 <span>{tech.name}</span>

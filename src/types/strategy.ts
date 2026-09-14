@@ -38,6 +38,21 @@ export interface CompanyStrategyMatrixSummary {
   evPlatform: LocalizedText;
 }
 
+export type EeArchitectureTopology =
+  | 'distributed-domain'
+  | 'central-domain'
+  | 'central-zonal';
+
+export type OsPlatformDepth =
+  | 'commercial-ecosystem'
+  | 'dual-track'
+  | 'proprietary-fullstack';
+
+export interface StrategicLandscapeClassification {
+  eeTopology: EeArchitectureTopology;
+  osDepth: OsPlatformDepth;
+}
+
 export interface CompanyStrategyInsight {
   companyId: string;
   companyName: string;
@@ -48,6 +63,8 @@ export interface CompanyStrategyInsight {
   irUrl: string | LocalizedText;
   latestEventOrReport: LocalizedText;
   matrixSummary: CompanyStrategyMatrixSummary;
+  strategicLandscape: StrategicLandscapeClassification;
+  relatedTechnologyIds?: string[];
   sdvArchitecture: LocalizedText;
   eeZonalArchitecture: LocalizedText;
   evPlatformStrategy: LocalizedText;

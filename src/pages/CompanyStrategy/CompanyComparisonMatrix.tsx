@@ -28,6 +28,7 @@ import { CompanyStrategyInsight } from '../../types/strategy';
 
 interface CompanyComparisonMatrixProps {
   selectedCompanyIds: string[];
+  onSetComparison: (companyIds: string[]) => void;
   onAddCompany: (companyId: string) => void;
   onRemoveCompany: (companyId: string) => void;
   onClearComparison: () => void;
@@ -36,6 +37,7 @@ interface CompanyComparisonMatrixProps {
 
 export const CompanyComparisonMatrix: React.FC<CompanyComparisonMatrixProps> = ({
   selectedCompanyIds,
+  onSetComparison,
   onAddCompany,
   onRemoveCompany,
   onClearComparison,
@@ -88,8 +90,7 @@ export const CompanyComparisonMatrix: React.FC<CompanyComparisonMatrixProps> = (
   );
 
   const applyPreset = (companyIds: string[]) => {
-    onClearComparison();
-    companyIds.forEach((id) => onAddCompany(id));
+    onSetComparison(companyIds);
   };
 
   return (
@@ -259,6 +260,7 @@ export const CompanyComparisonMatrix: React.FC<CompanyComparisonMatrixProps> = (
                           onClick={() => onRemoveCompany(strat.companyId)}
                           className="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition cursor-pointer"
                           title={t.strategyInsights.compareRemoveBtn}
+                          aria-label={`${t.strategyInsights.compareRemoveBtn}: ${comp?.name || strat.companyName}`}
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -408,7 +410,7 @@ export const CompanyComparisonMatrix: React.FC<CompanyComparisonMatrixProps> = (
                           {relatedTechs.map((tech) => (
                             <Link
                               key={tech.id}
-                              to={`/stack-explorer?tech=${tech.id}`}
+                              to={`/stack/${tech.id}`}
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900/40 text-slate-700 dark:text-slate-300 hover:text-brand-700 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700/60 transition group"
                             >
                               <span>{tech.name}</span>

@@ -9,7 +9,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { getStrategyKPIs } from '../../lib/domain';
+import { getStrategyKPIs, COMPANY_CONTINENT_ORDER } from '../../lib/domain';
+import { CompanyContinent } from '../../types/company';
 
 interface StrategyKPIStripProps {
   selectedCategory: string;
@@ -17,6 +18,15 @@ interface StrategyKPIStripProps {
   selectedContinent: string;
   onSelectContinent: (continent: string) => void;
 }
+
+const CONTINENT_FLAGS: Record<CompanyContinent, string> = {
+  'north-america': '🇺🇸',
+  europe: '🇪🇺',
+  asia: '🌏',
+  'south-america': '🇧🇷',
+  africa: '🌍',
+  oceania: '🇦🇺',
+};
 
 export const StrategyKPIStrip: React.FC<StrategyKPIStripProps> = ({
   selectedCategory,
@@ -26,6 +36,29 @@ export const StrategyKPIStrip: React.FC<StrategyKPIStripProps> = ({
 }) => {
   const { t } = useLanguage();
   const kpis = getStrategyKPIs();
+
+  const getContinentLabel = (c: string): string => {
+    switch (c) {
+      case 'north-america':
+        return t.continents.northAmerica;
+      case 'europe':
+        return t.continents.europe;
+      case 'asia':
+        return t.continents.asia;
+      case 'south-america':
+        return t.continents.southAmerica;
+      case 'africa':
+        return t.continents.africa;
+      case 'oceania':
+        return t.continents.oceania;
+      default:
+        return c;
+    }
+  };
+
+  const activeContinents = COMPANY_CONTINENT_ORDER.filter(
+    (cont) => (kpis.byContinent[cont] || 0) > 0
+  );
 
   return (
     <div className="space-y-4">
@@ -183,39 +216,26 @@ export const StrategyKPIStrip: React.FC<StrategyKPIStripProps> = ({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => onSelectContinent(selectedContinent === 'north-america' ? 'all' : 'north-america')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-              selectedContinent === 'north-america'
-                ? 'bg-brand-600 text-white border-brand-600 dark:bg-brand-500'
-                : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700'
-            }`}
-          >
-            🇺🇸 {t.continents.northAmerica} ({kpis.byContinent['north-america']})
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelectContinent(selectedContinent === 'europe' ? 'all' : 'europe')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-              selectedContinent === 'europe'
-                ? 'bg-brand-600 text-white border-brand-600 dark:bg-brand-500'
-                : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700'
-            }`}
-          >
-            🇪🇺 {t.continents.europe} ({kpis.byContinent.europe})
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelectContinent(selectedContinent === 'asia' ? 'all' : 'asia')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
-              selectedContinent === 'asia'
-                ? 'bg-brand-600 text-white border-brand-600 dark:bg-brand-500'
-                : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700'
-            }`}
-          >
-            🌏 {t.continents.asia} ({kpis.byContinent.asia})
-          </button>
+          {activeContinents.map((cont) => {
+            const flag = CONTINENT_FLAGS[cont] || '🌐';
+            const count = kpis.byContinent[cont] || 0;
+            const isSelected = selectedContinent === cont;
+
+            return (
+              <button
+                key={cont}
+                type="button"
+                onClick={() => onSelectContinent(isSelected ? 'all' : cont)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
+                  isSelected
+                    ? 'bg-brand-600 text-white border-brand-600 dark:bg-brand-500'
+                    : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                {flag} {getContinentLabel(cont)} ({count})
+              </button>
+            );
+          })}
           {selectedContinent !== 'all' && (
             <button
               type="button"

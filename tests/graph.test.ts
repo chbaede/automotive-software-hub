@@ -4350,6 +4350,214 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 81 Passed: Strategy Comparative Intelligence Dashboard, KPIs & Domain Integrity verified.');
 }
 
+// Test 82: Strategy Intelligence Semantics, Explicit Relationships & Hardening Regression
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const {
+    getCompanyStrategies,
+    getStrategyKPIs,
+    getStrategicLandscapeData,
+    getStrategicMilestones,
+    getRelatedTechnologiesForStrategy,
+    companyById,
+    technologyById,
+    COMPANY_CONTINENT_ORDER,
+  } = await import('../src/lib/domain/index.js');
+
+  const strategies = getCompanyStrategies();
+
+  // Test A: Comparison Preset Atomic Selection
+  const presets = [
+    {
+      id: 'german-trio',
+      companyIds: ['mercedes-benz', 'bmw-group', 'volkswagen-group'],
+    },
+    {
+      id: 'volume-oems',
+      companyIds: ['toyota-motor', 'volkswagen-group', 'hyundai-motor-group', 'general-motors'],
+    },
+    {
+      id: 'us-leaders',
+      companyIds: ['tesla', 'general-motors', 'ford'],
+    },
+    {
+      id: 'chinese-pioneers',
+      companyIds: ['nio', 'xpeng', 'li-auto', 'byd'],
+    },
+    {
+      id: 'silicon-giants',
+      companyIds: ['nvidia', 'qualcomm', 'mobileye'],
+    },
+    {
+      id: 'tier1-leaders',
+      companyIds: ['hyundai-mobis', 'lg-electronics-vs'],
+    },
+  ];
+
+  const strategyCompanyIds = new Set(strategies.map((s) => s.companyId));
+  for (const preset of presets) {
+    assert.ok(preset.companyIds.length > 0 && preset.companyIds.length <= 4, `Preset ${preset.id} length must be <= 4`);
+    for (const cId of preset.companyIds) {
+      assert.ok(strategyCompanyIds.has(cId), `Preset ${preset.id} contains invalid companyId: ${cId}`);
+    }
+  }
+
+  // Test B: Comparison Maximum 4 Clamping Contract
+  const simulateAtomicSetter = (incoming: string[]) => {
+    return Array.from(new Set(incoming))
+      .filter((id) => strategyCompanyIds.has(id))
+      .slice(0, 4);
+  };
+  const oversized = ['bmw-group', 'mercedes-benz', 'volkswagen-group', 'tesla', 'ford', 'byd'];
+  const clamped = simulateAtomicSetter(oversized);
+  assert.strictEqual(clamped.length, 4, 'Comparison selection must clamp to 4');
+  assert.deepStrictEqual(clamped, ['bmw-group', 'mercedes-benz', 'volkswagen-group', 'tesla']);
+
+  // Test C: Comparison Duplicate Prevention
+  const duplicates = ['bmw-group', 'bmw-group', 'mercedes-benz', 'bmw-group'];
+  const deduplicated = simulateAtomicSetter(duplicates);
+  assert.strictEqual(deduplicated.length, 2);
+  assert.deepStrictEqual(deduplicated, ['bmw-group', 'mercedes-benz']);
+
+  // Test D: Explicit relatedTechnologyIds Resolution
+  for (const strat of strategies) {
+    const relatedTechs = getRelatedTechnologiesForStrategy(strat);
+    if (strat.relatedTechnologyIds && strat.relatedTechnologyIds.length > 0) {
+      for (const techId of strat.relatedTechnologyIds) {
+        assert.ok(
+          relatedTechs.some((t) => t.id === techId),
+          `Tech ${techId} must be resolved for strategy ${strat.companyId}`
+        );
+      }
+    }
+  }
+
+  // Test E & F: Invalid & Duplicate relatedTechnologyIds Detection
+  for (const strat of strategies) {
+    if (strat.relatedTechnologyIds) {
+      const seen = new Set<string>();
+      for (const tId of strat.relatedTechnologyIds) {
+        assert.ok(technologyById.has(tId), `Strategy ${strat.companyId} has non-existent tech ${tId}`);
+        assert.ok(!seen.has(tId), `Strategy ${strat.companyId} has duplicate tech ${tId}`);
+        seen.add(tId);
+      }
+    }
+  }
+
+  // Test G & H: Strategic Landscape Classification Validity & Count Invariance
+  const landscape = getStrategicLandscapeData();
+  assert.strictEqual(landscape.length, strategies.length, 'Landscape count must exactly equal strategy count');
+  assert.strictEqual(landscape.length, 26, 'Landscape count must equal 26');
+
+  const validTopologies = new Set(['distributed-domain', 'central-domain', 'central-zonal']);
+  const validDepths = new Set(['commercial-ecosystem', 'dual-track', 'proprietary-fullstack']);
+
+  for (const item of landscape) {
+    assert.ok(validTopologies.has(item.eeTopology), `Invalid topology for ${item.companyId}: ${item.eeTopology}`);
+    assert.ok(validDepths.has(item.osDepth), `Invalid osDepth for ${item.companyId}: ${item.osDepth}`);
+  }
+
+  // Test I: KPI Totals Reconcile
+  const kpis = getStrategyKPIs();
+  assert.strictEqual(kpis.total, strategies.length, 'KPI total must match strategies length');
+  assert.strictEqual(kpis.oems + kpis.semis + kpis.tier1s, kpis.total, 'OEM + Semi + Tier1 must equal total');
+  const expectedZonal = strategies.filter((s) => s.strategicLandscape.eeTopology === 'central-zonal').length;
+  assert.strictEqual(kpis.zonal, expectedZonal, 'KPI zonal must match explicit central-zonal count');
+  assert.strictEqual(kpis.zonal, 12, 'Zonal count must be exactly 12');
+  const expectedMonetization = strategies.filter((s) => Boolean(s.softwareMonetization)).length;
+  assert.strictEqual(kpis.monetization, expectedMonetization, 'KPI monetization must match explicit monetization count');
+
+  // Test J: Continent Totals Reconcile
+  let continentSum = 0;
+  for (const cont of COMPANY_CONTINENT_ORDER) {
+    continentSum += kpis.byContinent[cont] || 0;
+  }
+  assert.strictEqual(continentSum, kpis.total, 'Sum of all continent counts must equal KPI total');
+
+  // Test K: No Text-Based Strategy-to-Technology Inference
+  // Mutating prose in an isolated strategy object must NOT change returned technologies or landscape data
+  const originalStrat = strategies.find((s) => s.companyId === 'mercedes-benz')!;
+  const originalTechs = getRelatedTechnologiesForStrategy(originalStrat);
+  const mutatedStrat = {
+    ...originalStrat,
+    sdvArchitecture: {
+      en: 'Mentions Android Automotive OS and Qualcomm Snapdragon extensively in prose without explicit link.',
+      ko: '설명 문구에 안드로이드와 퀄컴을 언급하지만 명시적 링크는 없음.',
+    },
+    eeZonalArchitecture: {
+      en: 'Mentions proprietary full-stack distributed system.',
+      ko: '분산 시스템 언급.',
+    },
+  };
+  const mutatedTechs = getRelatedTechnologiesForStrategy(mutatedStrat);
+  assert.deepStrictEqual(
+    mutatedTechs.map((t) => t.id),
+    originalTechs.map((t) => t.id),
+    'Changing strategy prose must NOT change resolved technologies (no regex inference)'
+  );
+
+  // Test L: Strategy Company IDs Resolve
+  for (const strat of strategies) {
+    assert.ok(companyById.has(strat.companyId), `Strategy companyId ${strat.companyId} must exist in canonical company index`);
+  }
+
+  // Test M: Strategy Technology IDs Resolve
+  for (const strat of strategies) {
+    if (strat.relatedTechnologyIds) {
+      for (const tId of strat.relatedTechnologyIds) {
+        assert.ok(technologyById.has(tId), `Technology ${tId} in ${strat.companyId} must exist in technologyById`);
+      }
+    }
+  }
+
+  // Test N: Bilingual Dashboard Translation Parity
+  const enKeys = Object.keys(en.strategyInsights);
+  const koKeys = Object.keys(ko.strategyInsights);
+  assert.strictEqual(
+    enKeys.length,
+    koKeys.length,
+    `Translation key count mismatch: EN (${enKeys.length}) vs KO (${koKeys.length})`
+  );
+  for (const k of enKeys) {
+    assert.ok(
+      (ko.strategyInsights as Record<string, string>)[k],
+      `Missing KO translation for strategyInsights.${k}`
+    );
+  }
+  for (const cont of COMPANY_CONTINENT_ORDER) {
+    const key =
+      cont === 'north-america'
+        ? 'northAmerica'
+        : cont === 'south-america'
+        ? 'southAmerica'
+        : cont;
+    assert.ok((en.continents as Record<string, string>)[key], `Missing EN continent translation for ${key}`);
+    assert.ok((ko.continents as Record<string, string>)[key], `Missing KO continent translation for ${key}`);
+  }
+
+  // Test O: Milestone Company IDs Resolve
+  const milestones = getStrategicMilestones();
+  for (const m of milestones) {
+    assert.ok(
+      companyById.has(m.companyId),
+      `Milestone companyId '${m.companyId}' must resolve in canonical company index`
+    );
+  }
+
+  // Test P: No Invalid Continent Values
+  for (const strat of strategies) {
+    const comp = companyById.get(strat.companyId);
+    assert.ok(comp, `Company ${strat.companyId} must exist`);
+    assert.ok(
+      COMPANY_CONTINENT_ORDER.includes(comp.continent),
+      `Company ${strat.companyId} has invalid continent '${comp.continent}'`
+    );
+  }
+
+  console.log('✅ Test 82 Passed: Strategy Intelligence semantics, explicit relationships & hardening regression (Tests A-P) verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

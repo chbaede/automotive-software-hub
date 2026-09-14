@@ -11,6 +11,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { companyStrategies } from '../../data/companyStrategies';
 import { getCompany } from '../../lib/domain';
 import { getCountryFlag } from '../../utils/formatters';
 
@@ -29,7 +30,9 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: TrendingUp,
       title: t.strategyInsights.insightInHouseOsTitle,
       description: t.strategyInsights.insightInHouseOsDesc,
-      companyIds: ['mercedes-benz', 'tesla', 'hyundai-motor-group', 'bmw-group', 'toyota-motor', 'nio'],
+      companyIds: companyStrategies
+        .filter((cs) => cs.strategicLandscape.osDepth === 'proprietary-fullstack')
+        .map((cs) => cs.companyId),
       badgeColor: 'text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-400/30',
     },
     {
@@ -37,7 +40,9 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: Layers,
       title: t.strategyInsights.insightAaosTitle,
       description: t.strategyInsights.insightAaosDesc,
-      companyIds: ['general-motors', 'renault-group', 'ford', 'bmw-group', 'volkswagen-group'],
+      companyIds: companyStrategies
+        .filter((cs) => (cs.relatedTechnologyIds || []).includes('android-automotive-os'))
+        .map((cs) => cs.companyId),
       badgeColor: 'text-blue-700 dark:text-blue-300 bg-blue-500/10 border-blue-400/30',
     },
     {
@@ -45,7 +50,13 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: Cpu,
       title: t.strategyInsights.insightNvidiaTitle,
       description: t.strategyInsights.insightNvidiaDesc,
-      companyIds: ['nvidia', 'mercedes-benz', 'byd', 'nio', 'li-auto'],
+      companyIds: companyStrategies
+        .filter(
+          (cs) =>
+            cs.companyId === 'nvidia' ||
+            (cs.relatedTechnologyIds || []).some((id) => id.startsWith('nvidia-'))
+        )
+        .map((cs) => cs.companyId),
       badgeColor: 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-400/30',
     },
     {
@@ -53,7 +64,13 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: Cpu,
       title: t.strategyInsights.insightQualcommTitle,
       description: t.strategyInsights.insightQualcommDesc,
-      companyIds: ['qualcomm', 'general-motors', 'renault-group', 'bmw-group', 'hyundai-motor-group', 'mahindra'],
+      companyIds: companyStrategies
+        .filter(
+          (cs) =>
+            cs.companyId === 'qualcomm' ||
+            (cs.relatedTechnologyIds || []).some((id) => id.startsWith('qualcomm-'))
+        )
+        .map((cs) => cs.companyId),
       badgeColor: 'text-purple-700 dark:text-purple-300 bg-purple-500/10 border-purple-400/30',
     },
     {
@@ -61,7 +78,9 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: Zap,
       title: t.strategyInsights.insightZonalTitle,
       description: t.strategyInsights.insightZonalDesc,
-      companyIds: ['tesla', 'mercedes-benz', 'volkswagen-group', 'renault-group', 'general-motors', 'ford'],
+      companyIds: companyStrategies
+        .filter((cs) => cs.strategicLandscape.eeTopology === 'central-zonal')
+        .map((cs) => cs.companyId),
       badgeColor: 'text-cyan-700 dark:text-cyan-300 bg-cyan-500/10 border-cyan-400/30',
     },
     {
@@ -69,7 +88,9 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       icon: ShieldCheck,
       title: t.strategyInsights.insightMonetizationTitle,
       description: t.strategyInsights.insightMonetizationDesc,
-      companyIds: ['tesla', 'general-motors', 'ford', 'stellantis', 'mercedes-benz', 'hyundai-motor-group'],
+      companyIds: companyStrategies
+        .filter((cs) => Boolean(cs.softwareMonetization))
+        .map((cs) => cs.companyId),
       badgeColor: 'text-orange-700 dark:text-orange-300 bg-orange-500/10 border-orange-400/30',
     },
   ];
@@ -79,19 +100,25 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       id: 'na',
       region: '🇺🇸 ' + t.strategyInsights.regionNaTitle,
       description: t.strategyInsights.regionNaDesc,
-      companyIds: ['tesla', 'general-motors', 'ford', 'nvidia', 'qualcomm'],
+      companyIds: companyStrategies
+        .filter((cs) => getCompany(cs.companyId)?.continent === 'north-america')
+        .map((cs) => cs.companyId),
     },
     {
       id: 'eu',
       region: '🇪🇺 ' + t.strategyInsights.regionEuTitle,
       description: t.strategyInsights.regionEuDesc,
-      companyIds: ['mercedes-benz', 'bmw-group', 'volkswagen-group', 'stellantis', 'renault-group'],
+      companyIds: companyStrategies
+        .filter((cs) => getCompany(cs.companyId)?.continent === 'europe')
+        .map((cs) => cs.companyId),
     },
     {
       id: 'asia',
       region: '🌏 ' + t.strategyInsights.regionAsiaTitle,
       description: t.strategyInsights.regionAsiaDesc,
-      companyIds: ['hyundai-motor-group', 'toyota-motor', 'byd', 'nio', 'xpeng', 'li-auto'],
+      companyIds: companyStrategies
+        .filter((cs) => getCompany(cs.companyId)?.continent === 'asia')
+        .map((cs) => cs.companyId),
     },
   ];
 
@@ -147,6 +174,7 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
                           key={cId}
                           type="button"
                           onClick={() => onSelectCompany(cId)}
+                          aria-label={`${t.strategyInsights.jumpToDetail}: ${comp.name}`}
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/50 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                         >
                           <span>{getCountryFlag(comp.headquarters)}</span>
@@ -196,6 +224,7 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
                         key={cId}
                         type="button"
                         onClick={() => onSelectCompany(cId)}
+                        aria-label={`${t.strategyInsights.jumpToDetail}: ${comp.name}`}
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/50 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                       >
                         <span>{getCountryFlag(comp.headquarters)}</span>

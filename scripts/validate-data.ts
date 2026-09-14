@@ -449,6 +449,39 @@ companyStrategies.forEach((cs) => {
     error(`[Company Strategy ID: ${cs.companyId}] Missing localized matrixSummary.evPlatform.`);
   }
 
+  // Validate Strategic Landscape Classification
+  const validTopologies = new Set(['distributed-domain', 'central-domain', 'central-zonal']);
+  const validDepths = new Set(['commercial-ecosystem', 'dual-track', 'proprietary-fullstack']);
+
+  if (!cs.strategicLandscape) {
+    error(`[Company Strategy ID: ${cs.companyId}] Missing 'strategicLandscape' classification.`);
+  } else {
+    if (!validTopologies.has(cs.strategicLandscape.eeTopology)) {
+      error(
+        `[Company Strategy ID: ${cs.companyId}] Invalid strategicLandscape.eeTopology: '${cs.strategicLandscape.eeTopology}'.`
+      );
+    }
+    if (!validDepths.has(cs.strategicLandscape.osDepth)) {
+      error(
+        `[Company Strategy ID: ${cs.companyId}] Invalid strategicLandscape.osDepth: '${cs.strategicLandscape.osDepth}'.`
+      );
+    }
+  }
+
+  // Validate Explicit Related Technologies
+  if (cs.relatedTechnologyIds) {
+    const seenTechIds = new Set<string>();
+    cs.relatedTechnologyIds.forEach((techId) => {
+      if (!techIds.has(techId)) {
+        error(`[Company Strategy ID: ${cs.companyId}] Unknown relatedTechnologyId: '${techId}'.`);
+      }
+      if (seenTechIds.has(techId)) {
+        error(`[Company Strategy ID: ${cs.companyId}] Duplicate relatedTechnologyId: '${techId}'.`);
+      }
+      seenTechIds.add(techId);
+    });
+  }
+
   if (!cs.sdvArchitecture?.en || !cs.sdvArchitecture?.ko) {
     error(`[Company Strategy ID: ${cs.companyId}] Missing localized sdvArchitecture.`);
   }

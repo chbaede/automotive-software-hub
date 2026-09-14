@@ -183,6 +183,7 @@ export const StrategicLandscapeMatrix: React.FC<StrategicLandscapeMatrixProps> =
                                       : 'bg-black/5 hover:bg-black/15 dark:bg-white/10 dark:hover:bg-white/20 text-slate-600 dark:text-slate-300'
                                   }`}
                                   title={isComparing ? t.strategyInsights.compareRemoveBtn : t.strategyInsights.compareAddBtn}
+                                  aria-label={`${isComparing ? t.strategyInsights.compareRemoveBtn : t.strategyInsights.compareAddBtn}: ${comp?.name || item.companyName}`}
                                 >
                                   {isComparing ? '✓' : '+'}
                                 </button>
