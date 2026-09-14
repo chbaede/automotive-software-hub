@@ -55,18 +55,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
     <>
       <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-2xs">
         {/* Tier 1: Main Brand & Utility Controls */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-15 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-15 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink group">
             <div className="p-1.5 sm:p-2 bg-brand-600 text-white rounded-lg group-hover:bg-brand-700 transition shrink-0 shadow-xs">
               <Cpu className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 min-w-0">
                 <span className="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition truncate">
                   Automotive Software Hub
                 </span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shrink-0">
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shrink-0 hidden sm:inline-block">
                   {APP_VERSION}
                 </span>
               </div>
@@ -77,11 +77,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
           </Link>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Global Search Button */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
+              className="flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
               aria-label="Search"
             >
               <Search className="w-4 h-4 text-slate-400" />
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
+              className="flex items-center gap-1 px-2 py-1.5 sm:px-2.5 sm:py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 transition"
               title={language === 'en' ? 'Switch to Korean' : '영문으로 변경'}
             >
               <Globe className="w-4 h-4 text-brand-500" />
@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
               href="https://www.linkedin.com/in/locust2001/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 sm:p-2 text-slate-500 hover:text-[#0A66C2] dark:hover:text-[#0A66C2] hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition group"
+              className="hidden sm:inline-flex p-1.5 sm:p-2 text-slate-500 hover:text-[#0A66C2] dark:hover:text-[#0A66C2] hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition group"
               title={t.nav.authorLinkedin}
               aria-label="Author LinkedIn"
             >
@@ -132,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
               href="https://github.com/chbaede/automotive-software-hub"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition"
+              className="hidden sm:inline-flex p-1.5 sm:p-2 text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg transition"
               aria-label="GitHub Repository"
               title="GitHub Repository"
             >
@@ -142,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg"
+              className="lg:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -213,8 +213,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
-            {/* Core Stack */}
+          <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl animate-in slide-in-from-top-2 duration-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-3">
+              {/* Core Stack */}
             <div className="space-y-1">
               <span className="text-[10px] font-mono uppercase text-slate-400 font-bold px-3">
                 {t.nav.architectureSection}
@@ -295,7 +296,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </header>
 
       <GlobalSearchModal
