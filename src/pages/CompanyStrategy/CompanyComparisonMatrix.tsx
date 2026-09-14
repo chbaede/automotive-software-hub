@@ -251,7 +251,7 @@ export const CompanyComparisonMatrix: React.FC<CompanyComparisonMatrixProps> = (
                               {strat.category}
                             </span>
                             <span className="text-[11px] text-slate-400">
-                              {strat.headquarters}
+                              {comp?.headquarters || strat.headquarters}
                             </span>
                           </div>
                         </div>

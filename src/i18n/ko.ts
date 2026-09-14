@@ -399,6 +399,7 @@ export const ko: Translations = {
     // Connectivity & Navigation
     linkedStackTechnologies: '연관 스택 기술 (Stack Explorer)',
     viewInStackExplorer: 'Stack Explorer에서 탐색 →',
+    sourceEvidence: '출처 근거',
     jumpToDetail: '상세 전략 보기',
     scrollUp: '맨 위로 이동',
     companiesMatchingFilter: '총 {count}개 기업 표시 중',

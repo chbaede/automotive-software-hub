@@ -53,6 +53,12 @@ export interface StrategicLandscapeClassification {
   osDepth: OsPlatformDepth;
 }
 
+export interface StrategyTechnologyReference {
+  technologyId: string;
+  reason?: LocalizedText;
+  sourceUrl?: string;
+}
+
 export interface CompanyStrategyInsight {
   companyId: string;
   companyName: string;
@@ -64,6 +70,7 @@ export interface CompanyStrategyInsight {
   latestEventOrReport: LocalizedText;
   matrixSummary: CompanyStrategyMatrixSummary;
   strategicLandscape: StrategicLandscapeClassification;
+  relatedTechnologies?: StrategyTechnologyReference[];
   relatedTechnologyIds?: string[];
   sdvArchitecture: LocalizedText;
   eeZonalArchitecture: LocalizedText;

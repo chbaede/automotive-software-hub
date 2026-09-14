@@ -15,11 +15,13 @@ import {
   EeArchitectureTopology,
   OsPlatformDepth,
   StrategicLandscapeClassification,
+  StrategyTechnologyReference,
 } from '../../types/strategy';
 export type {
   EeArchitectureTopology,
   OsPlatformDepth,
   StrategicLandscapeClassification,
+  StrategyTechnologyReference,
 };
 import { LocalizedText } from '../../types/i18n';
 import { StackLayer, StackTechnology } from '../../types/stack';
@@ -346,7 +348,7 @@ export function getStrategicLandscapeData(): StrategicLandscapeItem[] {
     const comp = companyById.get(cs.companyId);
     return {
       companyId: cs.companyId,
-      companyName: cs.companyName,
+      companyName: comp?.name || cs.companyName,
       category: cs.category,
       continent: comp?.continent,
       eeTopology: cs.strategicLandscape.eeTopology,
@@ -371,11 +373,12 @@ export interface StrategicMilestoneItem {
 export function getStrategicMilestones(): StrategicMilestoneItem[] {
   const items: StrategicMilestoneItem[] = [];
   companyStrategies.forEach((cs) => {
+    const comp = companyById.get(cs.companyId);
     cs.strategicTargets.forEach((target) => {
       items.push({
         year: target.year,
         companyId: cs.companyId,
-        companyName: cs.companyName,
+        companyName: comp?.name || cs.companyName,
         category: cs.category,
         milestone: target.milestone,
       });
@@ -394,13 +397,21 @@ export function getStrategicMilestones(): StrategicMilestoneItem[] {
 
 /**
  * Resolves stack technologies linked to a company's strategy.
- * Strictly resolves explicit relatedTechnologyIds and direct canonical company technologies.
+ * Strictly resolves explicit relatedTechnologies, relatedTechnologyIds and direct canonical company technologies.
  */
 export function getRelatedTechnologiesForStrategy(
   strategy: CompanyStrategyInsight
 ): StackTechnology[] {
   const direct = getTechnologiesForCompany(strategy.companyId);
   const matchedIds = new Set<string>(direct.map((t) => t.id));
+
+  if (strategy.relatedTechnologies) {
+    strategy.relatedTechnologies.forEach((ref) => {
+      if (technologyById.has(ref.technologyId)) {
+        matchedIds.add(ref.technologyId);
+      }
+    });
+  }
 
   if (strategy.relatedTechnologyIds) {
     strategy.relatedTechnologyIds.forEach((techId) => {
@@ -413,5 +424,21 @@ export function getRelatedTechnologiesForStrategy(
   return Array.from(matchedIds)
     .map((id) => technologyById.get(id))
     .filter((t): t is StackTechnology => Boolean(t));
+}
+
+/**
+ * Resolves explicit technology references for a company strategy.
+ * Returns structured StrategyTechnologyReference items with reasons and sources when present.
+ */
+export function getStrategyTechnologyReferences(
+  strategy: CompanyStrategyInsight
+): StrategyTechnologyReference[] {
+  if (strategy.relatedTechnologies && strategy.relatedTechnologies.length > 0) {
+    return strategy.relatedTechnologies;
+  }
+  if (strategy.relatedTechnologyIds) {
+    return strategy.relatedTechnologyIds.map((id) => ({ technologyId: id }));
+  }
+  return [];
 }
 

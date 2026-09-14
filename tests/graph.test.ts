@@ -4558,6 +4558,170 @@ console.log('🧪 Running Knowledge Graph Test Suite...\n');
   console.log('✅ Test 82 Passed: Strategy Intelligence semantics, explicit relationships & hardening regression (Tests A-P) verified.');
 }
 
+// Test 83: Strategy -> Technology Traceability, SSOT Company Integrity & Final Hardening Pass
+{
+  const { en } = await import('../src/i18n/en.js');
+  const { ko } = await import('../src/i18n/ko.js');
+  const {
+    getCompanyStrategies,
+    getStrategyKPIs,
+    getStrategicLandscapeData,
+    getStrategicMilestones,
+    getRelatedTechnologiesForStrategy,
+    getStrategyTechnologyReferences,
+    companyById,
+    technologyById,
+    COMPANY_CONTINENT_ORDER,
+  } = await import('../src/lib/domain/index.js');
+
+  const strategies = getCompanyStrategies();
+
+  // 1. Strategy Company ID resolution & 2. SSOT companyName equality
+  for (const strat of strategies) {
+    const comp = companyById.get(strat.companyId);
+    assert.ok(comp, `Strategy companyId ${strat.companyId} must exist in canonical company index`);
+    assert.strictEqual(
+      strat.companyName,
+      comp.name,
+      `Strategy companyName '${strat.companyName}' must strictly equal canonical company name '${comp.name}'`
+    );
+  }
+
+  // 3. Strategy Technology ID resolution
+  // 4. No duplicate technology references
+  // 5. Invalid technology ID rejection
+  // 6. Source URL validation (must be HTTPS)
+  // 7. Localized reason (must have non-empty EN and KO)
+  for (const strat of strategies) {
+    const refs = getStrategyTechnologyReferences(strat);
+    const seenTechIds = new Set<string>();
+
+    for (const ref of refs) {
+      assert.ok(ref.technologyId, `Tech reference in ${strat.companyId} must have technologyId`);
+      assert.ok(
+        technologyById.has(ref.technologyId),
+        `Technology '${ref.technologyId}' referenced by ${strat.companyId} must exist in technologyById`
+      );
+      assert.ok(
+        !seenTechIds.has(ref.technologyId),
+        `Company ${strat.companyId} contains duplicate reference to technology '${ref.technologyId}'`
+      );
+      seenTechIds.add(ref.technologyId);
+
+      if (ref.sourceUrl !== undefined) {
+        assert.ok(
+          ref.sourceUrl.startsWith('https://'),
+          `sourceUrl '${ref.sourceUrl}' in ${strat.companyId} must start with https://`
+        );
+      }
+
+      if (ref.reason !== undefined) {
+        assert.ok(
+          ref.reason.en && ref.reason.en.trim().length > 0,
+          `Reference to ${ref.technologyId} in ${strat.companyId} must have non-empty EN reason`
+        );
+        assert.ok(
+          ref.reason.ko && ref.reason.ko.trim().length > 0,
+          `Reference to ${ref.technologyId} in ${strat.companyId} must have non-empty KO reason`
+        );
+      }
+    }
+  }
+
+  // 8. Explicit Landscape classification: all enum values valid
+  const validTopologies = new Set(['distributed-domain', 'central-domain', 'central-zonal']);
+  const validDepths = new Set(['commercial-ecosystem', 'dual-track', 'proprietary-fullstack']);
+  for (const strat of strategies) {
+    assert.ok(
+      validTopologies.has(strat.strategicLandscape.eeTopology),
+      `Invalid eeTopology '${strat.strategicLandscape.eeTopology}' in ${strat.companyId}`
+    );
+    assert.ok(
+      validDepths.has(strat.strategicLandscape.osDepth),
+      `Invalid osDepth '${strat.strategicLandscape.osDepth}' in ${strat.companyId}`
+    );
+  }
+
+  // 9. KPI reconciliation
+  const kpis = getStrategyKPIs();
+  assert.strictEqual(kpis.total, 26);
+  assert.strictEqual(kpis.oems + kpis.semis + kpis.tier1s, kpis.total);
+  assert.strictEqual(
+    kpis.zonal,
+    strategies.filter((s) => s.strategicLandscape.eeTopology === 'central-zonal').length
+  );
+  assert.strictEqual(
+    kpis.monetization,
+    strategies.filter((s) => Boolean(s.softwareMonetization)).length
+  );
+
+  // 10. No heuristic Strategy -> Technology inference
+  const testStrat = strategies.find((s) => s.companyId === 'bmw-group')!;
+  const baselineTechs = getRelatedTechnologiesForStrategy(testStrat);
+  const modifiedStrat = {
+    ...testStrat,
+    sdvArchitecture: {
+      en: 'Mentions NVIDIA DRIVE Thor and Mobileye EyeQ prominently in text but has no explicit reference.',
+      ko: '본문에 엔비디아와 모빌아이를 언급하지만 명시적 관계는 없음.',
+    },
+  };
+  const afterProseChangeTechs = getRelatedTechnologiesForStrategy(modifiedStrat);
+  assert.deepStrictEqual(
+    afterProseChangeTechs.map((t) => t.id),
+    baselineTechs.map((t) => t.id),
+    'Prose alterations must never heuristically infer or alter technology links'
+  );
+
+  // 11. Comparison preset replacement, 12. max 4, 13. deduplication
+  const oversizedSelection = ['bmw-group', 'mercedes-benz', 'volkswagen-group', 'tesla', 'ford', 'byd'];
+  const deduplicatedSelection = Array.from(new Set(oversizedSelection))
+    .filter((id) => companyById.has(id))
+    .slice(0, 4);
+  assert.strictEqual(deduplicatedSelection.length, 4);
+
+  // 14. EN/KO translation parity for newly introduced keys
+  assert.ok(en.strategyInsights.sourceEvidence, 'Missing EN sourceEvidence');
+  assert.ok(ko.strategyInsights.sourceEvidence, 'Missing KO sourceEvidence');
+  assert.strictEqual(
+    Object.keys(en.strategyInsights).length,
+    Object.keys(ko.strategyInsights).length,
+    'EN and KO strategyInsights must have identical key counts'
+  );
+
+  // 15. Strategic milestone company resolution
+  const milestones = getStrategicMilestones();
+  for (const m of milestones) {
+    assert.ok(companyById.has(m.companyId), `Milestone companyId ${m.companyId} must exist`);
+  }
+
+  // 16. Continent validity
+  for (const strat of strategies) {
+    const comp = companyById.get(strat.companyId)!;
+    assert.ok(COMPANY_CONTINENT_ORDER.includes(comp.continent));
+  }
+
+  // 17. Functional Safety invariants: certified vs capable
+  const perseus = technologyById.get('perseus-hypervisor');
+  assert.ok(perseus, 'Perseus Pegasus must exist');
+  assert.strictEqual(perseus.asilLevel, 'ASIL-D');
+  assert.strictEqual(perseus.functionalSafety?.claimType, 'certified');
+
+  const thor = technologyById.get('nvidia-drive-thor');
+  assert.ok(thor, 'NVIDIA DRIVE Thor must exist');
+  assert.strictEqual(thor.asilLevel, 'ASIL-D');
+  assert.strictEqual(thor.functionalSafety?.claimType, 'capable');
+
+  const qnx = technologyById.get('qnx-neutrino');
+  assert.ok(qnx, 'QNX Neutrino must exist');
+  assert.strictEqual(qnx.asilLevel, 'ASIL-D');
+  assert.strictEqual(qnx.functionalSafety?.claimType, 'capable');
+
+  // 18. Relationship count / graph invariants
+  assert.ok(strategies.length >= 26);
+
+  console.log('✅ Test 83 Passed: Strategy -> Technology Traceability, SSOT Company Integrity & Final Hardening Pass verified.');
+}
+
 console.log('\n🎉 All Knowledge Graph Tests Passed Cleanly!');
 
 

@@ -94,7 +94,7 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
               {getCountryFlag(company?.headquarters || strategy.headquarters)}
             </span>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              {strategy.companyName}
+              {company?.name || strategy.companyName}
             </h2>
             <span
               className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border uppercase tracking-wider ${getCategoryBadgeClass(
@@ -123,7 +123,7 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
           </div>
 
           <div className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-3">
-            <span>{strategy.headquarters}</span>
+            <span>{company?.headquarters || strategy.headquarters}</span>
             <span>•</span>
             <span className="font-medium text-slate-700 dark:text-slate-300">
               {getLocalizedText(strategy.latestEventOrReport, language)}
@@ -225,7 +225,7 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
 
       {/* Connected Stack Technologies (Stack Explorer Linking) */}
       {relatedTechs.length > 0 && (
-        <div className="p-3.5 rounded-xl bg-slate-50/60 dark:bg-slate-950/30 border border-slate-200/70 dark:border-slate-800/70 space-y-2">
+        <div className="p-3.5 rounded-xl bg-slate-50/60 dark:bg-slate-950/30 border border-slate-200/70 dark:border-slate-800/70 space-y-2.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand-500" />
@@ -235,17 +235,45 @@ export const CompanyStrategyCard: React.FC<CompanyStrategyCardProps> = ({
               {t.strategyInsights.viewInStackExplorer}
             </span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {relatedTechs.map((tech) => (
-              <Link
-                key={tech.id}
-                to={`/stack/${tech.id}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/50 text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-700 transition shadow-2xs group"
-              >
-                <span>{tech.name}</span>
-                <ArrowUpRight className="w-3 h-3 opacity-40 group-hover:opacity-100" />
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {relatedTechs.map((tech) => {
+              const ref = strategy.relatedTechnologies?.find((r) => r.technologyId === tech.id);
+              const reasonText = ref?.reason ? getLocalizedText(ref.reason, language) : null;
+
+              return (
+                <div
+                  key={tech.id}
+                  className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 space-y-1 shadow-2xs"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <Link
+                      to={`/stack/${tech.id}`}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-800 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 transition group"
+                    >
+                      <span>{tech.name}</span>
+                      <ArrowUpRight className="w-3 h-3 opacity-40 group-hover:opacity-100" />
+                    </Link>
+                    {ref?.sourceUrl && (
+                      <a
+                        href={ref.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition shrink-0"
+                        title={t.strategyInsights.sourceEvidence}
+                      >
+                        <span>{t.strategyInsights.sourceEvidence}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                  {reasonText && (
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
+                      {reasonText}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

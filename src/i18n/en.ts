@@ -397,6 +397,7 @@ export const en = {
     // Connectivity & Navigation
     linkedStackTechnologies: 'Related Technologies in Stack Explorer',
     viewInStackExplorer: 'Explore in Stack Explorer →',
+    sourceEvidence: 'Source Evidence',
     jumpToDetail: 'View Detailed Strategy',
     scrollUp: 'Back to Top',
     companiesMatchingFilter: 'Showing {count} companies',

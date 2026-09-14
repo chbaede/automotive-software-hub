@@ -41,7 +41,10 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       title: t.strategyInsights.insightAaosTitle,
       description: t.strategyInsights.insightAaosDesc,
       companyIds: companyStrategies
-        .filter((cs) => (cs.relatedTechnologyIds || []).includes('android-automotive-os'))
+        .filter((cs) => {
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          return ids.includes('android-automotive-os');
+        })
         .map((cs) => cs.companyId),
       badgeColor: 'text-blue-700 dark:text-blue-300 bg-blue-500/10 border-blue-400/30',
     },
@@ -51,11 +54,10 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       title: t.strategyInsights.insightNvidiaTitle,
       description: t.strategyInsights.insightNvidiaDesc,
       companyIds: companyStrategies
-        .filter(
-          (cs) =>
-            cs.companyId === 'nvidia' ||
-            (cs.relatedTechnologyIds || []).some((id) => id.startsWith('nvidia-'))
-        )
+        .filter((cs) => {
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          return cs.companyId === 'nvidia' || ids.some((id) => id.startsWith('nvidia-'));
+        })
         .map((cs) => cs.companyId),
       badgeColor: 'text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-400/30',
     },
@@ -65,11 +67,10 @@ export const StrategyQuickInsights: React.FC<StrategyQuickInsightsProps> = ({
       title: t.strategyInsights.insightQualcommTitle,
       description: t.strategyInsights.insightQualcommDesc,
       companyIds: companyStrategies
-        .filter(
-          (cs) =>
-            cs.companyId === 'qualcomm' ||
-            (cs.relatedTechnologyIds || []).some((id) => id.startsWith('qualcomm-'))
-        )
+        .filter((cs) => {
+          const ids = cs.relatedTechnologies?.map((r) => r.technologyId) || cs.relatedTechnologyIds || [];
+          return cs.companyId === 'qualcomm' || ids.some((id) => id.startsWith('qualcomm-'));
+        })
         .map((cs) => cs.companyId),
       badgeColor: 'text-purple-700 dark:text-purple-300 bg-purple-500/10 border-purple-400/30',
     },
