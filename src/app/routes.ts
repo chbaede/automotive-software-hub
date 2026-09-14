@@ -62,8 +62,8 @@ export const CANONICAL_STATIC_ROUTES: RouteMetadata[] = [
     priority: '0.90',
     changefreq: 'weekly',
     title: {
-      en: 'Interactive Automotive Stack Builder — Automotive Software Hub',
-      ko: '인터랙티브 차량 소프트웨어 스택 빌더 — Automotive Software Hub',
+      en: 'Interactive Automotive Stack Builder (Beta) — Automotive Software Hub',
+      ko: '인터랙티브 차량 소프트웨어 스택 빌더 (Beta) — Automotive Software Hub',
     },
     description: {
       en: 'Compose custom automotive software stacks layer-by-layer with real-time architectural validation, compatibility scoring, and what-if analysis.',

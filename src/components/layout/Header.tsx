@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
     { to: '/', label: t.nav.home },
     { to: '/stack', label: t.nav.stackExplorer },
     { to: '/architectures', label: t.nav.architectures },
-    { to: '/stack-builder', label: t.nav.stackBuilder },
+    { to: '/stack-builder', label: t.nav.stackBuilder, badge: 'Beta' },
   ];
 
   const ecosystemNavItems = [
@@ -167,7 +167,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
                     }`
                   }
                 >
-                  {item.label}
+                  <span className="inline-flex items-center gap-1.5">
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wider uppercase bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                        {item.badge}
+                      </span>
+                    )}
+                  </span>
                 </NavLink>
               ))}
 
@@ -232,7 +239,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenTool }) => {
                     }`
                   }
                 >
-                  {item.label}
+                  <div className="flex items-center justify-between">
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
                 </NavLink>
               ))}
             </div>

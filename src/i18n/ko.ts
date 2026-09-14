@@ -476,7 +476,7 @@ export const ko: Translations = {
     companionLabel: '아키텍처 구성 기술',
     coreLayer: '핵심 영역',
     crossCuttingLayer: '공통 영역',
-    buildThisArchitecture: '이 아키텍처로 스택 구성하기',
+    buildThisArchitecture: '스택 빌더(Beta)에서 이 아키텍처 구성하기',
     buildThisArchitectureDesc: '아키텍처의 모든 구성 기술을 오토모티브 스택 빌더로 직접 불러와 유효성을 검증하고 대체 기술을 시뮬레이션합니다.',
     compareArchitectures: '아키텍처 비교',
     selectArchToCompare: '비교할 아키텍처 선택...',
@@ -579,6 +579,7 @@ export const ko: Translations = {
   stackBuilder: {
     title: '나만의 자동차 소프트웨어 스택 구성',
     subtitle: '차량용 소프트웨어 계층별 기술을 선택하여 나만의 아키텍처 스택을 구성하고 지식 그래프 기반으로 검증하세요.',
+    betaNotice: '스택 빌더는 현재 베타(Beta) 버전으로 제공 중입니다. 지식 그래프 관계 규칙 및 검증 매핑이 지속적으로 보완되고 있습니다.',
     coreLayersTitle: '핵심 런타임 계층',
     coreLayersSubtitle: '실리콘 하드웨어 연산부터 애플리케이션 프레임워크까지의 수직 소프트웨어 계층입니다.',
     supportingLayersTitle: '공통 및 지원 계층',

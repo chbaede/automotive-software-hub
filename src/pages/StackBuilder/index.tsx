@@ -161,15 +161,28 @@ export const StackBuilderPage: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
             <Wrench className="w-3.5 h-3.5" />
             <span>{t.stackBuilder.title}</span>
+            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold tracking-wider uppercase bg-amber-500/25 text-amber-300 border border-amber-400/40">
+              Beta
+            </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            {t.stackBuilder.title}
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight flex items-center gap-3 flex-wrap">
+            <span>{t.stackBuilder.title}</span>
+            <span className="px-2.5 py-0.5 rounded-lg text-sm font-mono font-bold tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-400/40 align-middle">
+              Beta
+            </span>
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             {t.stackBuilder.subtitle}
           </p>
+
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-xs">
+            <span className="font-bold uppercase font-mono text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30 shrink-0">
+              Beta
+            </span>
+            <span className="leading-snug">{t.stackBuilder.betaNotice}</span>
+          </div>
 
           {/* Action Bar */}
           <div className="flex flex-wrap items-center gap-3 pt-2">

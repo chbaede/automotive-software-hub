@@ -52,8 +52,11 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/stack-builder" className="hover:text-brand-500 transition">
-                  {t.nav.stackBuilder}
+                <Link to="/stack-builder" className="hover:text-brand-500 transition inline-flex items-center gap-1.5">
+                  <span>{t.nav.stackBuilder}</span>
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wider uppercase bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    Beta
+                  </span>
                 </Link>
               </li>
               <li>

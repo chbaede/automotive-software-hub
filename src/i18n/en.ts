@@ -474,7 +474,7 @@ export const en = {
     companionLabel: 'Architecture Components',
     coreLayer: 'Core',
     crossCuttingLayer: 'Cross-cutting',
-    buildThisArchitecture: 'Build this Architecture in Stack Builder',
+    buildThisArchitecture: 'Build this Architecture in Stack Builder (Beta)',
     buildThisArchitectureDesc: 'Load all integrated technologies directly into the Automotive Stack Builder to test, customize, and simulate replacements.',
     compareArchitectures: 'Compare Architectures',
     selectArchToCompare: 'Select architecture to compare...',
@@ -577,6 +577,7 @@ export const en = {
   stackBuilder: {
     title: 'Build Your Automotive Stack',
     subtitle: 'Select technologies across automotive software layers to compose, explore, and validate your vehicle software stack.',
+    betaNotice: 'Stack Builder is currently in Beta. Knowledge graph relationship rules and validation mappings are actively being enhanced.',
     coreLayersTitle: 'Core Runtime Layers',
     coreLayersSubtitle: 'Sequential vertical software hierarchy from silicon compute to application framework.',
     supportingLayersTitle: 'Supporting & Cross-Cutting Layers',
